@@ -19,7 +19,7 @@ public abstract class WorldObject implements Parentable {
 	private boolean mousehovering = false;
 	private List<ClickHandler> clickHandlers = new ArrayList<ClickHandler>();
 	
-	private TextObject text;
+	private List<TextObject> textObjects = new ArrayList<TextObject>();
 
 	private Parentable parent;
 
@@ -101,8 +101,12 @@ public abstract class WorldObject implements Parentable {
 		this.visible = visible;
 	}
 	
-	public void setText(TextObject text) {
-		this.text= text;
+	public void addText(TextObject text) {
+		this.textObjects.add(text);
+	}
+	
+	public void removeText(TextObject text) {
+		this.textObjects.remove(text);
 	}
 
 	public void addClickHandler(ClickHandler c) {
@@ -123,10 +127,9 @@ public abstract class WorldObject implements Parentable {
 
 			g.drawImage(img, getGlobalX(), getGlobalY(), null);
 			
-			if (text != null) {
-				text.draw(g, getGlobalX(), getGlobalY());
-				// g.setFont(Font.getFont(Font.DIALOG));
-				// g.setColor(Color.RED);
+			if (textObjects != null) {
+				for (TextObject t : textObjects)
+					t.draw(g, getGlobalX(), getGlobalY());
 			}
 		}
 

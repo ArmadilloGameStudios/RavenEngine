@@ -90,6 +90,8 @@ public class BattleScene extends Scene {
 
 	public void setSelectedUnit(Unit unit) {
 		selectedUnit = unit;
+		
+		playerSideBar.updateStats(unit.getStats());
 	}
 
 	Unit getSelectedUnit() {

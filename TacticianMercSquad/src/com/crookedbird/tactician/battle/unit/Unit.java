@@ -88,6 +88,10 @@ public class Unit {
 		this.team = team;
 	}
 
+	public UnitStats getStats() {
+		return stats;
+	}
+
 	private boolean pathfindIsWalkable(Terrain t, List<Terrain> lst) {
 		return t != null && t.isPassable() && t != getTerrain()
 				&& !lst.contains(t) && (t.getUnit() == null || t.getUnit().getTeam() == team);
