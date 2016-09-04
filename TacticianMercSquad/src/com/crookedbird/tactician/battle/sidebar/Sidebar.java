@@ -9,12 +9,12 @@ import com.crookedbird.tactician.battle.unit.UnitStats;
 
 public class Sidebar extends WorldObject {
 	static class Stats {
-		static final int Movement = 0;
-		static final int Initiative = 1;
-		static final int Accuracy = 2;
-		static final int Dodge = 3;
-		static final int Stamina = 4;
-		static final int HitPoints = 5;
+		static final int Initiative = 0;
+		static final int Movement = 1;
+		static final int Stamina = 2;
+		static final int HitPoints = 3;
+		static final int Dodge = 4;
+		static final int Accuracy = 5;
 		static final int Resistance = 6;
 		static final int Absorption = 7;
 	}
