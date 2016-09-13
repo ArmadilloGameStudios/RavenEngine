@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.crookedbird.engine.GameEngine;
+import com.crookedbird.engine.database.GameData;
+import com.crookedbird.engine.database.GameDataQuery;
 import com.crookedbird.engine.util.Pair;
 import com.crookedbird.engine.worldobject.WorldObject;
 import com.crookedbird.tactician.battle.BattleScene;
@@ -24,10 +26,22 @@ public class Unit {
 
 	private List<Terrain> actionTerrain;
 
-	public Unit(BattleScene battleScene, Terrain terrain, int team) {
+	public Unit(BattleScene battleScene, Terrain terrain, final int team) {
 		unitWorldObject = new UnitWorldObject(this, battleScene.getLevel(),
-				GameEngine.getEngine().getFromGameDatabase("Anim", "Name",
-						"Unit1"), terrain.getX(), terrain.getY(), 16, 16);
+				GameEngine.getEngine().getFromGameDatabase("Units",
+						new GameDataQuery() {
+							public boolean matches(GameData row) {
+								switch (team) {
+								case 1:
+									return row.getData("team").getString()
+											.equalsIgnoreCase("red");
+								case 2:
+								default:
+									return row.getData("team").getString()
+											.equalsIgnoreCase("red");
+								}
+							}
+						}).getData("img"), terrain.getX(), terrain.getY(), 16, 16);
 
 		this.tx = terrain.getGridX();
 		this.ty = terrain.getGridY();
@@ -84,6 +98,7 @@ public class Unit {
 	public int getTeam() {
 		return team;
 	}
+
 	public void setTeam(int team) {
 		this.team = team;
 	}
@@ -94,7 +109,8 @@ public class Unit {
 
 	private boolean pathfindIsWalkable(Terrain t, List<Terrain> lst) {
 		return t != null && t.isPassable() && t != getTerrain()
-				&& !lst.contains(t) && (t.getUnit() == null || t.getUnit().getTeam() == team);
+				&& !lst.contains(t)
+				&& (t.getUnit() == null || t.getUnit().getTeam() == team);
 	}
 
 	private boolean pathfindIsFree(Terrain t, List<Terrain> lst) {
@@ -117,7 +133,7 @@ public class Unit {
 				t = getRelitiveTerrain(p.getX(), p.getY() + 1);
 				if (pathfindIsWalkable(t, terrain)) {
 					nextPoints.add(new Pair<Integer>(p.getX(), p.getY() + 1));
-					
+
 					if (pathfindIsFree(t, terrain)) {
 						terrain.add(t);
 					}
@@ -126,7 +142,7 @@ public class Unit {
 				t = getRelitiveTerrain(p.getX(), p.getY() - 1);
 				if (pathfindIsWalkable(t, terrain)) {
 					nextPoints.add(new Pair<Integer>(p.getX(), p.getY() - 1));
-					
+
 					if (pathfindIsFree(t, terrain)) {
 						terrain.add(t);
 					}
@@ -135,7 +151,7 @@ public class Unit {
 				t = getRelitiveTerrain(p.getX() + 1, p.getY());
 				if (pathfindIsWalkable(t, terrain)) {
 					nextPoints.add(new Pair<Integer>(p.getX() + 1, p.getY()));
-					
+
 					if (pathfindIsFree(t, terrain)) {
 						terrain.add(t);
 					}
@@ -144,7 +160,7 @@ public class Unit {
 				t = getRelitiveTerrain(p.getX() - 1, p.getY());
 				if (pathfindIsWalkable(t, terrain)) {
 					nextPoints.add(new Pair<Integer>(p.getX() - 1, p.getY()));
-					
+
 					if (pathfindIsFree(t, terrain)) {
 						terrain.add(t);
 					}

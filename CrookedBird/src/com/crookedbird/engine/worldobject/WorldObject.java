@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.crookedbird.engine.database.GameDataRow;
+import com.crookedbird.engine.database.GameData;
 import com.crookedbird.engine.graphics.AnimatedGraphic;
 import com.crookedbird.engine.input.MouseClickInput;
 import com.crookedbird.engine.input.MouseMovementInput;
@@ -23,16 +23,20 @@ public abstract class WorldObject implements Parentable {
 
 	private Parentable parent;
 
-	public WorldObject(Parentable parent, GameDataRow anim) {
-		this(parent, anim, 0, 0, 0, 0);
+	public WorldObject(Parentable parent, GameData img) {
+		this(parent, img, 0, 0, 0, 0);
 	}
 
-	public WorldObject(Parentable parent, GameDataRow anim, int x, int y,
+	public WorldObject(Parentable parent, GameData img, int x, int y) {
+		this(parent, img, x, y, 0, 0);
+	}
+
+	public WorldObject(Parentable parent, GameData img, int x, int y,
 			int w, int h) {
 		this.parent = parent;
 
-		if (anim != null) {
-			animatedReference = new AnimatedGraphic(anim);
+		if (img != null) {
+			animatedReference = new AnimatedGraphic(img);
 		}
 
 		this.x = x;

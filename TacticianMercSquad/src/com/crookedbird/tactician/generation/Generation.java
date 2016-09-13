@@ -1,5 +1,8 @@
 package com.crookedbird.tactician.generation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.crookedbird.tactician.battle.BattleScene;
 import com.crookedbird.tactician.battle.Level;
 import com.crookedbird.tactician.battle.Terrain;
@@ -123,35 +126,36 @@ public class Generation {
 			terrain[i] = new Terrain[lgp.getHeight()];
 
 			for (int j = 0; j < lgp.getHeight(); j++) {
+				List<String> type = new ArrayList<String>();
+
 				switch (terrainType[i][j]) {
 				case Ground:
-					terrain[i][j] = new Terrain(level, theme, "Ground", i * 16,
-							j * 16);
+					type.add("Ground");
 					break;
 				case Wall:
-					String wall = "Wall";
+					type.add("Wall");
+
 					if (j + 1 < lgp.getHeight()
 							&& terrainType[i][j + 1] == TerrainType.Wall) {
-						wall += "B";
+						type.add("Bottom");
 					}
 					if (i - 1 >= 0 && terrainType[i - 1][j] == TerrainType.Wall) {
-						wall += "L";
+						type.add("Left");
 					}
 					if (i + 1 < lgp.getWidth()
 							&& terrainType[i + 1][j] == TerrainType.Wall) {
-						wall += "R";
+						type.add("Right");
 					}
 					if (j - 1 >= 0 && terrainType[i][j - 1] == TerrainType.Wall) {
-						wall += "T";
+						type.add("Top");
 					}
-					terrain[i][j] = new Terrain(level, theme, wall, i * 16,
-							j * 16);
 					break;
 				case Obstacle:
-					terrain[i][j] = new Terrain(level, theme, "Barrel", i * 16,
-							j * 16);
+					type.add("Obstacle");
 					break;
 				}
+
+				terrain[i][j] = new Terrain(level, theme, type, i * 16, j * 16);
 			}
 		}
 

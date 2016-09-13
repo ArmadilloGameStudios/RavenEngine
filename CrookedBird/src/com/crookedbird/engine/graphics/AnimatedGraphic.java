@@ -16,14 +16,14 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import com.crookedbird.engine.GameEngine;
-import com.crookedbird.engine.database.GameDataRow;
+import com.crookedbird.engine.database.GameData;
 import com.crookedbird.engine.scene.Layer;
 
 public class AnimatedGraphic extends ImageReference {
 
 	private Map<String, List<Frame>> states = new HashMap<String, List<Frame>>();
 	private int width, height;
-	
+
 	public AnimatedGraphic(File file) {
 		BufferedReader reader = null;
 
@@ -34,7 +34,8 @@ public class AnimatedGraphic extends ImageReference {
 		}
 
 		String line = "";
-		width = 0; height = 0;
+		width = 0;
+		height = 0;
 		int i = 0;
 		BufferedImage img = null;
 		List<Frame> frameList = null;
@@ -92,18 +93,55 @@ public class AnimatedGraphic extends ImageReference {
 		// TODO Auto-generated constructor stub
 	}
 
-	public AnimatedGraphic(GameDataRow anim) {
+	public AnimatedGraphic(GameData imgData) {
+		// src, width, height, FrameCSV
+		BufferedImage imgRef;
+		String[] strFrames = null;
 
-		String line = "";
-		width = Integer.parseInt(anim.get("Width").toString());
-		height = Integer.parseInt(anim.get("Height").toString());
-		BufferedImage img = GameEngine.getEngine()
-				.getImageReferenceAsset(anim.get("Src").toString()).getImage();
+		if (imgData.isString()) {
+			imgRef = GameEngine.getEngine()
+					.getImageReferenceAsset(imgData.getString()).getImage();
+
+			width = imgRef.getWidth();
+			height = imgRef.getHeight();
+			strFrames = new String[] { "idle,0,0" };
+		} else {
+			imgRef = GameEngine.getEngine()
+					.getImageReferenceAsset(imgData.getData("src").getString())
+					.getImage();
+
+			if (imgData.getData("width") != null
+					&& imgData.getData("width").isInteger()) {
+				width = imgData.getData("width").getInteger();
+			} else {
+				width = imgRef.getWidth();
+			}
+			if (imgData.getData("height") != null
+					&& imgData.getData("height").isInteger()) {
+				height = imgData.getData("height").getInteger();
+			} else {
+				height = imgRef.getHeight();
+			}
+
+			if (imgData.getData("anim") != null) {
+				if (imgData.getData("anim").isList()) {
+					List<GameData> l = imgData.getData("anim").getList();
+					strFrames = new String[l.size()];
+
+					for (int i = 0; i < strFrames.length; i++) {
+						if (l.get(i).isString())
+							strFrames[i] = l.get(i).getString();
+					}
+				} else if (imgData.getData("anim").isString()) {
+					strFrames = new String[] { imgData.getData("anim").getString() };
+				}
+			} else {
+				strFrames = new String[] { "idle,0,0" };
+			}
+		}
+
 		List<Frame> frameList = null;
 
-		String value = anim.get("FrameCSV").toString();
-
-		String[] strFrames = value.split("\\|");
 		for (String strFrame : strFrames) {
 
 			String[] strFrameData = strFrame.split(",");
@@ -113,13 +151,13 @@ public class AnimatedGraphic extends ImageReference {
 				BufferedImage bufferedImage = new BufferedImage(width, height,
 						BufferedImage.TYPE_INT_ARGB);
 
-				int w = ((width * Integer.parseInt(strFrameData[i])) % img
+				int w = ((width * Integer.parseInt(strFrameData[i])) % imgRef
 						.getWidth()) / width;
 				int h = (width * Integer.parseInt(strFrameData[i]))
-						/ img.getWidth();
+						/ imgRef.getWidth();
 
-				bufferedImage.getGraphics().drawImage(img, 0, 0, width, height,
-						width * w, height * h, width * (w + 1),
+				bufferedImage.getGraphics().drawImage(imgRef, 0, 0, width,
+						height, width * w, height * h, width * (w + 1),
 						height * (h + 1), null);
 
 				frameList.add(new Frame(strFrameData[0], frameList.size(),
@@ -198,11 +236,11 @@ public class AnimatedGraphic extends ImageReference {
 
 		return current.getImage();
 	}
-	
+
 	public int getWidth() {
 		return width;
 	}
-	
+
 	public int getHeight() {
 		return height;
 	}

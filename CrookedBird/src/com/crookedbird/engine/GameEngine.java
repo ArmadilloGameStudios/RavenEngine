@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.crookedbird.engine.database.GameDataRow;
+import com.crookedbird.engine.database.GameData;
+import com.crookedbird.engine.database.GameDataQuery;
 import com.crookedbird.engine.database.GameDatabase;
 import com.crookedbird.engine.forms.GameWindow;
-import com.crookedbird.engine.graphics.AnimatedGraphic;
 import com.crookedbird.engine.graphics.ImageGraphic;
 import com.crookedbird.engine.graphics.ImageReference;
 import com.crookedbird.engine.input.Input;
@@ -93,13 +93,9 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 	public GameDatabase getGameDatabase() {
 		return gdb;
 	}
-	
-	public GameDataRow getFromGameDatabase(String table, String prop, Object val) {
-		return gdb.getTable(table).get(prop, val);
-	}
 
-	public GameDataRow getFromGameDatabase(String table, String[] prop, Object[] val) {
-		return gdb.getTable(table).get(prop, val);
+	public GameData getFromGameDatabase(String table, GameDataQuery query) {
+		return gdb.getTable(table).get(query);
 	}
 
 	public void breakThread() {

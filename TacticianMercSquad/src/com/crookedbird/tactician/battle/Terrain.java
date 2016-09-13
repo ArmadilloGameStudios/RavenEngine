@@ -1,7 +1,10 @@
 package com.crookedbird.tactician.battle;
 
+import java.util.List;
+
 import com.crookedbird.engine.GameEngine;
-import com.crookedbird.engine.database.GameDataRow;
+import com.crookedbird.engine.database.GameData;
+import com.crookedbird.engine.database.GameDataQuery;
 import com.crookedbird.engine.input.MouseClickInput;
 import com.crookedbird.engine.worldobject.ClickHandler;
 import com.crookedbird.engine.worldobject.WorldObject;
@@ -13,25 +16,25 @@ public class Terrain extends WorldObject {
 	private TerrainHighlight highlight;
 	private Unit unit;
 
-	public Terrain(Level l, String theme, String terrain, int x, int y) {
-		this(l, GameEngine.getEngine().getFromGameDatabase("Terrain", new String[] { "Theme", "Name" },
-				new String[] { theme, terrain }), x, y);
+	public Terrain(Level l, String theme, List<String> type, int x, int y) {
+		this(l, GameEngine.getEngine().getFromGameDatabase("Terrain",
+				new TerrainQuery(theme, type)), x, y);
 	}
 
-	public Terrain(Level l, GameDataRow data, int x, int y) {
-		super(l, GameEngine.getEngine().getFromGameDatabase("Anim", "Name", data.get("AnimName")), x, y, 16, 16);
-		
+	public Terrain(Level l, GameData data, int x, int y) {
+		super(l, data.getData("img"), x, y);
+
 		this.level = l;
-		
+
 		highlight = new TerrainHighlight(this, TerrainHighlight.Color.Blue);
 		highlight.setVisibility(false);
-		
+
 		this.addChild(highlight);
 
-		passable = Boolean.parseBoolean(data.get("Passable").toString());
-		
+		passable = data.getData("Passable") != null
+				&& data.getData("Passable").getBoolean();
 
-		addClickHandler(new ClickHandler () {
+		addClickHandler(new ClickHandler() {
 			@Override
 			public void onMouseClick(MouseClickInput e) {
 				switch (level.getState()) {
@@ -40,7 +43,8 @@ public class Terrain extends WorldObject {
 				case ACTION_SELECTION:
 					break;
 				case ACTION_TARGET_SELECTION:
-					level.getSelectedUnit().executeAction(getGridX(), getGridY());
+					level.getSelectedUnit().executeAction(getGridX(),
+							getGridY());
 					break;
 				case EXECUTING_ACTION:
 					break;
@@ -50,18 +54,19 @@ public class Terrain extends WorldObject {
 			}
 		});
 	}
-	
+
 	public int getGridX() {
 		return getX() / 16;
 	}
+
 	public int getGridY() {
 		return getY() / 16;
 	}
-	
+
 	public void setUnit(Unit u) {
 		this.unit = u;
 	}
-	
+
 	public Unit getUnit() {
 		return unit;
 	}
@@ -69,11 +74,11 @@ public class Terrain extends WorldObject {
 	public boolean isPassable() {
 		return passable;
 	}
-	
+
 	public void highlight(boolean on) {
 		highlight.setVisibility(on);
 	}
-	
+
 	public boolean isHighlight() {
 		return highlight.getVisibility();
 	}
