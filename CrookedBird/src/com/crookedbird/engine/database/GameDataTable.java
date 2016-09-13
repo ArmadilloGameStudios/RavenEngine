@@ -15,13 +15,25 @@ public class GameDataTable {
 		return name;
 	}
 
-	public GameData get(GameDataQuery query) {
+	public GameData getFirst(GameDataQuery query) {
 		for (GameData row : data) {
 			if (query.matches(row)) {
 				return row;
 			}
 		}
 		return null;
+	}
+	
+
+	public List<GameData> getAll(GameDataQuery query) {
+		List<GameData> l = new ArrayList<GameData>();
+		
+		for (GameData row : data) {
+			if (query.matches(row)) {
+				l.add(row);
+			}
+		}
+		return l;
 	}
 
 	public List<GameData> getRows() {

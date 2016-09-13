@@ -9,7 +9,7 @@ import com.crookedbird.engine.worldobject.WorldObject;
 public class MainMenuStartButton extends WorldObject {
 	public MainMenuStartButton(Layer parent) {
 		super(parent, GameEngine.getEngine()
-				.getFromGameDatabase("StartScreen", new GameDataQuery() {
+				.getFirstFromGameDatabase("StartScreen", new GameDataQuery() {
 					public boolean matches(GameData row) {
 						return row.getData("name") != null
 								&& row.getData("name").isString()

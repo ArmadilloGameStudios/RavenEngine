@@ -10,8 +10,20 @@
 	img: "img/terrain/sandbarrel.png"
 },
 {
-	name: "Pillar",
+	name: "Barrel Light",
 	type: "obstacle",
+	img: {
+		src: "img/terrain/sandbarrellight.png",
+		width: 16,
+		height: 16,
+		anim: {
+			idle: [[0, 650], [1, 350]]
+		}
+	}
+},
+{
+	name: "Pillar",
+	type: ["obstacle", "removed"],
 	img: { 
 		src: "img/terrain/sandpillar.png",
 		anchorx: 0,

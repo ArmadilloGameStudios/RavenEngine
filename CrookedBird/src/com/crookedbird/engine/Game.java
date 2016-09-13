@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 
 import com.crookedbird.engine.input.MouseClickInput;
 import com.crookedbird.engine.input.MouseMovementInput;
-import com.crookedbird.engine.scene.Layer;
 import com.crookedbird.engine.scene.Scene;
 
 public abstract class Game {

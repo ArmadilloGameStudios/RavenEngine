@@ -12,7 +12,7 @@ public class Holder extends WorldObject {
 	private TextObject des, val;
 
 	public Holder(Sidebar parent, int x, int y) {
-		super(parent, GameEngine.getEngine().getFromGameDatabase("BattleScreen", new GameDataQuery() {
+		super(parent, GameEngine.getEngine().getFirstFromGameDatabase("BattleScreen", new GameDataQuery() {
 			public boolean matches(GameData row) {
 				return row.getData("Name").getString().equalsIgnoreCase("StatHolder");
 			}

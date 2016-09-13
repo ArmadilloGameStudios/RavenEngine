@@ -2,6 +2,7 @@ package com.crookedbird.engine.worldobject;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public abstract class WorldObject implements Parentable {
 	private String animationstate = "idle";
 	private boolean mousehovering = false;
 	private List<ClickHandler> clickHandlers = new ArrayList<ClickHandler>();
-	
+
 	private List<TextObject> textObjects = new ArrayList<TextObject>();
 
 	private Parentable parent;
@@ -31,8 +32,8 @@ public abstract class WorldObject implements Parentable {
 		this(parent, img, x, y, 0, 0);
 	}
 
-	public WorldObject(Parentable parent, GameData img, int x, int y,
-			int w, int h) {
+	public WorldObject(Parentable parent, GameData img, int x, int y, int w,
+			int h) {
 		this.parent = parent;
 
 		if (img != null) {
@@ -104,11 +105,11 @@ public abstract class WorldObject implements Parentable {
 	public void setVisibility(boolean visible) {
 		this.visible = visible;
 	}
-	
+
 	public void addText(TextObject text) {
 		this.textObjects.add(text);
 	}
-	
+
 	public void removeText(TextObject text) {
 		this.textObjects.remove(text);
 	}
@@ -127,10 +128,11 @@ public abstract class WorldObject implements Parentable {
 
 			Graphics g = i.getGraphics();
 
-			BufferedImage img = animatedReference.getImage(animationstate, 0);
+			BufferedImage img = animatedReference.getImage(animationstate,
+					java.time.Clock.systemDefaultZone().millis());
 
 			g.drawImage(img, getGlobalX(), getGlobalY(), null);
-			
+
 			if (textObjects != null) {
 				for (TextObject t : textObjects)
 					t.draw(g, getGlobalX(), getGlobalY());

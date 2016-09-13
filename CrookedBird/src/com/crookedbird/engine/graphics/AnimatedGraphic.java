@@ -13,11 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-
 import com.crookedbird.engine.GameEngine;
 import com.crookedbird.engine.database.GameData;
 import com.crookedbird.engine.scene.Layer;
+import com.crookedbird.engine.util.Pair;
 
 public class AnimatedGraphic extends ImageReference {
 
@@ -96,7 +95,8 @@ public class AnimatedGraphic extends ImageReference {
 	public AnimatedGraphic(GameData imgData) {
 		// src, width, height, FrameCSV
 		BufferedImage imgRef;
-		String[] strFrames = null;
+		// String[] strFrames = null;
+		Map<String, List<Pair<Integer>>> mapFrames = null;
 
 		if (imgData.isString()) {
 			imgRef = GameEngine.getEngine()
@@ -104,7 +104,12 @@ public class AnimatedGraphic extends ImageReference {
 
 			width = imgRef.getWidth();
 			height = imgRef.getHeight();
-			strFrames = new String[] { "idle,0,0" };
+
+			// strFrames = new String[] { "idle,0,0" };
+			mapFrames = new HashMap<String, List<Pair<Integer>>>();
+			List<Pair<Integer>> l = new ArrayList<Pair<Integer>>();
+			mapFrames.put("idle", l);
+			l.add(new Pair<Integer>(0, 0));
 		} else {
 			imgRef = GameEngine.getEngine()
 					.getImageReferenceAsset(imgData.getData("src").getString())
@@ -124,47 +129,54 @@ public class AnimatedGraphic extends ImageReference {
 			}
 
 			if (imgData.getData("anim") != null) {
-				if (imgData.getData("anim").isList()) {
-					List<GameData> l = imgData.getData("anim").getList();
-					strFrames = new String[l.size()];
+				if (imgData.getData("anim").isData()) {
+					Map<String, GameData> map = imgData.getData("anim")
+							.getData();
 
-					for (int i = 0; i < strFrames.length; i++) {
-						if (l.get(i).isString())
-							strFrames[i] = l.get(i).getString();
+					mapFrames = new HashMap<String, List<Pair<Integer>>>();
+
+					for (String key : map.keySet()) {
+						List<Pair<Integer>> l = new ArrayList<Pair<Integer>>();
+						mapFrames.put(key, l);
+
+						for (GameData frame : map.get(key).getList()) {
+							l.add(new Pair<Integer>(frame.getList().get(0)
+									.getInteger(), frame.getList().get(1)
+									.getInteger()));
+						}
 					}
-				} else if (imgData.getData("anim").isString()) {
-					strFrames = new String[] { imgData.getData("anim").getString() };
 				}
 			} else {
-				strFrames = new String[] { "idle,0,0" };
+				// strFrames = new String[] { "idle,0,0" };
+				mapFrames = new HashMap<String, List<Pair<Integer>>>();
+				List<Pair<Integer>> l = new ArrayList<Pair<Integer>>();
+				mapFrames.put("idle", l);
 			}
 		}
 
 		List<Frame> frameList = null;
 
-		for (String strFrame : strFrames) {
+		for (String key : mapFrames.keySet()) {
 
-			String[] strFrameData = strFrame.split(",");
 			frameList = new ArrayList<Frame>();
 
-			for (int i = 1; i < strFrameData.length; i += 2) {
+			for (Pair<Integer> frameData : mapFrames.get(key)) {
 				BufferedImage bufferedImage = new BufferedImage(width, height,
 						BufferedImage.TYPE_INT_ARGB);
 
-				int w = ((width * Integer.parseInt(strFrameData[i])) % imgRef
-						.getWidth()) / width;
-				int h = (width * Integer.parseInt(strFrameData[i]))
-						/ imgRef.getWidth();
+				int w = ((width * frameData.getX()) % imgRef.getWidth())
+						/ width;
+				int h = (width * frameData.getX()) / imgRef.getWidth();
 
 				bufferedImage.getGraphics().drawImage(imgRef, 0, 0, width,
 						height, width * w, height * h, width * (w + 1),
 						height * (h + 1), null);
 
-				frameList.add(new Frame(strFrameData[0], frameList.size(),
-						Integer.parseInt(strFrameData[i + 1]), bufferedImage));
+				frameList.add(new Frame(key, frameList.size(),
+						frameData.getY(), bufferedImage));
 			}
 
-			states.put(strFrameData[0], frameList);
+			states.put(key, frameList);
 		}
 	}
 
@@ -206,7 +218,7 @@ public class AnimatedGraphic extends ImageReference {
 		}
 	}
 
-	public BufferedImage getImage(String state, int time) {
+	public BufferedImage getImage(String state, long l) {
 		List<Frame> frames = states.get(state);
 
 		if (frames == null) {
@@ -224,11 +236,11 @@ public class AnimatedGraphic extends ImageReference {
 			return current.getImage();
 		}
 
-		time = time % timeSum;
+		l = l % timeSum;
 		int currentTime = 0;
 		int i = 0;
 
-		while (currentTime < time) {
+		while (currentTime < l) {
 			current = frames.get(i);
 			currentTime += current.getTimeLength();
 			i++;

@@ -1,10 +1,11 @@
 package com.crookedbird.tactician.battle;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.crookedbird.engine.GameEngine;
 import com.crookedbird.engine.database.GameData;
-import com.crookedbird.engine.database.GameDataQuery;
 import com.crookedbird.engine.input.MouseClickInput;
 import com.crookedbird.engine.worldobject.ClickHandler;
 import com.crookedbird.engine.worldobject.WorldObject;
@@ -13,11 +14,11 @@ import com.crookedbird.tactician.battle.unit.Unit;
 public class Terrain extends WorldObject {
 	private Level level;
 	private boolean passable = true;
-	private TerrainHighlight highlight;
+	private Map<String, TerrainHighlight> highlights;
 	private Unit unit;
 
 	public Terrain(Level l, String theme, List<String> type, int x, int y) {
-		this(l, GameEngine.getEngine().getFromGameDatabase("Terrain",
+		this(l, GameEngine.getEngine().getRandomFromGameDatabase("Terrain",
 				new TerrainQuery(theme, type)), x, y);
 	}
 
@@ -26,10 +27,25 @@ public class Terrain extends WorldObject {
 
 		this.level = l;
 
-		highlight = new TerrainHighlight(this, TerrainHighlight.Color.Blue);
-		highlight.setVisibility(false);
+		highlights = new HashMap<String, TerrainHighlight>();
 
-		this.addChild(highlight);
+		highlights.put(TerrainHighlight.Color.Blue, new TerrainHighlight(this,
+				TerrainHighlight.Color.Blue));
+		highlights.put(TerrainHighlight.Color.Red, new TerrainHighlight(this,
+				TerrainHighlight.Color.Red));
+		highlights.put(TerrainHighlight.Color.Green, new TerrainHighlight(this,
+				TerrainHighlight.Color.Green));
+		highlights.put(TerrainHighlight.Color.Yellow, new TerrainHighlight(
+				this, TerrainHighlight.Color.Yellow));
+		highlights.put(TerrainHighlight.Color.Magenta, new TerrainHighlight(
+				this, TerrainHighlight.Color.Magenta));
+		highlights.put(TerrainHighlight.Color.Cyan, new TerrainHighlight(this,
+				TerrainHighlight.Color.Cyan));
+
+		for (TerrainHighlight th : highlights.values()) {
+			th.setVisibility(false);
+			this.addChild(th);
+		}
 
 		passable = data.getData("Passable") != null
 				&& data.getData("Passable").getBoolean();
@@ -75,11 +91,22 @@ public class Terrain extends WorldObject {
 		return passable;
 	}
 
-	public void highlight(boolean on) {
-		highlight.setVisibility(on);
+	public void highlightOff() {
+		for (TerrainHighlight th : highlights.values()) {
+			th.setVisibility(false);
+		}
+	}
+
+	public void highlight(String color) {
+		highlights.get(color).setVisibility(true);
 	}
 
 	public boolean isHighlight() {
-		return highlight.getVisibility();
+		for (TerrainHighlight th : highlights.values()) {
+			if (th.getVisibility() == true)
+				return true;
+		}
+
+		return false;
 	}
 }

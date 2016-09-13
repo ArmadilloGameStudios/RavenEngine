@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.crookedbird.engine.database.GameData;
@@ -94,8 +95,19 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 		return gdb;
 	}
 
-	public GameData getFromGameDatabase(String table, GameDataQuery query) {
-		return gdb.getTable(table).get(query);
+	public GameData getFirstFromGameDatabase(String table, GameDataQuery query) {
+		return gdb.getTable(table).getFirst(query);
+	}
+
+	public List<GameData> getAllFromGameDatabase(String table, GameDataQuery query) {
+		return gdb.getTable(table).getAll(query);
+	}
+
+	public GameData getRandomFromGameDatabase(String table, GameDataQuery query) {
+		List<GameData> rows = gdb.getTable(table).getAll(query);
+		
+		Random r = new Random();
+		return rows.get(r.nextInt(rows.size()));
 	}
 
 	public void breakThread() {

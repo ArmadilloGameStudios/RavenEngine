@@ -3,6 +3,6 @@
 	img: "img/units/unit1.png"
 },
 {
-	team: "red",
+	team: "blue",
 	img: "img/units/unit2.png"
 }
