@@ -1,0 +1,8 @@
+{
+	name: "Gun",
+	damage: 10
+},
+{
+	name: "Gun V2",
+	damage: 11
+}

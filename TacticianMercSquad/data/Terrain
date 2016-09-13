@@ -1,0 +1,100 @@
+{
+	name: "Ground",
+	passable: true,
+	type: "ground",
+	img: "img/terrain/sand.png",
+},
+{
+	name: "Barrel",
+	type: "obstacle",
+	img: "img/terrain/sandbarrel.png"
+},
+{
+	name: "Pillar",
+	type: "obstacle",
+	img: { 
+		src: "img/terrain/sandpillar.png",
+		anchorx: 0,
+		anchory: 5
+	}	
+},
+{
+	name: "Wall",
+	type: "wall",
+	img: "img/terrain/sandwall.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "bottom"],
+	img: "img/terrain/sandwallB.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "bottom", "left"],
+	img: "img/terrain/sandwallBL.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "bottom", "left", "right"],
+	img: "img/terrain/sandwallBLR.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "bottom", "left", "right", "top"],
+	img: "img/terrain/sandwallBLRT.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "bottom", "left", "top"],
+	img: "img/terrain/sandwallBLT.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "bottom", "right"],
+	img: "img/terrain/sandwallBR.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "bottom", "right", "top"],
+	img: "img/terrain/sandwallBRT.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "bottom", "top"],
+	img: "img/terrain/sandwallBT.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "left"],
+	img: "img/terrain/sandwallL.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "left", "right"],
+	img: "img/terrain/sandwallLR.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "left", "right", "top"],
+	img: "img/terrain/sandwallLRT.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "left", "top"],
+	img: "img/terrain/sandwallLT.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "right"],
+	img: "img/terrain/sandwallR.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "right", "top"],
+	img: "img/terrain/sandwallRT.png"
+},
+{
+	name: "Wall",
+	type: ["wall", "top"],
+	img: "img/terrain/sandwallT.png"
+},

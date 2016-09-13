@@ -1,0 +1,8 @@
+{
+	team: "red",
+	img: "img/units/unit1.png"
+},
+{
+	team: "red",
+	img: "img/units/unit2.png"
+}

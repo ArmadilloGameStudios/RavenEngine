@@ -1,0 +1,8 @@
+{
+	color: "red",
+	img: "img/terrain/highlight/red.png"
+},
+{
+	color: "blue",
+	img: "img/terrain/highlight/blue.png"
+}
