@@ -2,9 +2,9 @@ package com.crookedbird.engine.worldobject;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.crookedbird.engine.database.GameData;
 import com.crookedbird.engine.graphics.AnimatedGraphic;
@@ -19,6 +19,7 @@ public abstract class WorldObject implements Parentable {
 	private String animationstate = "idle";
 	private boolean mousehovering = false;
 	private List<ClickHandler> clickHandlers = new ArrayList<ClickHandler>();
+	private int timeOffset = new Random().nextInt(10000);
 
 	private List<TextObject> textObjects = new ArrayList<TextObject>();
 
@@ -129,7 +130,7 @@ public abstract class WorldObject implements Parentable {
 			Graphics g = i.getGraphics();
 
 			BufferedImage img = animatedReference.getImage(animationstate,
-					java.time.Clock.systemDefaultZone().millis());
+					java.time.Clock.systemDefaultZone().millis() + timeOffset);
 
 			g.drawImage(img, getGlobalX(), getGlobalY(), null);
 

@@ -51,11 +51,15 @@ public class Unit {
 		this.terrain = terrain;
 		terrain.setUnit(this);
 		this.team = team;
-		this.stats = new UnitStats((int) Math.floor(Math.random() * 5) + 2, 5,
-				10, 3, 4, 4, 2, 20, 20, 0, 0);
+		this.stats = new UnitStats(range(2, 6), range(4, 16), 3, 4, 4, 2, 20,
+				20, 0, 0, 1);
 		this.battleScene = battleScene;
 		this.level = battleScene.getLevel();
 		this.unitActions = new UnitAction[] { new UnitAction(this) };
+	}
+
+	private int range(int min, int max) {
+		return (int) Math.floor(Math.random() * (max - min)) + min;
 	}
 
 	public WorldObject getWorldObject() {
@@ -196,23 +200,26 @@ public class Unit {
 			if (t != null)
 				t.highlight(TerrainHighlight.Color.Blue);
 		}
-		
+
 		this.getTerrain().highlight(TerrainHighlight.Color.Yellow);
 	}
 
 	public void executeAction(int x, int y) {
-		battleScene.setState(BattleSceneState.EXECUTING_ACTION);
-		
-		this.getTerrain().highlightOff();
+		if (level.getTerrain()[x][y].isHighlight()) {
+			battleScene.setState(BattleSceneState.EXECUTING_ACTION);
 
-		if (level.getTerrain()[x][y].isHighlight())
+			this.getTerrain().highlightOff();
+
 			selectedAction.doAction(x, y);
 
-		for (Terrain t : actionTerrain) {
-			if (t != null)
-				t.highlightOff();
-		}
+			for (Terrain t : actionTerrain) {
+				if (t != null)
+					t.highlightOff();
+			}
 
-		actionTerrain = null;
+			actionTerrain = null;
+
+			battleScene.getNextSelectedUnit().selectUnit();
+		}
 	}
 }

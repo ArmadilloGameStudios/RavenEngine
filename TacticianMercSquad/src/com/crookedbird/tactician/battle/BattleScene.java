@@ -1,6 +1,8 @@
 package com.crookedbird.tactician.battle;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.crookedbird.engine.Game;
@@ -18,6 +20,7 @@ public class BattleScene extends Scene {
 	private int levelOffset = 192;
 	private List<Unit> units = new ArrayList<Unit>();
 	private Unit selectedUnit;
+	private int selectedUnitIndex = 0;
 	private BattleSceneState state = BattleSceneState.UNIT_SELECTION;
 	private Sidebar playerSideBar;
 
@@ -36,12 +39,11 @@ public class BattleScene extends Scene {
 				this);
 		levelLayer.addChild(level);
 		level.setX(levelOffset);
-		
+
 		// Player Sidebar
 		playerSideBar = new Sidebar(playerSideBarLayer);
 		playerSideBarLayer.addChild(playerSideBar);
-		
-		
+
 		// TODO
 		// remove, just for test
 		int l = level.getTerrain().length;
@@ -63,6 +65,25 @@ public class BattleScene extends Scene {
 		for (Unit u : units) {
 			level.addChild(u.getWorldObject());
 		}
+
+		Collections.sort(units, new Comparator<Unit>() {
+			@Override
+			public int compare(Unit a, Unit b) {
+				int i = b.getStats().getInitiative()
+						- a.getStats().getInitiative();
+
+				if (i == 0) {
+					i = a.getStats().getMaxStamina() - b.getStats().getMaxStamina();
+				}
+				if (i == 0) {
+					i = a.getStats().getMovement() - b.getStats().getMovement();
+				}
+
+				return i;
+			}
+		});
+
+		units.get(0).selectUnit();
 	}
 
 	@Override
@@ -88,10 +109,28 @@ public class BattleScene extends Scene {
 		return level;
 	}
 
+	public void setSelectedUnit(Unit unit, int index) {
+		selectedUnit = unit;
+		selectedUnitIndex = 0;
+
+		playerSideBar.updateStats(unit.getStats());
+	}
+
 	public void setSelectedUnit(Unit unit) {
 		selectedUnit = unit;
-		
+		selectedUnitIndex = units.indexOf(unit);
+
 		playerSideBar.updateStats(unit.getStats());
+	}
+
+	public Unit getNextSelectedUnit() {
+		selectedUnitIndex++;
+
+		if (selectedUnitIndex == units.size()) {
+			selectedUnitIndex = 0;
+		}
+
+		return units.get(selectedUnitIndex);
 	}
 
 	Unit getSelectedUnit() {
