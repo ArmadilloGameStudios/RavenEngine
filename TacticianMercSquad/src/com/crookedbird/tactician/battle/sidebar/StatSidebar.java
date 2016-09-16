@@ -7,21 +7,21 @@ import com.crookedbird.engine.worldobject.Parentable;
 import com.crookedbird.engine.worldobject.WorldObject;
 import com.crookedbird.tactician.battle.unit.UnitStats;
 
-public class Sidebar extends WorldObject {
+public class StatSidebar extends WorldObject {
 	static class Stats {
-		static final int Initiative = 0;
-		static final int Movement = 1;
+		static final int HitPoints = 0;
+		static final int Initiative = 1;
 		static final int Stamina = 2;
-		static final int HitPoints = 3;
-		static final int Dodge = 4;
-		static final int Accuracy = 5;
-		static final int Resistance = 6;
-		static final int Absorption = 7;
+		static final int Movement = 3;
+		static final int Weight = 4;
+		static final int Dodge = 5;
+		static final int Accuracy = 6;
+		static final int Resistance = 7;
 	}
 
 	private List<Holder> holders = new ArrayList<Holder>();
 
-	public Sidebar(Parentable parent) {
+	public StatSidebar(Parentable parent) {
 		super(parent, null);
 
 		for (int i = 0; i < 8; i++) {
@@ -58,8 +58,8 @@ public class Sidebar extends WorldObject {
 				h.setDescription("Resistance");
 				h.setValue("0");
 				break;
-			case Stats.Absorption:
-				h.setDescription("Absorption");
+			case Stats.Weight:
+				h.setDescription("Weight");
 				h.setValue("0");
 				break;
 			}
@@ -74,6 +74,6 @@ public class Sidebar extends WorldObject {
 		holders.get(Stats.Stamina).setValue(stats.getCurrentStamina() + "/" + stats.getMaxStamina());
 		holders.get(Stats.HitPoints).setValue(stats.getCurrentHitPoints() + "/" + stats.getMaxHitPoints());
 		holders.get(Stats.Resistance).setValue(String.valueOf(stats.getResistance()));
-		holders.get(Stats.Absorption).setValue(String.valueOf(stats.getAbsorption()));
+		holders.get(Stats.Weight).setValue(String.valueOf(stats.getWeight()));
 	}
 }

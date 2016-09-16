@@ -11,11 +11,11 @@ public class UnitStats {
 	private int currentStamina = 0;
 	private int recovery = 0;     // rec
 	
-	private int maxHitPoints = 0; // hp
+	private int maxHitPoints = 0; // hps
 	private int currentHitPoints = 0;
 	
 	private int resistance = 0;   // res
-	private int absorption = 0;   // abs
+	private int weight = 0;   	  // wgt
 
 	
 	public UnitStats(
@@ -23,7 +23,7 @@ public class UnitStats {
 			int accuracy, int dodge, 
 			int maxStamina, int currentStamina, int recovery, 
 			int maxHitPoints, int currentHitPoints, 
-			int resistance, int absorption) {
+			int resistance, int weight) {
 		
 		this.movement = movement;
 		this.initiative = initiative;
@@ -35,7 +35,7 @@ public class UnitStats {
 		this.maxHitPoints = maxHitPoints;
 		this.currentHitPoints = currentHitPoints;
 		this.resistance = resistance;
-		this.absorption = absorption;
+		this.weight = weight;
 	}
 
 	public int getMovement() {
@@ -86,11 +86,11 @@ public class UnitStats {
 	public void setResistance(int resistance) {
 		this.resistance = resistance;
 	}
-	public int getAbsorption() {
-		return absorption;
+	public int getWeight() {
+		return weight;
 	}
-	public void setAbsorption(int absorption) {
-		this.absorption = absorption;
+	public void setWeigth(int weight) {
+		this.weight = weight;
 	}
 	public int getCurrentStamina() {
 		return currentStamina;

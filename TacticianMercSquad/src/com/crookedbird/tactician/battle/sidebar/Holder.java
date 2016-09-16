@@ -3,6 +3,7 @@ package com.crookedbird.tactician.battle.sidebar;
 import com.crookedbird.engine.GameEngine;
 import com.crookedbird.engine.database.GameData;
 import com.crookedbird.engine.database.GameDataQuery;
+import com.crookedbird.engine.worldobject.Parentable;
 import com.crookedbird.engine.worldobject.TextObject;
 import com.crookedbird.engine.worldobject.WorldObject;
 
@@ -11,7 +12,7 @@ public class Holder extends WorldObject {
 	
 	private TextObject des, val;
 
-	public Holder(Sidebar parent, int x, int y) {
+	public Holder(Parentable parent, int x, int y) {
 		super(parent, GameEngine.getEngine().getFirstFromGameDatabase("BattleScreen", new GameDataQuery() {
 			public boolean matches(GameData row) {
 				return row.getData("Name").getString().equalsIgnoreCase("StatHolder");

@@ -2,7 +2,6 @@ package com.crookedbird.tactician.battle.unit;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import com.crookedbird.engine.GameEngine;
 import com.crookedbird.engine.database.GameData;
@@ -14,6 +13,9 @@ import com.crookedbird.tactician.battle.BattleSceneState;
 import com.crookedbird.tactician.battle.Level;
 import com.crookedbird.tactician.battle.Terrain;
 import com.crookedbird.tactician.battle.TerrainHighlight;
+import com.crookedbird.tactician.battle.unit.action.ActionMove;
+import com.crookedbird.tactician.battle.unit.action.ActionNextUnit;
+import com.crookedbird.tactician.battle.unit.action.UnitAction;
 
 public class Unit {
 	private WorldObject unitWorldObject;
@@ -22,11 +24,9 @@ public class Unit {
 	private Terrain terrain;
 	private int tx, ty;
 	private int team;
-	private UnitAction[] unitActions;
+	private List<UnitAction> unitActions = new ArrayList<UnitAction>();
 	private UnitAction selectedAction;
 	private UnitStats stats;
-
-	private List<Terrain> actionTerrain;
 
 	public Unit(BattleScene battleScene, Terrain terrain, final int team) {
 		unitWorldObject = new UnitWorldObject(this, battleScene.getLevel(),
@@ -51,11 +51,22 @@ public class Unit {
 		this.terrain = terrain;
 		terrain.setUnit(this);
 		this.team = team;
-		this.stats = new UnitStats(range(2, 6), range(4, 16), 3, 4, 4, 2, 20,
-				20, 0, 0, 1);
+		int stm = range(20, 40);
+		this.stats = new UnitStats(range(2, 4), // mov
+				range(4, 40), // init
+				0, // acc
+				0, // dge
+				stm, stm, // stm
+				range(4, 12), // rec
+				20, 20, // hps
+				0, // res
+				range(5, 20) // wgt
+		);
 		this.battleScene = battleScene;
 		this.level = battleScene.getLevel();
-		this.unitActions = new UnitAction[] { new UnitAction(this) };
+
+		this.unitActions.add(new ActionMove(this));
+		this.unitActions.add(new ActionNextUnit(this));
 	}
 
 	private int range(int min, int max) {
@@ -76,6 +87,14 @@ public class Unit {
 		this.tx = tx;
 		this.ty = ty;
 		this.terrain = level.getTerrain()[tx][ty];
+	}
+
+	public void setTerrain(Terrain t) {
+		unitWorldObject.setX(t.getGridX() * 16);
+		unitWorldObject.setY(t.getGridY() * 16);
+		this.tx = t.getGridX();
+		this.ty = t.getGridY();
+		this.terrain = t;
 	}
 
 	public Terrain getRelitiveTerrain(int offsetX, int offsetY) {
@@ -114,112 +133,48 @@ public class Unit {
 		return stats;
 	}
 
-	private boolean pathfindIsWalkable(Terrain t, List<Terrain> lst) {
-		return t != null && t.isPassable() && t != getTerrain()
-				&& !lst.contains(t)
-				&& (t.getUnit() == null || t.getUnit().getTeam() == team);
-	}
+	public void recover() {
+		int cs = stats.getRecovery() + stats.getCurrentStamina();
 
-	private boolean pathfindIsFree(Terrain t, List<Terrain> lst) {
-		return t != null && t.isPassable() && t != getTerrain()
-				&& !lst.contains(t) && t.getUnit() == null;
-	}
-
-	private List<Terrain> pathfind(int dis) {
-		ArrayList<Terrain> terrain = new ArrayList<Terrain>();
-
-		ArrayList<Pair<Integer>> activePoints = new ArrayList<Pair<Integer>>();
-		activePoints.add(new Pair<Integer>(0, 0));
-
-		ArrayList<Pair<Integer>> nextPoints = new ArrayList<Pair<Integer>>();
-
-		Terrain t = null;
-
-		for (int i = 0; i < dis; i++) {
-			for (Pair<Integer> p : activePoints) {
-				t = getRelitiveTerrain(p.getX(), p.getY() + 1);
-				if (pathfindIsWalkable(t, terrain)) {
-					nextPoints.add(new Pair<Integer>(p.getX(), p.getY() + 1));
-
-					if (pathfindIsFree(t, terrain)) {
-						terrain.add(t);
-					}
-				}
-
-				t = getRelitiveTerrain(p.getX(), p.getY() - 1);
-				if (pathfindIsWalkable(t, terrain)) {
-					nextPoints.add(new Pair<Integer>(p.getX(), p.getY() - 1));
-
-					if (pathfindIsFree(t, terrain)) {
-						terrain.add(t);
-					}
-				}
-
-				t = getRelitiveTerrain(p.getX() + 1, p.getY());
-				if (pathfindIsWalkable(t, terrain)) {
-					nextPoints.add(new Pair<Integer>(p.getX() + 1, p.getY()));
-
-					if (pathfindIsFree(t, terrain)) {
-						terrain.add(t);
-					}
-				}
-
-				t = getRelitiveTerrain(p.getX() - 1, p.getY());
-				if (pathfindIsWalkable(t, terrain)) {
-					nextPoints.add(new Pair<Integer>(p.getX() - 1, p.getY()));
-
-					if (pathfindIsFree(t, terrain)) {
-						terrain.add(t);
-					}
-				}
-			}
-
-			activePoints.clear();
-			activePoints.addAll(nextPoints);
-			nextPoints.clear();
+		if (cs > stats.getMaxStamina()) {
+			cs = stats.getMaxStamina();
 		}
 
-		return terrain;
+		stats.setCurrentStamina(cs);
+	}
+
+	public Unit getNextUnit() {
+		return battleScene.getNextSelectedUnit();
 	}
 
 	public void selectUnit() {
 		battleScene.setSelectedUnit(this);
 		battleScene.setState(BattleSceneState.ACTION_SELECTION);
+		battleScene.setUnitAction(this.unitActions);
 
-		// TODO
-		selectAction();
+		getTerrain().highlight(TerrainHighlight.Color.Yellow);
 	}
 
-	public void selectAction() {
-		selectedAction = unitActions[0];
+	public void selectAction(UnitAction action) {
+		if (selectedAction != null)
+			selectedAction.cleanAction();
+
+		selectedAction = action;
+
 		battleScene.setState(BattleSceneState.ACTION_TARGET_SELECTION);
-
-		actionTerrain = pathfind(stats.getMovement());
-
-		for (Terrain t : actionTerrain) {
-			if (t != null)
-				t.highlight(TerrainHighlight.Color.Blue);
-		}
-
-		this.getTerrain().highlight(TerrainHighlight.Color.Yellow);
 	}
 
 	public void executeAction(int x, int y) {
-		if (level.getTerrain()[x][y].isHighlight()) {
+		Terrain oldTerrain = getTerrain();
+		
+		if (level.getTerrain()[x][y].hasAction()) {
 			battleScene.setState(BattleSceneState.EXECUTING_ACTION);
 
-			this.getTerrain().highlightOff();
-
-			selectedAction.doAction(x, y);
-
-			for (Terrain t : actionTerrain) {
-				if (t != null)
-					t.highlightOff();
-			}
-
-			actionTerrain = null;
-
-			battleScene.getNextSelectedUnit().selectUnit();
+			selectedAction.doAction(level.getTerrain()[x][y]);
+			selectedAction.cleanAction();
+			oldTerrain.highlightOff();
+			getTerrain().highlight(TerrainHighlight.Color.Yellow);
+			selectedAction.setupAction();
 		}
 	}
 }

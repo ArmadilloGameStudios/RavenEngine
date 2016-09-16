@@ -19,7 +19,7 @@ public abstract class WorldObject implements Parentable {
 	private String animationstate = "idle";
 	private boolean mousehovering = false;
 	private List<ClickHandler> clickHandlers = new ArrayList<ClickHandler>();
-	private int timeOffset = new Random().nextInt(10000);
+	private int timeOffset = 0;
 
 	private List<TextObject> textObjects = new ArrayList<TextObject>();
 
@@ -148,6 +148,9 @@ public abstract class WorldObject implements Parentable {
 	public void addChild(WorldObject child) {
 		children.add(child);
 	}
+	public void removeAllChildren() {
+		children.clear();
+	}
 
 	final public void checkMouseMovement(MouseMovementInput newMMI) {
 		if (isMouseHovering()) {
@@ -201,7 +204,6 @@ public abstract class WorldObject implements Parentable {
 			for (WorldObject child : this.children) {
 				child.checkMouseClick(e);
 			}
-
 		}
 	}
 
@@ -234,5 +236,4 @@ public abstract class WorldObject implements Parentable {
 	public void onUpdate(double deltaTime) {
 
 	}
-
 }

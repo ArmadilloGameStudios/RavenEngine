@@ -8,8 +8,10 @@ import java.util.List;
 import com.crookedbird.engine.Game;
 import com.crookedbird.engine.scene.Layer;
 import com.crookedbird.engine.scene.Scene;
-import com.crookedbird.tactician.battle.sidebar.Sidebar;
+import com.crookedbird.tactician.battle.sidebar.ActionSidebar;
+import com.crookedbird.tactician.battle.sidebar.StatSidebar;
 import com.crookedbird.tactician.battle.unit.Unit;
+import com.crookedbird.tactician.battle.unit.action.UnitAction;
 import com.crookedbird.tactician.generation.Generation;
 import com.crookedbird.tactician.generation.LevelGenerationProperties;
 
@@ -22,7 +24,8 @@ public class BattleScene extends Scene {
 	private Unit selectedUnit;
 	private int selectedUnitIndex = 0;
 	private BattleSceneState state = BattleSceneState.UNIT_SELECTION;
-	private Sidebar playerSideBar;
+	private StatSidebar statSideBar;
+	private ActionSidebar actionSideBar;
 
 	public BattleScene(Game game) {
 		super(game);
@@ -40,9 +43,12 @@ public class BattleScene extends Scene {
 		levelLayer.addChild(level);
 		level.setX(levelOffset);
 
-		// Player Sidebar
-		playerSideBar = new Sidebar(playerSideBarLayer);
-		playerSideBarLayer.addChild(playerSideBar);
+		// Sidebar
+		statSideBar = new StatSidebar(playerSideBarLayer);
+		playerSideBarLayer.addChild(statSideBar);
+		
+		actionSideBar = new ActionSidebar(playerSideBarLayer, level.getWidth() + level.getGlobalX(), 0);
+		playerSideBarLayer.addChild(actionSideBar);
 
 		// TODO
 		// remove, just for test
@@ -113,14 +119,14 @@ public class BattleScene extends Scene {
 		selectedUnit = unit;
 		selectedUnitIndex = 0;
 
-		playerSideBar.updateStats(unit.getStats());
+		statSideBar.updateStats(unit.getStats());
 	}
 
 	public void setSelectedUnit(Unit unit) {
 		selectedUnit = unit;
 		selectedUnitIndex = units.indexOf(unit);
 
-		playerSideBar.updateStats(unit.getStats());
+		statSideBar.updateStats(unit.getStats());
 	}
 
 	public Unit getNextSelectedUnit() {
@@ -135,5 +141,9 @@ public class BattleScene extends Scene {
 
 	Unit getSelectedUnit() {
 		return selectedUnit;
+	}
+
+	public void setUnitAction(List<UnitAction> unitActions) {
+		actionSideBar.setUnitActions(unitActions);
 	}
 }

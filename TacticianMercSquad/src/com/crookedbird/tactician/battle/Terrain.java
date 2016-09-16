@@ -10,12 +10,14 @@ import com.crookedbird.engine.input.MouseClickInput;
 import com.crookedbird.engine.worldobject.ClickHandler;
 import com.crookedbird.engine.worldobject.WorldObject;
 import com.crookedbird.tactician.battle.unit.Unit;
+import com.crookedbird.tactician.battle.unit.action.UnitAction;
 
 public class Terrain extends WorldObject {
 	private Level level;
 	private boolean passable = true;
 	private Map<String, TerrainHighlight> highlights;
 	private Unit unit;
+	private UnitAction action;
 
 	public Terrain(Level l, String theme, List<String> type, int x, int y) {
 		this(l, GameEngine.getEngine().getRandomFromGameDatabase("Terrain",
@@ -108,5 +110,23 @@ public class Terrain extends WorldObject {
 		}
 
 		return false;
+	}
+
+	public boolean hasAction() {
+		return this.action != null;
+	}
+	
+	public void setAction(UnitAction action) {
+		this.action = action;
+		highlight(action.getColor());
+	}
+	
+	public void removeAction() {
+		this.action = null;
+		this.highlightOff();
+	}
+	
+	public UnitAction getAction() {
+		return action;
 	}
 }
