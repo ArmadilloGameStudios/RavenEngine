@@ -47,7 +47,7 @@ public class BattleScene extends Scene {
 		statSideBar = new StatSidebar(playerSideBarLayer);
 		playerSideBarLayer.addChild(statSideBar);
 		
-		actionSideBar = new ActionSidebar(playerSideBarLayer, level.getWidth() + level.getGlobalX(), 0);
+		actionSideBar = new ActionSidebar(playerSideBarLayer, this, level.getWidth() + (int)level.getGlobalX(), 0);
 		playerSideBarLayer.addChild(actionSideBar);
 
 		// TODO
@@ -69,7 +69,7 @@ public class BattleScene extends Scene {
 		units.add(new Unit(this, level.getTerrain()[(l / 2) - 1][h - 1], 1));
 
 		for (Unit u : units) {
-			level.addChild(u.getWorldObject());
+			level.addChild(u);
 		}
 
 		Collections.sort(units, new Comparator<Unit>() {
@@ -119,31 +119,43 @@ public class BattleScene extends Scene {
 		selectedUnit = unit;
 		selectedUnitIndex = 0;
 
-		statSideBar.updateStats(unit.getStats());
+		updateStats();
 	}
 
 	public void setSelectedUnit(Unit unit) {
 		selectedUnit = unit;
 		selectedUnitIndex = units.indexOf(unit);
 
-		statSideBar.updateStats(unit.getStats());
+		updateStats();
 	}
 
 	public Unit getNextSelectedUnit() {
-		selectedUnitIndex++;
+		int index = selectedUnitIndex + 1;
 
-		if (selectedUnitIndex == units.size()) {
-			selectedUnitIndex = 0;
+		if (index >= units.size()) {
+			index = 0;
 		}
 
-		return units.get(selectedUnitIndex);
+		return units.get(index);
 	}
 
-	Unit getSelectedUnit() {
+	public Unit getSelectedUnit() {
 		return selectedUnit;
 	}
 
 	public void setUnitAction(List<UnitAction> unitActions) {
 		actionSideBar.setUnitActions(unitActions);
+	}
+	
+	public void updateStats() {
+		if (selectedUnit != null) {
+			statSideBar.updateStats(selectedUnit.getStats());
+		}
+	}
+	
+	public void removeUnit(Unit unit) {
+		this.units.remove(unit);
+		
+		this.level.removeChild(unit);
 	}
 }

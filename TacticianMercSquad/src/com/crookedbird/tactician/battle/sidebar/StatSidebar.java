@@ -14,9 +14,10 @@ public class StatSidebar extends WorldObject {
 		static final int Stamina = 2;
 		static final int Movement = 3;
 		static final int Weight = 4;
-		static final int Dodge = 5;
-		static final int Accuracy = 6;
-		static final int Resistance = 7;
+		static final int Recovery = 5;
+		static final int Dodge = 6;
+		static final int Accuracy = 7;
+		static final int Resistance = 8;
 	}
 
 	private List<Holder> holders = new ArrayList<Holder>();
@@ -24,7 +25,7 @@ public class StatSidebar extends WorldObject {
 	public StatSidebar(Parentable parent) {
 		super(parent, null);
 
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 9; i++) {
 			Holder h = new Holder(this, 0, 64 * i);
 			holders.add(h);
 			this.addChild(h);
@@ -62,6 +63,10 @@ public class StatSidebar extends WorldObject {
 				h.setDescription("Weight");
 				h.setValue("0");
 				break;
+			case Stats.Recovery:
+				h.setDescription("Recovery");
+				h.setValue("0");
+				break;
 			}
 		}
 	}
@@ -75,5 +80,6 @@ public class StatSidebar extends WorldObject {
 		holders.get(Stats.HitPoints).setValue(stats.getCurrentHitPoints() + "/" + stats.getMaxHitPoints());
 		holders.get(Stats.Resistance).setValue(String.valueOf(stats.getResistance()));
 		holders.get(Stats.Weight).setValue(String.valueOf(stats.getWeight()));
+		holders.get(Stats.Recovery).setValue(String.valueOf(stats.getRecovery()));
 	}
 }

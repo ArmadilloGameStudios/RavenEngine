@@ -1,0 +1,8 @@
+{
+	name: "MainMenuBackground",
+	img: "img/mainmenu/background.png"
+},
+{
+	name: "MainMenuStartButton",
+	img: "img/mainmenu/startbutton.png"
+}

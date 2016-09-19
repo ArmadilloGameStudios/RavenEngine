@@ -51,7 +51,7 @@ public abstract class Game {
 		currentScene.mouseClick(e);
 	}
 
-	final public void update(double deltaTime) {
+	final public void update(float deltaTime) {
 		currentScene.update(deltaTime);
 		
 		if (readyTransitionScene != null) {

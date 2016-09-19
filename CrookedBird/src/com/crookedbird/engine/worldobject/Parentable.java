@@ -1,8 +1,8 @@
 package com.crookedbird.engine.worldobject;
 
 public interface Parentable {
-	public int getGlobalX();
-	public int getGlobalY();
+	public double getGlobalX();
+	public double getGlobalY();
 	public int getWidth();
 	public int getHeight();
 }

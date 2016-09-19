@@ -58,19 +58,19 @@ public class Layer implements Parentable {
 		}
 	}
 
-	public void update(double deltaTime) {
+	public void update(float deltaTime) {
 		for (WorldObject o : gameObjectList) {
 			o.update(deltaTime);
 		}
 	}
 
 	@Override
-	public int getGlobalX() {
+	public double getGlobalX() {
 		return 0;
 	}
 
 	@Override
-	public int getGlobalY() {
+	public double getGlobalY() {
 		return 0;
 	}
 

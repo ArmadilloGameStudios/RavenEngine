@@ -49,7 +49,8 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 	private GameDatabase gdb;
 	private List<Input> inputs = new ArrayList<Input>();
 	private Input mouseMovementInput = null;
-	private double deltaTime;
+	private float deltaTime;
+	private long systemTime;
 	private boolean breakthread = false;
 
 	// Accessors
@@ -64,10 +65,16 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 	private GameEngine(Game game) {
 		this.game = game;
 		game.setEngine(this);
+		
+		systemTime = System.nanoTime() / 1000000L;
 	}
 
-	public double getDeltaTime() {
+	public float getDeltaTime() {
 		return deltaTime;
+	}
+
+	public long getSystemTime() {
+		return systemTime;
 	}
 
 	public ImageReference getImageReferenceAsset(String name) {
@@ -172,8 +179,10 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 				}
 			}
 
-			deltaTime = (double) (System.nanoTime() - start) / 1000000000.0;
-			// System.out.println("DeltaTime: " + deltaTime);
+			// deltaTime = (System.nanoTime() - start) / 1000000000.0F;
+			deltaTime = (System.nanoTime() - start) / 1000000.0F;
+			systemTime = System.nanoTime() / 1000000L;
+			// System.out.println("systemTime: " + systemTime);
 		}
 
 		System.out.println("End Run");

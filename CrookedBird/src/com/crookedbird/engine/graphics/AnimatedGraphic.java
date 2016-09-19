@@ -260,4 +260,14 @@ public class AnimatedGraphic extends ImageReference {
 	public void draw(Layer v) {
 		// TODO
 	}
+
+	public int getFrameTime(String animationstate) {
+		int length = 0;
+		
+		for (Frame f : states.get(animationstate)) {
+			length += f.getTimeLength();
+		}
+		
+		return length;
+	}
 }

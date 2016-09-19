@@ -4,22 +4,24 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.crookedbird.engine.GameEngine;
 import com.crookedbird.engine.database.GameData;
 import com.crookedbird.engine.graphics.AnimatedGraphic;
 import com.crookedbird.engine.input.MouseClickInput;
 import com.crookedbird.engine.input.MouseMovementInput;
 
 public abstract class WorldObject implements Parentable {
-	private int x, y, w, h;
+	private double x, y;
+	private int w, h;
 	private boolean visible = true;
-	private List<WorldObject> children = new ArrayList<WorldObject>();
+	private List<WorldObject> children = new CopyOnWriteArrayList<WorldObject>();
 	private AnimatedGraphic animatedReference;
 	private String animationstate = "idle";
 	private boolean mousehovering = false;
 	private List<ClickHandler> clickHandlers = new ArrayList<ClickHandler>();
-	private int timeOffset = 0;
+	private long timeOffset = 0;
 
 	private List<TextObject> textObjects = new ArrayList<TextObject>();
 
@@ -29,11 +31,11 @@ public abstract class WorldObject implements Parentable {
 		this(parent, img, 0, 0, 0, 0);
 	}
 
-	public WorldObject(Parentable parent, GameData img, int x, int y) {
+	public WorldObject(Parentable parent, GameData img, double x, double y) {
 		this(parent, img, x, y, 0, 0);
 	}
 
-	public WorldObject(Parentable parent, GameData img, int x, int y, int w,
+	public WorldObject(Parentable parent, GameData img, double x, double y, int w,
 			int h) {
 		this.parent = parent;
 
@@ -53,33 +55,36 @@ public abstract class WorldObject implements Parentable {
 		return animationstate;
 	}
 
-	public void setAnimationState(String animationstate) {
+	public int setAnimationState(String animationstate) {
 		this.animationstate = animationstate;
+		timeOffset = GameEngine.getEngine().getSystemTime();
+		
+		return this.animatedReference.getFrameTime(animationstate);
 	}
 
 	@Override
-	public int getGlobalX() {
+	public double getGlobalX() {
 		return this.getX() + parent.getGlobalX();
 	}
 
-	public int getX() {
+	public double getX() {
 		return x;
 	}
 
-	public void setX(int x) {
+	public void setX(double x) {
 		this.x = x;
 	}
 
 	@Override
-	public int getGlobalY() {
+	public double getGlobalY() {
 		return this.getY() + parent.getGlobalY();
 	}
 
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 
-	public void setY(int y) {
+	public void setY(double y) {
 		this.y = y;
 	}
 
@@ -128,15 +133,15 @@ public abstract class WorldObject implements Parentable {
 			// System.out.println("Image for: " + asset);
 
 			Graphics g = i.getGraphics();
-
+			
 			BufferedImage img = animatedReference.getImage(animationstate,
-					java.time.Clock.systemDefaultZone().millis() + timeOffset);
+					GameEngine.getEngine().getSystemTime() - timeOffset);
 
-			g.drawImage(img, getGlobalX(), getGlobalY(), null);
+			g.drawImage(img, (int)getGlobalX(), (int)getGlobalY(), null);
 
 			if (textObjects != null) {
 				for (TextObject t : textObjects)
-					t.draw(g, getGlobalX(), getGlobalY());
+					t.draw(g, (int)getGlobalX(), (int)getGlobalY());
 			}
 		}
 
@@ -148,8 +153,13 @@ public abstract class WorldObject implements Parentable {
 	public void addChild(WorldObject child) {
 		children.add(child);
 	}
+	
 	public void removeAllChildren() {
 		children.clear();
+	}
+
+	public void removeChild(WorldObject child) {
+		children.remove(child);
 	}
 
 	final public void checkMouseMovement(MouseMovementInput newMMI) {
@@ -225,7 +235,7 @@ public abstract class WorldObject implements Parentable {
 		}
 	}
 
-	final public void update(double deltaTime) {
+	final public void update(float deltaTime) {
 		this.onUpdate(deltaTime);
 
 		for (WorldObject c : children) {
@@ -233,7 +243,7 @@ public abstract class WorldObject implements Parentable {
 		}
 	}
 
-	public void onUpdate(double deltaTime) {
+	public void onUpdate(float deltaTime) {
 
 	}
 }

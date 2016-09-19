@@ -50,7 +50,7 @@ public abstract class Scene {
 		}
 	}
 
-	final public void update(double deltaTime) {
+	final public void update(float deltaTime) {
 		for (Layer l : layers) {
 			l.update(deltaTime);
 		}

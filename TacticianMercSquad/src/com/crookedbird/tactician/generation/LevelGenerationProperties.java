@@ -5,8 +5,8 @@ import java.util.Random;
 public class LevelGenerationProperties {
 	private Random rnd;
 	
-	private int width = 32;
-	private int height = 32;
+	private int width = 24;
+	private int height = 24;
 	
 	public LevelGenerationProperties() {
 		rnd = new Random();

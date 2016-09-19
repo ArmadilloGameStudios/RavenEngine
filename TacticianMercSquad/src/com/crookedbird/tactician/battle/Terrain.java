@@ -74,11 +74,11 @@ public class Terrain extends WorldObject {
 	}
 
 	public int getGridX() {
-		return getX() / 16;
+		return (int)getX() / 16;
 	}
 
 	public int getGridY() {
-		return getY() / 16;
+		return (int)getY() / 16;
 	}
 
 	public void setUnit(Unit u) {

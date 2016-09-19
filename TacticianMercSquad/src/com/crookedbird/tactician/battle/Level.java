@@ -48,7 +48,7 @@ public class Level extends WorldObject {
 	
 	public void onUpdate(double deltaTime) {
 		if (bs.getState() == BattleSceneState.EXECUTING_ACTION) {
-			bs.setState(BattleSceneState.UNIT_SELECTION);
+			// bs.setState(BattleSceneState.UNIT_SELECTION);
 		}
 	}
 }

@@ -1,8 +1,28 @@
 {
 	team: "red",
-	img: "img/units/unit1.png"
+	img: {
+		src: "img/units/unit1.png",
+		width: 16,
+		height: 16,
+		anim: {
+			idle: [[0, 0]],
+			teleport: [[1, 100], [2, 100], [3, 200], [2, 100], [1, 100]]
+			die: [[1, 100], [2, 100], [3, 100]]
+		}
+	}
+	
+	
 },
 {
 	team: "blue",
-	img: "img/units/unit2.png"
+	img: {
+		src: "img/units/unit2.png",
+		width: 16,
+		height: 16,
+		anim: {
+			idle: [[0, 0]],
+			teleport: [[1, 100], [2, 100], [3, 200], [2, 100], [1, 100]]
+			die: [[1, 100], [2, 100], [3, 100]]
+		}
+	}
 }
