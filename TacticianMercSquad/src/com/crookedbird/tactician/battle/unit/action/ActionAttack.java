@@ -13,6 +13,7 @@ public class ActionAttack extends UnitAction {
 	private boolean kill;
 	private Terrain attackedTerrain;
 	private float tickTotal;
+	private int totalLength;
 
 	public ActionAttack(Unit unit, BattleScene bs) {
 		super(unit, bs);
@@ -32,27 +33,10 @@ public class ActionAttack extends UnitAction {
 	public void setupAction() {
 		getUnit().selectAction(this);
 
-		if (getUnit().getStats().getCurrentStamina() > 0) {
-			Terrain t;
-			t = getUnit().getRelitiveTerrain(1, 0);
-			if (validateTerrain(t)) {
-				actionTerrain.add(t);
-			}
+		getUnit().getTerrain().highlight(TerrainHighlight.Color.Yellow);
 
-			t = getUnit().getRelitiveTerrain(-1, 0);
-			if (validateTerrain(t)) {
-				actionTerrain.add(t);
-			}
-
-			t = getUnit().getRelitiveTerrain(0, 1);
-			if (validateTerrain(t)) {
-				actionTerrain.add(t);
-			}
-
-			t = getUnit().getRelitiveTerrain(0, -1);
-			if (validateTerrain(t)) {
-				actionTerrain.add(t);
-			}
+		if (getUnit().getStats().getCurrentStamina() > stmCost()) {
+			actionTerrain = getTerrain();
 
 			for (Terrain at : actionTerrain) {
 				at.setAction(this);
@@ -61,25 +45,53 @@ public class ActionAttack extends UnitAction {
 	}
 
 	@Override
+	public List<Terrain> getTerrain() {
+		List<Terrain> terrain = new ArrayList<Terrain>();
+
+		Terrain t;
+		t = getUnit().getRelitiveTerrain(1, 0);
+		if (validateTerrain(t)) {
+			terrain.add(t);
+		}
+
+		t = getUnit().getRelitiveTerrain(-1, 0);
+		if (validateTerrain(t)) {
+			terrain.add(t);
+		}
+
+		t = getUnit().getRelitiveTerrain(0, 1);
+		if (validateTerrain(t)) {
+			terrain.add(t);
+		}
+
+		t = getUnit().getRelitiveTerrain(0, -1);
+		if (validateTerrain(t)) {
+			terrain.add(t);
+		}
+
+		return terrain;
+	}
+
+	@Override
 	public void startAction(Terrain t) {
 		tickTotal = 0F;
 		attackedTerrain = t;
-		
+
 		kill = t.getUnit().interaction().damage(12);
-		if (kill) 
-			t.getUnit().setAnimationState("die");
+		if (kill)
+			totalLength = t.getUnit().setAnimationState("die");
 	}
 
 	@Override
 	public boolean tickAction(float deltaTime) {
 		if (kill) {
-			if (tickTotal + deltaTime > 300F) {
+			if (tickTotal + deltaTime > totalLength) {
 				attackedTerrain.getUnit().kill();
 				return true;
 			}
-			
+
 			tickTotal += deltaTime;
-			
+
 			return false;
 		} else {
 			return true;
@@ -93,6 +105,7 @@ public class ActionAttack extends UnitAction {
 
 	@Override
 	public void cleanAction() {
+		getUnit().getTerrain().highlightOff();
 		for (Terrain t : actionTerrain) {
 			t.removeAction();
 		}
@@ -102,5 +115,15 @@ public class ActionAttack extends UnitAction {
 	private boolean validateTerrain(Terrain t) {
 		return t != null && t.getUnit() != null
 				&& t.getUnit().getTeam() != getUnit().getTeam();
+	}
+
+	@Override
+	public ActionType getType() {
+		return ActionType.ATTACK;
+	}
+
+	@Override
+	public boolean canAttack() {
+		return getTerrain().size() != 0;
 	}
 }

@@ -32,10 +32,11 @@ public class ActionMove extends UnitAction {
 
 	@Override
 	public void setupAction() {	
-		getUnit().getTerrain().highlight(TerrainHighlight.Color.Yellow);
 		getUnit().selectAction(this);
 
-		if (getUnit().getStats().getCurrentStamina() > 0) {
+		getUnit().getTerrain().highlight(TerrainHighlight.Color.Yellow);
+
+		if (getUnit().getStats().getCurrentStamina() > stmCost()) {
 			actionTerrain = pathfind(getUnit().getStats().getMovement());
 
 			for (Terrain t : actionTerrain) {
@@ -83,6 +84,10 @@ public class ActionMove extends UnitAction {
 			t.removeAction();
 		}
 		actionTerrain.clear();
+	}
+	
+	public List<Terrain> getTerrain() {
+		return pathfind(getUnit().getStats().getMovement());
 	}
 	
 	private boolean pathfindIsWalkable(Terrain t, List<Terrain> lst) {
@@ -151,5 +156,10 @@ public class ActionMove extends UnitAction {
 		}
 
 		return terrain;
+	}
+
+	@Override
+	public ActionType getType() {
+		return ActionType.MOVE;
 	}
 }

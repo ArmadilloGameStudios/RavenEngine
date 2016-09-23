@@ -3,7 +3,9 @@ package com.crookedbird.tactician.battle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.crookedbird.engine.Game;
 import com.crookedbird.engine.scene.Layer;
@@ -14,6 +16,9 @@ import com.crookedbird.tactician.battle.unit.Unit;
 import com.crookedbird.tactician.battle.unit.action.UnitAction;
 import com.crookedbird.tactician.generation.Generation;
 import com.crookedbird.tactician.generation.LevelGenerationProperties;
+import com.crookedbird.tactician.player.Player;
+import com.crookedbird.tactician.player.PlayerAI;
+import com.crookedbird.tactician.player.PlayerHuman;
 
 public class BattleScene extends Scene {
 	private Game game;
@@ -26,6 +31,8 @@ public class BattleScene extends Scene {
 	private BattleSceneState state = BattleSceneState.UNIT_SELECTION;
 	private StatSidebar statSideBar;
 	private ActionSidebar actionSideBar;
+	private Map<Integer, Player> players = new HashMap<Integer, Player>();
+	private Player activePlayer;
 
 	public BattleScene(Game game) {
 		super(game);
@@ -46,9 +53,14 @@ public class BattleScene extends Scene {
 		// Sidebar
 		statSideBar = new StatSidebar(playerSideBarLayer);
 		playerSideBarLayer.addChild(statSideBar);
-		
-		actionSideBar = new ActionSidebar(playerSideBarLayer, this, level.getWidth() + (int)level.getGlobalX(), 0);
+
+		actionSideBar = new ActionSidebar(playerSideBarLayer, this,
+				level.getWidth() + (int) level.getGlobalX(), 0);
 		playerSideBarLayer.addChild(actionSideBar);
+
+		// players
+		players.put(0, new PlayerAI(this, 0));
+		players.put(1, new PlayerAI(this, 1));
 
 		// TODO
 		// remove, just for test
@@ -79,7 +91,8 @@ public class BattleScene extends Scene {
 						- a.getStats().getInitiative();
 
 				if (i == 0) {
-					i = a.getStats().getMaxStamina() - b.getStats().getMaxStamina();
+					i = a.getStats().getMaxStamina()
+							- b.getStats().getMaxStamina();
 				}
 				if (i == 0) {
 					i = a.getStats().getMovement() - b.getStats().getMovement();
@@ -119,14 +132,40 @@ public class BattleScene extends Scene {
 		selectedUnit = unit;
 		selectedUnitIndex = 0;
 
-		updateStats();
+		selectedUnit();
 	}
 
 	public void setSelectedUnit(Unit unit) {
 		selectedUnit = unit;
 		selectedUnitIndex = units.indexOf(unit);
 
-		updateStats();
+		selectedUnit();
+	}
+
+	private void selectedUnit() {
+
+		if (selectedUnit.getPlayer().isHuman()) {
+			updateStats();
+
+			setState(BattleSceneState.ACTION_SELECTION);
+
+			setUnitAction(selectedUnit.getUnitActions());
+			selectedUnit.getUnitActions().get(0).setupAction();
+
+			selectedUnit.getTerrain().highlight(TerrainHighlight.Color.Yellow);
+		} else {
+			Player ai = selectedUnit.getPlayer();
+			UnitAction action = ai.selectAction(selectedUnit.getUnitActions());
+
+			System.out.println(action.getType());
+			
+			selectedUnit.selectAction(action);
+
+			setState(BattleSceneState.EXECUTING_ACTION);
+			action.startAction(ai.selectTerrain(action));
+
+			selectedUnit.interaction().excersise(action.stmCost());
+		}
 	}
 
 	public Unit getNextSelectedUnit() {
@@ -146,16 +185,20 @@ public class BattleScene extends Scene {
 	public void setUnitAction(List<UnitAction> unitActions) {
 		actionSideBar.setUnitActions(unitActions);
 	}
-	
+
 	public void updateStats() {
 		if (selectedUnit != null) {
 			statSideBar.updateStats(selectedUnit.getStats());
 		}
 	}
-	
+
 	public void removeUnit(Unit unit) {
 		this.units.remove(unit);
-		
+
 		this.level.removeChild(unit);
+	}
+
+	public Player getPlayer(int team) {
+		return players.get(team);
 	}
 }

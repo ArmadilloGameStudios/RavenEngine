@@ -1,10 +1,16 @@
 package com.crookedbird.tactician.battle.unit.action;
 
+import java.util.List;
+
 import com.crookedbird.tactician.battle.BattleScene;
 import com.crookedbird.tactician.battle.Terrain;
 import com.crookedbird.tactician.battle.unit.Unit;
 
 public abstract class UnitAction {
+	public static enum ActionType {
+		MOVE, ATTACK, END_TURN
+	}
+	
 	private Unit unit;
 	private BattleScene battleScene;
 	
@@ -20,16 +26,23 @@ public abstract class UnitAction {
 	public abstract void startAction(Terrain t);
 	public abstract boolean tickAction(float deltaTime);
 	public abstract void cleanAction();	
+
+	public abstract List<Terrain> getTerrain();
 	
+	public abstract ActionType getType();
 
 	public abstract int stmCost();
 	// public abstract Unit getNextUnit();
 	
-	protected Unit getUnit() {
+	public Unit getUnit() {
 		return unit;
 	}
 
-	protected BattleScene getBattleScene() {
+	public BattleScene getBattleScene() {
 		return battleScene;
+	}
+
+	public boolean canAttack() {
+		return false;
 	}
 }

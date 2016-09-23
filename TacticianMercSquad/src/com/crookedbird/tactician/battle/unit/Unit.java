@@ -18,6 +18,7 @@ import com.crookedbird.tactician.battle.unit.action.ActionAttack;
 import com.crookedbird.tactician.battle.unit.action.ActionMove;
 import com.crookedbird.tactician.battle.unit.action.ActionNextUnit;
 import com.crookedbird.tactician.battle.unit.action.UnitAction;
+import com.crookedbird.tactician.player.Player;
 
 public class Unit extends WorldObject {
 	private BattleScene battleScene;
@@ -29,7 +30,8 @@ public class Unit extends WorldObject {
 	private UnitAction selectedAction;
 	private UnitStats stats;
 	private UnitInteraction unitInteraction;
-	
+	private Player player;
+
 	public Unit(BattleScene battleScene, Terrain terrain, final int team) {
 		super(battleScene.getLevel(), GameEngine.getEngine()
 				.getFirstFromGameDatabase("Units", new GameDataQuery() {
@@ -56,7 +58,7 @@ public class Unit extends WorldObject {
 				range(4, 40), // init
 				0, // acc
 				0, // dge
-				stm, stm, // stm
+				stm, 0, // stm
 				range(6, 6), // rec
 				20, 20, // hps
 				0, // res
@@ -70,12 +72,7 @@ public class Unit extends WorldObject {
 		this.unitActions.add(new ActionAttack(this, battleScene));
 		this.unitActions.add(new ActionNextUnit(this, battleScene));
 
-		addClickHandler(new ClickHandler() {
-			@Override
-			public void onMouseClick(MouseClickInput e) {
-				onClick();
-			}
-		});
+		this.player = this.battleScene.getPlayer(this.team);
 	}
 
 	private int range(int min, int max) {
@@ -138,14 +135,16 @@ public class Unit extends WorldObject {
 		return stats;
 	}
 
+	public List<UnitAction> getUnitActions() {
+		return this.unitActions;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
 	public void selectUnit() {
 		battleScene.setSelectedUnit(this);
-		battleScene.setState(BattleSceneState.ACTION_SELECTION);
-		battleScene.setUnitAction(this.unitActions);
-
-		getTerrain().highlight(TerrainHighlight.Color.Yellow);
-
-		this.unitActions.get(0).setupAction();
 	}
 
 	public void selectAction(UnitAction action) {
@@ -157,11 +156,13 @@ public class Unit extends WorldObject {
 		battleScene.setState(BattleSceneState.ACTION_TARGET_SELECTION);
 	}
 
-	private int eax, eay;
-
 	public void executeAction(int x, int y) {
-		if (level.getTerrain()[x][y].hasAction()) {			
-			selectedAction.startAction(level.getTerrain()[x][y]);
+		executeAction(level.getTerrain()[x][y]);
+	}
+
+	public void executeAction(Terrain t) {
+		if (t.hasAction()) {
+			selectedAction.startAction(t);
 
 			interaction().excersise(selectedAction.stmCost());
 			battleScene.updateStats();
@@ -179,25 +180,8 @@ public class Unit extends WorldObject {
 		battleScene.removeUnit(this);
 	}
 
-	public void onClick() {
-		switch (level.getState()) {
-		case UNIT_SELECTION:
-			selectUnit();
-			break;
-		case ACTION_SELECTION:
-			break;
-		case ACTION_TARGET_SELECTION:
-			break;
-		case EXECUTING_ACTION:
-			break;
-		default:
-			break;
-		}
-	}
-
 	@Override
 	public void onUpdate(float deltaTime) {
-		
 		switch (level.getState()) {
 		case UNIT_SELECTION:
 			break;
@@ -208,9 +192,13 @@ public class Unit extends WorldObject {
 		case EXECUTING_ACTION:
 			if (selectedAction != null) {
 				if (selectedAction.tickAction(deltaTime)) {
-
 					selectedAction.cleanAction();
-					selectedAction.setupAction();
+					if (player.isHuman())
+						selectedAction.setupAction();
+					else {
+						battleScene.setSelectedUnit(battleScene
+								.getSelectedUnit());
+					}
 				}
 			}
 			break;
