@@ -8,6 +8,7 @@ import java.util.Random;
 
 import com.crookedbird.tactician.battle.BattleScene;
 import com.crookedbird.tactician.battle.Terrain;
+import com.crookedbird.tactician.battle.unit.Unit;
 import com.crookedbird.tactician.battle.unit.action.UnitAction;
 import com.crookedbird.tactician.battle.unit.action.UnitAction.ActionType;
 
@@ -34,19 +35,27 @@ public class PlayerAI extends Player {
 			sortedActions.get(action.getType()).add(action);
 		}
 
+		// Attack
 		for (UnitAction action : sortedActions.get(ActionType.ATTACK)) {
-			if (action.stmCost() < action.getUnit().getStats()
-					.getCurrentStamina()
-					&& action.canAttack())
-				return action;
+			if (action.canAttack()) {
+				if (action.stmCost() <= action.getUnit().getStats()
+						.getCurrentStamina())
+					return action;
+				else
+					return unitActions.get(2);
+			}
 		}
 
+		// Move
 		for (UnitAction action : sortedActions.get(ActionType.MOVE)) {
-			if (action.stmCost() < action.getUnit().getStats()
-					.getCurrentStamina())
+			if (action.stmCost() <= action.getUnit().getStats()
+					.getCurrentStamina()
+					&& action.getTerrain().size() > 0) {
 				return action;
+			}
 		}
 
+		// End Turn
 		return unitActions.get(2);
 	}
 
@@ -54,8 +63,36 @@ public class PlayerAI extends Player {
 	public Terrain selectTerrain(UnitAction unitAction) {
 		List<Terrain> terrain = unitAction.getTerrain();
 
-		int pick = new Random().nextInt(terrain.size());
+		List<Unit> foes = getBattleScene().getOtherTeamUnits(
+				unitAction.getUnit().getTeam());
 
-		return terrain.get(pick);
+		Unit unit = unitAction.getUnit();
+		Unit closetFoe = null;
+
+		int dist = 0;
+
+		for (Unit foe : foes) {
+			int d = unit.getDistance(foe);
+			if ((d < dist && d != 0) || dist == 0) {
+				dist = d;
+				closetFoe = foe;
+			} else if (d == dist && d != 0) {
+				if (closetFoe.getStats().getCurrentHitPoints() > foe.getStats()
+						.getCurrentHitPoints()) {
+					closetFoe = foe;
+				}
+			}
+		}
+
+		Terrain t = null;
+
+		if (closetFoe != null)
+			t = closetFoe.closestTerrain(terrain);
+
+		if (t == null && terrain.size() > 0) {
+			t = terrain.get(new Random().nextInt(terrain.size()));
+		}
+
+		return t;
 	}
 }

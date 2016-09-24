@@ -12,7 +12,7 @@ public class ActionAttack extends UnitAction {
 	private List<Terrain> actionTerrain = new ArrayList<Terrain>();
 	private boolean kill;
 	private Terrain attackedTerrain;
-	private float tickTotal;
+	private float tickTotal, attackTotal;
 	private int totalLength;
 
 	public ActionAttack(Unit unit, BattleScene bs) {
@@ -35,7 +35,7 @@ public class ActionAttack extends UnitAction {
 
 		getUnit().getTerrain().highlight(TerrainHighlight.Color.Yellow);
 
-		if (getUnit().getStats().getCurrentStamina() > stmCost()) {
+		if (getUnit().getStats().getCurrentStamina() >= stmCost()) {
 			actionTerrain = getTerrain();
 
 			for (Terrain at : actionTerrain) {
@@ -75,32 +75,37 @@ public class ActionAttack extends UnitAction {
 	@Override
 	public void startAction(Terrain t) {
 		tickTotal = 0F;
+		totalLength = getUnit().setAnimationState("attack");
 		attackedTerrain = t;
-
-		kill = t.getUnit().interaction().damage(12);
-		if (kill)
-			totalLength = t.getUnit().setAnimationState("die");
+		kill = false;
 	}
 
 	@Override
 	public boolean tickAction(float deltaTime) {
-		if (kill) {
-			if (tickTotal + deltaTime > totalLength) {
-				attackedTerrain.getUnit().kill();
+		if (tickTotal < totalLength && tickTotal + deltaTime > totalLength
+				&& !kill) {
+			this.getUnit().setAnimationState("idle");
+
+			kill = attackedTerrain.getUnit().interaction().damage(8);
+			
+			if (kill)
+				totalLength += attackedTerrain.getUnit().setAnimationState(
+						"die");
+			else
 				return true;
-			}
-
-			tickTotal += deltaTime;
-
-			return false;
-		} else {
+		} else if (tickTotal + deltaTime > totalLength) {
+			attackedTerrain.getUnit().kill();
 			return true;
 		}
+
+		tickTotal += deltaTime;
+
+		return false;
 	}
 
 	@Override
 	public int stmCost() {
-		return getUnit().getStats().getWeight();
+		return getUnit().getStats().getWeight() + 2;
 	}
 
 	@Override

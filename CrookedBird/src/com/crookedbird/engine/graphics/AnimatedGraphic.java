@@ -96,7 +96,7 @@ public class AnimatedGraphic extends ImageReference {
 		// src, width, height, FrameCSV
 		BufferedImage imgRef;
 		// String[] strFrames = null;
-		Map<String, List<Pair<Integer>>> mapFrames = null;
+		Map<String, List<Pair>> mapFrames = null;
 
 		if (imgData.isString()) {
 			imgRef = GameEngine.getEngine()
@@ -106,10 +106,10 @@ public class AnimatedGraphic extends ImageReference {
 			height = imgRef.getHeight();
 
 			// strFrames = new String[] { "idle,0,0" };
-			mapFrames = new HashMap<String, List<Pair<Integer>>>();
-			List<Pair<Integer>> l = new ArrayList<Pair<Integer>>();
+			mapFrames = new HashMap<String, List<Pair>>();
+			List<Pair> l = new ArrayList<Pair>();
 			mapFrames.put("idle", l);
-			l.add(new Pair<Integer>(0, 0));
+			l.add(new Pair(0, 0));
 		} else {
 			imgRef = GameEngine.getEngine()
 					.getImageReferenceAsset(imgData.getData("src").getString())
@@ -133,14 +133,14 @@ public class AnimatedGraphic extends ImageReference {
 					Map<String, GameData> map = imgData.getData("anim")
 							.getData();
 
-					mapFrames = new HashMap<String, List<Pair<Integer>>>();
+					mapFrames = new HashMap<String, List<Pair>>();
 
 					for (String key : map.keySet()) {
-						List<Pair<Integer>> l = new ArrayList<Pair<Integer>>();
+						List<Pair> l = new ArrayList<Pair>();
 						mapFrames.put(key, l);
 
 						for (GameData frame : map.get(key).getList()) {
-							l.add(new Pair<Integer>(frame.getList().get(0)
+							l.add(new Pair(frame.getList().get(0)
 									.getInteger(), frame.getList().get(1)
 									.getInteger()));
 						}
@@ -148,8 +148,8 @@ public class AnimatedGraphic extends ImageReference {
 				}
 			} else {
 				// strFrames = new String[] { "idle,0,0" };
-				mapFrames = new HashMap<String, List<Pair<Integer>>>();
-				List<Pair<Integer>> l = new ArrayList<Pair<Integer>>();
+				mapFrames = new HashMap<String, List<Pair>>();
+				List<Pair> l = new ArrayList<Pair>();
 				mapFrames.put("idle", l);
 			}
 		}
@@ -160,7 +160,7 @@ public class AnimatedGraphic extends ImageReference {
 
 			frameList = new ArrayList<Frame>();
 
-			for (Pair<Integer> frameData : mapFrames.get(key)) {
+			for (Pair frameData : mapFrames.get(key)) {
 				BufferedImage bufferedImage = new BufferedImage(width, height,
 						BufferedImage.TYPE_INT_ARGB);
 

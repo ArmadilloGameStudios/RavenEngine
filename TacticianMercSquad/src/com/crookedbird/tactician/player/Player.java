@@ -18,4 +18,12 @@ public abstract class Player {
 	public abstract boolean isHuman();
 	public abstract UnitAction selectAction(List<UnitAction> unitActions);
 	public abstract Terrain selectTerrain(UnitAction unitAction);
+	
+	public BattleScene getBattleScene() {
+		return battleScene;
+	}
+	
+	public int getTeam() {
+		return team;
+	}
 }

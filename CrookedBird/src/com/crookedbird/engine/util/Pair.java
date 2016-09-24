@@ -1,18 +1,18 @@
 package com.crookedbird.engine.util;
 
-public class Pair<T extends Number> {
-	private T x, y;
+public class Pair {
+	private int x, y;
 
-	public Pair(T a, T b) {
+	public Pair(int a, int b) {
 		this.x = a;
 		this.y = b;
 	}
 
-	public T getX() {
+	public int getX() {
 		return x;
 	}
 
-	public T getY() {
+	public int getY() {
 		return y;
 	}
 
@@ -20,7 +20,8 @@ public class Pair<T extends Number> {
 	public boolean equals(Object o) {
 		try {
 			if (this.getClass() == o.getClass()) {
-				Pair<T> p = (Pair<T>) o;
+				Pair p = (Pair) o;
+				
 				return x == p.x && y == p.y; // || a == p.b && b == p.a;
 			}
 			return super.equals(o);
@@ -31,6 +32,12 @@ public class Pair<T extends Number> {
 
 	@Override
 	public int hashCode() {
-		return x.hashCode() + y.hashCode();
+		// return x.hashCode() + y.hashCode();
+		return 0;
+	}
+	
+	@Override
+	public String toString() {
+		return "(" + x + ", " + y + ")";
 	}
 }

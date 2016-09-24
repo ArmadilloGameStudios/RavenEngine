@@ -116,7 +116,6 @@ public class BattleScene extends Scene {
 	}
 
 	public void setState(BattleSceneState state) {
-		System.out.println(state);
 		this.state = state;
 	}
 
@@ -154,17 +153,22 @@ public class BattleScene extends Scene {
 
 			selectedUnit.getTerrain().highlight(TerrainHighlight.Color.Yellow);
 		} else {
+			for (int i = 0; i < level.getTerrain().length; i++) {
+				for (int j = 0; j < level.getTerrain()[i].length; j++) {
+					level.getTerrain()[i][j].highlightOff();
+				}
+			}
+			
 			Player ai = selectedUnit.getPlayer();
 			UnitAction action = ai.selectAction(selectedUnit.getUnitActions());
 
-			System.out.println(action.getType());
-			
 			selectedUnit.selectAction(action);
 
 			setState(BattleSceneState.EXECUTING_ACTION);
 			action.startAction(ai.selectTerrain(action));
 
 			selectedUnit.interaction().excersise(action.stmCost());
+			
 		}
 	}
 
@@ -180,6 +184,32 @@ public class BattleScene extends Scene {
 
 	public Unit getSelectedUnit() {
 		return selectedUnit;
+	}
+
+	public List<Unit> getUnits() {
+		return this.units;
+	}
+
+	public List<Unit> getTeamUnits(int team) {
+		List<Unit> ut = new ArrayList<Unit>();
+
+		for (Unit u : units) {
+			if (u.getTeam() == team)
+				ut.add(u);
+		}
+
+		return ut;
+	}
+
+	public List<Unit> getOtherTeamUnits(int team) {
+		List<Unit> ut = new ArrayList<Unit>();
+
+		for (Unit u : units) {
+			if (u.getTeam() != team)
+				ut.add(u);
+		}
+
+		return ut;
 	}
 
 	public void setUnitAction(List<UnitAction> unitActions) {

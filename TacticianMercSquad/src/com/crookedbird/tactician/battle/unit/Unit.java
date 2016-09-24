@@ -1,13 +1,14 @@
 package com.crookedbird.tactician.battle.unit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.crookedbird.engine.GameEngine;
 import com.crookedbird.engine.database.GameData;
 import com.crookedbird.engine.database.GameDataQuery;
-import com.crookedbird.engine.input.MouseClickInput;
-import com.crookedbird.engine.worldobject.ClickHandler;
+import com.crookedbird.engine.util.Pair;
 import com.crookedbird.engine.worldobject.WorldObject;
 import com.crookedbird.tactician.battle.BattleScene;
 import com.crookedbird.tactician.battle.BattleSceneState;
@@ -54,15 +55,15 @@ public class Unit extends WorldObject {
 		terrain.setUnit(this);
 		this.team = team;
 		int stm = range(8, 8);
-		this.stats = new UnitStats(range(3, 10), // mov
-				range(4, 40), // init
+		this.stats = new UnitStats(range(3, 4), // mov
+				range(1, 100), // init
 				0, // acc
 				0, // dge
-				stm, 0, // stm
-				range(6, 6), // rec
+				stm, stm, // stm
+				stm, // rec
 				20, 20, // hps
 				0, // res
-				range(4, 4) // wgt
+				range(3, 5) // wgt
 		);
 		this.battleScene = battleScene;
 		this.level = battleScene.getLevel();
@@ -205,5 +206,164 @@ public class Unit extends WorldObject {
 		default:
 			break;
 		}
+	}
+
+	public int getDistance(Unit foe) {
+		return getDistance(foe.getGridX(), foe.getGridY());
+	}
+
+	public int getDistance(int x, int y) {
+		List<Pair> path = getPath(x, y);
+		if (path == null)
+			return 0;
+
+//		for (Pair p : path) {
+//			this.level.getTerrain()[p.getX()][p.getY()]
+//					.highlight(TerrainHighlight.Color.Green);
+//		}
+		
+		return path.size();
+		// return Math.abs(getGridX() - x) + Math.abs(getGridY() - y);
+	}
+
+	public List<Pair> getPath(int x, int y) {
+		List<Pair> searchedPoints = new ArrayList<Pair>();
+		searchedPoints.add(new Pair(getTerrain().getGridX(),
+				getTerrain().getGridY()));
+
+		List<List<Pair>> allPaths = new ArrayList<List<Pair>>();
+		allPaths.add(new ArrayList<Pair>(searchedPoints));
+
+		return getPath(x, y, searchedPoints, allPaths);
+	}
+
+	public List<Pair> getPath(int x, int y,
+			List<Pair> searchedPoints,
+			List<List<Pair>> allPaths) {
+
+		// find all valid search points
+		Map<Pair, List<Pair>> nextSearchPoints = new HashMap<Pair, List<Pair>>();
+
+		for (List<Pair> path : allPaths) {
+			Pair endPoint = path.get(path.size() - 1);
+
+			Pair nextPoint = null;
+			
+			nextPoint = new Pair(endPoint.getX() + 1, endPoint.getY());
+			if (!searchedPoints.contains(nextPoint)
+					&& !nextSearchPoints.keySet().contains(nextPoint)) {
+
+				searchedPoints.add(nextPoint);
+
+				List<Pair> newPath = new ArrayList<Pair>(path);
+				newPath.add(nextPoint);
+
+				nextSearchPoints.put(nextPoint, newPath);
+				//System.out.println(newPath);
+				
+				if (nextPoint.getX() == x && nextPoint.getY() == y) {
+					return nextSearchPoints.get(nextPoint);
+				}
+			}
+
+			nextPoint = new Pair(endPoint.getX() - 1, endPoint.getY());
+			if (!searchedPoints.contains(nextPoint)
+					&& !nextSearchPoints.keySet().contains(nextPoint)) {
+
+				searchedPoints.add(nextPoint);
+
+				List<Pair> newPath = new ArrayList<Pair>(path);
+				newPath.add(nextPoint);
+
+				nextSearchPoints.put(nextPoint, newPath);
+				//System.out.println(newPath);
+
+				if (nextPoint.getX() == x && nextPoint.getY() == y) {
+					return nextSearchPoints.get(nextPoint);
+				}
+			}
+
+			nextPoint = new Pair(endPoint.getX(), endPoint.getY() + 1);
+			if (!searchedPoints.contains(nextPoint)
+					&& !nextSearchPoints.keySet().contains(nextPoint)) {
+
+				searchedPoints.add(nextPoint);
+
+				List<Pair> newPath = new ArrayList<Pair>(path);
+				newPath.add(nextPoint);
+
+				nextSearchPoints.put(nextPoint, newPath);
+				//System.out.println(newPath);
+
+				if (nextPoint.getX() == x && nextPoint.getY() == y) {
+					return nextSearchPoints.get(nextPoint);
+				}
+			}
+
+			nextPoint = new Pair(endPoint.getX(), endPoint.getY() - 1);
+			if (!searchedPoints.contains(nextPoint)
+					&& !nextSearchPoints.keySet().contains(nextPoint)) {
+
+				searchedPoints.add(nextPoint);
+
+				List<Pair> newPath = new ArrayList<Pair>(path);
+				newPath.add(nextPoint);
+
+				nextSearchPoints.put(nextPoint, newPath);
+				//System.out.println(newPath);
+
+				if (nextPoint.getX() == x && nextPoint.getY() == y) {
+					return nextSearchPoints.get(nextPoint);
+				}
+			}
+		}
+
+		// check points & create new allPaths
+		checkPoints(allPaths, nextSearchPoints);
+
+		if (nextSearchPoints.keySet().size() > 0) {
+			return getPath(x, y, searchedPoints, allPaths);
+		} else {
+			return null;
+		}
+	}
+
+	private void checkPoints(List<List<Pair>> allPaths,
+			Map<Pair, List<Pair>> nextSearchPoints) {
+		allPaths.clear();
+
+		for (Pair point : nextSearchPoints.keySet()) {
+			if (pathfindIsWalkable(point.getX(), point.getY())) {
+				allPaths.add(nextSearchPoints.get(point));
+			}
+		}
+	}
+
+	private boolean pathfindIsWalkable(int x, int y) {
+		Terrain t = null;
+		
+
+		if (battleScene.getLevel().getTerrain().length > x && x > 0
+				&& battleScene.getLevel().getTerrain()[x].length > y && y > 0) {
+			t = battleScene.getLevel().getTerrain()[x][y];
+		}
+
+		return t != null && t.isPassable()
+				&& (t.getUnit() == null || t.getUnit().getTeam() == getTeam());
+	}
+
+	public Terrain closestTerrain(List<Terrain> terrain) {
+		Terrain ct = null;
+		int dist = 0;
+
+		for (Terrain t : terrain) {
+			int d = getDistance(t.getGridX(), t.getGridY());
+			if ((d < dist && d != 0) || dist == 0) {
+				dist = d;
+				ct = t;
+			}
+		}
+
+		return ct;
 	}
 }

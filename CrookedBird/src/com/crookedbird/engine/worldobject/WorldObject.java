@@ -56,9 +56,15 @@ public abstract class WorldObject implements Parentable {
 	}
 
 	public int setAnimationState(String animationstate) {
+		System.out.println(animationstate);
+		
 		this.animationstate = animationstate;
 		timeOffset = GameEngine.getEngine().getSystemTime();
 		
+		return this.animatedReference.getFrameTime(animationstate);
+	}
+	
+	public int getAnimationTime(String animationstate) {
 		return this.animatedReference.getFrameTime(animationstate);
 	}
 
