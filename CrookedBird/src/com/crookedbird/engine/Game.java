@@ -2,6 +2,21 @@ package com.crookedbird.engine;
 
 import java.awt.image.BufferedImage;
 
+import org.lwjgl.*;
+import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.*;
+import org.lwjgl.system.*;
+
+import java.nio.*;
+
+import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.system.MemoryStack.*;
+import static org.lwjgl.system.MemoryUtil.*;
+
+import org.lwjgl.opengl.GL;
+
 import com.crookedbird.engine.input.MouseClickInput;
 import com.crookedbird.engine.input.MouseMovementInput;
 import com.crookedbird.engine.scene.Scene;
@@ -34,13 +49,26 @@ public abstract class Game {
 	final public Scene getCurrentScene() {
 		return currentScene;
 	}
+	
+	final public void draw3d(long window) {
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+			
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		
+		glEnable(GL_DEPTH_TEST);
+		
+		currentScene.draw();
 
-	final public BufferedImage draw() {
-		view.getGraphics().clearRect(0, 0, getWidth(), getHeight());
+		glFlush();
 
-		currentScene.draw(view);
+		glfwSwapBuffers(window); // swap the color buffers
 
-		return view;
+		// Poll for window events. The key callback above will only be
+		// invoked during this call.
+		glfwPollEvents();
 	}
 
 	final public void mouseMove(MouseMovementInput e) {

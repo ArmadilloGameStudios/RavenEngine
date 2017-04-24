@@ -13,9 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.crookedbird.engine.database.GameData;
 import com.crookedbird.engine.database.GameDataQuery;
 import com.crookedbird.engine.database.GameDatabase;
-import com.crookedbird.engine.forms.GameWindow;
-import com.crookedbird.engine.graphics.ImageGraphic;
-import com.crookedbird.engine.graphics.ImageReference;
+import com.crookedbird.engine.graphics2d.ImageGraphic;
+import com.crookedbird.engine.graphics2d.ImageReference;
+import com.crookedbird.engine.graphics3d.GameWindow3D;
 import com.crookedbird.engine.input.Input;
 import com.crookedbird.engine.input.MouseClickInput;
 import com.crookedbird.engine.input.MouseMovementInput;
@@ -28,7 +28,7 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 
 		GameEngine.engine = engine;
 
-		engine.window = new GameWindow(engine);
+		engine.window = new GameWindow3D(engine);
 
 		engine.thread = new Thread(engine);
 		engine.thread.start();
@@ -42,10 +42,12 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 
 	private Game game;
 	private Thread thread;
-	private GameWindow window;
+	private GameWindow3D window;
 	private Map<String, ImageReference> imageAssets = new ConcurrentHashMap<String, ImageReference>();
-	// private Map<String, AnimatedGraphic> animatedAssets = new ConcurrentHashMap<String, AnimatedGraphic>();
-	// private Map<String, Asset> assets = new ConcurrentHashMap<String, Asset>();
+	// private Map<String, AnimatedGraphic> animatedAssets = new
+	// ConcurrentHashMap<String, AnimatedGraphic>();
+	// private Map<String, Asset> assets = new ConcurrentHashMap<String,
+	// Asset>();
 	private GameDatabase gdb;
 	private List<Input> inputs = new ArrayList<Input>();
 	private Input mouseMovementInput = null;
@@ -65,7 +67,7 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 	private GameEngine(Game game) {
 		this.game = game;
 		game.setEngine(this);
-		
+
 		systemTime = System.nanoTime() / 1000000L;
 	}
 
@@ -78,7 +80,8 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 	}
 
 	public ImageReference getImageReferenceAsset(String name) {
-		ImageReference g = imageAssets.get(name.replace('\\', File.separatorChar));
+		ImageReference g = imageAssets.get(name.replace('\\',
+				File.separatorChar));
 
 		if (g == null) {
 			g = new ImageGraphic(ImageReference.genErrorImage());
@@ -88,15 +91,15 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 		return g;
 	}
 
-	/*public AnimatedGraphic getAnimationReferenceAsset(String name) {
-		AnimatedGraphic a = animatedAssets.get(name);
-
-		if (a == null) {
-			a = new AnimatedGraphic(ImageReference.genErrorImage());
-		}
-
-		return a;
-	}*/
+	/*
+	 * public AnimatedGraphic getAnimationReferenceAsset(String name) {
+	 * AnimatedGraphic a = animatedAssets.get(name);
+	 * 
+	 * if (a == null) { a = new AnimatedGraphic(ImageReference.genErrorImage());
+	 * }
+	 * 
+	 * return a; }
+	 */
 
 	public GameDatabase getGameDatabase() {
 		return gdb;
@@ -106,13 +109,14 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 		return gdb.getTable(table).getFirst(query);
 	}
 
-	public List<GameData> getAllFromGameDatabase(String table, GameDataQuery query) {
+	public List<GameData> getAllFromGameDatabase(String table,
+			GameDataQuery query) {
 		return gdb.getTable(table).getAll(query);
 	}
 
 	public GameData getRandomFromGameDatabase(String table, GameDataQuery query) {
 		List<GameData> rows = gdb.getTable(table).getAll(query);
-		
+
 		Random r = new Random();
 		return rows.get(r.nextInt(rows.size()));
 	}
@@ -130,9 +134,15 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 
 		loadAssets();
 
+		System.out.println("Starting OpenGL");
+
+		window.setup();
+
 		game.setup();
 
 		game.loadInitialScene();
+		
+		System.out.println(Thread.currentThread().getId());
 
 		// game.getCurrentScene().enterScene();
 
@@ -153,7 +163,7 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 
 			game.update(deltaTime);
 
-			window.draw(game.draw());
+			game.draw3d(window.getWindowHandler());
 
 			if (Thread.interrupted() || breakthread) {
 				System.out.println("Interrupted");
@@ -199,36 +209,35 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 
 		File imgDirectory = new File("img");
 		loadImages(imgDirectory);
-		
-		
-		for (String img :  imageAssets.keySet()) {
+
+		for (String img : imageAssets.keySet()) {
 			System.out.println(img);
 		}
 
 		// File animDirectory = new File("anim");
 		// loadAnimations(animDirectory);
-		
+
 		gdb = new GameDatabase();
 		gdb.load();
 	}
 
-//	private void searchAndLoadAssets(File cDir) {
-//		searchAndLoadAssets(cDir, "");
-//	}
+	// private void searchAndLoadAssets(File cDir) {
+	// searchAndLoadAssets(cDir, "");
+	// }
 
-//	private void searchAndLoadAssets(File cDir, String path) {
-//		List<File> files = Arrays.asList(cDir.listFiles());
-//
-//		for (File file : files) {
-//			String name = path + file.getName();
-//
-//			if (file.isDirectory()) {
-//				searchAndLoadAssets(file, name + "_");
-//			} else {
-//				assets.put(name, AssetReader.readAsset(file));
-//			}
-//		}
-//	}
+	// private void searchAndLoadAssets(File cDir, String path) {
+	// List<File> files = Arrays.asList(cDir.listFiles());
+	//
+	// for (File file : files) {
+	// String name = path + file.getName();
+	//
+	// if (file.isDirectory()) {
+	// searchAndLoadAssets(file, name + "_");
+	// } else {
+	// assets.put(name, AssetReader.readAsset(file));
+	// }
+	// }
+	// }
 
 	private void loadImages(File base) {
 		for (File f : base.listFiles()) {
@@ -240,15 +249,11 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 		}
 	}
 
-	/*private void loadAnimations(File base) {
-		for (File f : base.listFiles()) {
-			if (f.isFile()) {
-				animatedAssets.put(f.getPath(), new AnimatedGraphic(f));
-			} else if (f.isDirectory()) {
-				loadImages(f);
-			}
-		}
-	}*/
+	/*
+	 * private void loadAnimations(File base) { for (File f : base.listFiles())
+	 * { if (f.isFile()) { animatedAssets.put(f.getPath(), new
+	 * AnimatedGraphic(f)); } else if (f.isDirectory()) { loadImages(f); } } }
+	 */
 
 	@Override
 	public void mouseClicked(MouseEvent e) {

@@ -32,9 +32,9 @@ public abstract class Scene {
 		layers.add(l);
 	}
 	
-	final public void draw(BufferedImage img) {
+	final public void draw() {
 		for (Layer l : layers) {
-			l.draw(img);
+			l.draw();
 		}
 	}
 

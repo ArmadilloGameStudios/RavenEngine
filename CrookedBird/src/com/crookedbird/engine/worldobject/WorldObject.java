@@ -1,23 +1,23 @@
 package com.crookedbird.engine.worldobject;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.crookedbird.engine.GameEngine;
 import com.crookedbird.engine.database.GameData;
-import com.crookedbird.engine.graphics.AnimatedGraphic;
+import com.crookedbird.engine.graphics2d.AnimatedGraphic;
+import com.crookedbird.engine.graphics3d.AnimatedModel;
 import com.crookedbird.engine.input.MouseClickInput;
 import com.crookedbird.engine.input.MouseMovementInput;
 
+
 public abstract class WorldObject implements Parentable {
-	private double x, y;
-	private int w, h;
+	private double x, y, z;
+	private int w, h, l;
 	private boolean visible = true;
 	private List<WorldObject> children = new CopyOnWriteArrayList<WorldObject>();
-	private AnimatedGraphic animatedReference;
+	private AnimatedModel animatedReference;
 	private String animationstate = "idle";
 	private boolean mousehovering = false;
 	private List<ClickHandler> clickHandlers = new ArrayList<ClickHandler>();
@@ -27,28 +27,32 @@ public abstract class WorldObject implements Parentable {
 
 	private Parentable parent;
 
-	public WorldObject(Parentable parent, GameData img) {
-		this(parent, img, 0, 0, 0, 0);
+	public WorldObject(Parentable parent, GameData model) {
+		this(parent, model, 0, 0, 0, 0);
 	}
 
-	public WorldObject(Parentable parent, GameData img, double x, double y) {
-		this(parent, img, x, y, 0, 0);
+	public WorldObject(Parentable parent, GameData model, double x, double y) {
+		this(parent, model, x, y, 0, 0);
 	}
 
-	public WorldObject(Parentable parent, GameData img, double x, double y, int w,
+	public WorldObject(Parentable parent, GameData model, double x, double y, int w,
 			int h) {
 		this.parent = parent;
 
-		if (img != null) {
-			animatedReference = new AnimatedGraphic(img);
+		if (model != null) {
+			animatedReference = new AnimatedModel(model);
 		}
 
 		this.x = x;
 		this.y = y;
-		this.w = (w == 0 && animatedReference != null ? animatedReference
+		this.z = 0;
+		
+		this.w = (int)(w == 0 && animatedReference != null ? animatedReference
 				.getWidth() : w);
-		this.h = (h == 0 && animatedReference != null ? animatedReference
+		this.h = (int)(h == 0 && animatedReference != null ? animatedReference
 				.getHeight() : h);
+		this.l = (int)(l == 0 && animatedReference != null ? animatedReference
+				.getLength() : l);
 	}
 
 	public String getAnimationState() {
@@ -134,26 +138,8 @@ public abstract class WorldObject implements Parentable {
 		return mousehovering;
 	}
 
-	public void draw(BufferedImage i) {
-		if (animatedReference != null && visible) {
-			// System.out.println("Image for: " + asset);
-
-			Graphics g = i.getGraphics();
-			
-			BufferedImage img = animatedReference.getImage(animationstate,
-					GameEngine.getEngine().getSystemTime() - timeOffset);
-
-			g.drawImage(img, (int)getGlobalX(), (int)getGlobalY(), null);
-
-			if (textObjects != null) {
-				for (TextObject t : textObjects)
-					t.draw(g, (int)getGlobalX(), (int)getGlobalY());
-			}
-		}
-
-		for (WorldObject child : children) {
-			child.draw(i);
-		}
+	public void draw() {
+		this.animatedReference.draw();
 	}
 
 	public void addChild(WorldObject child) {

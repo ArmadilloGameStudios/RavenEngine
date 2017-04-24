@@ -1,4 +1,4 @@
-package com.crookedbird.engine.graphics;
+package com.crookedbird.engine.graphics2d;
 
 import java.awt.image.BufferedImage;
 

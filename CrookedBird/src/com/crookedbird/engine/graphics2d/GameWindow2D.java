@@ -1,8 +1,6 @@
-package com.crookedbird.engine.forms;
+package com.crookedbird.engine.graphics2d;
 
 import java.awt.Dimension;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
@@ -13,14 +11,17 @@ import javax.swing.WindowConstants;
 
 import com.crookedbird.engine.GameEngine;
 
-public class GameWindow extends JFrame implements WindowListener {
+public class GameWindow2D extends JFrame implements WindowListener {
 	private GameEngine engine;
 	private JPanel pane;
 
-	public GameWindow(GameEngine engine) {
+	public GameWindow2D(GameEngine engine) {
 		super();
 
 		this.engine = engine;
+	}
+	
+	public void setup() {
 
 		setResizable(false);
 
