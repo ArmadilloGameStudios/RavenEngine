@@ -10,12 +10,15 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 import com.crookedbird.engine.database.GameData;
 import com.crookedbird.engine.database.GameDataQuery;
 import com.crookedbird.engine.database.GameDatabase;
 import com.crookedbird.engine.graphics2d.ImageGraphic;
 import com.crookedbird.engine.graphics2d.ImageReference;
 import com.crookedbird.engine.graphics3d.GameWindow3D;
+import com.crookedbird.engine.graphics3d.ModelReference;
 import com.crookedbird.engine.input.Input;
 import com.crookedbird.engine.input.MouseClickInput;
 import com.crookedbird.engine.input.MouseMovementInput;
@@ -142,11 +145,13 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 
 		game.loadInitialScene();
 		
+		ModelReference.compileBuffer();
+		
 		System.out.println(Thread.currentThread().getId());
 
 		// game.getCurrentScene().enterScene();
 
-		while (game.isRunning()) {
+		while (game.isRunning() || !glfwWindowShouldClose(window.getWindowHandler())) {
 			long start = System.nanoTime();
 
 			synchronized (inputs) {
@@ -176,8 +181,8 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 			if (len == 0) {
 				// System.out.println(0);
 			} else {
-				// System.out.println("FPS: " + 1000000000L / len + " Run: " +
-				// len + ", Sleep: " + sleep);
+//				 System.out.println("FPS: " + 1000000000L / len + " Run: " +
+//				 len + ", Sleep: " + sleep);
 			}
 
 			if (sleep > 0L) {

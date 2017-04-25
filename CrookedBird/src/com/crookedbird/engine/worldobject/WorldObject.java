@@ -11,6 +11,7 @@ import com.crookedbird.engine.graphics3d.AnimatedModel;
 import com.crookedbird.engine.input.MouseClickInput;
 import com.crookedbird.engine.input.MouseMovementInput;
 
+import static org.lwjgl.opengl.GL11.*;
 
 public abstract class WorldObject implements Parentable {
 	private double x, y, z;
@@ -73,6 +74,19 @@ public abstract class WorldObject implements Parentable {
 	}
 
 	@Override
+	public double getGlobalZ() {
+		return this.getX() + parent.getGlobalX();
+	}
+
+	public double getZ() {
+		return x;
+	}
+
+	public void setZ(double z) {
+		this.z = z;
+	}
+	
+	@Override
 	public double getGlobalX() {
 		return this.getX() + parent.getGlobalX();
 	}
@@ -114,6 +128,14 @@ public abstract class WorldObject implements Parentable {
 		this.h = h;
 	}
 
+	public int getLength() {
+		return l;
+	}
+
+	public void setLength(int l) {
+		this.l = l;
+	}
+
 	public boolean getVisibility() {
 		return this.visible;
 	}
@@ -139,7 +161,13 @@ public abstract class WorldObject implements Parentable {
 	}
 
 	public void draw() {
+		glPushMatrix();
+		
+		glTranslated(this.x, this.y, this.z);
+		
 		this.animatedReference.draw();
+		
+		glPopMatrix();
 	}
 
 	public void addChild(WorldObject child) {
