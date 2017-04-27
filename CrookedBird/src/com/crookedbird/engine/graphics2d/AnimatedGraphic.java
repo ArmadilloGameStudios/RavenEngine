@@ -53,7 +53,7 @@ public class AnimatedGraphic extends ImageReference {
 						height = Integer.parseInt(value);
 					} else if (prop.compareTo("img") == 0) {
 						img = GameEngine.getEngine()
-								.getImageReferenceAsset(value).getImage();
+								.getModelReferenceAsset(value).getImage();
 					} else {
 						String[] times = value.split(",");
 						frameList = new ArrayList<Frame>();
@@ -100,7 +100,7 @@ public class AnimatedGraphic extends ImageReference {
 
 		if (imgData.isString()) {
 			imgRef = GameEngine.getEngine()
-					.getImageReferenceAsset(imgData.getString()).getImage();
+					.getModelReferenceAsset(imgData.getString()).getImage();
 
 			width = imgRef.getWidth();
 			height = imgRef.getHeight();
@@ -112,7 +112,7 @@ public class AnimatedGraphic extends ImageReference {
 			l.add(new Pair(0, 0));
 		} else {
 			imgRef = GameEngine.getEngine()
-					.getImageReferenceAsset(imgData.getData("src").getString())
+					.getModelReferenceAsset(imgData.getData("src").getString())
 					.getImage();
 
 			if (imgData.getData("width") != null

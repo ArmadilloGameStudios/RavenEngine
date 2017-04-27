@@ -46,7 +46,7 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 	private Game game;
 	private Thread thread;
 	private GameWindow3D window;
-	private Map<String, ImageReference> imageAssets = new ConcurrentHashMap<String, ImageReference>();
+	private Map<String, ModelReference> modelAssets = new ConcurrentHashMap<String, ModelReference>();
 	// private Map<String, AnimatedGraphic> animatedAssets = new
 	// ConcurrentHashMap<String, AnimatedGraphic>();
 	// private Map<String, Asset> assets = new ConcurrentHashMap<String,
@@ -82,12 +82,12 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 		return systemTime;
 	}
 
-	public ImageReference getImageReferenceAsset(String name) {
-		ImageReference g = imageAssets.get(name.replace('\\',
+	public ModelReference getModelReferenceAsset(String name) {
+		ModelReference g = modelAssets.get(name.replace('\\',
 				File.separatorChar));
 
 		if (g == null) {
-			g = new ImageGraphic(ImageReference.genErrorImage());
+			g = ModelReference.getErrorModel();
 			System.out.println("Error Referencing " + name);
 		}
 
@@ -133,13 +133,12 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 	@Override
 	public void run() {
 		System.out.println("Started Run");
-		System.out.println("Loading Assets");
-
-		loadAssets();
-
+		
 		System.out.println("Starting OpenGL");
-
 		window.setup();
+		
+		System.out.println("Loading Assets");
+		loadDatabaseAndModels();
 
 		game.setup();
 
@@ -209,13 +208,13 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 		System.exit(0);
 	}
 
-	private void loadAssets() {
+	private void loadDatabaseAndModels() {
 		// searchAndLoadAssets(new File("assets"));
 
-		File imgDirectory = new File("img");
-		loadImages(imgDirectory);
+		File modelDirectory = new File("model");
+		loadModels(modelDirectory);
 
-		for (String img : imageAssets.keySet()) {
+		for (String img : modelAssets.keySet()) {
 			System.out.println(img);
 		}
 
@@ -244,12 +243,13 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 	// }
 	// }
 
-	private void loadImages(File base) {
+	private void loadModels(File base) {
 		for (File f : base.listFiles()) {
 			if (f.isFile()) {
-				imageAssets.put(f.getPath(), new ImageGraphic(f));
+				System.out.println(f.getPath());
+				modelAssets.put(f.getPath(), ModelReference.load(f));
 			} else if (f.isDirectory()) {
-				loadImages(f);
+				loadModels(f);
 			}
 		}
 	}
