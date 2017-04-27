@@ -165,7 +165,7 @@ public abstract class WorldObject implements Parentable {
 		
 		glTranslated(this.x, this.y, this.z);
 		
-		this.animatedReference.draw();
+		this.animatedReference.draw(animationstate, GameEngine.getEngine().getSystemTime() - timeOffset);
 		
 		glPopMatrix();
 	}

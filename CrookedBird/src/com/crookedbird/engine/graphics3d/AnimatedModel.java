@@ -1,12 +1,16 @@
 package com.crookedbird.engine.graphics3d;
 
+import java.awt.image.BufferedImage;
+import java.util.List;
+
 import com.crookedbird.engine.GameEngine;
 import com.crookedbird.engine.database.GameData;
+import com.crookedbird.engine.graphics2d.Frame;
 
 public class AnimatedModel {
 	private int width, height, length;
-	
-	private ModelReference model;
+
+	private ModelFrames modelAnim;
 
 	public AnimatedModel(GameData modelData) {
 		if (modelData.getData("width") != null
@@ -30,11 +34,12 @@ public class AnimatedModel {
 			length = 16;
 		}
 
-		model = GameEngine.getEngine().getModelReferenceAsset(modelData.getData("src").getString());
+		modelAnim = GameEngine.getEngine().getModelReferenceAsset(
+				modelData.getData("src").getString());
 	}
 
-	public void draw() {
-		model.draw();
+	public void draw(String animationstate, long timeOffset) {
+		modelAnim.getModel(animationstate, timeOffset).draw();
 	}
 
 	public void drawError() {
@@ -54,12 +59,6 @@ public class AnimatedModel {
 	}
 
 	public int getFrameTime(String animationstate) {
-		int length = 0;
-
-		// for (Frame f : states.get(animationstate)) {
-		// length += f.getTimeLength();
-		// }
-
-		return length;
+		return modelAnim.getFrameTime(animationstate);
 	}
 }

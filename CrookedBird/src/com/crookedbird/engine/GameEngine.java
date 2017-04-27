@@ -1,5 +1,7 @@
 package com.crookedbird.engine;
 
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -10,14 +12,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.lwjgl.glfw.GLFW.*;
-
 import com.crookedbird.engine.database.GameData;
 import com.crookedbird.engine.database.GameDataQuery;
 import com.crookedbird.engine.database.GameDatabase;
-import com.crookedbird.engine.graphics2d.ImageGraphic;
-import com.crookedbird.engine.graphics2d.ImageReference;
 import com.crookedbird.engine.graphics3d.GameWindow3D;
+import com.crookedbird.engine.graphics3d.ModelFrames;
 import com.crookedbird.engine.graphics3d.ModelReference;
 import com.crookedbird.engine.input.Input;
 import com.crookedbird.engine.input.MouseClickInput;
@@ -46,7 +45,7 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 	private Game game;
 	private Thread thread;
 	private GameWindow3D window;
-	private Map<String, ModelReference> modelAssets = new ConcurrentHashMap<String, ModelReference>();
+	private Map<String, ModelFrames> modelAssets = new ConcurrentHashMap<String, ModelFrames>();
 	// private Map<String, AnimatedGraphic> animatedAssets = new
 	// ConcurrentHashMap<String, AnimatedGraphic>();
 	// private Map<String, Asset> assets = new ConcurrentHashMap<String,
@@ -82,8 +81,8 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 		return systemTime;
 	}
 
-	public ModelReference getModelReferenceAsset(String name) {
-		ModelReference g = modelAssets.get(name.replace('\\',
+	public ModelFrames getModelReferenceAsset(String name) {
+		ModelFrames g = modelAssets.get(name.replace('\\',
 				File.separatorChar));
 
 		if (g == null) {

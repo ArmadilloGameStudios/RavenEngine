@@ -1,7 +1,6 @@
 package com.crookedbird.engine.graphics3d;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_SHORT;
 import static org.lwjgl.opengl.GL11.glColorPointer;
@@ -19,11 +18,13 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.lwjgl.BufferUtils;
 
@@ -36,12 +37,13 @@ public class ModelReference {
 	private static ArrayList<Float> colors_list = new ArrayList<Float>();
 	private static ArrayList<Float> glow_list = new ArrayList<Float>();
 
-	private static int vbo_vertex_handle, vbo_normal_handle, vbo_color_handle, vbo_glow_handle;
+	private static int vbo_vertex_handle, vbo_normal_handle, vbo_color_handle,
+			vbo_glow_handle;
 
-	public static ModelReference load(File f) {
-		ModelReference model = new ModelReference();
-
-		int vertex_start = vertex_list.size();
+	public static ModelFrames load(File f) {
+		ModelFrames frameAnimation = new ModelFrames();
+		String frameState = null;
+		int frameIndex = 0, frameTime = 0;
 
 		int left = -8, right = 8, lower = -8, upper = 8, back = -8, front = 8;
 
@@ -49,17 +51,6 @@ public class ModelReference {
 				- back][];
 		Float[][][] mapGlow = new Float[right - left][upper - lower][front
 				- back];
-
-		// Gen Test Data
-		// Random rnd = new Random();
-		// for (int i = 0; i < 40; i++) {
-		// int a = rnd.nextInt(right - left);
-		// int b = rnd.nextInt(upper - lower);
-		// int c = rnd.nextInt(front - back);
-		//
-		// map[a][b][c] = new Float[] { rnd.nextFloat(), rnd.nextFloat(),
-		// rnd.nextFloat() };
-		// }
 
 		// TODO find this values
 		try {
@@ -91,9 +82,34 @@ public class ModelReference {
 						mapGlow[x][y][z] = glow;
 					}
 				} else if (sdata.length == 2) {
+					String[] cdata;
+
 					switch (sdata[0].trim()) {
+					case "frame":
+						if (frameState != null) {
+							frameAnimation.addFrame(frameState, frameIndex, frameTime,
+									processFrameData(mapColor, mapGlow));
+						}
+
+						String newFrame = sdata[1].trim();
+						frameState = newFrame;
+
+						cdata = sdata[1].split(",");
+
+						if (cdata.length == 3) {
+							frameState = cdata[0].trim();
+							frameIndex = Integer.parseInt(cdata[1].trim());
+							frameTime = Integer.parseInt(cdata[2].trim());
+
+						}
+
+						mapColor = new Float[right - left][upper - lower][front
+								- back][];
+						mapGlow = new Float[right - left][upper - lower][front
+								- back];
+						break;
 					case "color":
-						String[] cdata = sdata[1].split(",");
+						cdata = sdata[1].split(",");
 
 						if (cdata.length == 3) {
 							r = Float.parseFloat(cdata[0].trim());
@@ -114,8 +130,22 @@ public class ModelReference {
 			e.printStackTrace();
 			System.exit(0);
 		}
+		
+		frameAnimation.addFrame(frameState, frameIndex, frameTime,
+				processFrameData(mapColor, mapGlow));
 
 		// process lists into buffers
+		return frameAnimation;
+	}
+
+	private static ModelReference processFrameData(Float[][][][] mapColor,
+			Float[][][] mapGlow) {
+
+		int vertex_start = vertex_list.size();
+
+		int left = -8, right = 8, lower = -8, upper = 8, back = -8, front = 8;
+
+		ModelReference model = new ModelReference();
 
 		for (int i = 0; i < right - left; i++) {
 			for (int j = 0; j < upper - lower; j++) {
@@ -350,7 +380,7 @@ public class ModelReference {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	public static ModelReference getErrorModel() {
+	public static ModelFrames getErrorModel() {
 		// TODO Auto-generated method stub
 		return null;
 	}
