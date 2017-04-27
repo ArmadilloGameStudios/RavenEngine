@@ -41,7 +41,7 @@ public class Generation {
 		}
 
 		// Add Walls
-		int wallCount = lgp.getRandom().nextInt(10) + 5;
+		int wallCount = lgp.getRandom().nextInt(10) + 7;
 		for (int i = 0; i < wallCount; i++) {
 			int o = lgp.getRandom().nextInt(4);
 			int l = lgp.getRandom().nextInt(6) + 2;
@@ -57,11 +57,11 @@ public class Generation {
 					terrainType[x1][y1] = TerrainType.Wall;
 				}
 
-				if (x1 >= 0 && x1 < lgp.getWidth() && y2 >= 0
-						&& y2 < lgp.getHeight()) {
-
-					terrainType[x1][y2] = TerrainType.Wall;
-				}
+//				if (x1 >= 0 && x1 < lgp.getWidth() && y2 >= 0
+//						&& y2 < lgp.getHeight()) {
+//
+//					terrainType[x1][y2] = TerrainType.Wall;
+//				}
 
 				switch (o) {
 				case 0:
