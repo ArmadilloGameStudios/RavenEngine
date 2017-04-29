@@ -22,9 +22,7 @@ import java.nio.ShortBuffer;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Random;
 
 import org.lwjgl.BufferUtils;
 
@@ -60,7 +58,6 @@ public class ModelReference {
 		mapColor = new Float[right - left][upper - lower][front - back][];
 		mapGlow = new Float[right - left][upper - lower][front - back];
 
-		// TODO find this values
 		try {
 			int x = 0;
 			int y = 0;
@@ -161,7 +158,6 @@ public class ModelReference {
 
 					if (mapColor[i][j][k] != null) {
 
-
 						anyFace(i, j, k, 0); // left
 						anyFace(i, j, k, 1); // right
 						anyFace(i, j, k, 2); // lower
@@ -205,10 +201,7 @@ public class ModelReference {
 			if (!(i == 0 || mapColor[i - 1][j][k] == null))
 				return;
 
-			v = new int[] { 0, 1, 1, 
-					        0, 1, 0, 
-					        0, 0, 0, 
-					        0, 0, 1 };
+			v = new int[] { 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1 };
 
 			n = new Float[] { -1f, 0f, 0f };
 			break;
@@ -216,10 +209,7 @@ public class ModelReference {
 			if (!(i == right - left - 1 || mapColor[i + 1][j][k] == null))
 				return;
 
-			v = new int[] { 1, 0, 0, 
-					        1, 1, 0, 
-					        1, 1, 1, 
-					        1, 0, 1 };
+			v = new int[] { 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1 };
 
 			n = new Float[] { 1f, 0f, 0f };
 			break;
@@ -227,10 +217,7 @@ public class ModelReference {
 			if (!(j == 0 || mapColor[i][j - 1][k] == null))
 				return;
 
-			v = new int[] { 0, 0, 0, 
-					        1, 0, 0, 
-					        1, 0, 1, 
-					        0, 0, 1 };
+			v = new int[] { 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1 };
 
 			n = new Float[] { 0f, -1f, 0f };
 			break;
@@ -238,10 +225,7 @@ public class ModelReference {
 			if (!(j == upper - lower - 1 || mapColor[i][j + 1][k] == null))
 				return;
 
-			v = new int[] { 1, 1, 1, 
-					        1, 1, 0, 
-					        0, 1, 0, 
-					        0, 1, 1 };
+			v = new int[] { 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1 };
 
 			n = new Float[] { 0f, 1f, 0f };
 			break;
@@ -249,10 +233,7 @@ public class ModelReference {
 			if (!(k == 0 || mapColor[i][j][k - 1] == null))
 				return;
 
-			v = new int[] { 1, 1, 0, 
-					        1, 0, 0, 
-					        0, 0, 0, 
-					        0, 1, 0 };
+			v = new int[] { 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0 };
 
 			n = new Float[] { 0f, 0f, -1f };
 			break;
@@ -260,15 +241,11 @@ public class ModelReference {
 			if (!(k == front - back - 1 || mapColor[i][j][k + 1] == null))
 				return;
 
-			v = new int[] { 0, 0, 1, 
-					        1, 0, 1, 
-					        1, 1, 1, 
-					        0, 1, 1 };
+			v = new int[] { 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1 };
 
 			n = new Float[] { 0f, 0f, 1f };
 			break;
 		}
-
 
 		g = new int[12];
 		for (int x = 0; x < 12; x++) {
@@ -304,68 +281,73 @@ public class ModelReference {
 			glowCorners[h + 2] = mapColor[i][j][k][2] * mapGlow[i][j][k];
 		}
 
-		checkGlowsCat(glowCorners, 0, mapGlow[i][j][k], i, j, k, g[0], g[1], g[2]);
-		checkGlowsCat(glowCorners, 3, mapGlow[i][j][k], i, j, k, g[3], g[4], g[5]);
-		checkGlowsCat(glowCorners, 6, mapGlow[i][j][k], i, j, k, g[6], g[7], g[8]);
-		checkGlowsCat(glowCorners, 9, mapGlow[i][j][k], i, j, k, g[9], g[10], g[11]);
-
+		setVerticesGlow(glowCorners, 0, mapGlow[i][j][k], i, j, k, g[0], g[1],
+				g[2]);
+		setVerticesGlow(glowCorners, 3, mapGlow[i][j][k], i, j, k, g[3], g[4],
+				g[5]);
+		setVerticesGlow(glowCorners, 6, mapGlow[i][j][k], i, j, k, g[6], g[7],
+				g[8]);
+		setVerticesGlow(glowCorners, 9, mapGlow[i][j][k], i, j, k, g[9], g[10],
+				g[11]);
 
 		glow_list.addAll(Arrays.asList(glowCorners));
 	}
 
-	private static void checkGlowsCat(Float[] glowCorners, int s, float g, int i, int j,
-			int k, int a, int b, int c) {
-		
+	private static void setVerticesGlow(Float[] glowCorners, int s, float g,
+			int i, int j, int k, int a, int b, int c) {
+
 		if (i + a >= 0 && i + a <= 15 && mapColor[i + a][j][k] != null) {
 			glowCorners[s] += getGlowFade(0, i + a, j, k) * (1f - g);
-			glowCorners[s + 1] += getGlowFade(1, i + a, j, k)* (1f - g);
-			glowCorners[s + 2] += getGlowFade(2, i + a, j, k)* (1f - g);
+			glowCorners[s + 1] += getGlowFade(1, i + a, j, k) * (1f - g);
+			glowCorners[s + 2] += getGlowFade(2, i + a, j, k) * (1f - g);
 		}
 
 		if (k + c >= 0 && k + c <= 15 && mapColor[i][j][k + c] != null) {
-			glowCorners[s] += getGlowFade(0, i, j, k + c)* (1f - g);
-			glowCorners[s + 1] += getGlowFade(1, i, j, k + c)* (1f - g);
-			glowCorners[s + 2] += getGlowFade(2, i, j, k + c)* (1f - g);
+			glowCorners[s] += getGlowFade(0, i, j, k + c) * (1f - g);
+			glowCorners[s + 1] += getGlowFade(1, i, j, k + c) * (1f - g);
+			glowCorners[s + 2] += getGlowFade(2, i, j, k + c) * (1f - g);
 		}
 
 		if (j + b >= 0 && j + b <= 15 && mapColor[i][j + b][k] != null) {
-			glowCorners[s] += getGlowFade(0, i, j + b, k)* (1f - g);
-			glowCorners[s + 1] += getGlowFade(1, i, j + b, k)* (1f - g);
-			glowCorners[s + 2] += getGlowFade(2, i, j + b, k)* (1f - g);
+			glowCorners[s] += getGlowFade(0, i, j + b, k) * (1f - g);
+			glowCorners[s + 1] += getGlowFade(1, i, j + b, k) * (1f - g);
+			glowCorners[s + 2] += getGlowFade(2, i, j + b, k) * (1f - g);
 		}
 
 		if (j + b >= 0 && j + b <= 15 && k + c >= 0 && k + c <= 15
 				&& mapColor[i][j + b][k + c] != null) {
-			glowCorners[s] += getGlowFade(0, i, j + b, k + c)* (1f - g);
-			glowCorners[s + 1] += getGlowFade(1, i, j + b, k + c)* (1f - g);
-			glowCorners[s + 2] += getGlowFade(2, i, j + b, k + c)* (1f - g);
+			glowCorners[s] += getGlowFade(0, i, j + b, k + c) * (1f - g);
+			glowCorners[s + 1] += getGlowFade(1, i, j + b, k + c) * (1f - g);
+			glowCorners[s + 2] += getGlowFade(2, i, j + b, k + c) * (1f - g);
 		}
 
 		if (i + a >= 0 && i + a <= 15 && k + c >= 0 && k + c <= 15
 				&& mapColor[i + a][j][k + c] != null) {
-			glowCorners[s] += getGlowFade(0, i + a, j, k + c)* (1f - g);
-			glowCorners[s + 1] += getGlowFade(1, i + a, j, k + c)* (1f - g);
-			glowCorners[s + 2] += getGlowFade(2, i + a, j, k + c)* (1f - g);
+			glowCorners[s] += getGlowFade(0, i + a, j, k + c) * (1f - g);
+			glowCorners[s + 1] += getGlowFade(1, i + a, j, k + c) * (1f - g);
+			glowCorners[s + 2] += getGlowFade(2, i + a, j, k + c) * (1f - g);
 		}
 
 		if (i + a >= 0 && i + a <= 15 && j + b >= 0 && j + b <= 15
 				&& mapColor[i + a][j + b][k] != null) {
-			glowCorners[s] += getGlowFade(0, i + a, j + b, k)* (1f - g);
-			glowCorners[s + 1] += getGlowFade(1, i + a, j + b, k)* (1f - g);
-			glowCorners[s + 2] += getGlowFade(2, i + a, j + b, k)* (1f - g);
+			glowCorners[s] += getGlowFade(0, i + a, j + b, k) * (1f - g);
+			glowCorners[s + 1] += getGlowFade(1, i + a, j + b, k) * (1f - g);
+			glowCorners[s + 2] += getGlowFade(2, i + a, j + b, k) * (1f - g);
 		}
 
 		if (i + a >= 0 && i + a <= 15 && j + b >= 0 && j + b <= 15
 				&& k + c >= 0 && k + c <= 15
 				&& mapColor[i + a][j + b][k + c] != null) {
-			glowCorners[s] += getGlowFade(0, i + a, j + b, k + c)* (1f - g);
-			glowCorners[s + 1] += getGlowFade(1, i + a, j + b, k + c)* (1f - g);
-			glowCorners[s + 2] += getGlowFade(2, i + a, j + b, k + c)* (1f - g);
+			glowCorners[s] += getGlowFade(0, i + a, j + b, k + c) * (1f - g);
+			glowCorners[s + 1] += getGlowFade(1, i + a, j + b, k + c)
+					* (1f - g);
+			glowCorners[s + 2] += getGlowFade(2, i + a, j + b, k + c)
+					* (1f - g);
 		}
 	}
 
 	private static float getGlowFade(int c, int i, int j, int k) {
-		return mapColor[i][j][k][c] * mapGlow[i][j][k] / 4.0f;
+		return mapColor[i][j][k][c] * mapGlow[i][j][k] / 3.0f;
 	}
 
 	public static void compileBuffer() {

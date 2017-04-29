@@ -1,11 +1,7 @@
 package com.crookedbird.engine.graphics3d;
 
-import java.awt.image.BufferedImage;
-import java.util.List;
-
 import com.crookedbird.engine.GameEngine;
 import com.crookedbird.engine.database.GameData;
-import com.crookedbird.engine.graphics2d.Frame;
 
 public class AnimatedModel {
 	private int width, height, length;

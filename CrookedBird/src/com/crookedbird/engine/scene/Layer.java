@@ -1,10 +1,8 @@
 package com.crookedbird.engine.scene;
 
-import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.crookedbird.engine.graphics2d.ImageReference;
 import com.crookedbird.engine.input.MouseClickInput;
 import com.crookedbird.engine.input.MouseMovementInput;
 import com.crookedbird.engine.worldobject.Parentable;
@@ -13,12 +11,9 @@ import com.crookedbird.engine.worldobject.WorldObject;
 public class Layer implements Parentable {
 	private Scene scene;
 	private List<WorldObject> gameObjectList = new CopyOnWriteArrayList<WorldObject>();
-	private BufferedImage img;
 
 	public Layer(Scene scene) {
 		this.scene = scene;
-		img = ImageReference.safeImage(new BufferedImage(10, 10,
-				BufferedImage.TYPE_INT_RGB));
 	}
 
 	public List<WorldObject> getGameObjectList() {
@@ -27,10 +22,6 @@ public class Layer implements Parentable {
 
 	public void addChild(WorldObject obj) {
 		gameObjectList.add(obj);
-	}
-
-	public BufferedImage getImage() {
-		return img;
 	}
 
 	public void draw() {

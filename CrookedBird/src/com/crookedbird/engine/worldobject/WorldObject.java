@@ -1,17 +1,18 @@
 package com.crookedbird.engine.worldobject;
 
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glTranslated;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.crookedbird.engine.GameEngine;
 import com.crookedbird.engine.database.GameData;
-import com.crookedbird.engine.graphics2d.AnimatedGraphic;
 import com.crookedbird.engine.graphics3d.AnimatedModel;
 import com.crookedbird.engine.input.MouseClickInput;
 import com.crookedbird.engine.input.MouseMovementInput;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public abstract class WorldObject implements Parentable {
 	private double x, y, z;

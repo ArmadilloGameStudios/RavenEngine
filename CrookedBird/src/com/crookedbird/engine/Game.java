@@ -71,12 +71,11 @@ public abstract class Game {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
-		glTranslatef(0f, 0f, -25.0f);
+		glTranslatef(0f, 0f, -300.0f);
 		glRotatef(55.0f, 1f, 0f, 0f);
 		glRotatef(trans * 100.0f, 0f, 1f, 0f);
-		//glRotatef(60.0f, 0f, 1f, 0f);
 
-		trans -= .003;
+		trans -= .002;
 
 		currentScene.draw();
 
