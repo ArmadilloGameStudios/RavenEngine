@@ -82,8 +82,7 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 	}
 
 	public ModelFrames getModelReferenceAsset(String name) {
-		ModelFrames g = modelAssets.get(name.replace('\\',
-				File.separatorChar));
+		ModelFrames g = modelAssets.get(name.replace('\\', File.separatorChar));
 
 		if (g == null) {
 			g = ModelReference.getErrorModel();
@@ -132,24 +131,25 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 	@Override
 	public void run() {
 		System.out.println("Started Run");
-		
+
 		System.out.println("Starting OpenGL");
 		window.setup();
-		
+
 		System.out.println("Loading Assets");
 		loadDatabaseAndModels();
 
 		game.setup();
 
 		game.loadInitialScene();
-		
+
 		ModelReference.compileBuffer();
-		
+
 		System.out.println(Thread.currentThread().getId());
 
 		// game.getCurrentScene().enterScene();
 
-		while (game.isRunning() || !glfwWindowShouldClose(window.getWindowHandler())) {
+		while (game.isRunning()
+				|| !glfwWindowShouldClose(window.getWindowHandler())) {
 			long start = System.nanoTime();
 
 			synchronized (inputs) {
@@ -176,11 +176,12 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 			long len = System.nanoTime() - start;
 			long sleep = 1000000000L / 60 - len;
 
+
 			if (len == 0) {
 				// System.out.println(0);
 			} else {
-//				 System.out.println("FPS: " + 1000000000L / len + " Run: " +
-//				 len + ", Sleep: " + sleep);
+//				System.out.println("FPS: " + 1000000000L / len + " Run: " + len
+//						+ ", Sleep: " + sleep);
 			}
 
 			if (sleep > 0L) {

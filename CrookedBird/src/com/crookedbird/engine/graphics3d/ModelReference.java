@@ -40,17 +40,25 @@ public class ModelReference {
 	private static int vbo_vertex_handle, vbo_normal_handle, vbo_color_handle,
 			vbo_glow_handle;
 
+	private static int left = -8, right = 8, lower = -8, upper = 8, back = -8,
+			front = 8;
+	private static Float[][][][] mapColor;
+	private static Float[][][] mapGlow;
+
 	public static ModelFrames load(File f) {
 		ModelFrames frameAnimation = new ModelFrames();
 		String frameState = null;
 		int frameIndex = 0, frameTime = 0;
 
-		int left = -8, right = 8, lower = -8, upper = 8, back = -8, front = 8;
+		left = -8;
+		right = 8;
+		lower = -8;
+		upper = 8;
+		back = -8;
+		front = 8;
 
-		Float[][][][] mapColor = new Float[right - left][upper - lower][front
-				- back][];
-		Float[][][] mapGlow = new Float[right - left][upper - lower][front
-				- back];
+		mapColor = new Float[right - left][upper - lower][front - back][];
+		mapGlow = new Float[right - left][upper - lower][front - back];
 
 		// TODO find this values
 		try {
@@ -87,8 +95,8 @@ public class ModelReference {
 					switch (sdata[0].trim()) {
 					case "frame":
 						if (frameState != null) {
-							frameAnimation.addFrame(frameState, frameIndex, frameTime,
-									processFrameData(mapColor, mapGlow));
+							frameAnimation.addFrame(frameState, frameIndex,
+									frameTime, processFrameData());
 						}
 
 						String newFrame = sdata[1].trim();
@@ -130,20 +138,20 @@ public class ModelReference {
 			e.printStackTrace();
 			System.exit(0);
 		}
-		
+
 		frameAnimation.addFrame(frameState, frameIndex, frameTime,
-				processFrameData(mapColor, mapGlow));
+				processFrameData());
+
+		mapColor = null;
+		mapGlow = null;
 
 		// process lists into buffers
 		return frameAnimation;
 	}
 
-	private static ModelReference processFrameData(Float[][][][] mapColor,
-			Float[][][] mapGlow) {
+	private static ModelReference processFrameData() {
 
 		int vertex_start = vertex_list.size();
-
-		int left = -8, right = 8, lower = -8, upper = 8, back = -8, front = 8;
 
 		ModelReference model = new ModelReference();
 
@@ -153,151 +161,13 @@ public class ModelReference {
 
 					if (mapColor[i][j][k] != null) {
 
-						// left
-						if (i == 0 || mapColor[i - 1][j][k] == null) {
-							vertex_list.addAll(Arrays.asList(new Float[] {
-									(float) (i + left), (float) (j + lower),
-									(float) (k + back), (float) (i + left),
-									(float) (j + lower + 1),
-									(float) (k + back), (float) (i + left),
-									(float) (j + lower + 1),
-									(float) (k + back + 1), (float) (i + left),
-									(float) (j + lower),
-									(float) (k + back + 1), }));
 
-							normal_list.addAll(Arrays.asList(new Float[] { -1f,
-									0f, 0f, -1f, 0f, 0f, -1f, 0f, 0f, -1f, 0f,
-									0f, }));
-
-							for (int l = 0; l < 4; l++) {
-								colors_list.addAll(Arrays
-										.asList(mapColor[i][j][k]));
-								glow_list.add(mapGlow[i][j][k]);
-							}
-						}
-
-						// right
-						if (i == right - left - 1
-								|| mapColor[i + 1][j][k] == null) {
-							vertex_list.addAll(Arrays.asList(new Float[] {
-									(float) (i + left + 1),
-									(float) (j + lower), (float) (k + back),
-									(float) (i + left + 1),
-									(float) (j + lower + 1),
-									(float) (k + back), (float) (i + left + 1),
-									(float) (j + lower + 1),
-									(float) (k + back + 1),
-									(float) (i + left + 1),
-									(float) (j + lower),
-									(float) (k + back + 1), }));
-
-							normal_list.addAll(Arrays
-									.asList(new Float[] { 1f, 0f, 0f, 1f, 0f,
-											0f, 1f, 0f, 0f, 1f, 0f, 0f, }));
-
-							for (int l = 0; l < 4; l++) {
-								colors_list.addAll(Arrays
-										.asList(mapColor[i][j][k]));
-								glow_list.add(mapGlow[i][j][k]);
-							}
-						}
-
-						// lower
-						if (j == 0 || mapColor[i][j - 1][k] == null) {
-							vertex_list.addAll(Arrays.asList(new Float[] {
-									(float) (i + left), (float) (j + lower),
-									(float) (k + back), (float) (i + left + 1),
-									(float) (j + lower), (float) (k + back),
-									(float) (i + left + 1),
-									(float) (j + lower),
-									(float) (k + back + 1), (float) (i + left),
-									(float) (j + lower),
-									(float) (k + back + 1), }));
-
-							normal_list.addAll(Arrays.asList(new Float[] { 0f,
-									-1f, 0f, 0f, -1f, 0f, 0f, -1f, 0f, 0f, -1f,
-									0f, }));
-
-							for (int l = 0; l < 4; l++) {
-								colors_list.addAll(Arrays
-										.asList(mapColor[i][j][k]));
-								glow_list.add(mapGlow[i][j][k]);
-							}
-						}
-
-						// upper
-						if (j == upper - lower - 1
-								|| mapColor[i][j + 1][k] == null) {
-							vertex_list.addAll(Arrays.asList(new Float[] {
-									(float) (i + left),
-									(float) (j + lower + 1),
-									(float) (k + back), (float) (i + left + 1),
-									(float) (j + lower + 1),
-									(float) (k + back), (float) (i + left + 1),
-									(float) (j + lower + 1),
-									(float) (k + back + 1), (float) (i + left),
-									(float) (j + lower + 1),
-									(float) (k + back + 1), }));
-
-							normal_list.addAll(Arrays
-									.asList(new Float[] { 0f, 1f, 0f, 0f, 1f,
-											0f, 0f, 1f, 0f, 0f, 1f, 0f, }));
-
-							for (int l = 0; l < 4; l++) {
-								colors_list.addAll(Arrays
-										.asList(mapColor[i][j][k]));
-								glow_list.add(mapGlow[i][j][k]);
-							}
-						}
-
-						// back
-						if (k == 0 || mapColor[i][j][k - 1] == null) {
-							vertex_list.addAll(Arrays.asList(new Float[] {
-									(float) (i + left), (float) (j + lower),
-									(float) (k + back), (float) (i + left + 1),
-									(float) (j + lower), (float) (k + back),
-									(float) (i + left + 1),
-									(float) (j + lower + 1),
-									(float) (k + back), (float) (i + left),
-									(float) (j + lower + 1),
-									(float) (k + back), }));
-
-							normal_list.addAll(Arrays.asList(new Float[] { 0f,
-									0f, -1f, 0f, 0f, -1f, 0f, 0f, -1f, 0f, 0f,
-									-1f, }));
-
-							for (int l = 0; l < 4; l++) {
-								colors_list.addAll(Arrays
-										.asList(mapColor[i][j][k]));
-								glow_list.add(mapGlow[i][j][k]);
-							}
-						}
-
-						// front
-						if (k == front - back - 1
-								|| mapColor[i][j][k + 1] == null) {
-							vertex_list.addAll(Arrays.asList(new Float[] {
-									(float) (i + left), (float) (j + lower),
-									(float) (k + back + 1),
-									(float) (i + left + 1),
-									(float) (j + lower),
-									(float) (k + back + 1),
-									(float) (i + left + 1),
-									(float) (j + lower + 1),
-									(float) (k + back + 1), (float) (i + left),
-									(float) (j + lower + 1),
-									(float) (k + back + 1), }));
-
-							normal_list.addAll(Arrays
-									.asList(new Float[] { 0f, 0f, 1f, 0f, 0f,
-											1f, 0f, 0f, 1f, 0f, 0f, 1f, }));
-
-							for (int l = 0; l < 4; l++) {
-								colors_list.addAll(Arrays
-										.asList(mapColor[i][j][k]));
-								glow_list.add(mapGlow[i][j][k]);
-							}
-						}
+						anyFace(i, j, k, 0); // left
+						anyFace(i, j, k, 1); // right
+						anyFace(i, j, k, 2); // lower
+						anyFace(i, j, k, 3); // upper
+						anyFace(i, j, k, 4); // back
+						anyFace(i, j, k, 5); // front
 					}
 
 				}
@@ -323,6 +193,179 @@ public class ModelReference {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		return model;
+	}
+
+	private static void anyFace(int i, int j, int k, int type) {
+		int[] g = null;
+		int[] v = null;
+		Float[] n = null;
+
+		switch (type) {
+		case 0: // left
+			if (!(i == 0 || mapColor[i - 1][j][k] == null))
+				return;
+
+			v = new int[] { 0, 1, 1, 
+					        0, 1, 0, 
+					        0, 0, 0, 
+					        0, 0, 1 };
+
+			n = new Float[] { -1f, 0f, 0f };
+			break;
+		case 1: // right
+			if (!(i == right - left - 1 || mapColor[i + 1][j][k] == null))
+				return;
+
+			v = new int[] { 1, 0, 0, 
+					        1, 1, 0, 
+					        1, 1, 1, 
+					        1, 0, 1 };
+
+			n = new Float[] { 1f, 0f, 0f };
+			break;
+		case 2: // lower
+			if (!(j == 0 || mapColor[i][j - 1][k] == null))
+				return;
+
+			v = new int[] { 0, 0, 0, 
+					        1, 0, 0, 
+					        1, 0, 1, 
+					        0, 0, 1 };
+
+			n = new Float[] { 0f, -1f, 0f };
+			break;
+		case 3: // upper
+			if (!(j == upper - lower - 1 || mapColor[i][j + 1][k] == null))
+				return;
+
+			v = new int[] { 1, 1, 1, 
+					        1, 1, 0, 
+					        0, 1, 0, 
+					        0, 1, 1 };
+
+			n = new Float[] { 0f, 1f, 0f };
+			break;
+		case 4: // back
+			if (!(k == 0 || mapColor[i][j][k - 1] == null))
+				return;
+
+			v = new int[] { 1, 1, 0, 
+					        1, 0, 0, 
+					        0, 0, 0, 
+					        0, 1, 0 };
+
+			n = new Float[] { 0f, 0f, -1f };
+			break;
+		case 5: // front
+			if (!(k == front - back - 1 || mapColor[i][j][k + 1] == null))
+				return;
+
+			v = new int[] { 0, 0, 1, 
+					        1, 0, 1, 
+					        1, 1, 1, 
+					        0, 1, 1 };
+
+			n = new Float[] { 0f, 0f, 1f };
+			break;
+		}
+
+
+		g = new int[12];
+		for (int x = 0; x < 12; x++) {
+			if (v[x] == 0)
+				g[x] = -1;
+			else
+				g[x] = 1;
+		}
+
+		vertex_list.addAll(Arrays.asList(new Float[] {
+				(float) (i + left + v[0]), (float) (j + lower + v[1]),
+				(float) (k + back + v[2]),
+
+				(float) (i + left + v[3]), (float) (j + lower + v[4]),
+				(float) (k + back + v[5]),
+
+				(float) (i + left + v[6]), (float) (j + lower + v[7]),
+				(float) (k + back + v[8]),
+
+				(float) (i + left + v[9]), (float) (j + lower + v[10]),
+				(float) (k + back + v[11]), }));
+
+		for (int l = 0; l < 4; l++) {
+			colors_list.addAll(Arrays.asList(mapColor[i][j][k]));
+			normal_list.addAll(Arrays.asList(n));
+		}
+
+		// glow corners
+		Float[] glowCorners = new Float[12];
+		for (int h = 0; h < 12; h += 3) {
+			glowCorners[h] = mapColor[i][j][k][0] * mapGlow[i][j][k];
+			glowCorners[h + 1] = mapColor[i][j][k][1] * mapGlow[i][j][k];
+			glowCorners[h + 2] = mapColor[i][j][k][2] * mapGlow[i][j][k];
+		}
+
+		checkGlowsCat(glowCorners, 0, mapGlow[i][j][k], i, j, k, g[0], g[1], g[2]);
+		checkGlowsCat(glowCorners, 3, mapGlow[i][j][k], i, j, k, g[3], g[4], g[5]);
+		checkGlowsCat(glowCorners, 6, mapGlow[i][j][k], i, j, k, g[6], g[7], g[8]);
+		checkGlowsCat(glowCorners, 9, mapGlow[i][j][k], i, j, k, g[9], g[10], g[11]);
+
+
+		glow_list.addAll(Arrays.asList(glowCorners));
+	}
+
+	private static void checkGlowsCat(Float[] glowCorners, int s, float g, int i, int j,
+			int k, int a, int b, int c) {
+		
+		if (i + a >= 0 && i + a <= 15 && mapColor[i + a][j][k] != null) {
+			glowCorners[s] += getGlowFade(0, i + a, j, k) * (1f - g);
+			glowCorners[s + 1] += getGlowFade(1, i + a, j, k)* (1f - g);
+			glowCorners[s + 2] += getGlowFade(2, i + a, j, k)* (1f - g);
+		}
+
+		if (k + c >= 0 && k + c <= 15 && mapColor[i][j][k + c] != null) {
+			glowCorners[s] += getGlowFade(0, i, j, k + c)* (1f - g);
+			glowCorners[s + 1] += getGlowFade(1, i, j, k + c)* (1f - g);
+			glowCorners[s + 2] += getGlowFade(2, i, j, k + c)* (1f - g);
+		}
+
+		if (j + b >= 0 && j + b <= 15 && mapColor[i][j + b][k] != null) {
+			glowCorners[s] += getGlowFade(0, i, j + b, k)* (1f - g);
+			glowCorners[s + 1] += getGlowFade(1, i, j + b, k)* (1f - g);
+			glowCorners[s + 2] += getGlowFade(2, i, j + b, k)* (1f - g);
+		}
+
+		if (j + b >= 0 && j + b <= 15 && k + c >= 0 && k + c <= 15
+				&& mapColor[i][j + b][k + c] != null) {
+			glowCorners[s] += getGlowFade(0, i, j + b, k + c)* (1f - g);
+			glowCorners[s + 1] += getGlowFade(1, i, j + b, k + c)* (1f - g);
+			glowCorners[s + 2] += getGlowFade(2, i, j + b, k + c)* (1f - g);
+		}
+
+		if (i + a >= 0 && i + a <= 15 && k + c >= 0 && k + c <= 15
+				&& mapColor[i + a][j][k + c] != null) {
+			glowCorners[s] += getGlowFade(0, i + a, j, k + c)* (1f - g);
+			glowCorners[s + 1] += getGlowFade(1, i + a, j, k + c)* (1f - g);
+			glowCorners[s + 2] += getGlowFade(2, i + a, j, k + c)* (1f - g);
+		}
+
+		if (i + a >= 0 && i + a <= 15 && j + b >= 0 && j + b <= 15
+				&& mapColor[i + a][j + b][k] != null) {
+			glowCorners[s] += getGlowFade(0, i + a, j + b, k)* (1f - g);
+			glowCorners[s + 1] += getGlowFade(1, i + a, j + b, k)* (1f - g);
+			glowCorners[s + 2] += getGlowFade(2, i + a, j + b, k)* (1f - g);
+		}
+
+		if (i + a >= 0 && i + a <= 15 && j + b >= 0 && j + b <= 15
+				&& k + c >= 0 && k + c <= 15
+				&& mapColor[i + a][j + b][k + c] != null) {
+			glowCorners[s] += getGlowFade(0, i + a, j + b, k + c)* (1f - g);
+			glowCorners[s + 1] += getGlowFade(1, i + a, j + b, k + c)* (1f - g);
+			glowCorners[s + 2] += getGlowFade(2, i + a, j + b, k + c)* (1f - g);
+		}
+	}
+
+	private static float getGlowFade(int c, int i, int j, int k) {
+		return mapColor[i][j][k][c] * mapGlow[i][j][k] / 4.0f;
 	}
 
 	public static void compileBuffer() {
@@ -375,7 +418,7 @@ public class ModelReference {
 		vbo_glow_handle = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_glow_handle);
 		glBufferData(GL_ARRAY_BUFFER, glow_list_buffer, GL_STATIC_DRAW);
-		glVertexAttribPointer(6, 1, GL_FLOAT, false, 0, 0l);
+		glVertexAttribPointer(6, 3, GL_FLOAT, false, 0, 0l);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}

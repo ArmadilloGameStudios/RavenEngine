@@ -131,7 +131,7 @@ public class GameWindow3D {
 
 			IntBuffer iVal = BufferUtils.createIntBuffer(1);
 			glGetShaderiv(vShader, GL_COMPILE_STATUS, iVal);
-			if (GL_TRUE != iVal.get() || true) {
+			if (GL_TRUE != iVal.get()) {
 				System.out.println("Vertex Shader Failed: "
 						+ glGetShaderInfoLog(vShader));
 			}
@@ -145,7 +145,7 @@ public class GameWindow3D {
 
 			iVal = BufferUtils.createIntBuffer(1);
 			glGetShaderiv(fShader, GL_COMPILE_STATUS, iVal);
-			if (GL_TRUE != iVal.get() || true) {
+			if (GL_TRUE != iVal.get()) {
 				System.out.println("Fragment Shader Failed: "
 						+ glGetShaderInfoLog(fShader));
 			}
@@ -159,13 +159,12 @@ public class GameWindow3D {
 
 			iVal = BufferUtils.createIntBuffer(1);
 			glGetProgramiv(program, GL_VALIDATE_STATUS, iVal);
-			if (GL_TRUE != iVal.get() || true) {
+			if (GL_TRUE != iVal.get()) {
 				System.out.println("Program Failed: "
 						+ glGetProgramInfoLog(program));
 			}
 			
 			System.out.println("Shader version: " + glGetString(GL_SHADING_LANGUAGE_VERSION));
-
 
 			// Enable the vbo attributes
 			glEnableClientState(GL_VERTEX_ARRAY);
@@ -189,10 +188,15 @@ public class GameWindow3D {
 
 			glViewport(0, 0, engine.getGame().getWidth(), engine.getGame().getHeight());
 
-			glfwWindowHint(GLFW_SAMPLES, 8);
-			glEnable(GL_MULTISAMPLE);  
+			// Enable multisample
+			//glfwWindowHint(GLFW_SAMPLES, 8);
+			//glEnable(GL_MULTISAMPLE);  
 			
 			glEnable(GL_DEPTH_TEST);
+			
+			// Enable face culling
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

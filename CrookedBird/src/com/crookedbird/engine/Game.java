@@ -67,12 +67,14 @@ public abstract class Game {
 		glMultMatrixf(GLMatrix.perspective(60.0f, ((float) getWidth())
 				/ ((float) getHeight()), 1f, 1000.0f));
 
-		glTranslatef(0f, 0f, -100.0f);
-		glRotatef(45.0f, 1f, 0f, 0f);
-		glRotatef(trans * 200.0f, 0f, 1f, 0f);
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
+
+		glTranslatef(0f, 0f, -25.0f);
+		glRotatef(55.0f, 1f, 0f, 0f);
+		glRotatef(trans * 100.0f, 0f, 1f, 0f);
+		//glRotatef(60.0f, 0f, 1f, 0f);
 
 		trans -= .003;
 
