@@ -7,8 +7,9 @@ import com.crookedbird.engine.scene.Layer;
 import com.crookedbird.engine.worldobject.WorldObject;
 
 public class MainMenuStartButton extends WorldObject {
-	public MainMenuStartButton(Layer parent) {
-		super(parent, GameEngine.getEngine()
+
+	private static GameData getGameData() {
+		return GameEngine.getEngine()
 				.getFirstFromGameDatabase("StartScreen", new GameDataQuery() {
 					public boolean matches(GameData row) {
 						return row.getData("name") != null
@@ -17,9 +18,10 @@ public class MainMenuStartButton extends WorldObject {
 										.equals("MainMenuStartButton");
 					}
 
-				}).getData("img"));
-
-		setX((parent.getWidth() - getWidth()) / 2);
-		setY(250);
+				}).getData("model");
+	}
+	
+	public MainMenuStartButton(Layer parent) {
+		super(parent, getGameData());
 	}
 }

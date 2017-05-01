@@ -1,21 +1,28 @@
-in float glow;
+#version 430
 
-varying vec3 N, L;
-varying vec4 glowColor;
+layout(location = 0) in vec3 vertex_pos;
+layout(location = 1) in vec3 vertex_normal;
+layout(location = 2) in vec3 vertex_color;
+layout(location = 3) in vec3 vertex_glow;
 
-vec3 lightPos = vec3(0, 16, 16);
-varying float lightDis;
+uniform mat4 P;
+uniform mat4 V;
+uniform mat4 M;
+
+out vec3 light, lightGlow, color;
+
+vec3 lightDirection = normalize(vec3(5, 5, 10));
 
 void main(void) 
 {
-	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	gl_Position = P * V * M * vec4(vertex_pos, 1.0);
+
+	float ambiantLight = .3; 
 	
-	N = normalize(gl_NormalMatrix * gl_Normal);
-	vec4 V = gl_ModelViewMatrix * gl_Vertex;
-	L = normalize(lightPos - V.xyz);
-	
-	lightDis = distance(lightPos, V.xyz);
-	
-	gl_FrontColor = gl_Color; 	
-	glowColor = gl_Color * glow;
+	float NdotL = dot(normalize((V * M * vec4(vertex_normal, 0.0)).xyz), lightDirection);
+	float directionalLight = max(0.0, NdotL) * .3;
+
+	light = vec3(ambiantLight + directionalLight);
+	lightGlow = vertex_glow;
+	color = vertex_color;
 }
