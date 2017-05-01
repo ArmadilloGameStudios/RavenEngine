@@ -90,6 +90,27 @@ public class ModelReference {
 					String[] cdata;
 
 					switch (sdata[0].trim()) {
+					case "size":
+						cdata = sdata[1].split(",");
+
+						if (cdata.length == 3) {
+							int width = Integer.parseInt(cdata[0].trim());
+							int height = Integer.parseInt(cdata[1].trim());
+							int length = Integer.parseInt(cdata[2].trim());
+
+							left = -width / 2;
+							right = width / 2;
+							lower = -height / 2;
+							upper = height / 2;
+							back = -length / 2;
+							front = length / 2;
+
+							mapColor = new Float[right - left][upper - lower][front
+									- back][];
+							mapGlow = new Float[right - left][upper - lower][front
+									- back];
+						}
+						break;
 					case "frame":
 						if (frameState != null) {
 							frameAnimation.addFrame(frameState, frameIndex,
@@ -296,48 +317,55 @@ public class ModelReference {
 	private static void setVerticesGlow(Float[] glowCorners, int s, float g,
 			int i, int j, int k, int a, int b, int c) {
 
-		if (i + a >= 0 && i + a <= 15 && mapColor[i + a][j][k] != null) {
+		if (i + a >= 0 && i + a < right - left &&
+				mapColor[i + a][j][k] != null) {
 			glowCorners[s] += getGlowFade(0, i + a, j, k) * (1f - g);
 			glowCorners[s + 1] += getGlowFade(1, i + a, j, k) * (1f - g);
 			glowCorners[s + 2] += getGlowFade(2, i + a, j, k) * (1f - g);
 		}
 
-		if (k + c >= 0 && k + c <= 15 && mapColor[i][j][k + c] != null) {
+		if (k + c >= 0 && k + c < front - back &&
+				mapColor[i][j][k + c] != null) {
 			glowCorners[s] += getGlowFade(0, i, j, k + c) * (1f - g);
 			glowCorners[s + 1] += getGlowFade(1, i, j, k + c) * (1f - g);
 			glowCorners[s + 2] += getGlowFade(2, i, j, k + c) * (1f - g);
 		}
 
-		if (j + b >= 0 && j + b <= 15 && mapColor[i][j + b][k] != null) {
+		if (j + b >= 0 && j + b < upper - lower &&
+				mapColor[i][j + b][k] != null) {
 			glowCorners[s] += getGlowFade(0, i, j + b, k) * (1f - g);
 			glowCorners[s + 1] += getGlowFade(1, i, j + b, k) * (1f - g);
 			glowCorners[s + 2] += getGlowFade(2, i, j + b, k) * (1f - g);
 		}
 
-		if (j + b >= 0 && j + b <= 15 && k + c >= 0 && k + c <= 15
-				&& mapColor[i][j + b][k + c] != null) {
+		if (j + b >= 0 && j + b < upper - lower &&
+				k + c >= 0 && k + c < front - back && 
+				mapColor[i][j + b][k + c] != null) {
 			glowCorners[s] += getGlowFade(0, i, j + b, k + c) * (1f - g);
 			glowCorners[s + 1] += getGlowFade(1, i, j + b, k + c) * (1f - g);
 			glowCorners[s + 2] += getGlowFade(2, i, j + b, k + c) * (1f - g);
 		}
 
-		if (i + a >= 0 && i + a <= 15 && k + c >= 0 && k + c <= 15
-				&& mapColor[i + a][j][k + c] != null) {
+		if (i + a >= 0 && i + a < right - left && 
+				k + c >= 0 && k + c < front - back && 
+				mapColor[i + a][j][k + c] != null) {
 			glowCorners[s] += getGlowFade(0, i + a, j, k + c) * (1f - g);
 			glowCorners[s + 1] += getGlowFade(1, i + a, j, k + c) * (1f - g);
 			glowCorners[s + 2] += getGlowFade(2, i + a, j, k + c) * (1f - g);
 		}
 
-		if (i + a >= 0 && i + a <= 15 && j + b >= 0 && j + b <= 15
-				&& mapColor[i + a][j + b][k] != null) {
+		if (i + a >= 0 && i + a < right - left && 
+				j + b >= 0 && j + b < upper - lower && 
+				mapColor[i + a][j + b][k] != null) {
 			glowCorners[s] += getGlowFade(0, i + a, j + b, k) * (1f - g);
 			glowCorners[s + 1] += getGlowFade(1, i + a, j + b, k) * (1f - g);
 			glowCorners[s + 2] += getGlowFade(2, i + a, j + b, k) * (1f - g);
 		}
 
-		if (i + a >= 0 && i + a <= 15 && j + b >= 0 && j + b <= 15
-				&& k + c >= 0 && k + c <= 15
-				&& mapColor[i + a][j + b][k + c] != null) {
+		if (i + a >= 0 && i + a < right - left &&
+				j + b >= 0 && j + b < upper - lower && 
+				k + c >= 0 && k + c < front - back && 
+				mapColor[i + a][j + b][k + c] != null) {
 			glowCorners[s] += getGlowFade(0, i + a, j + b, k + c) * (1f - g);
 			glowCorners[s + 1] += getGlowFade(1, i + a, j + b, k + c)
 					* (1f - g);
@@ -385,22 +413,22 @@ public class ModelReference {
 		vbo_vertex_handle = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_vertex_handle);
 		glBufferData(GL_ARRAY_BUFFER, vertex_list_buffer, GL_STATIC_DRAW);
-		glVertexPointer(vertex_size, GL_FLOAT, 0, 0l);
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0l);
 
 		vbo_normal_handle = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_normal_handle);
 		glBufferData(GL_ARRAY_BUFFER, normal_list_buffer, GL_STATIC_DRAW);
-		glNormalPointer(GL_FLOAT, 0, 0l);
+		glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0l);
 
 		vbo_color_handle = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_color_handle);
 		glBufferData(GL_ARRAY_BUFFER, colors_list_buffer, GL_STATIC_DRAW);
-		glColorPointer(vertex_size, GL_FLOAT, 0, 0l);
+		glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0l);
 
 		vbo_glow_handle = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_glow_handle);
 		glBufferData(GL_ARRAY_BUFFER, glow_list_buffer, GL_STATIC_DRAW);
-		glVertexAttribPointer(6, 3, GL_FLOAT, false, 0, 0l);
+		glVertexAttribPointer(3, 3, GL_FLOAT, false, 0, 0l);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}

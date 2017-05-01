@@ -16,13 +16,21 @@ import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.opengl.GL11.GL_COLOR_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_INDEX_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
 import static org.lwjgl.opengl.GL11.GL_NORMAL_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
 import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
+import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnableClientState;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glMultMatrixf;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
@@ -37,6 +45,9 @@ import static org.lwjgl.opengl.GL20.glLinkProgram;
 import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL32.*;
+import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -54,13 +65,19 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 
 import com.crookedbird.engine.GameEngine;
+import com.crookedbird.engine.util.Matrix4f;
 
 public class GameWindow3D {
 
 	// The window handle
 	private long window;
-	private int program;
+
+	private int mainProgram, drawFBOProgram, fbo, fboColorTexture,
+			fboGlowTexture, fboIDTexture, fboRenderBuffer;
 	
+	private int uProjectionMatrix, uViewMatrix, uModelMatrix;
+	private int uTextureColor, uTextureGlow, uTextureID;
+
 	private GameEngine engine;
 
 	public GameWindow3D(GameEngine engine) {
@@ -73,19 +90,14 @@ public class GameWindow3D {
 			// will print the error message in System.err.
 			GLFWErrorCallback.createPrint(System.err).set();
 
-			// Initialize GLFW. Most GLFW functions will not work before doing
-			// this.
+			// Initialize GLFW.
 			if (!glfwInit())
 				throw new IllegalStateException("Unable to initialize GLFW");
 
 			// Configure GLFW
-			glfwDefaultWindowHints(); // optional, the current window hints are
-										// already the default
-			glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay
-														// hidden
-														// after creation
-			glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be
-														// resizable
+			glfwDefaultWindowHints();
+			glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+			glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
 			// Create the window
 			window = glfwCreateWindow(engine.getGame().getWidth(), engine
@@ -120,91 +132,249 @@ public class GameWindow3D {
 
 			GL.createCapabilities();
 
-			// Create Shaders
-			// Vertex Shader
-			File shaderv = new File("shaders" + File.separator + "vertex.glsl");
+			// Shaders
+			mainProgram = loadProgram("shaders" + File.separator
+					+ "vertex.glsl", "shaders" + File.separator
+					+ "fragment.glsl");
 
-			int vShader = glCreateShader(GL_VERTEX_SHADER);
-			glShaderSource(vShader,
-					new String(Files.readAllBytes(shaderv.toPath())));
-			glCompileShader(vShader);
+			glBindAttribLocation(mainProgram, 0, "vertex_pos");
+			glBindAttribLocation(mainProgram, 1, "vertex_color");
+			glBindAttribLocation(mainProgram, 2, "vertex_normal");
+			glBindAttribLocation(mainProgram, 3, "vertex_glow");
 
-			IntBuffer iVal = BufferUtils.createIntBuffer(1);
-			glGetShaderiv(vShader, GL_COMPILE_STATUS, iVal);
-			if (GL_TRUE != iVal.get()) {
-				System.out.println("Vertex Shader Failed: "
-						+ glGetShaderInfoLog(vShader));
-			}
+			uProjectionMatrix = glGetUniformLocation(mainProgram, "P");
+			uModelMatrix = glGetUniformLocation(mainProgram, "M");
+			uViewMatrix = glGetUniformLocation(mainProgram, "V");
 
-			// Frag Shader
-			File shaderf = new File("shaders" + File.separator + "fragment.glsl");
-			int fShader = glCreateShader(GL_FRAGMENT_SHADER);
-			glShaderSource(fShader,
-					new String(Files.readAllBytes(shaderf.toPath())));
-			glCompileShader(fShader);
-
-			iVal = BufferUtils.createIntBuffer(1);
-			glGetShaderiv(fShader, GL_COMPILE_STATUS, iVal);
-			if (GL_TRUE != iVal.get()) {
-				System.out.println("Fragment Shader Failed: "
-						+ glGetShaderInfoLog(fShader));
-			}
-
-			// Create the program
-			program = glCreateProgram();
-			glAttachShader(program, vShader);
-			glAttachShader(program, fShader);
+			glLinkProgram(mainProgram);
 			
-			glLinkProgram(program);
+			drawFBOProgram = loadProgram("shaders" + File.separator
+					+ "vertex2.glsl", "shaders" + File.separator
+					+ "fragment2.glsl");
 
-			iVal = BufferUtils.createIntBuffer(1);
-			glGetProgramiv(program, GL_VALIDATE_STATUS, iVal);
-			if (GL_TRUE != iVal.get()) {
-				System.out.println("Program Failed: "
-						+ glGetProgramInfoLog(program));
-			}
+			uTextureColor = glGetUniformLocation(drawFBOProgram, "colorTexture");
+			uTextureGlow = glGetUniformLocation(drawFBOProgram, "glowTexture");
+			uTextureID = glGetUniformLocation(drawFBOProgram, "idTexture");
 			
-			System.out.println("Shader version: " + glGetString(GL_SHADING_LANGUAGE_VERSION));
+			glLinkProgram(drawFBOProgram);
 
-			// Enable the vbo attributes
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glEnableClientState(GL_NORMAL_ARRAY);
-			glEnableClientState(GL_COLOR_ARRAY);
-			glEnableClientState(GL_INDEX_ARRAY);
-			
-			// Enable the custom mode attribute
-			glEnableVertexAttribArray(6);
-			glBindAttribLocation(program, 6, "glow");
-			
-			// Link program			
-			glLinkProgram(program);
-
-			// glGetProgramiv();
-
-			glUseProgram(program);
-
-			// 
-			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-			glViewport(0, 0, engine.getGame().getWidth(), engine.getGame().getHeight());
+			// Create FBOs
+			setupFBO();
 
 			// Enable multisample
-			//glfwWindowHint(GLFW_SAMPLES, 8);
-			//glEnable(GL_MULTISAMPLE);  
-			
+			// glfwWindowHint(GLFW_SAMPLES, 8);
+			// glEnable(GL_MULTISAMPLE);
+
 			glEnable(GL_DEPTH_TEST);
-			
+
 			// Enable face culling
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_BACK);
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	private int loadProgram(String v, String f) throws IOException {
+		int program = 0;
+
+		// Create Shaders
+		// Vertex Shader
+		File shaderv = new File(v);
+
+		int vShader = glCreateShader(GL_VERTEX_SHADER);
+		glShaderSource(vShader,
+				new String(Files.readAllBytes(shaderv.toPath())));
+		glCompileShader(vShader);
+
+		IntBuffer iVal = BufferUtils.createIntBuffer(1);
+		glGetShaderiv(vShader, GL_COMPILE_STATUS, iVal);
+		if (GL_TRUE != iVal.get() || true) {
+			System.out.println("Vertex Shader Failed: " + v + "\n"
+					+ glGetShaderInfoLog(vShader));
+		}
+
+		// Frag Shader
+		File shaderf = new File(f);
+		int fShader = glCreateShader(GL_FRAGMENT_SHADER);
+		glShaderSource(fShader,
+				new String(Files.readAllBytes(shaderf.toPath())));
+		glCompileShader(fShader);
+
+		iVal = BufferUtils.createIntBuffer(1);
+		glGetShaderiv(fShader, GL_COMPILE_STATUS, iVal);
+		if (GL_TRUE != iVal.get() || true) {
+			System.out.println("Fragment Shader Failed: " + f + "\n"
+					+ glGetShaderInfoLog(fShader));
+		}
+
+		// Create the program
+		program = glCreateProgram();
+		glAttachShader(program, vShader);
+		glAttachShader(program, fShader);
+
+		glLinkProgram(program);
+
+		iVal = BufferUtils.createIntBuffer(1);
+		glGetProgramiv(program, GL_VALIDATE_STATUS, iVal);
+		if (GL_TRUE != iVal.get() || true) {
+			System.out.println("Program Failed: "
+					+ glGetProgramInfoLog(program));
+		}
+
+		return program;
+	}
+
+	private void setupFBO() {
+		fbo = glGenFramebuffers();
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+		// FBO Textures
+		// Color
+		fboColorTexture = glGenTextures();
+		glBindTexture(GL_TEXTURE_2D, fboColorTexture);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, engine.getGame().getWidth(),
+				engine.getGame().getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+				fboColorTexture, 0);
+
+		// Glow
+		fboGlowTexture = glGenTextures();
+		glBindTexture(GL_TEXTURE_2D, fboGlowTexture);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, engine.getGame().getWidth(),
+				engine.getGame().getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1,
+				fboGlowTexture, 0);
+
+		// ID
+		fboIDTexture = glGenTextures();
+		glBindTexture(GL_TEXTURE_2D, fboIDTexture);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, engine.getGame().getWidth(),
+				engine.getGame().getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2,
+				fboIDTexture, 0);
+
+		// Depth
+		fboRenderBuffer = glGenRenderbuffers();
+		glBindRenderbuffer(GL_RENDERBUFFER, fboRenderBuffer);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, engine
+				.getGame().getWidth(), engine.getGame().getHeight());
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+				GL_RENDERBUFFER, fboRenderBuffer);
+		
+		// Draw buffers
+		IntBuffer fboBuffers = BufferUtils.createIntBuffer(3);
+		int bfs[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
+				GL_COLOR_ATTACHMENT2 };
+		for (int i = 0; i < bfs.length; i++)
+			fboBuffers.put(bfs[i]);
+		fboBuffers.flip();
+
+		glDrawBuffers(fboBuffers);
+
+
+		// Errors
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+			System.out.println("FBO Failed: "
+					+ glCheckFramebufferStatus(GL_FRAMEBUFFER));
+		}
+	}
+
 	public long getWindowHandler() {
 		return window;
+	}
+
+	public void setProgramMain() {
+		glUseProgram(mainProgram);
+	}
+	
+	public void setProgramDrawFBO() {
+		glUseProgram(drawFBOProgram);
+	}
+
+	public void setRenderTargetFBO() {
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+		glViewport(0, 0, engine.getGame().getWidth(), engine.getGame()
+				.getHeight());
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	}
+
+	public void setRenderTargetWindow() {
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glViewport(0, 0, engine.getGame().getWidth(), engine.getGame()
+				.getHeight());
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	}
+
+	public void drawFBO() {		
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		
+		// Bind the color
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fboColorTexture);
+		glUniform1i(uTextureColor, 0);
+
+		// Bind the glow
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, fboGlowTexture);
+		glUniform1i(uTextureGlow, 1);
+
+		// Bind the id
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, fboIDTexture);
+		glUniform1i(uTextureID, 2);
+		
+		// ? glEnableVertexAttribArray(0);
+
+		glBegin(GL_QUADS);
+		glTexCoord2f(0f, 0f);
+		glVertex3f(-1.0f, -1.0f, 0.0f);
+		glTexCoord2f(1f, 0f);
+		glVertex3f(1.0f, -1.0f, 0.0f);
+		glTexCoord2f(1f, 1f);
+		glVertex3f(1.0f, 1.0f, 0.0f);
+		glTexCoord2f(0f, 1f);
+		glVertex3f(-1.0f, 1.0f, 0.0f);
+		glEnd();
+
+		// glDisableVertexAttribArray(0);
+	}
+	
+	public void setProjectionMatrix(Matrix4f m) {
+		glUniformMatrix4fv(uProjectionMatrix, false, m.toBuffer());
+	}
+	
+	public void setViewMatrix(Matrix4f m) {
+		glUniformMatrix4fv(uViewMatrix, false, m.toBuffer());
+	}
+	
+	public void setModelMatrix(Matrix4f m) {
+		glUniformMatrix4fv(uModelMatrix, false, m.toBuffer());
 	}
 }

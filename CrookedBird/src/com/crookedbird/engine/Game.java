@@ -1,27 +1,31 @@
 package com.crookedbird.engine;
 
+import static org.lwjgl.opengl.GL11.GL_COLOR_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_INDEX_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_NORMAL_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glDisableClientState;
+import static org.lwjgl.opengl.GL11.glEnableClientState;
+import static org.lwjgl.opengl.GL11.glFlush;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.*;
+
 import java.awt.image.BufferedImage;
 
-import org.lwjgl.*;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
-
-import java.nio.*;
-
-import static org.lwjgl.glfw.Callbacks.*;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
-
-import org.lwjgl.opengl.GL;
-
-import com.crookedbird.engine.graphics3d.GLMatrix;
 import com.crookedbird.engine.input.MouseClickInput;
 import com.crookedbird.engine.input.MouseMovementInput;
 import com.crookedbird.engine.scene.Scene;
+import com.crookedbird.engine.util.Matrix4f;
 
 public abstract class Game {
 	private GameEngine engine;
@@ -54,26 +58,33 @@ public abstract class Game {
 
 	float trans = 0;
 
-	final public void draw3d(long window) {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the
-															// framebuffer
-
+	final public void draw3d() {
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
+		// Enable the custom mode attribute
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
 
 		// Set Projection
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glMultMatrixf(GLMatrix.perspective(60.0f, ((float) getWidth())
-				/ ((float) getHeight()), 1f, 1000.0f));
+		// glMatrixMode(GL_PROJECTION);
+		// glLoadIdentity();
 
+		engine.getWindow().setProjectionMatrix(
+				Matrix4f.perspective(60.0f, ((float) getWidth())
+						/ ((float) getHeight()), 1f, 1000.0f));
 
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+		Matrix4f viewMatrix = new Matrix4f();
+		viewMatrix = viewMatrix.multiply(Matrix4f.translate(0f, 0f, -30f));
+		viewMatrix = viewMatrix.multiply(Matrix4f.rotate(65f, 1f, 0f, 0f));
 
-		glTranslatef(0f, 0f, -300.0f);
-		glRotatef(55.0f, 1f, 0f, 0f);
-		glRotatef(trans * 100.0f, 0f, 1f, 0f);
+		engine.getWindow().setViewMatrix(viewMatrix);
+
+		engine.getWindow().setModelMatrix(new Matrix4f());
+
+		// glRotatef(trans * 100.0f, 0f, 1f, 0f);
 
 		trans -= .002;
 
@@ -81,11 +92,11 @@ public abstract class Game {
 
 		glFlush();
 
-		glfwSwapBuffers(window); // swap the color buffers
-
-		// Poll for window events. The key callback above will only be
-		// invoked during this call.
-		glfwPollEvents();
+		// Enable the custom mode attribute
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(2);
+		glDisableVertexAttribArray(3);
 	}
 
 	final public void mouseMove(MouseMovementInput e) {

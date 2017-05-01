@@ -1,5 +1,6 @@
 package com.crookedbird.engine;
 
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 import java.awt.event.MouseEvent;
@@ -81,6 +82,10 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 		return systemTime;
 	}
 
+	public GameWindow3D getWindow() {
+		return window;
+	}
+	
 	public ModelFrames getModelReferenceAsset(String name) {
 		ModelFrames g = modelAssets.get(name.replace('\\', File.separatorChar));
 
@@ -91,16 +96,6 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 
 		return g;
 	}
-
-	/*
-	 * public AnimatedGraphic getAnimationReferenceAsset(String name) {
-	 * AnimatedGraphic a = animatedAssets.get(name);
-	 * 
-	 * if (a == null) { a = new AnimatedGraphic(ImageReference.genErrorImage());
-	 * }
-	 * 
-	 * return a; }
-	 */
 
 	public GameDatabase getGameDatabase() {
 		return gdb;
@@ -166,7 +161,23 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 
 			game.update(deltaTime);
 
-			game.draw3d(window.getWindowHandler());
+
+			window.setProgramMain();
+
+			window.setRenderTargetFBO();
+			
+			game.draw3d();
+
+			window.setProgramDrawFBO();
+		    window.setRenderTargetWindow();
+			
+			window.drawFBO();
+
+			glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
+
+			// Poll for window events. The key callback above will only be
+			// invoked during this call.
+			glfwPollEvents();
 
 			if (Thread.interrupted() || breakthread) {
 				System.out.println("Interrupted");
