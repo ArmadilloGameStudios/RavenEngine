@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.raven.engine.Game;
-import com.raven.engine.input.MouseClickInput;
 import com.raven.engine.input.MouseMovementInput;
 
 public abstract class Scene {
@@ -43,11 +42,6 @@ public abstract class Scene {
 		}
 	}
 
-	final public void mouseClick(MouseClickInput e) {
-		for (Layer l : layers) {			
-			l.mouseClick(e);
-		}
-	}
 
 	final public void update(float deltaTime) {
 		for (Layer l : layers) {

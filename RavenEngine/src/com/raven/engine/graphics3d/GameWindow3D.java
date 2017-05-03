@@ -38,12 +38,15 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL32.*;
+import static org.lwjgl.opengl.GL45.*;
 import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL45.glTextureSubImage2D;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
 
@@ -447,5 +450,29 @@ public class GameWindow3D {
         int b = (id & 0x00FF0000) >> 16;
 
         glUniform3f(uID, r / 255.0f, g / 255.0f, b / 255.0f);
+    }
+
+    IntBuffer pixelreadBuffer = BufferUtils.createIntBuffer(1);
+    DoubleBuffer coursorXPosBuffer = BufferUtils.createDoubleBuffer(1);
+    DoubleBuffer coursorYPosBuffer = BufferUtils.createDoubleBuffer(1);
+    public int getWorldObjectID() {
+        glfwGetCursorPos(window, coursorXPosBuffer, coursorYPosBuffer);
+
+        glFlush();
+        glFinish();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glReadBuffer(GL_COLOR_ATTACHMENT2);
+        glReadPixels((int)coursorXPosBuffer.get(), engine.getGame().getHeight() - (int)coursorYPosBuffer.get(),
+                1, 1, GL_RGB, GL_UNSIGNED_BYTE, pixelreadBuffer);
+
+        int id = pixelreadBuffer.get();
+
+        pixelreadBuffer.flip();
+        coursorXPosBuffer.flip();
+        coursorYPosBuffer.flip();
+
+        return id;
     }
 }

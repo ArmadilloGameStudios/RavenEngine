@@ -6,8 +6,7 @@ import java.util.Map;
 
 import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
-import com.raven.engine.input.MouseClickInput;
-import com.raven.engine.worldobject.ClickHandler;
+import com.raven.engine.worldobject.MouseHandler;
 import com.raven.engine.worldobject.WorldObject;
 import com.crookedbird.tactician.battle.unit.Unit;
 import com.crookedbird.tactician.battle.unit.action.UnitAction;
@@ -52,9 +51,9 @@ public class Terrain extends WorldObject {
 		passable = data.getData("Passable") != null
 				&& data.getData("Passable").getBoolean();
 
-		addClickHandler(new ClickHandler() {
+		addMouseHandler(new MouseHandler() {
 			@Override
-			public void onMouseClick(MouseClickInput e) {
+			public void onMouseClick() {
 				switch (level.getState()) {
 				case UNIT_SELECTION:
 					break;
@@ -70,6 +69,12 @@ public class Terrain extends WorldObject {
 					break;
 				}
 			}
+
+			@Override
+			public void onMouseEnter() { }
+			@Override
+			public void onMouseLeave() { }
+
 		});
 	}
 

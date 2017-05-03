@@ -3,7 +3,6 @@ package com.raven.engine.scene;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.raven.engine.input.MouseClickInput;
 import com.raven.engine.input.MouseMovementInput;
 import com.raven.engine.worldobject.Parentable;
 import com.raven.engine.worldobject.WorldObject;
@@ -33,12 +32,6 @@ public class Layer implements Parentable {
 	final public void mouseMove(MouseMovementInput m) {
 		for (WorldObject o : gameObjectList) {
 			o.checkMouseMovement(m);
-		}
-	}
-
-	public void mouseClick(MouseClickInput e) {
-		for (WorldObject o : gameObjectList) {
-			o.checkMouseClick(e);
 		}
 	}
 

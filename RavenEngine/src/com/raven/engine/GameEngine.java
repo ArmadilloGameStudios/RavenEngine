@@ -20,10 +20,10 @@ import com.raven.engine.graphics3d.GameWindow3D;
 import com.raven.engine.graphics3d.ModelFrames;
 import com.raven.engine.graphics3d.ModelReference;
 import com.raven.engine.input.Input;
-import com.raven.engine.input.MouseClickInput;
 import com.raven.engine.input.MouseMovementInput;
+import com.raven.engine.worldobject.WorldObject;
 
-public class GameEngine implements Runnable, MouseListener, MouseMotionListener {
+public class GameEngine implements Runnable {
 	private static GameEngine engine;
 
 	public static GameEngine Launch(Game game) {
@@ -145,18 +145,6 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 				|| !glfwWindowShouldClose(window.getWindowHandler())) {
 			long start = System.nanoTime();
 
-			synchronized (inputs) {
-				if (mouseMovementInput != null) {
-					inputs.add(mouseMovementInput);
-				}
-
-				for (Input i : inputs) {
-					i.read(game);
-				}
-
-				inputs.clear();
-			}
-
 			game.update(deltaTime);
 
 			// drawing
@@ -171,6 +159,13 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 			window.setProgramDrawFBO();
 		    window.setRenderTargetWindow(true);
 			window.drawFBO();
+
+			// mouse
+			int id = window.getWorldObjectID();
+			if (id != 0) {
+				WorldObject clicked = WorldObject.getWorldObjectFromID(id);
+				clicked.onMouseEnter();
+			}
 
 //			window.setProgramMain();
 //			// window.setRenderTargetFBO();
@@ -240,24 +235,6 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 		gdb.load();
 	}
 
-	// private void searchAndLoadAssets(File cDir) {
-	// searchAndLoadAssets(cDir, "");
-	// }
-
-	// private void searchAndLoadAssets(File cDir, String path) {
-	// List<File> files = Arrays.asList(cDir.listFiles());
-	//
-	// for (File file : files) {
-	// String name = path + file.getName();
-	//
-	// if (file.isDirectory()) {
-	// searchAndLoadAssets(file, name + "_");
-	// } else {
-	// assets.put(name, AssetReader.readAsset(file));
-	// }
-	// }
-	// }
-
 	private void loadModels(File base) {
 		for (File f : base.listFiles()) {
 			if (f.isFile()) {
@@ -266,57 +243,6 @@ public class GameEngine implements Runnable, MouseListener, MouseMotionListener 
 			} else if (f.isDirectory()) {
 				loadModels(f);
 			}
-		}
-	}
-
-	/*
-	 * private void loadAnimations(File base) { for (File f : base.listFiles())
-	 * { if (f.isFile()) { animatedAssets.put(f.getPath(), new
-	 * AnimatedGraphic(f)); } else if (f.isDirectory()) { loadImages(f); } } }
-	 */
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		synchronized (inputs) {
-			inputs.add(new MouseClickInput(e));
-		}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		synchronized (inputs) {
-			mouseMovementInput = null;
-		}
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		synchronized (inputs) {
-			mouseMovementInput = new MouseMovementInput(e);
 		}
 	}
 }

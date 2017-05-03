@@ -3,17 +3,28 @@ package com.raven.engine.worldobject;
 import static org.lwjgl.opengl.GL11.glTranslated;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
 import com.raven.engine.graphics3d.AnimatedModel;
-import com.raven.engine.input.MouseClickInput;
 import com.raven.engine.input.MouseMovementInput;
 
 public abstract class WorldObject implements Parentable {
 	private static int last_id = 0;
+	private static HashMap<Integer, WorldObject> worldObjectIDMap = new HashMap<Integer, WorldObject>();
+
+	public static void resetObjectIDs() {
+		worldObjectIDMap.clear();
+		last_id = 0;
+	}
+
+	public static WorldObject getWorldObjectFromID(int id) {
+		return worldObjectIDMap.get(id);
+	}
+
 	private int id;
 	private double x, y, z;
 	private int w, h, l;
@@ -22,7 +33,7 @@ public abstract class WorldObject implements Parentable {
 	private AnimatedModel animatedReference;
 	private String animationstate = "idle";
 	private boolean mousehovering = false;
-	private List<ClickHandler> clickHandlers = new ArrayList<ClickHandler>();
+	private List<MouseHandler> clickHandlers = new ArrayList<MouseHandler>();
 	private long timeOffset = 0;
 
 	private List<TextObject> textObjects = new ArrayList<TextObject>();
@@ -41,16 +52,21 @@ public abstract class WorldObject implements Parentable {
 			int h) {
 		this.parent = parent;
 
+		// model
 		if (model != null) {
 			animatedReference = new AnimatedModel(model);
 		}
-		
-		id = ++last_id;
 
+		// click id
+		id = ++last_id;
+		worldObjectIDMap.put(id, this);
+
+		// pos
 		this.x = x;
 		this.y = y;
 		this.z = 0;
-		
+
+		// size
 		this.w = (int)(w == 0 && animatedReference != null ? animatedReference
 				.getWidth() : w);
 		this.h = (int)(h == 0 && animatedReference != null ? animatedReference
@@ -64,8 +80,6 @@ public abstract class WorldObject implements Parentable {
 	}
 
 	public int setAnimationState(String animationstate) {
-		System.out.println(animationstate);
-		
 		this.animationstate = animationstate;
 		timeOffset = GameEngine.getEngine().getSystemTime();
 		
@@ -155,7 +169,7 @@ public abstract class WorldObject implements Parentable {
 		this.textObjects.remove(text);
 	}
 
-	public void addClickHandler(ClickHandler c) {
+	public void addMouseHandler(MouseHandler c) {
 		this.clickHandlers.add(c);
 	}
 
@@ -215,7 +229,7 @@ public abstract class WorldObject implements Parentable {
 
 				// System.out.println("Entered: " + this);
 
-				this.onMouseEnter(newMMI);
+				this.onMouseEnter();
 
 				for (WorldObject child : this.children) {
 					child.checkMouseMovement(newMMI);
@@ -224,36 +238,24 @@ public abstract class WorldObject implements Parentable {
 		}
 	}
 
-	final public void checkMouseClick(MouseClickInput e) {
-		if (this.visible && e.getX() > this.getGlobalX()
-				&& e.getX() < this.getGlobalX() + this.getWidth()
-				&& e.getY() > this.getGlobalY()
-				&& e.getY() < this.getGlobalY() + this.getHeight()) {
-
-			System.out.println("Click: " + this);
-			this.onMouseClick(e);
-
-			for (WorldObject child : this.children) {
-				child.checkMouseClick(e);
-			}
+	final public void onMouseEnter() {
+		for (MouseHandler c : clickHandlers) {
+			c.onMouseEnter();
 		}
 	}
 
-	final public void onMouseEnter(MouseMovementInput m) {
-
-	}
-
 	final public void onMouseMove(MouseMovementInput m) {
-
 	}
 
 	final public void onMouseLeave(MouseMovementInput m) {
-
+		for (MouseHandler c : clickHandlers) {
+			c.onMouseLeave();
+		}
 	}
 
-	final public void onMouseClick(MouseClickInput m) {
-		for (ClickHandler c : clickHandlers) {
-			c.onMouseClick(m);
+	final public void onMouseClick() {
+		for (MouseHandler c : clickHandlers) {
+			c.onMouseClick();
 		}
 	}
 

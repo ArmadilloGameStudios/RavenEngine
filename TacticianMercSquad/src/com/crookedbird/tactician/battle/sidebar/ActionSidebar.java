@@ -3,8 +3,7 @@ package com.crookedbird.tactician.battle.sidebar;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.raven.engine.input.MouseClickInput;
-import com.raven.engine.worldobject.ClickHandler;
+import com.raven.engine.worldobject.MouseHandler;
 import com.raven.engine.worldobject.Parentable;
 import com.raven.engine.worldobject.WorldObject;
 import com.crookedbird.tactician.battle.BattleScene;
@@ -35,9 +34,9 @@ public class ActionSidebar extends WorldObject {
 
 			h.setDescription(action.getName());
 
-			h.addClickHandler(new ClickHandler() {
+			h.addMouseHandler(new MouseHandler() {
 				@Override
-				public void onMouseClick(MouseClickInput m) {
+				public void onMouseClick() {
 
 					switch (battleScene.getState()) {
 					case UNIT_SELECTION:
@@ -52,6 +51,11 @@ public class ActionSidebar extends WorldObject {
 						break;
 					}
 				}
+
+				@Override
+				public void onMouseEnter() { }
+				@Override
+				public void onMouseLeave() { }
 			});
 		}
 
