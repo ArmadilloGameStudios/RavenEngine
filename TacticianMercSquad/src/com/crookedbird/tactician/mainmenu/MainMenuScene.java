@@ -25,20 +25,6 @@ public class MainMenuScene extends Scene {
 
 		bg = new MainMenuBackground(backgroundLayer);
 		sb = new MainMenuStartButton(backgroundLayer);
-		sb.addMouseHandler(new MouseHandler() {
-			@Override
-			public void onMouseClick() {
-				game.prepTransitionScene(new BattleScene(game));
-			}
-
-			@Override
-			public void onMouseEnter() {
-				sb.setAnimationState("hover");
-			}
-
-			@Override
-			public void onMouseLeave() { }
-		});
 
 		backgroundLayer.addChild(bg);
 		backgroundLayer.addChild(sb);

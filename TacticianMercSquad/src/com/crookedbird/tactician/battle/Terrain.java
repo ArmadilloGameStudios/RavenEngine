@@ -75,6 +75,7 @@ public class Terrain extends WorldObject {
 			@Override
 			public void onMouseLeave() { }
 
+			public void onMouseMove() { }
 		});
 	}
 

@@ -6,7 +6,6 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 
 import java.awt.image.BufferedImage;
 
-import com.raven.engine.input.MouseMovementInput;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Matrix4f;
 
@@ -73,10 +72,6 @@ public abstract class Game {
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
 		glDisableVertexAttribArray(3);
-	}
-
-	final public void mouseMove(MouseMovementInput e) {
-		currentScene.mouseMove(e);
 	}
 
 	final public void update(float deltaTime) {

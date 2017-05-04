@@ -52,6 +52,7 @@ import java.nio.file.Files;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
@@ -474,5 +475,21 @@ public class GameWindow3D {
         coursorYPosBuffer.flip();
 
         return id;
+    }
+
+    public void processInput() {
+        // get all the events
+        glfwPollEvents();
+
+        if (GLFW_TRUE == glfwGetKey(window, GLFW_KEY_A)) {
+            System.out.println("A");
+        }
+
+//        glfwSetMouseButtonCallback(window, new GLFWMouseButtonCallbackI() {
+//            @Override
+//            public void invoke(long window, int button, int action, int mods) {
+//
+//            }
+//        });
     }
 }

@@ -56,6 +56,8 @@ public class ActionSidebar extends WorldObject {
 				public void onMouseEnter() { }
 				@Override
 				public void onMouseLeave() { }
+				@Override
+				public void onMouseMove() { }
 			});
 		}
 

@@ -10,7 +10,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
 import com.raven.engine.graphics3d.AnimatedModel;
-import com.raven.engine.input.MouseMovementInput;
 
 public abstract class WorldObject implements Parentable {
 	private static int last_id = 0;
@@ -39,6 +38,7 @@ public abstract class WorldObject implements Parentable {
 	private List<TextObject> textObjects = new ArrayList<TextObject>();
 
 	private Parentable parent;
+	private boolean parentIsWorldObject;
 
 	public WorldObject(Parentable parent, GameData model) {
 		this(parent, model, 0, 0, 0, 0);
@@ -51,11 +51,15 @@ public abstract class WorldObject implements Parentable {
 	public WorldObject(Parentable parent, GameData model, double x, double y, int w,
 			int h) {
 		this.parent = parent;
+		if (parentIsWorldObject = parent.getClass() == WorldObject.class) {
+
+		}
 
 		// model
 		if (model != null) {
 			animatedReference = new AnimatedModel(model);
 		}
+
 
 		// click id
 		id = ++last_id;
@@ -169,14 +173,6 @@ public abstract class WorldObject implements Parentable {
 		this.textObjects.remove(text);
 	}
 
-	public void addMouseHandler(MouseHandler c) {
-		this.clickHandlers.add(c);
-	}
-
-	public boolean isMouseHovering() {
-		return mousehovering;
-	}
-
 	public void draw() {
 		glTranslated(this.x, this.y, this.z);
 		
@@ -184,6 +180,27 @@ public abstract class WorldObject implements Parentable {
 		GameEngine.getEngine().getWindow().setWorldObjectID(id);
 		
 		this.animatedReference.draw(animationstate, GameEngine.getEngine().getSystemTime() - timeOffset);
+	}
+
+	public Parentable getParent() {
+		return parent;
+	}
+
+	public boolean isParentWorldObject() {
+		return parentIsWorldObject;
+	}
+
+	public List<WorldObject> getParentWorldObjectList() {
+		List<WorldObject> list;
+
+		if (parentIsWorldObject) {
+			list = ((WorldObject)parent).getParentWorldObjectList();
+			list.add((WorldObject)parent);
+		} else {
+			list = new ArrayList<WorldObject>();
+		}
+
+		return list;
 	}
 
 	public void addChild(WorldObject child) {
@@ -198,65 +215,40 @@ public abstract class WorldObject implements Parentable {
 		children.remove(child);
 	}
 
-	final public void checkMouseMovement(MouseMovementInput newMMI) {
-		if (isMouseHovering()) {
-			if (newMMI.getX() > this.getGlobalX()
-					&& newMMI.getX() < this.getGlobalX() + this.getWidth()
-					&& newMMI.getY() > this.getGlobalY()
-					&& newMMI.getY() < this.getGlobalY() + this.getHeight()) {
+	public void addMouseHandler(MouseHandler c) {
+		this.clickHandlers.add(c);
+	}
 
-				this.onMouseMove(newMMI);
+	public boolean isMouseHovering() {
+		return mousehovering;
+	}
 
-				for (WorldObject child : this.children) {
-					child.checkMouseMovement(newMMI);
-				}
-			} else {
-				mousehovering = false;
-
-				for (WorldObject child : this.children) {
-					child.checkMouseMovement(newMMI);
-				}
-
-				this.onMouseLeave(newMMI);
-			}
-		} else {
-			if (newMMI.getX() > this.getGlobalX()
-					&& newMMI.getX() < this.getGlobalX() + this.getWidth()
-					&& newMMI.getY() > this.getGlobalY()
-					&& newMMI.getY() < this.getGlobalY() + this.getHeight()) {
-
-				mousehovering = true;
-
-				// System.out.println("Entered: " + this);
-
-				this.onMouseEnter();
-
-				for (WorldObject child : this.children) {
-					child.checkMouseMovement(newMMI);
-				}
-			}
+	final public void checkMouseMovement(boolean hovering) {
+		if (!isMouseHovering() && hovering) {
+			onMouseEnter();
+		} else if (isMouseHovering() && !hovering) {
+			onMouseLeave();
+		} else if (hovering) {
+			onMouseMove();
 		}
+
+		mousehovering = hovering;
 	}
 
 	final public void onMouseEnter() {
-		for (MouseHandler c : clickHandlers) {
-			c.onMouseEnter();
-		}
+		for (MouseHandler c : clickHandlers) c.onMouseEnter();
 	}
 
-	final public void onMouseMove(MouseMovementInput m) {
+	final public void onMouseMove() {
+		for (MouseHandler c : clickHandlers) c.onMouseMove();
 	}
 
-	final public void onMouseLeave(MouseMovementInput m) {
-		for (MouseHandler c : clickHandlers) {
-			c.onMouseLeave();
-		}
+	final public void onMouseLeave() {
+		for (MouseHandler c : clickHandlers) c.onMouseLeave();
 	}
 
 	final public void onMouseClick() {
-		for (MouseHandler c : clickHandlers) {
-			c.onMouseClick();
-		}
+		for (MouseHandler c : clickHandlers) c.onMouseClick();
 	}
 
 	final public void update(float deltaTime) {

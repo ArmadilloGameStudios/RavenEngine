@@ -3,9 +3,6 @@ package com.raven.engine;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +16,6 @@ import com.raven.engine.database.GameDatabase;
 import com.raven.engine.graphics3d.GameWindow3D;
 import com.raven.engine.graphics3d.ModelFrames;
 import com.raven.engine.graphics3d.ModelReference;
-import com.raven.engine.input.Input;
-import com.raven.engine.input.MouseMovementInput;
 import com.raven.engine.worldobject.WorldObject;
 
 public class GameEngine implements Runnable {
@@ -47,13 +42,8 @@ public class GameEngine implements Runnable {
 	private Thread thread;
 	private GameWindow3D window;
 	private Map<String, ModelFrames> modelAssets = new ConcurrentHashMap<String, ModelFrames>();
-	// private Map<String, AnimatedGraphic> animatedAssets = new
-	// ConcurrentHashMap<String, AnimatedGraphic>();
-	// private Map<String, Asset> assets = new ConcurrentHashMap<String,
-	// Asset>();
+	private List<WorldObject> oldMouseList = new ArrayList<>();
 	private GameDatabase gdb;
-	private List<Input> inputs = new ArrayList<Input>();
-	private Input mouseMovementInput = null;
 	private float deltaTime;
 	private long systemTime;
 	private boolean breakthread = false;
@@ -164,19 +154,31 @@ public class GameEngine implements Runnable {
 			int id = window.getWorldObjectID();
 			if (id != 0) {
 				WorldObject clicked = WorldObject.getWorldObjectFromID(id);
-				clicked.onMouseEnter();
-			}
 
-//			window.setProgramMain();
-//			// window.setRenderTargetFBO();
-//			window.setRenderTargetWindow();
-//			game.draw3d();
+				List<WorldObject> newList = clicked.getParentWorldObjectList();
+				newList.add(clicked);
+				for (WorldObject o : oldMouseList) {
+					if (newList.contains(o))
+						o.checkMouseMovement(true);
+					else {
+						o.checkMouseMovement(false);
+					}
+				}
+
+				oldMouseList = newList;
+			} else {
+				for (WorldObject o : oldMouseList) {
+					o.checkMouseMovement(false);
+				}
+
+				oldMouseList.clear();
+			}
 
 			glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
 
 			// Poll for window events. The key callback above will only be
 			// invoked during this call.
-			glfwPollEvents();
+			window.processInput();
 
 			if (Thread.interrupted() || breakthread) {
 				System.out.println("Interrupted");

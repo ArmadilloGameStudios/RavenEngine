@@ -1,9 +1,11 @@
 package com.crookedbird.tactician.mainmenu;
 
+import com.crookedbird.tactician.battle.BattleScene;
 import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataQuery;
 import com.raven.engine.scene.Layer;
+import com.raven.engine.worldobject.MouseHandler;
 import com.raven.engine.worldobject.WorldObject;
 
 public class MainMenuStartButton extends WorldObject {
@@ -23,5 +25,28 @@ public class MainMenuStartButton extends WorldObject {
 	
 	public MainMenuStartButton(Layer parent) {
 		super(parent, getGameData());
+
+
+		addMouseHandler(new MouseHandler() {
+			@Override
+			public void onMouseClick() {
+				GameEngine.getEngine().getGame().prepTransitionScene(new BattleScene(GameEngine.getEngine().getGame()));
+			}
+
+			@Override
+			public void onMouseEnter() {
+				setAnimationState("hover");
+			}
+
+			@Override
+			public void onMouseLeave() {
+				setAnimationState("idle");
+			}
+
+			@Override
+			public void onMouseMove() {
+
+			}
+		});
 	}
 }
