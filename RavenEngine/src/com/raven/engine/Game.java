@@ -61,11 +61,7 @@ public abstract class Game {
 
 		engine.getWindow().setModelMatrix(new Matrix4f());
 
-		trans -= .002;
-
 		currentScene.draw();
-
-		glFlush();
 
 		// Disable the custom mode attribute
 		glDisableVertexAttribArray(0);
@@ -110,4 +106,14 @@ public abstract class Game {
 	abstract public int getHeight();
 
 	abstract public String getTitle();
+
+	@Deprecated
+	public void rotateLeft() {
+		trans -= .002;
+	}
+
+	@Deprecated
+	public void rotateRight() {
+		trans += .002;
+	}
 }

@@ -24,7 +24,7 @@ public class Terrain extends WorldObject {
 	}
 
 	public Terrain(Level l, GameData data, int x, int y) {
-		super(l, data.getData("img"), x, y);
+		super(l, data.getData("model"), x, y);
 
 		this.level = l;
 

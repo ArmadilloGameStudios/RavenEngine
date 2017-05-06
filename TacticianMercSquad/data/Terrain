@@ -2,52 +2,11 @@
 	name: "Ground",
 	passable: true,
 	type: "ground",
-	img: {
-		src: "img/terrain/sand.png",
+	model: {
+		src: "model/terrain/sand",
 		width: 16,
 		height: 16,
-		anim: {
-			idle: [[0, 0]]
-		}
-	}
-},
-{
-	name: "Ground",
-	passable: true,
-	type: "ground",
-	img: {
-		src: "img/terrain/sand.png",
-		width: 16,
-		height: 16,
-		anim: {
-			idle: [[1, 0]]
-		}
-	}
-},
-{
-	name: "Ground",
-	passable: true,
-	type: "ground",
-	img: {
-		src: "img/terrain/sand.png",
-		width: 16,
-		height: 16,
-		anim: {
-			idle: [[2, 0]]
-		}
-	}
-},
-{
-	name: "Ground",
-	passable: true,
-	type: "ground",
-	img: {
-		src: "img/terrain/sand.png",
-		width: 16,
-		height: 16,
-		anim: {
-			idle: [[3, 0]]
-		}
+		length: 16,
 	}
 },
 {

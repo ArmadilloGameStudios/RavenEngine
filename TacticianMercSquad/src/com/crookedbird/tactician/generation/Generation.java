@@ -7,6 +7,8 @@ import com.crookedbird.tactician.battle.BattleScene;
 import com.crookedbird.tactician.battle.Level;
 import com.crookedbird.tactician.battle.Terrain;
 
+import static com.crookedbird.tactician.generation.Generation.TerrainType.Ground;
+
 public class Generation {
 
 	public enum TerrainType {
@@ -27,7 +29,7 @@ public class Generation {
 			terrainType[i] = new TerrainType[lgp.getHeight()];
 
 			for (int j = 0; j < lgp.getHeight(); j++) {
-				terrainType[i][j] = TerrainType.Ground;
+				terrainType[i][j] = Ground;
 			}
 		}
 
@@ -104,20 +106,20 @@ public class Generation {
 		// int midy = lgp.getWidth() / 2;
 
 		// -bottom
-		terrainType[midx][0] = TerrainType.Ground;
-		terrainType[midx + 1][0] = TerrainType.Ground;
-		terrainType[midx - 1][0] = TerrainType.Ground;
-		terrainType[midx][1] = TerrainType.Ground;
-		terrainType[midx + 1][1] = TerrainType.Ground;
-		terrainType[midx - 1][1] = TerrainType.Ground;
+		terrainType[midx][0] = Ground;
+		terrainType[midx + 1][0] = Ground;
+		terrainType[midx - 1][0] = Ground;
+		terrainType[midx][1] = Ground;
+		terrainType[midx + 1][1] = Ground;
+		terrainType[midx - 1][1] = Ground;
 
 		// -top
-		terrainType[midx][lgp.getHeight() - 1] = TerrainType.Ground;
-		terrainType[midx + 1][lgp.getHeight() - 1] = TerrainType.Ground;
-		terrainType[midx - 1][lgp.getHeight() - 1] = TerrainType.Ground;
-		terrainType[midx][lgp.getHeight() - 2] = TerrainType.Ground;
-		terrainType[midx + 1][lgp.getHeight() - 2] = TerrainType.Ground;
-		terrainType[midx - 1][lgp.getHeight() - 2] = TerrainType.Ground;
+		terrainType[midx][lgp.getHeight() - 1] = Ground;
+		terrainType[midx + 1][lgp.getHeight() - 1] = Ground;
+		terrainType[midx - 1][lgp.getHeight() - 1] = Ground;
+		terrainType[midx][lgp.getHeight() - 2] = Ground;
+		terrainType[midx + 1][lgp.getHeight() - 2] = Ground;
+		terrainType[midx - 1][lgp.getHeight() - 2] = Ground;
 
 		// Create Terrain
 		Terrain[][] terrain = new Terrain[lgp.getWidth()][];
@@ -128,7 +130,8 @@ public class Generation {
 			for (int j = 0; j < lgp.getHeight(); j++) {
 				List<String> type = new ArrayList<String>();
 
-				switch (terrainType[i][j]) {
+				// switch (terrainType[i][j]) {
+				switch (Ground) {
 				case Ground:
 					type.add("Ground");
 					break;

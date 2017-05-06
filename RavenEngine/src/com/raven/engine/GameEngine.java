@@ -135,75 +135,12 @@ public class GameEngine implements Runnable {
 				|| !glfwWindowShouldClose(window.getWindowHandler())) {
 			long start = System.nanoTime();
 
+			draw();
+			input();
 			game.update(deltaTime);
-
-			// drawing
-			window.setProgramMain();
-			window.setRenderTargetFBO(true);
-			game.draw3d();
-
-			window.setProgramBloomHorizontal();
-			window.setRenderTargetFBOHOR(true);
-			window.drawFBO();
-
-			window.setProgramDrawFBO();
-		    window.setRenderTargetWindow(true);
-			window.drawFBO();
-
-			// mouse
-			int id = window.getWorldObjectID();
-			if (id != 0) {
-				WorldObject clicked = WorldObject.getWorldObjectFromID(id);
-
-				List<WorldObject> newList = clicked.getParentWorldObjectList();
-				newList.add(clicked);
-				for (WorldObject o : oldMouseList) {
-					if (newList.contains(o))
-						o.checkMouseMovement(true);
-					else {
-						o.checkMouseMovement(false);
-					}
-				}
-
-				oldMouseList = newList;
-			} else {
-				for (WorldObject o : oldMouseList) {
-					o.checkMouseMovement(false);
-				}
-
-				oldMouseList.clear();
-			}
+			pause(start);
 
 			glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
-
-			// Poll for window events. The key callback above will only be
-			// invoked during this call.
-			window.processInput();
-
-			if (Thread.interrupted() || breakthread) {
-				System.out.println("Interrupted");
-				break;
-			}
-
-			long len = System.nanoTime() - start;
-			long sleep = 1000000000L / 60 - len;
-
-
-			if (len == 0) {
-				// System.out.println(0);
-			} else {
-//				System.out.println("FPS: " + 1000000000L / len + " Run: " + len
-//						+ ", Sleep: " + sleep);
-			}
-
-			if (sleep > 0L) {
-				try {
-					// System.out.println("Sleep for: " + sleep / 1000000L +
-					// "ms " + (int) (sleep % 1000000L) + "ns.");
-					Thread.sleep(sleep / 1000000L, (int) (sleep % 1000000L));
-				} catch (InterruptedException e) {
-				}
-			}
 
 			// deltaTime = (System.nanoTime() - start) / 1000000000.0F;
 			deltaTime = (System.nanoTime() - start) / 1000000.0F;
@@ -219,6 +156,74 @@ public class GameEngine implements Runnable {
 
 		System.exit(0);
 	}
+
+	private void draw() {
+		window.setProgramMain();
+		window.setRenderTargetFBO(true);
+		game.draw3d();
+
+		window.setProgramBloomHorizontal();
+		window.setRenderTargetFBOHOR(true);
+		window.drawFBO();
+
+		window.setProgramDrawFBO();
+		window.setRenderTargetWindow(true);
+		window.drawFBO();
+	}
+
+	private void input() {
+		int id = window.getWorldObjectID();
+		if (id != 0) {
+			WorldObject clicked = WorldObject.getWorldObjectFromID(id);
+
+			List<WorldObject> newList = clicked.getParentWorldObjectList();
+			newList.add(clicked);
+			for (WorldObject o : oldMouseList) {
+				if (newList.contains(o))
+					o.checkMouseMovement(true);
+				else {
+					o.checkMouseMovement(false);
+				}
+			}
+
+			oldMouseList = newList;
+		} else {
+			for (WorldObject o : oldMouseList) {
+				o.checkMouseMovement(false);
+			}
+
+			oldMouseList.clear();
+		}
+
+		window.processInput(oldMouseList);
+	}
+
+	private void pause(long start) {
+//		if (Thread.interrupted() || breakthread) {
+//			System.out.println("Interrupted");
+//			break;
+//		}
+
+		long len = System.nanoTime() - start;
+		long sleep = 1000000000L / 60 - len;
+
+
+//		if (len == 0) {
+//			System.out.println(0);
+//		} else {
+//			System.out.println("FPS: " + 1000000000L / len + " Run: " + len
+//						+ ", Sleep: " + sleep);
+//		}
+
+		if (sleep > 0L) {
+			try {
+//				System.out.println("Sleep for: " + sleep / 1000000L + "ms " + (int) (sleep % 1000000L) + "ns.");
+				Thread.sleep(sleep / 1000000L, (int) (sleep % 1000000L));
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+
 
 	private void loadDatabaseAndModels() {
 		// searchAndLoadAssets(new File("assets"));

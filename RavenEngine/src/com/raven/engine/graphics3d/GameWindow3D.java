@@ -49,9 +49,14 @@ import java.io.IOException;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import com.raven.engine.worldobject.WorldObject;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWKeyCallbackI;
 import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -72,6 +77,9 @@ public class GameWindow3D {
     private int uTextureColorfbo, uTextureGlowfbo, uID, uBloomStepfbo, uBloomStephor, uTextureGlowhor;
 
     private GameEngine engine;
+
+    private Map<Integer, Boolean> keyboard = new HashMap<Integer, Boolean>();
+    private Map<Integer, Boolean> mouse = new HashMap<Integer, Boolean>();
 
     public GameWindow3D(GameEngine engine) {
         this.engine = engine;
@@ -122,6 +130,20 @@ public class GameWindow3D {
 
             // Make the window visible
             glfwShowWindow(window);
+            glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, 1);
+            glfwSetInputMode(window, GLFW_STICKY_KEYS, 1);
+            glfwSetKeyCallback(window, new GLFWKeyCallbackI() {
+                @Override
+                public void invoke(long window, int key, int scancode, int action, int mods) {
+                    keyboard.put(key, action == GLFW_KEY_DOWN);
+                }
+            });
+            glfwSetMouseButtonCallback(window, new GLFWMouseButtonCallbackI() {
+                @Override
+                public void invoke(long window, int button, int action, int mods) {
+                    mouse.put(button, action == GLFW_PRESS);
+                }
+            });
 
             GL.createCapabilities();
 
@@ -477,19 +499,13 @@ public class GameWindow3D {
         return id;
     }
 
-    public void processInput() {
+    public void processInput(List<WorldObject> mouseOverObjects) {
         // get all the events
         glfwPollEvents();
 
-        if (GLFW_TRUE == glfwGetKey(window, GLFW_KEY_A)) {
-            System.out.println("A");
-        }
-
-//        glfwSetMouseButtonCallback(window, new GLFWMouseButtonCallbackI() {
-//            @Override
-//            public void invoke(long window, int button, int action, int mods) {
-//
-//            }
-//        });
+        if (mouse.get(GLFW_MOUSE_BUTTON_1) != null && mouse.get(GLFW_MOUSE_BUTTON_1))
+            for (WorldObject obj : mouseOverObjects) {
+                obj.onMouseClick();
+            }
     }
 }
