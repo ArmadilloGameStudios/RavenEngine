@@ -59,6 +59,7 @@ public abstract class Game {
 		viewMatrix = viewMatrix.multiply(Matrix4f.translate(0f, 0f, -30f));
 		viewMatrix = viewMatrix.multiply(Matrix4f.rotate(35f, 1f, 0f, 0f));
 		viewMatrix = viewMatrix.multiply(Matrix4f.rotate(trans * 100.0f, 0f, 1f, 0f));
+		// viewMatrix = viewMatrix.multiply(Matrix4f.rotate(trans * 200.0f, 1f, .5f, 0f));
 		trans += .0001 * engine.getDeltaTime();
 
 		engine.getWindow().setViewMatrix(viewMatrix);

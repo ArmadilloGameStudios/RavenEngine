@@ -9,7 +9,7 @@ public class TerrainData {
     static final int Sand = 0, Grass = 1, Stone = 2, Snow = 3, Water = 4;
     static final int typeCount = 5;
 
-    Vector3f position;
+    private Vector3f[] vertices;
     int type;
 
     public static Float[] getColorOfType(int type) {
@@ -28,27 +28,32 @@ public class TerrainData {
         }
     }
 
-    public static int getTypeFromTypes(int... types) {
-        int[] counts = new int[typeCount];
-
-        for (int t : types) {
-            counts[t] += 1;
-        }
-
-        int highest = 0;
-        int count = 0;
-
-        for (int c = 0; c < counts.length; c++) {
-            if (count < counts[c]) {
-                highest = c;
-                count = counts[c];
-            }
-        }
-
-        return highest;
+    public int getType() {
+        return type;
     }
 
-    public static Float[] getColorOfTypes(int... types) {
-        return getColorOfType(getTypeFromTypes(types));
+    public Float[] getTypeColor() {
+        return getColorOfType(getType());
+    }
+
+    public void setVertices(Vector3f... vertices) {
+        this.vertices = vertices;
+    }
+
+    public Float[] getVerticesAsArray() {
+        Float[] arr = new Float[vertices.length * 3];
+
+        for (int i = 0; i < vertices.length; i++) {
+            arr[i * 3 + 0] = vertices[i].x;
+            arr[i * 3 + 1] = vertices[i].y;
+            arr[i * 3 + 2] = vertices[i].z;
+        }
+
+        return arr;
+    }
+
+    public Vector3f getNormal() {
+        // assuming 3 vectors
+        return vertices[1].subtract(vertices[0]).cross(vertices[2].subtract(vertices[0])).normalize();
     }
 }
