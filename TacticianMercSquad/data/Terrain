@@ -2,8 +2,8 @@
 	name: "Ground",
 	passable: true,
 	type: "ground",
-	model: {
-		src: "model/terrain/sand",
+	modelFrames: {
+		src: "modelFrames/terrain/sand",
 		width: 16,
 		height: 16,
 		length: 16,
@@ -12,145 +12,200 @@
 {
 	name: "Barrel",
 	type: "obstacle",
-	img: "img/terrain/sandbarrel.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Barrel Light",
 	type: "obstacle",
-	img: {
-		src: "img/terrain/sandbarrellight.png",
-		width: 16,
-		height: 16,
-		anim: {
-			idle: [[0, 650], [1, 350]]
-		}
-	}
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Electric",
 	type: "obstacle",
-	img: {
-		src: "img/terrain/sandelectric.png",
-		width: 16,
-		height: 16,
-		anim: {
-			idle: [
-				[0, 1200], [1, 200], [2, 200],
-				[0, 1200], [3, 200], [4, 200],	
-				[0, 1200], [5, 200], [6, 200], 
-				[0, 1200], [7, 200], [8, 200], 		
-				[0, 1200], [9, 200], [10, 200], 		
-				[0, 1200], [15, 200], [16, 200], 	
-			]
-		}
-	}
-},
-{
-	name: "Electric",
-	type: "obstacle",
-	img: {
-		src: "img/terrain/sandelectric.png",
-		width: 16,
-		height: 16,
-		anim: {
-			idle: [	
-				[0, 1200], [15, 200], [16, 200], 
-				[0, 1200], [5, 200], [6, 200], 
-				[0, 1200], [7, 200], [8, 200],	
-				[0, 1200], [3, 200], [4, 200],	
-				[0, 1200], [5, 200], [6, 200], 	 	
-				[0, 1200], [1, 200], [2, 200],
-				[0, 1200], [9, 200], [10, 200], 
-			]
-		}
-	}
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Pillar",
 	type: ["obstacle", "removed"],
-	img: { 
-		src: "img/terrain/sandpillar.png",
-		anchorx: 0,
-		anchory: 5
-	}	
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: "wall",
-	img: "img/terrain/sandwall.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "bottom"],
-	img: "img/terrain/sandwallB.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "bottom", "left"],
-	img: "img/terrain/sandwallBL.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "bottom", "left", "right"],
-	img: "img/terrain/sandwallBLR.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "bottom", "left", "right", "top"],
-	img: "img/terrain/sandwallBLRT.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "bottom", "left", "top"],
-	img: "img/terrain/sandwallBLT.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "bottom", "right"],
-	img: "img/terrain/sandwallBR.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "bottom", "right", "top"],
-	img: "img/terrain/sandwallBRT.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "bottom", "top"],
-	img: "img/terrain/sandwallBT.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "left"],
-	img: "img/terrain/sandwallL.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "left", "right"],
-	img: "img/terrain/sandwallLR.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "left", "right", "top"],
-	img: "img/terrain/sandwallLRT.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "left", "top"],
-	img: "img/terrain/sandwallLT.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "right"],
-	img: "img/terrain/sandwallR.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "right", "top"],
-	img: "img/terrain/sandwallRT.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	name: "Wall",
 	type: ["wall", "top"],
-	img: "img/terrain/sandwallT.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },

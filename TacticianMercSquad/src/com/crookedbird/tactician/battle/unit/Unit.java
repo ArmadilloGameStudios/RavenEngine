@@ -46,7 +46,7 @@ public class Unit extends WorldObject {
 									.equalsIgnoreCase("blue");
 						}
 					}
-				}).getData("img"), terrain.getX(), terrain.getY());
+				}).getData("model"), terrain.getX(), terrain.getY());
 
 		this.tx = terrain.getGridX();
 		this.ty = terrain.getGridY();

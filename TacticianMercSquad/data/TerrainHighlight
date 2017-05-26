@@ -1,24 +1,54 @@
 {
 	color: "red",
-	img: "img/terrain/highlight/red.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	color: "blue",
-	img: "img/terrain/highlight/blue.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	color: "green",
-	img: "img/terrain/highlight/green.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	color: "yellow",
-	img: "img/terrain/highlight/yellow.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	color: "magenta",
-	img: "img/terrain/highlight/magenta.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 },
 {
 	color: "cyan",
-	img: "img/terrain/highlight/cyan.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 }

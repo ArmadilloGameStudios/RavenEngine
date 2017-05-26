@@ -17,7 +17,7 @@ public class Holder extends WorldObject {
 			public boolean matches(GameData row) {
 				return row.getData("Name").getString().equalsIgnoreCase("StatHolder");
 			}
-		}).getData("img"), x, y);
+		}).getData("model"), x, y);
 
 		addText(des = new TextObject());
 		des.setY(baseline);

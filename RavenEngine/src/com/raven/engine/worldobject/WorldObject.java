@@ -10,6 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
 import com.raven.engine.graphics3d.AnimatedModel;
+import com.raven.engine.graphics3d.ModelData;
 
 public abstract class WorldObject implements Parentable {
 	private static int last_id = 0;
@@ -46,6 +47,36 @@ public abstract class WorldObject implements Parentable {
 
 	public WorldObject(Parentable parent, GameData model, double x, double y) {
 		this(parent, model, x, y, 0, 0);
+	}
+
+	public WorldObject(Parentable parent, ModelData model) {
+		this.parent = parent;
+		if (parentIsWorldObject = parent.getClass() == WorldObject.class) {
+
+		}
+
+		// model
+		if (model != null) {
+			animatedReference = new AnimatedModel(model);
+		}
+
+
+		// click id
+		id = ++last_id;
+		worldObjectIDMap.put(id, this);
+
+		// pos
+		this.x = x;
+		this.y = y;
+		this.z = 0;
+
+		// size
+		this.w = (int)(w == 0 && animatedReference != null ? animatedReference
+				.getWidth() : w);
+		this.h = (int)(h == 0 && animatedReference != null ? animatedReference
+				.getHeight() : h);
+		this.l = (int)(l == 0 && animatedReference != null ? animatedReference
+				.getLength() : l);
 	}
 
 	public WorldObject(Parentable parent, GameData model, double x, double y, int w,
@@ -93,6 +124,7 @@ public abstract class WorldObject implements Parentable {
 	public int getAnimationTime(String animationstate) {
 		return this.animatedReference.getFrameTime(animationstate);
 	}
+
 
 	@Override
 	public double getGlobalZ() {
@@ -175,8 +207,7 @@ public abstract class WorldObject implements Parentable {
 
 	public void draw() {
 		glTranslated(this.x, this.y, this.z);
-		
-		// TODO
+
 		GameEngine.getEngine().getWindow().setWorldObjectID(id);
 		
 		this.animatedReference.draw(animationstate, GameEngine.getEngine().getSystemTime() - timeOffset);

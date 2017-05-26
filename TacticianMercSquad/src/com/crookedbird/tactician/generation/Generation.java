@@ -130,8 +130,8 @@ public class Generation {
 			for (int j = 0; j < lgp.getHeight(); j++) {
 				List<String> type = new ArrayList<String>();
 
-				// switch (terrainType[i][j]) {
-				switch (Ground) {
+				switch (terrainType[i][j]) {
+				// switch (Ground) {
 				case Ground:
 					type.add("Ground");
 					break;

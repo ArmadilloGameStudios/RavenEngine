@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.raven.engine.Game;
+import com.raven.engine.graphics3d.ModelData;
 
 public abstract class Scene {
 	private Game game;
@@ -41,6 +42,7 @@ public abstract class Scene {
 		}
 	}
 
-	abstract public void enterScene();
+    abstract public List<ModelData> getSceneModels();
+    abstract public void enterScene();
 	abstract public void exitScene();
 }

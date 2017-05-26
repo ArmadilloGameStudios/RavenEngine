@@ -194,4 +194,7 @@ public class Vector3f {
         buffer.flip();
     }
 
+    public Float[] toArray() {
+        return new Float[] { x, y, z };
+    }
 }

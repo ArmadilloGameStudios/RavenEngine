@@ -6,8 +6,12 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 
 import java.awt.image.BufferedImage;
 
+import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.graphics3d.ModelReference;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Matrix4f;
+
+import javax.jws.WebParam;
 
 public abstract class Game {
 	private GameEngine engine;
@@ -45,7 +49,6 @@ public abstract class Game {
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
-		glEnableVertexAttribArray(3);
 
 		// Set Projection
 		engine.getWindow().setProjectionMatrix(
@@ -54,8 +57,9 @@ public abstract class Game {
 
 		Matrix4f viewMatrix = new Matrix4f();
 		viewMatrix = viewMatrix.multiply(Matrix4f.translate(0f, 0f, -30f));
-		viewMatrix = viewMatrix.multiply(Matrix4f.rotate(65f, 1f, 0f, 0f));
+		viewMatrix = viewMatrix.multiply(Matrix4f.rotate(35f, 1f, 0f, 0f));
 		viewMatrix = viewMatrix.multiply(Matrix4f.rotate(trans * 100.0f, 0f, 1f, 0f));
+		trans += .0001 * engine.getDeltaTime();
 
 		engine.getWindow().setViewMatrix(viewMatrix);
 
@@ -67,7 +71,6 @@ public abstract class Game {
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
-		glDisableVertexAttribArray(3);
 	}
 
 	final public void update(float deltaTime) {
@@ -82,6 +85,14 @@ public abstract class Game {
 		if (currentScene != null) {
 			currentScene.exitScene();
 		}
+
+		ModelReference.clearBuffers();
+		ModelReference.setBlankModel();
+		for (ModelData md : scene.getSceneModels()) {
+			ModelReference.load(md);
+		}
+		ModelReference.compileBuffer();
+
 		scene.enterScene();
 		currentScene = scene;
 		readyTransitionScene = null;
@@ -99,13 +110,15 @@ public abstract class Game {
 
 	abstract public void breakdown();
 
-	abstract public void loadInitialScene();
+	abstract public Scene loadInitialScene();
 
 	abstract public int getWidth();
 
 	abstract public int getHeight();
 
 	abstract public String getTitle();
+
+	abstract public String getMainDirectory();
 
 	@Deprecated
 	public void rotateLeft() {

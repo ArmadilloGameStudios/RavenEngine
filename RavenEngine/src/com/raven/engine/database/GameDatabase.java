@@ -1,5 +1,7 @@
 package com.raven.engine.database;
 
+import com.raven.engine.GameEngine;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,7 +26,7 @@ public class GameDatabase {
 		try {
 			System.out.println("Connecting to database.");
 
-			File dataDirectory = new File("TacticianMercSquad" + File.separator + "data");
+			File dataDirectory = new File(GameEngine.getEngine().getGame().getMainDirectory() + File.separator + "data");
 
 			// Find Tables
 			for (File f : dataDirectory.listFiles()) {

@@ -38,8 +38,8 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL32.*;
-import static org.lwjgl.opengl.GL45.*;
 import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL45.glNamedFramebufferDrawBuffers;
 import static org.lwjgl.opengl.GL45.glTextureSubImage2D;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -71,10 +71,15 @@ public class GameWindow3D {
     private long window;
 
     private int mainProgram, drawFBOProgram, bloomProgram, fbo, fboColorTexture,
-            fboGlowTexture, fboIDTexture, fboRenderBuffer, fbohor, fbohorBloomTexture, fbohorRenderBuffer;
+            fboGlowTexture, fboIDTexture, fboRenderBuffer, fbo_ms, fboColorTexture_ms,
+            fboGlowTexture_ms, fboIDTexture_ms, fboRenderBuffer_ms, fbohor, fbohorBloomTexture, fbohorRenderBuffer;
 
     private int uProjectionMatrix, uViewMatrix, uModelMatrix;
-    private int uTextureColorfbo, uTextureGlowfbo, uID, uBloomStepfbo, uBloomStephor, uTextureGlowhor;
+    private int uTextureColorfbo, uTextureBloomfbo, uID, uBloomStepfbo, uBloomStephor, uTextureGlowhor;
+
+    private int uScreenSizeB, uScreenSize;
+
+    private int ms_count = 4;
 
     private GameEngine engine;
 
@@ -99,6 +104,7 @@ public class GameWindow3D {
             glfwDefaultWindowHints();
             glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
             glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+            // glfwWindowHint(GLFW_SAMPLES, 8);
 
             // Create the window
             window = glfwCreateWindow(engine.getGame().getWidth(), engine
@@ -125,6 +131,7 @@ public class GameWindow3D {
 
             // Make the OpenGL context current
             glfwMakeContextCurrent(window);
+
             // Enable v-sync
             glfwSwapInterval(1);
 
@@ -145,6 +152,7 @@ public class GameWindow3D {
                 }
             });
 
+
             GL.createCapabilities();
 
             // Shaders
@@ -154,8 +162,6 @@ public class GameWindow3D {
             glBindAttribLocation(mainProgram, 0, "vertex_pos");
             glBindAttribLocation(mainProgram, 1, "vertex_color");
             glBindAttribLocation(mainProgram, 2, "vertex_normal");
-            glBindAttribLocation(mainProgram, 3, "vertex_glow");
-
 
             uProjectionMatrix = glGetUniformLocation(mainProgram, "P");
             uModelMatrix = glGetUniformLocation(mainProgram, "M");
@@ -171,14 +177,18 @@ public class GameWindow3D {
             uTextureGlowhor = glGetUniformLocation(bloomProgram, "glowTexture");
 			uBloomStephor = glGetUniformLocation(bloomProgram, "bloomStep");
 
+            uScreenSizeB = glGetUniformLocation(bloomProgram, "screen_size");
+
 			glLinkProgram(bloomProgram);
 
             // combine
             drawFBOProgram = loadProgram("vertex2.glsl", "fragment2.glsl");
 
             uTextureColorfbo = glGetUniformLocation(drawFBOProgram, "colorTexture");
-            uTextureGlowfbo = glGetUniformLocation(drawFBOProgram, "glowTexture");
+            uTextureBloomfbo = glGetUniformLocation(drawFBOProgram, "glowTexture");
             uBloomStepfbo = glGetUniformLocation(drawFBOProgram, "bloomStep");
+
+            uScreenSize = glGetUniformLocation(drawFBOProgram, "screen_size");
 
             glLinkProgram(drawFBOProgram);
 
@@ -187,8 +197,7 @@ public class GameWindow3D {
             setupBloomHorFBO();
 
             // Enable multisample
-            // glfwWindowHint(GLFW_SAMPLES, 8);
-            // glEnable(GL_MULTISAMPLE);
+            glEnable(GL_MULTISAMPLE);
 
             glEnable(GL_DEPTH_TEST);
 
@@ -257,6 +266,61 @@ public class GameWindow3D {
     }
 
     private void setupFBO() {
+        fbo_ms = glGenFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo_ms);
+
+        // FBO Textures
+        // Color
+        fboColorTexture_ms = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, fboColorTexture_ms);
+
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, ms_count, GL_RGB, engine.getGame().getWidth(),
+                engine.getGame().getHeight(), true);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, fboColorTexture_ms, 0);
+
+        // Glow
+        fboGlowTexture_ms = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, fboGlowTexture_ms);
+
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, ms_count, GL_RGB, engine.getGame().getWidth(),
+                engine.getGame().getHeight(), true);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE, fboGlowTexture_ms, 0);
+
+        // ID
+        fboIDTexture_ms = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, fboIDTexture_ms);
+
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, ms_count, GL_RGB, engine.getGame().getWidth(),
+                engine.getGame().getHeight(), true);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D_MULTISAMPLE, fboIDTexture_ms, 0);
+
+        // Draw buffers
+        IntBuffer fboBuffers = BufferUtils.createIntBuffer(3);
+        int bfs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
+        for (int i = 0; i < bfs.length; i++)
+            fboBuffers.put(bfs[i]);
+        fboBuffers.flip();
+
+        glNamedFramebufferDrawBuffers(fbo_ms, fboBuffers);
+
+        // Depth
+        fboRenderBuffer_ms = glGenRenderbuffers();
+        glBindRenderbuffer(GL_RENDERBUFFER, fboRenderBuffer_ms);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, ms_count, GL_DEPTH_COMPONENT, engine
+                .getGame().getWidth(), engine.getGame().getHeight());
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                GL_RENDERBUFFER, fboRenderBuffer_ms);
+
+        // Errors
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            System.out.println("FBO_MS Failed: 0x"
+                    + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
+        }
+
+        // resolve ms
         fbo = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
@@ -271,8 +335,7 @@ public class GameWindow3D {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                fboColorTexture, 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, fboColorTexture, 0);
 
         // Glow
         fboGlowTexture = glGenTextures();
@@ -284,8 +347,7 @@ public class GameWindow3D {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1,
-                fboGlowTexture, 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, fboGlowTexture, 0);
 
         // ID
         fboIDTexture = glGenTextures();
@@ -297,18 +359,16 @@ public class GameWindow3D {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2,
-                fboIDTexture, 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, fboIDTexture, 0);
 
         // Draw buffers
-        IntBuffer fboBuffers = BufferUtils.createIntBuffer(3);
-        int bfs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
-                GL_COLOR_ATTACHMENT2};
-        for (int i = 0; i < bfs.length; i++)
-            fboBuffers.put(bfs[i]);
-        fboBuffers.flip();
+        IntBuffer fboBuffers2 = BufferUtils.createIntBuffer(3);
+        int bfs2[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
+        for (int i = 0; i < bfs2.length; i++)
+            fboBuffers2.put(bfs2[i]);
+        fboBuffers2.flip();
 
-        glDrawBuffers(fboBuffers);
+        glNamedFramebufferDrawBuffers(fbo, fboBuffers2);
 
         // Depth
         fboRenderBuffer = glGenRenderbuffers();
@@ -320,9 +380,11 @@ public class GameWindow3D {
 
         // Errors
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            System.out.println("FBO Failed: "
-                    + glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            System.out.println("FBO Failed: 0x"
+                    + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
         }
+
+        // the buffer post ms buffer
     }
 
     private void setupBloomHorFBO() {
@@ -340,17 +402,16 @@ public class GameWindow3D {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                fbohorBloomTexture, 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, fbohorBloomTexture, 0);
 
         // Draw buffers
-        IntBuffer fboBuffers = BufferUtils.createIntBuffer(3);
+        IntBuffer fboBuffers = BufferUtils.createIntBuffer(1);
         int bfs[] = { GL_COLOR_ATTACHMENT0 };
         for (int i = 0; i < bfs.length; i++)
             fboBuffers.put(bfs[i]);
         fboBuffers.flip();
 
-        glDrawBuffers(fboBuffers);
+        glNamedFramebufferDrawBuffers(fbohor, fboBuffers);
 
         // Depth
         fbohorRenderBuffer = glGenRenderbuffers();
@@ -362,8 +423,8 @@ public class GameWindow3D {
 
         // Errors
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            System.out.println("FBOHOR Failed: "
-                    + glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            System.out.println("FBOHOR Failed: 0x"
+                    + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
         }
     }
 
@@ -380,10 +441,12 @@ public class GameWindow3D {
 
         // Bind the glow
         glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, fboGlowTexture);
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, fboGlowTexture_ms);
         glUniform1i(uTextureGlowhor, 3);
 
         glUniform2f(uBloomStephor, 1f / engine.getGame().getWidth(), 0f);
+
+        glUniform2i(uScreenSizeB, engine.getGame().getWidth(), engine.getGame().getHeight());
     }
 
     public void setProgramDrawFBO() {
@@ -397,7 +460,7 @@ public class GameWindow3D {
         // Bind the glow
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, fbohorBloomTexture);
-        glUniform1i(uTextureGlowfbo, 1);
+        glUniform1i(uTextureBloomfbo, 1);
 
         glUniform2f(uBloomStepfbo, 0f, 1f / engine.getGame().getHeight());
     }
@@ -407,7 +470,7 @@ public class GameWindow3D {
     }
 
     public void setRenderTargetFBO(boolean clear) {
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo_ms);
 
         glViewport(0, 0, engine.getGame().getWidth(), engine.getGame().getHeight());
 
@@ -443,9 +506,19 @@ public class GameWindow3D {
                 .getHeight());
 
         if (clear) {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
+    }
+
+    public void flipRenderTarget() {
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_ms);
+
+        glBlitFramebuffer(
+                0, 0, engine.getGame().getWidth(), engine.getGame().getHeight(),
+                0, 0, engine.getGame().getWidth(), engine.getGame().getHeight(),
+                GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
 
     public void drawFBO() {

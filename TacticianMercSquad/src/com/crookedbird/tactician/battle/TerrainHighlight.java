@@ -20,6 +20,6 @@ public class TerrainHighlight extends WorldObject {
 			public boolean matches(GameData row) {
 				return row.getData("Color").getString().equalsIgnoreCase(color);
 			}
-		}).getData("img"));
+		}).getData("model"));
 	}
 }

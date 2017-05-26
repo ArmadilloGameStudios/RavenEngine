@@ -1,4 +1,9 @@
 {
 	name: "StatHolder",
-	img: "img/sidebar/statholder.png"
+	modelFrames: {
+        src: "modelFrames/terrain/sand",
+        width: 16,
+        height: 16,
+        length: 16,
+    }
 }

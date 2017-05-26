@@ -2,6 +2,10 @@ package com.raven.engine;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.GL_DRAW_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.glBindFramebuffer;
+import static org.lwjgl.opengl.GL30.glBlitFramebuffer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,6 +18,7 @@ import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataQuery;
 import com.raven.engine.database.GameDatabase;
 import com.raven.engine.graphics3d.GameWindow3D;
+import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.ModelFrames;
 import com.raven.engine.graphics3d.ModelReference;
 import com.raven.engine.worldobject.WorldObject;
@@ -77,7 +82,7 @@ public class GameEngine implements Runnable {
 	}
 	
 	public ModelFrames getModelReferenceAsset(String name) {
-		ModelFrames g = modelAssets.get("TacticianMercSquad" + File.separator + name.replace('\\', File.separatorChar));
+		ModelFrames g = modelAssets.get(game.getMainDirectory() + File.separator + name.replace('\\', File.separatorChar));
 
 		if (g == null) {
 			// g = ModelReference.getBlankModel();
@@ -125,7 +130,7 @@ public class GameEngine implements Runnable {
 
 		game.setup();
 
-		game.loadInitialScene();
+		game.transitionScene(game.loadInitialScene());
 
 		ModelReference.compileBuffer();
 
@@ -138,7 +143,7 @@ public class GameEngine implements Runnable {
 			draw();
 			input();
 			game.update(deltaTime);
-			pause(start);
+			// pause(start);
 
 			glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
 
@@ -157,10 +162,26 @@ public class GameEngine implements Runnable {
 		System.exit(0);
 	}
 
+	private void draw_old() {
+		window.setProgramMain();
+		window.setRenderTargetFBO(true);
+		game.draw3d();
+		window.flipRenderTarget();
+
+		window.setProgramBloomHorizontal();
+		window.setRenderTargetFBOHOR(true);
+		window.drawFBO();
+
+		window.setProgramDrawFBO();
+		window.setRenderTargetWindow(true);
+		window.drawFBO();
+	}
+
 	private void draw() {
 		window.setProgramMain();
 		window.setRenderTargetFBO(true);
 		game.draw3d();
+		window.flipRenderTarget();
 
 		window.setProgramBloomHorizontal();
 		window.setRenderTargetFBOHOR(true);
@@ -173,7 +194,9 @@ public class GameEngine implements Runnable {
 
 	private void input() {
 		int id = window.getWorldObjectID();
-		if (id != 0) {
+		if (id != 0 && false) {
+			System.out.println("id: " + id);
+
 			WorldObject clicked = WorldObject.getWorldObjectFromID(id);
 
 			List<WorldObject> newList = clicked.getParentWorldObjectList();
@@ -228,15 +251,12 @@ public class GameEngine implements Runnable {
 	private void loadDatabaseAndModels() {
 		// searchAndLoadAssets(new File("assets"));
 
-		File modelDirectory = new File("TacticianMercSquad" + File.separator + "model");
+		File modelDirectory = new File(game.getMainDirectory() + File.separator + "model");
 		loadModels(modelDirectory);
 
 		for (String img : modelAssets.keySet()) {
 			System.out.println(img);
 		}
-
-		// File animDirectory = new File("anim");
-		// loadAnimations(animDirectory);
 
 		gdb = new GameDatabase();
 		gdb.load();
@@ -246,7 +266,7 @@ public class GameEngine implements Runnable {
 		for (File f : base.listFiles()) {
 			if (f.isFile()) {
 				System.out.println(f.getPath());
-				modelAssets.put(f.getPath(), ModelReference.load(f));
+				modelAssets.put(f.getPath(), ModelData.load(f));
 			} else if (f.isDirectory()) {
 				loadModels(f);
 			}

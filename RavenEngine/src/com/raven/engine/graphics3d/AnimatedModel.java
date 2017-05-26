@@ -6,7 +6,17 @@ import com.raven.engine.database.GameData;
 public class AnimatedModel {
 	private int width, height, length;
 
-	private ModelFrames modelAnim;
+	private ModelFrames modelFramesAnim;
+
+	public AnimatedModel(ModelData data) {
+		width = 16;
+		height = 16;
+		length = 16;
+
+		modelFramesAnim = data.getModelFrames();
+
+		data.setAnimatedModel(this);
+	}
 
 	public AnimatedModel(GameData modelData) {
 		if (modelData.getData("width") != null
@@ -30,12 +40,16 @@ public class AnimatedModel {
 			length = 16;
 		}
 
-		modelAnim = GameEngine.getEngine().getModelReferenceAsset(
+		modelFramesAnim = GameEngine.getEngine().getModelReferenceAsset(
 				modelData.getData("src").getString());
 	}
 
+	void updateModelFrames(ModelData data) {
+		modelFramesAnim = data.getModelFrames();
+	}
+
 	public void draw(String animationstate, long timeOffset) {
-		modelAnim.getModel(animationstate, timeOffset).draw();
+		modelFramesAnim.getModel(animationstate, timeOffset).draw();
 	}
 
 	public void drawError() {
@@ -55,6 +69,6 @@ public class AnimatedModel {
 	}
 
 	public int getFrameTime(String animationstate) {
-		return modelAnim.getFrameTime(animationstate);
+		return modelFramesAnim.getFrameTime(animationstate);
 	}
 }
