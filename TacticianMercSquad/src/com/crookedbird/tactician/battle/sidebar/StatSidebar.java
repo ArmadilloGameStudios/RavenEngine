@@ -3,8 +3,8 @@ package com.crookedbird.tactician.battle.sidebar;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.crookedbird.engine.worldobject.Parentable;
-import com.crookedbird.engine.worldobject.WorldObject;
+import com.raven.engine.worldobject.Parentable;
+import com.raven.engine.worldobject.WorldObject;
 import com.crookedbird.tactician.battle.unit.UnitStats;
 
 public class StatSidebar extends WorldObject {

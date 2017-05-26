@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.crookedbird.engine.Game;
-import com.crookedbird.engine.scene.Layer;
-import com.crookedbird.engine.scene.Scene;
+import com.raven.engine.Game;
+import com.raven.engine.scene.Layer;
+import com.raven.engine.scene.Scene;
 import com.crookedbird.tactician.battle.sidebar.ActionSidebar;
 import com.crookedbird.tactician.battle.sidebar.StatSidebar;
 import com.crookedbird.tactician.battle.unit.Unit;
@@ -18,7 +18,6 @@ import com.crookedbird.tactician.generation.Generation;
 import com.crookedbird.tactician.generation.LevelGenerationProperties;
 import com.crookedbird.tactician.player.Player;
 import com.crookedbird.tactician.player.PlayerAI;
-import com.crookedbird.tactician.player.PlayerHuman;
 
 public class BattleScene extends Scene {
 	private Game game;

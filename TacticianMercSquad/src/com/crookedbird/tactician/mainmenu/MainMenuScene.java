@@ -1,10 +1,9 @@
 package com.crookedbird.tactician.mainmenu;
 
-import com.crookedbird.engine.Game;
-import com.crookedbird.engine.input.MouseClickInput;
-import com.crookedbird.engine.scene.Layer;
-import com.crookedbird.engine.scene.Scene;
-import com.crookedbird.engine.worldobject.ClickHandler;
+import com.raven.engine.Game;
+import com.raven.engine.scene.Layer;
+import com.raven.engine.scene.Scene;
+import com.raven.engine.worldobject.MouseHandler;
 import com.crookedbird.tactician.battle.BattleScene;
 
 public class MainMenuScene extends Scene {
@@ -26,12 +25,6 @@ public class MainMenuScene extends Scene {
 
 		bg = new MainMenuBackground(backgroundLayer);
 		sb = new MainMenuStartButton(backgroundLayer);
-		sb.addClickHandler(new ClickHandler() {
-			@Override
-			public void onMouseClick(MouseClickInput m) {
-				game.prepTransitionScene(new BattleScene(game));
-			}
-		});
 
 		backgroundLayer.addChild(bg);
 		backgroundLayer.addChild(sb);

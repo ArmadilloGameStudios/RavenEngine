@@ -1,14 +1,17 @@
 package com.crookedbird.tactician.mainmenu;
 
-import com.crookedbird.engine.GameEngine;
-import com.crookedbird.engine.database.GameData;
-import com.crookedbird.engine.database.GameDataQuery;
-import com.crookedbird.engine.scene.Layer;
-import com.crookedbird.engine.worldobject.WorldObject;
+import com.crookedbird.tactician.battle.BattleScene;
+import com.raven.engine.GameEngine;
+import com.raven.engine.database.GameData;
+import com.raven.engine.database.GameDataQuery;
+import com.raven.engine.scene.Layer;
+import com.raven.engine.worldobject.MouseHandler;
+import com.raven.engine.worldobject.WorldObject;
 
 public class MainMenuStartButton extends WorldObject {
-	public MainMenuStartButton(Layer parent) {
-		super(parent, GameEngine.getEngine()
+
+	private static GameData getGameData() {
+		return GameEngine.getEngine()
 				.getFirstFromGameDatabase("StartScreen", new GameDataQuery() {
 					public boolean matches(GameData row) {
 						return row.getData("name") != null
@@ -17,9 +20,33 @@ public class MainMenuStartButton extends WorldObject {
 										.equals("MainMenuStartButton");
 					}
 
-				}).getData("img"));
+				}).getData("model");
+	}
+	
+	public MainMenuStartButton(Layer parent) {
+		super(parent, getGameData());
 
-		setX((parent.getWidth() - getWidth()) / 2);
-		setY(250);
+
+		addMouseHandler(new MouseHandler() {
+			@Override
+			public void onMouseClick() {
+				GameEngine.getEngine().getGame().prepTransitionScene(new BattleScene(GameEngine.getEngine().getGame()));
+			}
+
+			@Override
+			public void onMouseEnter() {
+				setAnimationState("hover");
+			}
+
+			@Override
+			public void onMouseLeave() {
+				setAnimationState("idle");
+			}
+
+			@Override
+			public void onMouseMove() {
+
+			}
+		});
 	}
 }

@@ -1,11 +1,11 @@
 package com.crookedbird.tactician.battle.sidebar;
 
-import com.crookedbird.engine.GameEngine;
-import com.crookedbird.engine.database.GameData;
-import com.crookedbird.engine.database.GameDataQuery;
-import com.crookedbird.engine.worldobject.Parentable;
-import com.crookedbird.engine.worldobject.TextObject;
-import com.crookedbird.engine.worldobject.WorldObject;
+import com.raven.engine.GameEngine;
+import com.raven.engine.database.GameData;
+import com.raven.engine.database.GameDataQuery;
+import com.raven.engine.worldobject.Parentable;
+import com.raven.engine.worldobject.TextObject;
+import com.raven.engine.worldobject.WorldObject;
 
 public class Holder extends WorldObject {
 	private static final int baseline = 28;
@@ -17,7 +17,7 @@ public class Holder extends WorldObject {
 			public boolean matches(GameData row) {
 				return row.getData("Name").getString().equalsIgnoreCase("StatHolder");
 			}
-		}).getData("img"), x, y);
+		}).getData("model"), x, y);
 
 		addText(des = new TextObject());
 		des.setY(baseline);

@@ -4,11 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.crookedbird.engine.GameEngine;
-import com.crookedbird.engine.database.GameData;
-import com.crookedbird.engine.input.MouseClickInput;
-import com.crookedbird.engine.worldobject.ClickHandler;
-import com.crookedbird.engine.worldobject.WorldObject;
+import com.raven.engine.GameEngine;
+import com.raven.engine.database.GameData;
+import com.raven.engine.worldobject.MouseHandler;
+import com.raven.engine.worldobject.WorldObject;
 import com.crookedbird.tactician.battle.unit.Unit;
 import com.crookedbird.tactician.battle.unit.action.UnitAction;
 
@@ -25,7 +24,7 @@ public class Terrain extends WorldObject {
 	}
 
 	public Terrain(Level l, GameData data, int x, int y) {
-		super(l, data.getData("img"), x, y);
+		super(l, data.getData("model"), x, y);
 
 		this.level = l;
 
@@ -52,9 +51,9 @@ public class Terrain extends WorldObject {
 		passable = data.getData("Passable") != null
 				&& data.getData("Passable").getBoolean();
 
-		addClickHandler(new ClickHandler() {
+		addMouseHandler(new MouseHandler() {
 			@Override
-			public void onMouseClick(MouseClickInput e) {
+			public void onMouseClick() {
 				switch (level.getState()) {
 				case UNIT_SELECTION:
 					break;
@@ -70,6 +69,13 @@ public class Terrain extends WorldObject {
 					break;
 				}
 			}
+
+			@Override
+			public void onMouseEnter() { }
+			@Override
+			public void onMouseLeave() { }
+
+			public void onMouseMove() { }
 		});
 	}
 

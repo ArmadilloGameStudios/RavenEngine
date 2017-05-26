@@ -1,8 +1,18 @@
 {
 	name: "MainMenuBackground",
-	img: "img/mainmenu/background.png"
+	modelFrames: {
+		src: "modelFrames/mainmenu/background",
+		width: 16,
+		height: 16,
+		length: 16,
+	}
 },
 {
 	name: "MainMenuStartButton",
-	img: "img/mainmenu/startbutton.png"
+	modelFrames: {
+		src: "modelFrames/mainmenu/startbutton",
+		width: 22,
+		height: 8,
+		length: 2,
+	}
 }
