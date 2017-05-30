@@ -42,36 +42,8 @@ public abstract class Game {
 		return currentScene;
 	}
 
-	float trans = 0;
-
 	final public void draw3d() {
-		// Enable the custom mode attribute
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
-
-		// Set Projection
-		engine.getWindow().setProjectionMatrix(
-				Matrix4f.perspective(60.0f, ((float) getWidth())
-						/ ((float) getHeight()), 1f, 1000.0f));
-
-		Matrix4f viewMatrix = new Matrix4f();
-		viewMatrix = viewMatrix.multiply(Matrix4f.translate(0f, 0f, -30f));
-		viewMatrix = viewMatrix.multiply(Matrix4f.rotate(35f, 1f, 0f, 0f));
-		viewMatrix = viewMatrix.multiply(Matrix4f.rotate(trans * 100.0f, 0f, 1f, 0f));
-		// viewMatrix = viewMatrix.multiply(Matrix4f.rotate(trans * 200.0f, 1f, .5f, 0f));
-		trans += .0001 * engine.getDeltaTime();
-
-		engine.getWindow().setViewMatrix(viewMatrix);
-
-		engine.getWindow().setModelMatrix(new Matrix4f());
-
 		currentScene.draw();
-
-		// Disable the custom mode attribute
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
 	}
 
 	final public void update(float deltaTime) {
@@ -120,14 +92,4 @@ public abstract class Game {
 	abstract public String getTitle();
 
 	abstract public String getMainDirectory();
-
-	@Deprecated
-	public void rotateLeft() {
-		trans -= .002;
-	}
-
-	@Deprecated
-	public void rotateRight() {
-		trans += .002;
-	}
 }

@@ -23,5 +23,5 @@ void main(void) {
 	float glowStrength = min(max(max(bloomGlow.r, bloomGlow.g), bloomGlow.b), 1.0);
 	
 	frag_color = color * (1.0 - glowStrength) + bloomGlow;
-	// frag_color = bloomGlow;
+	frag_color = color;
 }

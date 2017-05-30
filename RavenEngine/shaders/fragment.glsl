@@ -8,7 +8,7 @@ uniform vec3 id;
 in vec3 light, lightGlow, color;
 
 void main(void) {
-    frag_color = light * color;
+    frag_color = color * light;
 	frag_glow = lightGlow;
 	frag_id = id;
 }

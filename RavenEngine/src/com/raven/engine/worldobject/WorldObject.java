@@ -206,10 +206,8 @@ public abstract class WorldObject implements Parentable {
 	}
 
 	public void draw() {
-		glTranslated(this.x, this.y, this.z);
+		GameEngine.getEngine().getWindow().getWorldShader().setWorldObjectID(id);
 
-		GameEngine.getEngine().getWindow().setWorldObjectID(id);
-		
 		this.animatedReference.draw(animationstate, GameEngine.getEngine().getSystemTime() - timeOffset);
 	}
 

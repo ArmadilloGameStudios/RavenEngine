@@ -9,9 +9,9 @@ import java.util.List;
  * Created by cookedbird on 5/8/17.
  */
 public class ModelData {
-    private static List<Float> vertex_list;
-    private static List<Float> normal_list;
-    private static List<Float> colors_list;
+    private List<Float> vertex_list;
+    private List<Float> normal_list;
+    private List<Float> colors_list;
     private ModelFrames modelFrames;
     private AnimatedModel model = null;
 

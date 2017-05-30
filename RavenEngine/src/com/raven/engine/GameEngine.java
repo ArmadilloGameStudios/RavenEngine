@@ -143,7 +143,6 @@ public class GameEngine implements Runnable {
 			draw();
 			input();
 			game.update(deltaTime);
-			// pause(start);
 
 			glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
 
@@ -162,38 +161,34 @@ public class GameEngine implements Runnable {
 		System.exit(0);
 	}
 
-	private void draw_old() {
-		window.setProgramMain();
-		window.setRenderTargetFBO(true);
-		game.draw3d();
-		window.flipRenderTarget();
-
-		window.setProgramBloomHorizontal();
-		window.setRenderTargetFBOHOR(true);
-		window.drawFBO();
-
-		window.setProgramDrawFBO();
-		window.setRenderTargetWindow(true);
-		window.drawFBO();
-	}
+//	private void draw_old() {
+//		window.setProgramMain();
+//		window.setRenderTargetFBO(true);
+//		game.draw3d();
+//		window.flipRenderTarget();
+//
+//		window.setProgramBloomHorizontal();
+//		window.setRenderTargetFBOHOR(true);
+//		window.drawFBO();
+//
+//		window.setProgramDrawFBO();
+//		window.setRenderTargetWindow(true);
+//		window.drawFBO();
+//	}
 
 	private void draw() {
-		window.setProgramMain();
-		window.setRenderTargetFBO(true);
 		game.draw3d();
-		window.flipRenderTarget();
+		window.getWorldShader().flipRenderTarget();
 
-		window.setProgramBloomHorizontal();
-		window.setRenderTargetFBOHOR(true);
+		window.getBloomShader().useProgram();
 		window.drawFBO();
 
-		window.setProgramDrawFBO();
-		window.setRenderTargetWindow(true);
+		window.getCombinationShader().useProgram();
 		window.drawFBO();
 	}
 
 	private void input() {
-		int id = window.getWorldObjectID();
+		int id = window.getWorldShader().getWorldObjectID();
 		if (id != 0 && false) {
 			System.out.println("id: " + id);
 

@@ -28,7 +28,10 @@ public class TerrainMap {
     public void genMap() {
         // Create starting vertices
         Random r = new Random();
-        SimplexNoise noise = new SimplexNoise(r.nextInt());
+        // int seed = -377377594; //r.nextInt();
+        int seed = r.nextInt();
+        System.out.println("Seed: " + seed);
+        SimplexNoise noise = new SimplexNoise(seed);
 
         heightPoints = new Vector3f[width + 1][];
 
@@ -53,6 +56,12 @@ public class TerrainMap {
                 }
 
                 y_pos = (float)Math.exp(y_pos * 1.3) * (float)Math.max(0.0, (1.2 - (x_pos * x_pos + z_pos * z_pos) / 500.0));
+                y_pos -= .45f;
+
+                if (y_pos < 0f) {
+                    y_pos -= .1;
+                }
+
                 heightPoints[x][z] = new Vector3f(x_pos, y_pos, z_pos);
             }
         }
@@ -60,10 +69,10 @@ public class TerrainMap {
         // Create faces
         data = new TerrainData[width][];
         for (int x = 0; x < width; x++) {
-            data[x] = new TerrainData[height * 2];
+            data[x] = new TerrainData[height * 2 - 1];
 
             for (int z = 0; z < height * 2 - 1; z++) {
-                TerrainData d = new TerrainData();
+                TerrainData d = new TerrainData(this, x, z);
                 if (x % 2 == 0) {
                     if (z % 2 == 0) {
                         d.setVertices(heightPoints[x + 1][z / 2], heightPoints[x][z / 2], heightPoints[x + 1][z / 2 + 1]);
@@ -79,6 +88,42 @@ public class TerrainMap {
                 }
 
                 data[x][z] = d;
+            }
+        }
+
+        // Set Types
+        for (TerrainData[] ds : data) {
+            for (TerrainData d : ds) {
+                if (d.getMinHeight() > .05f) {
+                    d.setType(TerrainData.Grass);
+                }
+
+                if (d.getNormal().y < .6f) {
+                    d.setType(TerrainData.Stone);
+                }
+            }
+        }
+
+        for (TerrainData[] ds : data) {
+            for (TerrainData d : ds) {
+                int stoneCount = 0;
+
+                for (TerrainData adjD : d.getAdjacentTerrainData()) {
+                    if (adjD.getType() == TerrainData.Stone)
+                        stoneCount += 1;
+                }
+
+                if (stoneCount >= 2 && d.getType() != TerrainData.Stone) {
+                    d.setType(TerrainData.Stone_add);
+                }
+            }
+        }
+
+        for (TerrainData[] ds : data) {
+            for (TerrainData d : ds) {
+                if (d.getType() == TerrainData.Stone_add) {
+                    d.setType(TerrainData.Stone);
+                }
             }
         }
     }
@@ -113,5 +158,17 @@ public class TerrainMap {
         model.setColorData(colors);
 
         return model;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public TerrainData[][] getTerrainData() {
+        return this.data;
     }
 }

@@ -3,15 +3,30 @@ package com.raven.engine.scene;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.raven.engine.GameEngine;
+import com.raven.engine.graphics3d.GameWindow3D;
+import com.raven.engine.util.Matrix4f;
 import com.raven.engine.worldobject.Parentable;
 import com.raven.engine.worldobject.WorldObject;
 
 public class Layer implements Parentable {
+	public enum Destination { Normal, Water };
+
 	private Scene scene;
+	private Destination destination;
 	private List<WorldObject> gameObjectList = new CopyOnWriteArrayList<WorldObject>();
 
+	private GameWindow3D window;
+
 	public Layer(Scene scene) {
+		this(scene, Destination.Normal);
+	}
+
+	public Layer(Scene scene, Destination destination) {
+		this.destination = destination;
 		this.scene = scene;
+
+		this.window = GameEngine.getEngine().getWindow();
 	}
 
 	public List<WorldObject> getGameObjectList() {
@@ -22,7 +37,34 @@ public class Layer implements Parentable {
 		gameObjectList.add(obj);
 	}
 
+	float trans = 0;
 	public void draw() {
+		switch (destination) {
+			case Water:
+				// window.getWorldShader().useProgram();
+				break;
+			case Normal:
+			default:
+				window.getWorldShader().useProgram();
+				break;
+		}
+
+		// Set Projection
+		window.getWorldShader().setProjectionMatrix(
+				Matrix4f.perspective(60.0f, ((float) getWidth())
+						/ ((float) getHeight()), 10f, 100.0f));
+
+		Matrix4f viewMatrix = new Matrix4f();
+		viewMatrix = viewMatrix.multiply(Matrix4f.translate(0f, 0f, -30f));
+		viewMatrix = viewMatrix.multiply(Matrix4f.rotate(45f, 1f, 0f, 0f));
+		viewMatrix = viewMatrix.multiply(Matrix4f.rotate(trans * 100.0f, 0f, 1f, 0f));
+
+		trans += .0001 * GameEngine.getEngine().getDeltaTime();
+
+		window.getWorldShader().setViewMatrix(viewMatrix);
+
+		window.getWorldShader().setModelMatrix(new Matrix4f());
+
 		for (WorldObject o : gameObjectList) {
 			o.draw();
 		}
