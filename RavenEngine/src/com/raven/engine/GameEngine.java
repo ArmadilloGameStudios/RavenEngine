@@ -2,10 +2,6 @@ package com.raven.engine;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.GL_DRAW_FRAMEBUFFER;
-import static org.lwjgl.opengl.GL30.glBindFramebuffer;
-import static org.lwjgl.opengl.GL30.glBlitFramebuffer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -161,30 +157,21 @@ public class GameEngine implements Runnable {
 		System.exit(0);
 	}
 
-//	private void draw_old() {
-//		window.setProgramMain();
-//		window.setRenderTargetFBO(true);
-//		game.draw3d();
-//		window.flipRenderTarget();
-//
-//		window.setProgramBloomHorizontal();
-//		window.setRenderTargetFBOHOR(true);
-//		window.drawFBO();
-//
-//		window.setProgramDrawFBO();
-//		window.setRenderTargetWindow(true);
-//		window.drawFBO();
-//	}
-
 	private void draw() {
+	    window.printErrors("Pre Draw ");
 		game.draw3d();
-		window.getWorldShader().flipRenderTarget();
+        window.printErrors("Draw ");
+		window.getWorldShader().blitFramebuffer();
+		window.getWaterShader().blitFramebuffer();
+        window.printErrors("Blit ");
 
 		window.getBloomShader().useProgram();
 		window.drawFBO();
+        window.printErrors("Bloom ");
 
 		window.getCombinationShader().useProgram();
 		window.drawFBO();
+        window.printErrors("Combine ");
 	}
 
 	private void input() {

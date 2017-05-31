@@ -15,41 +15,27 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glMultMatrixf;
-import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetShaderiv;
-import static org.lwjgl.opengl.GL20.glLinkProgram;
 import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL32.*;
 import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL45.glNamedFramebufferDrawBuffers;
 import static org.lwjgl.opengl.GL45.glTextureSubImage2D;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-import java.io.IOException;
-import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.raven.engine.graphics3d.shader.BloomShader;
-import com.raven.engine.graphics3d.shader.CombinationShader;
-import com.raven.engine.graphics3d.shader.Shader;
-import com.raven.engine.graphics3d.shader.WorldShader;
+import com.raven.engine.graphics3d.shader.*;
 import com.raven.engine.worldobject.WorldObject;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallbackI;
 import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
@@ -58,7 +44,6 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
 import com.raven.engine.GameEngine;
-import com.raven.engine.util.Matrix4f;
 
 public class GameWindow3D {
 
@@ -68,6 +53,7 @@ public class GameWindow3D {
     private int ms_count = 4;
 
     private WorldShader worldShader;
+    private WaterShader waterShader;
     private BloomShader bloomShader;
     private CombinationShader combinationShader;
 
@@ -146,9 +132,10 @@ public class GameWindow3D {
 
         // Shaders
         worldShader = new WorldShader();
+        waterShader = new WaterShader();
         bloomShader = new BloomShader(worldShader.getBloomTexture());
-        combinationShader = new CombinationShader(worldShader.getColorTexture(),
-                bloomShader.getBloomTexture());
+        combinationShader = new CombinationShader(worldShader, waterShader,
+                bloomShader);
 
         // Enable multisample
         glEnable(GL_MULTISAMPLE);
@@ -175,6 +162,9 @@ public class GameWindow3D {
         return bloomShader;
     }
 
+    public WaterShader getWaterShader() {
+        return waterShader;
+    }
     public CombinationShader getCombinationShader() {
         return combinationShader;
     }
@@ -209,13 +199,13 @@ public class GameWindow3D {
             activeShader.endProgram();
     }
 
-    public void getErrors() {
-        getErrors("");
+    public void printErrors() {
+        printErrors("");
     }
 
-    public void getErrors(String tag) {
+    public void printErrors(String tag) {
         int err;
-        if ((err = glGetError()) != GL_NO_ERROR) {
+        while ((err = glGetError()) != GL_NO_ERROR) {
             System.out.println(tag + "0x" + Integer.toHexString(err));
         }
     }
@@ -223,4 +213,5 @@ public class GameWindow3D {
     public Shader getActiveShader() {
         return activeShader;
     }
+
 }

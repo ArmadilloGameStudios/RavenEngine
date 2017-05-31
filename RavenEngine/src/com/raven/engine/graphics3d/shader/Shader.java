@@ -9,6 +9,7 @@ import java.nio.IntBuffer;
 import java.nio.file.Files;
 
 import static org.lwjgl.opengl.GL11.GL_TRUE;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL20.GL_VALIDATE_STATUS;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
@@ -18,6 +19,12 @@ import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
  */
 public abstract class Shader {
     int vertex_handel, fragment_handel, program_handel;
+
+    private static int nextTexture = 0;
+    protected static int getNextTexture() {
+        nextTexture++;
+        return GL_TEXTURE0 + nextTexture - 1;
+    }
 
     public Shader (String vertex_shader, String fragment_shader) {
         try {

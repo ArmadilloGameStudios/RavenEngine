@@ -4,16 +4,17 @@ import com.raven.engine.GameEngine;
 import com.raven.engine.util.Matrix4f;
 import org.lwjgl.BufferUtils;
 
-import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
-import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
+import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
-import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 import static org.lwjgl.opengl.GL32.glFramebufferTexture;
 import static org.lwjgl.opengl.GL32.glTexImage2DMultisample;
@@ -22,13 +23,11 @@ import static org.lwjgl.opengl.GL45.glNamedFramebufferDrawBuffers;
 /**
  * Created by cookedbird on 5/29/17.
  */
-public class WorldShader extends Shader {
+public class WaterShader extends Shader {
 
-    private int projection_location, model_location, view_location, id_location;
-    private int ms_framebuffer_handel, ms_renderbuffer_handel, ms_color_texture, ms_glow_texture,
-            ms_id_texture, ms_depth_texture;
-    private int framebuffer_handel, renderbuffer_handel, color_texture, bloom_texture,
-            id_texture, depth_texture;
+    private int projection_location, model_location, view_location;
+    private int ms_framebuffer_handel, ms_renderbuffer_handel, ms_color_texture, ms_glow_texture, ms_depth_texture;
+    private int framebuffer_handel, renderbuffer_handel, color_texture, bloom_texture, depth_texture;
 
     private Matrix4f projection_matrix = new Matrix4f(),
             model_matrix = new Matrix4f(),
@@ -36,10 +35,10 @@ public class WorldShader extends Shader {
 
     private IntBuffer buffers;
 
-    public WorldShader() {
-        super("vertex.glsl", "fragment.glsl");
+    public WaterShader() {
+        super("water_vertex.glsl", "water_fragment.glsl");
 
-        int bfs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+        int bfs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
         buffers = BufferUtils.createIntBuffer(bfs.length);
         for (int i = 0; i < bfs.length; i++)
             buffers.put(bfs[i]);
@@ -52,8 +51,6 @@ public class WorldShader extends Shader {
         projection_location = glGetUniformLocation(getProgramHandel(), "P");
         model_location = glGetUniformLocation(getProgramHandel(), "M");
         view_location = glGetUniformLocation(getProgramHandel(), "V");
-
-        id_location = glGetUniformLocation(getProgramHandel(), "id");
 
         glLinkProgram(getProgramHandel());
 
@@ -87,30 +84,6 @@ public class WorldShader extends Shader {
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE, ms_glow_texture, 0);
 
-        // ID
-        ms_id_texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_id_texture);
-
-        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
-                ms_count, GL_RGB,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
-                true);
-
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D_MULTISAMPLE, ms_id_texture, 0);
-
-        // Depth Texture
-//        ms_depth_texture = glGenTextures();
-//        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_depth_texture);
-//
-//        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
-//                ms_count, GL_DEPTH_COMPONENT32,
-//                GameEngine.getEngine().getGame().getWidth(),
-//                GameEngine.getEngine().getGame().getHeight(),
-//                true);
-//
-//        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, ms_depth_texture, 0);
-
         // Draw buffers
         buffers.rewind();
         glDrawBuffers(buffers);
@@ -126,7 +99,7 @@ public class WorldShader extends Shader {
 
         // Errors
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            System.out.println("FBO_MS Failed: 0x"
+            System.out.println("MS Water Shader Failed: 0x"
                     + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
         }
 
@@ -163,25 +136,15 @@ public class WorldShader extends Shader {
 
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, bloom_texture, 0);
 
-        // ID
-        id_texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, id_texture);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
-                0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, id_texture, 0);
+        // Draw buffers
+        buffers.rewind();
+        glDrawBuffers(buffers);
 
         // Depth
         depth_texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, depth_texture);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
                 GameEngine.getEngine().getGame().getWidth(),
                 GameEngine.getEngine().getGame().getHeight(),
                 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
@@ -191,13 +154,9 @@ public class WorldShader extends Shader {
 
         glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_texture, 0);
 
-        // Draw buffers
-        buffers.rewind();
-        glDrawBuffers(buffers);
-
         // Errors
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            System.out.println("World Shader Failed: 0x"
+            System.out.println("Water Shader Failed: 0x"
                     + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
         }
     }
@@ -256,43 +215,6 @@ public class WorldShader extends Shader {
         if(GameEngine.getEngine().getWindow().getActiveShader() == this)
             glUniformMatrix4fv(view_location, false, view_matrix.toBuffer());
     }
-
-    public void setWorldObjectID(int id) {
-        if (id != 0) {
-            int r = (id & 0x000000FF) >> 0;
-            int g = (id & 0x0000FF00) >> 8;
-            int b = (id & 0x00FF0000) >> 16;
-
-            glUniform3f(id_location, r / 255.0f, g / 255.0f, b / 255.0f);
-        }
-    }
-
-    private IntBuffer pixelreadBuffer = BufferUtils.createIntBuffer(1);
-    private DoubleBuffer coursorXPosBuffer = BufferUtils.createDoubleBuffer(1);
-    private DoubleBuffer coursorYPosBuffer = BufferUtils.createDoubleBuffer(1);
-    public int getWorldObjectID() {
-        glfwGetCursorPos(GameEngine.getEngine().getWindow().getWindowHandler(),
-                coursorXPosBuffer, coursorYPosBuffer);
-
-        glFlush();
-        glFinish();
-
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glReadBuffer(GL_COLOR_ATTACHMENT2);
-        glReadPixels((int)coursorXPosBuffer.get(),
-                GameEngine.getEngine().getGame().getHeight() - (int)coursorYPosBuffer.get(),
-                1, 1, GL_RGB, GL_UNSIGNED_BYTE, pixelreadBuffer);
-
-        int id = pixelreadBuffer.get();
-
-        pixelreadBuffer.flip();
-        coursorXPosBuffer.flip();
-        coursorYPosBuffer.flip();
-
-        return id;
-    }
-
     public int getColorTexture() {
         return color_texture;
     }
@@ -309,7 +231,6 @@ public class WorldShader extends Shader {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer_handel);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, ms_framebuffer_handel);
 
-        GameEngine.getEngine().getWindow().printErrors("Post Cat ");
         buffers.rewind();
         while (buffers.hasRemaining()) {
             int buffer = buffers.get();
@@ -326,16 +247,6 @@ public class WorldShader extends Shader {
                     GameEngine.getEngine().getGame().getHeight(),
                     GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
         }
-
-        // Not sure which is faster, or if it matters
-//        glBlitFramebuffer(
-//                0, 0,
-//                GameEngine.getEngine().getGame().getWidth(),
-//                GameEngine.getEngine().getGame().getHeight(),
-//                0, 0,
-//                GameEngine.getEngine().getGame().getWidth(),
-//                GameEngine.getEngine().getGame().getHeight(),
-//                GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
         buffers.rewind();
         glBindFramebuffer(GL_FRAMEBUFFER, ms_framebuffer_handel);

@@ -28,8 +28,8 @@ public class TerrainMap {
     public void genMap() {
         // Create starting vertices
         Random r = new Random();
-        // int seed = -377377594; //r.nextInt();
-        int seed = r.nextInt();
+        int seed = -377377594; //r.nextInt();
+        // int seed = r.nextInt();
         System.out.println("Seed: " + seed);
         SimplexNoise noise = new SimplexNoise(seed);
 

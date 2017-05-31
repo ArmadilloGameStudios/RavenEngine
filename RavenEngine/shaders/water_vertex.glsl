@@ -17,7 +17,7 @@ void main(void)
 	gl_Position = P * M * V * vec4(vertex_pos, 1.0);
 
 	float ambiantLight = .5;
-	
+
 	float NdotL = dot(normalize((M * V * vec4(vertex_normal, 0.0)).xyz), (M * V * vec4(lightDirection, 0.0)).xyz);
 	float directionalLight = max(0.0, NdotL) * .5;
 

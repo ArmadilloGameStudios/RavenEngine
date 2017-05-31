@@ -6,7 +6,6 @@ import org.lwjgl.BufferUtils;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -75,7 +74,7 @@ public class BloomShader extends Shader {
                     + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
         }
 
-        glActiveTexture(GL_TEXTURE0 + 3);
+        glActiveTexture(getNextTexture());
         glBindTexture(GL_TEXTURE_2D, bloom_vertical_texture);
     }
 
@@ -87,7 +86,7 @@ public class BloomShader extends Shader {
 
         // Bind the glow
         // set the texture
-        glUniform1i(texture_glow_location, 3);
+        glUniform1i(texture_glow_location, 0);
 
         glUniform2f(bloom_step_location,
                 1f / GameEngine.getEngine().getGame().getWidth(), 0f);
@@ -102,7 +101,7 @@ public class BloomShader extends Shader {
                 GameEngine.getEngine().getGame().getWidth(),
                 GameEngine.getEngine().getGame().getHeight());
 
-        glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 

@@ -39,35 +39,60 @@ public class Layer implements Parentable {
 
 	float trans = 0;
 	public void draw() {
+        window.printErrors("Pre Layer Draw ");
 		switch (destination) {
 			case Water:
-				// window.getWorldShader().useProgram();
+				window.getWaterShader().useProgram();
+
+                // Set Projection
+                window.getWaterShader().setProjectionMatrix(
+                        Matrix4f.perspective(60.0f, ((float) getWidth())
+                                / ((float) getHeight()), 10f, 100.0f));
+
+                Matrix4f viewMatrix = new Matrix4f();
+                viewMatrix = viewMatrix.multiply(Matrix4f.translate(0f, 0f, -30f));
+                viewMatrix = viewMatrix.multiply(Matrix4f.rotate(45f, 1f, 0f, 0f));
+                viewMatrix = viewMatrix.multiply(Matrix4f.rotate(trans * 100.0f, 0f, 1f, 0f));
+
+                trans += .0001 * GameEngine.getEngine().getDeltaTime();
+
+                window.getWaterShader().setViewMatrix(viewMatrix);
+
+                window.getWaterShader().setModelMatrix(new Matrix4f());
+
+                window.printErrors("Water Draw ");
 				break;
 			case Normal:
 			default:
 				window.getWorldShader().useProgram();
+
+                // Set Projection
+                window.getWorldShader().setProjectionMatrix(
+                        Matrix4f.perspective(60.0f, ((float) getWidth())
+                                / ((float) getHeight()), 10f, 100.0f));
+
+                viewMatrix = new Matrix4f();
+                viewMatrix = viewMatrix.multiply(Matrix4f.translate(0f, 0f, -30f));
+                viewMatrix = viewMatrix.multiply(Matrix4f.rotate(45f, 1f, 0f, 0f));
+                viewMatrix = viewMatrix.multiply(Matrix4f.rotate(trans * 100.0f, 0f, 1f, 0f));
+
+                trans += .0001 * GameEngine.getEngine().getDeltaTime();
+
+                window.getWorldShader().setViewMatrix(viewMatrix);
+
+                window.getWorldShader().setModelMatrix(new Matrix4f());
+
+                window.printErrors("World Draw ");
 				break;
 		}
 
-		// Set Projection
-		window.getWorldShader().setProjectionMatrix(
-				Matrix4f.perspective(60.0f, ((float) getWidth())
-						/ ((float) getHeight()), 10f, 100.0f));
-
-		Matrix4f viewMatrix = new Matrix4f();
-		viewMatrix = viewMatrix.multiply(Matrix4f.translate(0f, 0f, -30f));
-		viewMatrix = viewMatrix.multiply(Matrix4f.rotate(45f, 1f, 0f, 0f));
-		viewMatrix = viewMatrix.multiply(Matrix4f.rotate(trans * 100.0f, 0f, 1f, 0f));
-
-		trans += .0001 * GameEngine.getEngine().getDeltaTime();
-
-		window.getWorldShader().setViewMatrix(viewMatrix);
-
-		window.getWorldShader().setModelMatrix(new Matrix4f());
+        window.printErrors("Umm Draw ");
 
 		for (WorldObject o : gameObjectList) {
 			o.draw();
 		}
+
+        window.printErrors("else Draw ");
 	}
 
 	public void update(float deltaTime) {
