@@ -28,12 +28,14 @@ public class TerrainMap {
     public void genMap() {
         // Create starting vertices
         Random r = new Random();
-        int seed = -377377594; //r.nextInt();
+        int seed = -377377594;
+        // int seed = -699290749;
         // int seed = r.nextInt();
         System.out.println("Seed: " + seed);
         SimplexNoise noise = new SimplexNoise(seed);
 
         heightPoints = new Vector3f[width + 1][];
+        float length_modifier = (float)Math.sqrt(.5);
 
         for (int x = 0; x < width + 1; x++) {
             heightPoints[x] = new Vector3f[height + x % 2];
@@ -41,6 +43,8 @@ public class TerrainMap {
             for (int z = 0; z < height + x % 2; z++) {
                 float x_pos = x - (width + 1) / 2;
                 float z_pos = z - (height) / 2 - (x % 2) / 2f;
+                x_pos *= length_modifier;
+
 
                 float y_pos = 0f;
 
@@ -55,7 +59,9 @@ public class TerrainMap {
                     y_pos += noise.noise(noise_x, noise_z) * noise_height;
                 }
 
-                y_pos = (float)Math.exp(y_pos * 1.3) * (float)Math.max(0.0, (1.2 - (x_pos * x_pos + z_pos * z_pos) / 500.0));
+                // y_pos = (float)Math.exp(y_pos * 1.3) * (float)Math.max(0.0, 1.1 - (x_pos * x_pos + z_pos * z_pos) / 300.0);
+                y_pos = (float)Math.exp(y_pos * 1.1) * (float)Math.max(0.0, 1.3 - (x_pos * x_pos + z_pos * z_pos) / 500.0);
+                y_pos += (.5f - (x_pos * x_pos + z_pos * z_pos) / 200.0f);
                 y_pos -= .45f;
 
                 if (y_pos < 0f) {

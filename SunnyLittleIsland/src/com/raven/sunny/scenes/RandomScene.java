@@ -30,7 +30,7 @@ public class RandomScene extends Scene {
         waterLayer = new Layer(this, Layer.Destination.Water);
         this.addLayer(waterLayer);
 
-        t = Terrain.genTerrain(landLayer, 55, 55);
+        t = Terrain.genTerrain(landLayer, 60, 45);
         landLayer.addChild(t);
     }
 
