@@ -9,6 +9,8 @@ import java.nio.IntBuffer;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
@@ -25,9 +27,13 @@ import static org.lwjgl.opengl.GL45.glNamedFramebufferDrawBuffers;
  */
 public class WaterShader extends Shader {
 
+    public static final int
+            COLOR = getNextTexture(),
+            GLOW = getNextTexture(),
+            DEPTH = getNextTexture();
+
     private int projection_location, model_location, view_location;
-    private int ms_framebuffer_handel, ms_renderbuffer_handel, ms_color_texture, ms_glow_texture, ms_depth_texture;
-    private int framebuffer_handel, renderbuffer_handel, color_texture, bloom_texture, depth_texture;
+    private int framebuffer_handel, color_texture, bloom_texture, depth_texture;
 
     private Matrix4f projection_matrix = new Matrix4f(),
             model_matrix = new Matrix4f(),
@@ -54,62 +60,14 @@ public class WaterShader extends Shader {
 
         glLinkProgram(getProgramHandel());
 
-        int ms_count = GameEngine.getEngine().getWindow().getMultisampleCount();
-
-        ms_framebuffer_handel = glGenFramebuffers();
-        glBindFramebuffer(GL_FRAMEBUFFER, ms_framebuffer_handel);
-
-        // FBO Textures
-        // Color
-        ms_color_texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_color_texture);
-
-        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
-                ms_count, GL_RGB,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
-                true);
-
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, ms_color_texture, 0);
-
-        // Glow
-        ms_glow_texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_glow_texture);
-
-        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
-                ms_count, GL_RGB,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
-                true);
-
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE, ms_glow_texture, 0);
-
-        // Draw buffers
-        buffers.rewind();
-        glDrawBuffers(buffers);
-
-        // Depth
-        ms_renderbuffer_handel = glGenRenderbuffers();
-        glBindRenderbuffer(GL_RENDERBUFFER, ms_renderbuffer_handel);
-        glRenderbufferStorageMultisample(GL_RENDERBUFFER, ms_count, GL_DEPTH_COMPONENT,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight());
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                GL_RENDERBUFFER, ms_renderbuffer_handel);
-
-        // Errors
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            System.out.println("MS Water Shader Failed: 0x"
-                    + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
-        }
-
-        // resolve ms
+        // FBO
         framebuffer_handel = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
 
         // FBO Textures
         // Color
         color_texture = glGenTextures();
+        glActiveTexture(GL_TEXTURE0 + COLOR);
         glBindTexture(GL_TEXTURE_2D, color_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
@@ -121,6 +79,7 @@ public class WaterShader extends Shader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, color_texture, 0);
+        glActiveTexture(GL_TEXTURE0);
 
         // Glow
         bloom_texture = glGenTextures();
@@ -142,6 +101,7 @@ public class WaterShader extends Shader {
 
         // Depth
         depth_texture = glGenTextures();
+        glActiveTexture(GL_TEXTURE0 + DEPTH);
         glBindTexture(GL_TEXTURE_2D, depth_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
@@ -153,6 +113,7 @@ public class WaterShader extends Shader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
         glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_texture, 0);
+        glActiveTexture(GL_TEXTURE0);
 
         // Errors
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -167,7 +128,7 @@ public class WaterShader extends Shader {
 
         glUseProgram(getProgramHandel());
 
-        glBindFramebuffer(GL_FRAMEBUFFER, ms_framebuffer_handel);
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
 
         glViewport(0, 0,
                 GameEngine.getEngine().getGame().getWidth(),
@@ -225,35 +186,5 @@ public class WaterShader extends Shader {
 
     public int getDepthTexture() {
         return depth_texture;
-    }
-
-    public void blitFramebuffer() {
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer_handel);
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, ms_framebuffer_handel);
-
-        buffers.rewind();
-        while (buffers.hasRemaining()) {
-            int buffer = buffers.get();
-
-            glReadBuffer(buffer);
-            glDrawBuffer(buffer);
-
-            glBlitFramebuffer(
-                    0, 0,
-                    GameEngine.getEngine().getGame().getWidth(),
-                    GameEngine.getEngine().getGame().getHeight(),
-                    0, 0,
-                    GameEngine.getEngine().getGame().getWidth(),
-                    GameEngine.getEngine().getGame().getHeight(),
-                    GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-        }
-
-        buffers.rewind();
-        glBindFramebuffer(GL_FRAMEBUFFER, ms_framebuffer_handel);
-        glDrawBuffers(buffers);
-
-        buffers.rewind();
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
-        glDrawBuffers(buffers);
     }
 }

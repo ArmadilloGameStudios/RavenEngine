@@ -133,13 +133,13 @@ public class GameWindow3D {
         // Shaders
         worldShader = new WorldShader();
         waterShader = new WaterShader();
-        bloomShader = new BloomShader(worldShader.getBloomTexture());
-        combinationShader = new CombinationShader(worldShader, waterShader,
-                bloomShader);
+        bloomShader = new BloomShader();
+        combinationShader = new CombinationShader();
 
         // Enable multisample
         glEnable(GL_MULTISAMPLE);
 
+        // Enable depth test
         glEnable(GL_DEPTH_TEST);
 
         // Enable face culling

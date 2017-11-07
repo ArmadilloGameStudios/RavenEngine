@@ -9,6 +9,7 @@ import static org.lwjgl.opengl.GL20.glUniform1i;
 import static org.lwjgl.opengl.GL20.glUniform2f;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
+import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 
 /**
  * Created by cookedbird on 5/29/17.
@@ -18,9 +19,9 @@ public class CombinationShader extends Shader {
     private int texture_world_color_location, texture_world_depth_location,
             texture_water_color_location, texture_water_depth_location,
             texture_bloom_location,
-            bloom_step_location, screen_size_location;
+            bloom_step_location;
 
-    public CombinationShader(WorldShader world, WaterShader water, BloomShader bloom) {
+    public CombinationShader() {
         super("vertex2.glsl", "fragment2.glsl");
 
         texture_world_color_location = glGetUniformLocation(getProgramHandel(), "worldColorTexture");
@@ -29,27 +30,9 @@ public class CombinationShader extends Shader {
         texture_water_depth_location = glGetUniformLocation(getProgramHandel(), "waterDepthTexture");
 
         texture_bloom_location = glGetUniformLocation(getProgramHandel(), "glowTexture");
-
         bloom_step_location = glGetUniformLocation(getProgramHandel(), "bloomStep");
 
-        screen_size_location = glGetUniformLocation(getProgramHandel(), "screen_size");
-
         glLinkProgram(getProgramHandel());
-
-        glActiveTexture(getNextTexture());
-        glBindTexture(GL_TEXTURE_2D, world.getColorTexture());
-
-        glActiveTexture(getNextTexture());
-        glBindTexture(GL_TEXTURE_2D, world.getDepthTexture());
-
-        glActiveTexture(getNextTexture());
-        glBindTexture(GL_TEXTURE_2D, water.getColorTexture());
-
-        glActiveTexture(getNextTexture());
-        glBindTexture(GL_TEXTURE_2D, water.getDepthTexture());
-
-        glActiveTexture(getNextTexture());
-        glBindTexture(GL_TEXTURE_2D, bloom.getBloomTexture());
     }
 
     @Override
@@ -59,13 +42,12 @@ public class CombinationShader extends Shader {
         glUseProgram(getProgramHandel());
 
         // Bind the color and depth
-        glUniform1i(texture_world_color_location, 1);
-        glUniform1i(texture_world_depth_location, 2);
-        glUniform1i(texture_water_color_location, 3);
-        glUniform1i(texture_water_depth_location, 4);
-
+        glUniform1i(texture_world_color_location, WorldShader.COLOR);
+        glUniform1i(texture_world_depth_location, WorldShader.DEPTH);
+        glUniform1i(texture_water_color_location, WaterShader.COLOR);
+        glUniform1i(texture_water_depth_location, WaterShader.DEPTH);
         // Bind the bloom
-        glUniform1i(texture_bloom_location, 5);
+        glUniform1i(texture_bloom_location, BloomShader.GLOW);
 
         glUniform2f(bloom_step_location, 0f,
                 1f / GameEngine.getEngine().getGame().getHeight());

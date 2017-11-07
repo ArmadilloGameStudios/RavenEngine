@@ -23,7 +23,7 @@ public abstract class Shader {
     private static int nextTexture = 0;
     protected static int getNextTexture() {
         nextTexture++;
-        return GL_TEXTURE0 + nextTexture - 1;
+        return nextTexture;
     }
 
     public Shader (String vertex_shader, String fragment_shader) {

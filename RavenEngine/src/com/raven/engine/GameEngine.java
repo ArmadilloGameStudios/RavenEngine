@@ -114,6 +114,8 @@ public class GameEngine implements Runnable {
 		breakthread = true;
 	}
 
+	int frame = 0;
+	float framesdt = 0;
 	@Override
 	public void run() {
 		System.out.println("Started Run");
@@ -134,18 +136,29 @@ public class GameEngine implements Runnable {
 
 		while (game.isRunning()
 				|| !glfwWindowShouldClose(window.getWindowHandler())) {
+
 			long start = System.nanoTime();
 
 			draw();
 			input();
 			game.update(deltaTime);
 
+			if (frame % 120 == 0) {
+                System.out.println("FPS: " + 1000f / (framesdt / 120f));
+                framesdt = 0;
+            }
+
+
 			glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
 
-			// deltaTime = (System.nanoTime() - start) / 1000000000.0F;
-			deltaTime = (System.nanoTime() - start) / 1000000.0F;
-			systemTime = System.nanoTime() / 1000000L;
-			// System.out.println("systemTime: " + systemTime);
+            long currentTime = System.nanoTime();
+			deltaTime = (currentTime - start) / 1000000.0f;
+			systemTime = currentTime / 1000000L;
+
+            framesdt += deltaTime;
+            frame++;
+
+            window.printErrors("Errors: ");
 		}
 
 		System.out.println("End Run");
@@ -158,20 +171,14 @@ public class GameEngine implements Runnable {
 	}
 
 	private void draw() {
-	    window.printErrors("Pre Draw ");
 		game.draw3d();
-        window.printErrors("Draw ");
-		window.getWorldShader().blitFramebuffer();
-		window.getWaterShader().blitFramebuffer();
-        window.printErrors("Blit ");
+		// game.draw3d();
 
-		window.getBloomShader().useProgram();
-		window.drawFBO();
-        window.printErrors("Bloom ");
+		// window.getBloomShader().useProgram();
+		// window.drawFBO();
 
 		window.getCombinationShader().useProgram();
 		window.drawFBO();
-        window.printErrors("Combine ");
 	}
 
 	private void input() {
@@ -202,33 +209,6 @@ public class GameEngine implements Runnable {
 
 		window.processInput(oldMouseList);
 	}
-
-	private void pause(long start) {
-//		if (Thread.interrupted() || breakthread) {
-//			System.out.println("Interrupted");
-//			break;
-//		}
-
-		long len = System.nanoTime() - start;
-		long sleep = 1000000000L / 60 - len;
-
-
-//		if (len == 0) {
-//			System.out.println(0);
-//		} else {
-//			System.out.println("FPS: " + 1000000000L / len + " Run: " + len
-//						+ ", Sleep: " + sleep);
-//		}
-
-		if (sleep > 0L) {
-			try {
-//				System.out.println("Sleep for: " + sleep / 1000000L + "ms " + (int) (sleep % 1000000L) + "ns.");
-				Thread.sleep(sleep / 1000000L, (int) (sleep % 1000000L));
-			} catch (InterruptedException e) {
-			}
-		}
-	}
-
 
 	private void loadDatabaseAndModels() {
 		// searchAndLoadAssets(new File("assets"));

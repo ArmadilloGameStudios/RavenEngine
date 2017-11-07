@@ -9,6 +9,8 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -23,6 +25,11 @@ import static org.lwjgl.opengl.GL45.glNamedFramebufferDrawBuffers;
  * Created by cookedbird on 5/29/17.
  */
 public class WorldShader extends Shader {
+
+    public static final int
+            COLOR = getNextTexture(),
+            GLOW = getNextTexture(),
+            DEPTH = getNextTexture();
 
     private int projection_location, model_location, view_location, id_location;
     private int ms_framebuffer_handel, ms_renderbuffer_handel, ms_color_texture, ms_glow_texture,
@@ -62,21 +69,24 @@ public class WorldShader extends Shader {
         ms_framebuffer_handel = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, ms_framebuffer_handel);
 
-        // FBO Textures
+        // MS FBO Textures
         // Color
         ms_color_texture = glGenTextures();
+        glActiveTexture(GL_TEXTURE0 + COLOR);
         glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_color_texture);
 
         glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
-                ms_count, GL_RGB,
+                ms_count, GL_RGBA,
                 GameEngine.getEngine().getGame().getWidth(),
                 GameEngine.getEngine().getGame().getHeight(),
                 true);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, ms_color_texture, 0);
+        glActiveTexture(GL_TEXTURE0);
 
         // Glow
         ms_glow_texture = glGenTextures();
+        glActiveTexture(GL_TEXTURE0 + GLOW);
         glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_glow_texture);
 
         glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
@@ -86,6 +96,7 @@ public class WorldShader extends Shader {
                 true);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE, ms_glow_texture, 0);
+        glActiveTexture(GL_TEXTURE0);
 
         // ID
         ms_id_texture = glGenTextures();
@@ -100,29 +111,32 @@ public class WorldShader extends Shader {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D_MULTISAMPLE, ms_id_texture, 0);
 
         // Depth Texture
-//        ms_depth_texture = glGenTextures();
-//        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_depth_texture);
-//
-//        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
-//                ms_count, GL_DEPTH_COMPONENT32,
-//                GameEngine.getEngine().getGame().getWidth(),
-//                GameEngine.getEngine().getGame().getHeight(),
-//                true);
-//
-//        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, ms_depth_texture, 0);
+        ms_depth_texture = glGenTextures();
+        glActiveTexture(GL_TEXTURE0 + DEPTH);
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_depth_texture);
+
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
+                ms_count, GL_DEPTH_COMPONENT32,
+                GameEngine.getEngine().getGame().getWidth(),
+                GameEngine.getEngine().getGame().getHeight(),
+                true);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, ms_depth_texture, 0);
+        glActiveTexture(GL_TEXTURE0);
 
         // Draw buffers
         buffers.rewind();
         glDrawBuffers(buffers);
 
         // Depth
-        ms_renderbuffer_handel = glGenRenderbuffers();
-        glBindRenderbuffer(GL_RENDERBUFFER, ms_renderbuffer_handel);
-        glRenderbufferStorageMultisample(GL_RENDERBUFFER, ms_count, GL_DEPTH_COMPONENT,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight());
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                GL_RENDERBUFFER, ms_renderbuffer_handel);
+//        ms_renderbuffer_handel = glGenRenderbuffers();
+//        glBindRenderbuffer(GL_RENDERBUFFER, ms_renderbuffer_handel);
+//        glRenderbufferStorageMultisample(GL_RENDERBUFFER, ms_count, GL_DEPTH_COMPONENT,
+//                GameEngine.getEngine().getGame().getWidth(),
+//                GameEngine.getEngine().getGame().getHeight());
+//        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+//                GL_RENDERBUFFER, ms_renderbuffer_handel);
+
 
         // Errors
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -139,10 +153,10 @@ public class WorldShader extends Shader {
         color_texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, color_texture);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
                 GameEngine.getEngine().getGame().getWidth(),
                 GameEngine.getEngine().getGame().getHeight(),
-                0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+                0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -214,7 +228,7 @@ public class WorldShader extends Shader {
                 GameEngine.getEngine().getGame().getWidth(),
                 GameEngine.getEngine().getGame().getHeight());
 
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -294,7 +308,7 @@ public class WorldShader extends Shader {
     }
 
     public int getColorTexture() {
-        return color_texture;
+        return ms_color_texture;
     }
 
     public int getBloomTexture() {
@@ -302,40 +316,42 @@ public class WorldShader extends Shader {
     }
 
     public int getDepthTexture() {
-        return depth_texture;
+        return ms_depth_texture;
     }
 
     public void blitFramebuffer() {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer_handel);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, ms_framebuffer_handel);
 
-        GameEngine.getEngine().getWindow().printErrors("Post Cat ");
-        buffers.rewind();
-        while (buffers.hasRemaining()) {
-            int buffer = buffers.get();
-
-            glReadBuffer(buffer);
-            glDrawBuffer(buffer);
-
-            glBlitFramebuffer(
-                    0, 0,
-                    GameEngine.getEngine().getGame().getWidth(),
-                    GameEngine.getEngine().getGame().getHeight(),
-                    0, 0,
-                    GameEngine.getEngine().getGame().getWidth(),
-                    GameEngine.getEngine().getGame().getHeight(),
-                    GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-        }
+//        buffers.rewind();
+//        while (buffers.hasRemaining()) {
+//            int buffer = buffers.get();
+//
+//            glReadBuffer(buffer);
+//            glDrawBuffer(buffer);
+//
+//            glBlitFramebuffer(
+//                    0, 0,
+//                    GameEngine.getEngine().getGame().getWidth(),
+//                    GameEngine.getEngine().getGame().getHeight(),
+//                    0, 0,
+//                    GameEngine.getEngine().getGame().getWidth(),
+//                    GameEngine.getEngine().getGame().getHeight(),
+//                    GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+//        }
 
         // Not sure which is faster, or if it matters
-//        glBlitFramebuffer(
-//                0, 0,
-//                GameEngine.getEngine().getGame().getWidth(),
-//                GameEngine.getEngine().getGame().getHeight(),
-//                0, 0,
-//                GameEngine.getEngine().getGame().getWidth(),
-//                GameEngine.getEngine().getGame().getHeight(),
-//                GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        glBlitFramebuffer(
+                0, 0,
+                GameEngine.getEngine().getGame().getWidth(),
+                GameEngine.getEngine().getGame().getHeight(),
+                0, 0,
+                GameEngine.getEngine().getGame().getWidth(),
+                GameEngine.getEngine().getGame().getHeight(),
+                GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
         buffers.rewind();
         glBindFramebuffer(GL_FRAMEBUFFER, ms_framebuffer_handel);

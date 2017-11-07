@@ -6,6 +6,7 @@ import org.lwjgl.BufferUtils;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -17,13 +18,14 @@ import static org.lwjgl.opengl.GL45.glNamedFramebufferDrawBuffers;
  */
 public class BloomShader extends Shader {
 
+    public static final int
+            GLOW = getNextTexture();
+
     private int texture_glow_location, bloom_step_location, screen_size_location;
-    private int framebuffer_handel, renderbuffer_handel, bloom_texture, bloom_vertical_texture;
+    private int framebuffer_handel, renderbuffer_handel, bloom_texture;
 
-    public BloomShader(int bloom_vertical_texture) {
+    public BloomShader() {
         super("vertex2.glsl", "bloomf.glsl");
-
-        this.bloom_vertical_texture = bloom_vertical_texture;
 
         texture_glow_location = glGetUniformLocation(getProgramHandel(), "glowTexture");
         bloom_step_location = glGetUniformLocation(getProgramHandel(), "bloomStep");
@@ -38,6 +40,7 @@ public class BloomShader extends Shader {
         // FBO Textures
         // Color
         bloom_texture = glGenTextures();
+        glActiveTexture(GL_TEXTURE0 + GLOW);
         glBindTexture(GL_TEXTURE_2D, bloom_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
@@ -49,6 +52,7 @@ public class BloomShader extends Shader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, bloom_texture, 0);
+        glActiveTexture(GL_TEXTURE0);
 
         // Draw buffers
         IntBuffer fboBuffers = BufferUtils.createIntBuffer(1);
@@ -73,9 +77,6 @@ public class BloomShader extends Shader {
             System.out.println("FBOHOR Failed: 0x"
                     + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
         }
-
-        glActiveTexture(getNextTexture());
-        glBindTexture(GL_TEXTURE_2D, bloom_vertical_texture);
     }
 
     @Override
@@ -86,7 +87,7 @@ public class BloomShader extends Shader {
 
         // Bind the glow
         // set the texture
-        glUniform1i(texture_glow_location, 0);
+        glUniform1i(texture_glow_location, WorldShader.GLOW);
 
         glUniform2f(bloom_step_location,
                 1f / GameEngine.getEngine().getGame().getWidth(), 0f);
