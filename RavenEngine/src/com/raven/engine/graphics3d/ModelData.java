@@ -1,61 +1,31 @@
 package com.raven.engine.graphics3d;
 
-import com.raven.engine.worldobject.WorldObject;
-
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by cookedbird on 5/8/17.
  */
 public class ModelData {
-    private List<Float> vertex_list;
-    private List<Float> normal_list;
-    private List<Float> colors_list;
-    private ModelFrames modelFrames;
-    private AnimatedModel model = null;
+    private List<VertexData> vertexList = new ArrayList<>();
+    private ModelReference modelReference;
 
-    public void setVertexData(List<Float> vertices) {
-        vertex_list = vertices;
+    public List<VertexData> getVertexData() {
+        return vertexList;
     }
 
-    public List<Float> getVertexData() {
-        return vertex_list;
+    public void addVertex(VertexData vertexData) {
+        vertexList.add(vertexData);
     }
 
-    public void setNormalData(List<Float> normals) {
-        normal_list = normals;
+    void setModelReference(ModelReference modelReference) {
+        this.modelReference = modelReference;
     }
 
-    public List<Float>  getNormalData() {
-        return normal_list;
-    }
-
-    public void setColorData(List<Float> colors) {
-        colors_list = colors;
-    }
-
-    public List<Float>  getColorData() {
-        return colors_list;
-    }
-
-    public static ModelFrames load(File f) {
-        return null; // new ModelData();
-    }
-
-    void setModelFrames(ModelFrames frames) {
-        this.modelFrames = frames;
-
-        if (model != null) {
-            model.updateModelFrames(this);
-        }
-    }
-
-    public ModelFrames getModelFrames() {
-        return modelFrames;
-    }
-
-    public void setAnimatedModel(AnimatedModel model) {
-        this.model = model;
+    public ModelReference getModelReference() {
+        // If this has a null reference
+        // then the ModelData probably wasn't loaded to the gpu
+        return modelReference;
     }
 }

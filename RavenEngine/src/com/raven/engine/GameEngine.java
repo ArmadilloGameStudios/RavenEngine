@@ -15,7 +15,6 @@ import com.raven.engine.database.GameDataQuery;
 import com.raven.engine.database.GameDatabase;
 import com.raven.engine.graphics3d.GameWindow3D;
 import com.raven.engine.graphics3d.ModelData;
-import com.raven.engine.graphics3d.ModelFrames;
 import com.raven.engine.graphics3d.ModelReference;
 import com.raven.engine.worldobject.WorldObject;
 
@@ -42,7 +41,7 @@ public class GameEngine implements Runnable {
 	private Game game;
 	private Thread thread;
 	private GameWindow3D window;
-	private Map<String, ModelFrames> modelAssets = new ConcurrentHashMap<String, ModelFrames>();
+	private List<String> modelAssets = new ArrayList<>();
 	private List<WorldObject> oldMouseList = new ArrayList<>();
 	private GameDatabase gdb;
 	private float deltaTime;
@@ -75,17 +74,6 @@ public class GameEngine implements Runnable {
 
 	public GameWindow3D getWindow() {
 		return window;
-	}
-	
-	public ModelFrames getModelReferenceAsset(String name) {
-		ModelFrames g = modelAssets.get(game.getMainDirectory() + File.separator + name.replace('\\', File.separatorChar));
-
-		if (g == null) {
-			// g = ModelReference.getBlankModel();
-			System.out.println("Error Referencing " + name);
-		}
-
-		return g;
 	}
 
 	public GameDatabase getGameDatabase() {
@@ -131,6 +119,7 @@ public class GameEngine implements Runnable {
 		game.transitionScene(game.loadInitialScene());
 
 		ModelReference.compileBuffer();
+		window.printErrors("Compile Buffer Error: ");
 
 		// game.getCurrentScene().enterScene();
 
@@ -216,7 +205,7 @@ public class GameEngine implements Runnable {
 		File modelDirectory = new File(game.getMainDirectory() + File.separator + "model");
 		loadModels(modelDirectory);
 
-		for (String img : modelAssets.keySet()) {
+		for (String img : modelAssets) {
 			System.out.println(img);
 		}
 
@@ -228,7 +217,7 @@ public class GameEngine implements Runnable {
 		for (File f : base.listFiles()) {
 			if (f.isFile()) {
 				System.out.println(f.getPath());
-				modelAssets.put(f.getPath(), ModelData.load(f));
+				modelAssets.add(f.getPath());
 			} else if (f.isDirectory()) {
 				loadModels(f);
 			}

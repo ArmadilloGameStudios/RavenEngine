@@ -1,6 +1,7 @@
 package com.raven.sunny.terrain;
 
 import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.graphics3d.VertexData;
 import com.raven.engine.util.SimplexNoise;
 import com.raven.engine.util.Vector3f;
 
@@ -159,9 +160,25 @@ public class TerrainMap {
             }
         }
 
-        model.setVertexData(vertices);
-        model.setNormalData(normals);
-        model.setColorData(colors);
+        for (int i = 0; i < vertices.size(); i += 3) {
+            VertexData vertexData = new VertexData();
+
+            vertexData.x = vertices.get(i);
+            vertexData.y = vertices.get(i + 1);
+            vertexData.z = vertices.get(i + 2);
+            vertexData.nx = normals.get(i);
+            vertexData.ny = normals.get(i + 1);
+            vertexData.nz = normals.get(i + 2);
+            vertexData.red = colors.get(i);
+            vertexData.green = colors.get(i + 1);
+            vertexData.blue = colors.get(i + 2);
+
+            model.addVertex(vertexData);
+        }
+
+//        model.setVertexData(vertices);
+//        model.setNormalData(normals);
+//        model.setColorData(colors);
 
         return model;
     }

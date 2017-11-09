@@ -1,15 +1,21 @@
 package com.raven.sunny.scenes;
 
+import com.raven.engine.GameEngine;
 import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.graphics3d.PlyImporter;
+import com.raven.engine.graphics3d.VertexData;
 import com.raven.engine.scene.Layer;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.worldobject.WorldObject;
 import com.raven.sunny.SunnyLittleIslandGame;
 import com.raven.sunny.terrain.Terrain;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by cookedbird on 5/8/17.
@@ -79,15 +85,42 @@ public class RandomScene extends Scene {
                 .2f, .6f, .8f,
         };
 
-        water.setVertexData(Arrays.asList(v));
-        water.setNormalData(Arrays.asList(n));
-        water.setColorData(Arrays.asList(c));
+        for (int i = 0; i < 18; i += 3) {
+            VertexData vertexData = new VertexData();
+
+            vertexData.x = v[i];
+            vertexData.y = v[i + 1];
+            vertexData.z = v[i + 2];
+            vertexData.nx = n[i];
+            vertexData.ny = n[i + 1];
+            vertexData.nz = n[i + 2];
+            vertexData.red = c[i];
+            vertexData.green = c[i + 1];
+            vertexData.blue = c[i + 2];
+
+            water.addVertex(vertexData);
+        }
 
         mds.add(water);
 
         waterLayer.addChild(new WorldObject(landLayer, water) {
 
         });
+
+        // load trees
+        ModelData tree = PlyImporter.Import(new File(GameEngine.getEngine().getGame().getMainDirectory() + File.separator + "Blender" + File.separator + "palmtree.ply"));
+
+        mds.add(tree);
+
+        Random r = new Random();
+        for (int i = 0; i < 100; i++) {
+            WorldObject woTree;
+
+            landLayer.addChild(woTree = new WorldObject(landLayer, tree) {});
+
+            woTree.setX((r.nextFloat() - .5f) * 20f);
+            woTree.setZ((r.nextFloat() - .5f) * 20f);
+        }
 
         return mds;
     }

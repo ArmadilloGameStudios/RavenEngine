@@ -21,8 +21,6 @@ public class Terrain extends WorldObject {
         TerrainMap map = new TerrainMap(width, height);
 
         Terrain terrain = new Terrain(parent, map.getModelData());
-        terrain.setWidth(width);
-        terrain.setHeight(height);
         terrain.map = map;
 
         return terrain;

@@ -1,294 +1,229 @@
 package com.raven.engine.worldobject;
 
-import static org.lwjgl.opengl.GL11.glTranslated;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.raven.engine.GameEngine;
-import com.raven.engine.database.GameData;
-import com.raven.engine.graphics3d.AnimatedModel;
 import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.graphics3d.ModelReference;
+import com.raven.engine.util.Matrix4f;
 
 public abstract class WorldObject implements Parentable {
-	private static int last_id = 0;
-	private static HashMap<Integer, WorldObject> worldObjectIDMap = new HashMap<Integer, WorldObject>();
+    private static int last_id = 0;
+    private static HashMap<Integer, WorldObject> worldObjectIDMap = new HashMap<Integer, WorldObject>();
 
-	public static void resetObjectIDs() {
-		worldObjectIDMap.clear();
-		last_id = 0;
-	}
+    public static void resetObjectIDs() {
+        worldObjectIDMap.clear();
+        last_id = 0;
+    }
 
-	public static WorldObject getWorldObjectFromID(int id) {
-		return worldObjectIDMap.get(id);
-	}
+    public static WorldObject getWorldObjectFromID(int id) {
+        return worldObjectIDMap.get(id);
+    }
 
-	private int id;
-	private double x, y, z;
-	private int w, h, l;
-	private boolean visible = true;
-	private List<WorldObject> children = new CopyOnWriteArrayList<WorldObject>();
-	private AnimatedModel animatedReference;
-	private String animationstate = "idle";
-	private boolean mousehovering = false;
-	private List<MouseHandler> clickHandlers = new ArrayList<MouseHandler>();
-	private long timeOffset = 0;
+    private int id;
+    private float x, y, z, scale = 1f;
+    private Matrix4f matrix;
+    private boolean visible = true;
+    private List<WorldObject> children = new CopyOnWriteArrayList<WorldObject>();
+    private ModelData model;
+    private String animationstate = "idle";
+    private boolean mousehovering = false;
+    private List<MouseHandler> clickHandlers = new ArrayList<MouseHandler>();
+    private long timeOffset = 0;
 
-	private List<TextObject> textObjects = new ArrayList<TextObject>();
+    private List<TextObject> textObjects = new ArrayList<TextObject>();
 
-	private Parentable parent;
-	private boolean parentIsWorldObject;
+    private Parentable parent;
+    private boolean parentIsWorldObject;
 
-	public WorldObject(Parentable parent, GameData model) {
-		this(parent, model, 0, 0, 0, 0);
-	}
+    public WorldObject(Parentable parent, ModelData model) {
+        this.parent = parent;
 
-	public WorldObject(Parentable parent, GameData model, double x, double y) {
-		this(parent, model, x, y, 0, 0);
-	}
+        // model
+        this.model = model;
 
-	public WorldObject(Parentable parent, ModelData model) {
-		this.parent = parent;
-		if (parentIsWorldObject = parent.getClass() == WorldObject.class) {
+        // click id
+        id = ++last_id;
+        worldObjectIDMap.put(id, this);
 
-		}
+        // pos
+        this.x = x;
+        this.y = y;
+        this.z = 0;
 
-		// model
-		if (model != null) {
-			animatedReference = new AnimatedModel(model);
-		}
+        resolveMatrix();
+    }
 
+    public String getAnimationState() {
+        return animationstate;
+    }
 
-		// click id
-		id = ++last_id;
-		worldObjectIDMap.put(id, this);
+    public int setAnimationState(String animationstate) {
+        // TODO
+        return 0;
+    }
 
-		// pos
-		this.x = x;
-		this.y = y;
-		this.z = 0;
-
-		// size
-		this.w = (int)(w == 0 && animatedReference != null ? animatedReference
-				.getWidth() : w);
-		this.h = (int)(h == 0 && animatedReference != null ? animatedReference
-				.getHeight() : h);
-		this.l = (int)(l == 0 && animatedReference != null ? animatedReference
-				.getLength() : l);
-	}
-
-	public WorldObject(Parentable parent, GameData model, double x, double y, int w,
-			int h) {
-		this.parent = parent;
-		if (parentIsWorldObject = parent.getClass() == WorldObject.class) {
-
-		}
-
-		// model
-		if (model != null) {
-			animatedReference = new AnimatedModel(model);
-		}
+    public int getAnimationTime(String animationstate) {
+        // TODO
+        return 0;
+    }
 
 
-		// click id
-		id = ++last_id;
-		worldObjectIDMap.put(id, this);
+    @Override
+    public float getGlobalZ() {
+        return this.getZ() + parent.getGlobalZ();
+    }
 
-		// pos
-		this.x = x;
-		this.y = y;
-		this.z = 0;
+    public float getZ() {
+        return x;
+    }
 
-		// size
-		this.w = (int)(w == 0 && animatedReference != null ? animatedReference
-				.getWidth() : w);
-		this.h = (int)(h == 0 && animatedReference != null ? animatedReference
-				.getHeight() : h);
-		this.l = (int)(l == 0 && animatedReference != null ? animatedReference
-				.getLength() : l);
-	}
+    public void setZ(float z) {
+        this.z = z;
+        resolveMatrix();
+    }
 
-	public String getAnimationState() {
-		return animationstate;
-	}
+    @Override
+    public float getGlobalX() {
+        return this.getX() + parent.getGlobalX();
+    }
 
-	public int setAnimationState(String animationstate) {
-		this.animationstate = animationstate;
-		timeOffset = GameEngine.getEngine().getSystemTime();
-		
-		return this.animatedReference.getFrameTime(animationstate);
-	}
-	
-	public int getAnimationTime(String animationstate) {
-		return this.animatedReference.getFrameTime(animationstate);
-	}
+    public float getX() {
+        return x;
+    }
 
+    public void setX(float x) {
+        this.x = x;
+        resolveMatrix();
+    }
 
-	@Override
-	public double getGlobalZ() {
-		return this.getX() + parent.getGlobalX();
-	}
+    @Override
+    public float getGlobalY() {
+        return this.getY() + parent.getGlobalY();
+    }
 
-	public double getZ() {
-		return x;
-	}
+    public float getY() {
+        return y;
+    }
 
-	public void setZ(double z) {
-		this.z = z;
-	}
-	
-	@Override
-	public double getGlobalX() {
-		return this.getX() + parent.getGlobalX();
-	}
+    public void setY(float y) {
+        this.y = y;
+        resolveMatrix();
+    }
 
-	public double getX() {
-		return x;
-	}
+    public void setScale(float scale) {
+        this.scale = scale;
+        resolveMatrix();
+    }
 
-	public void setX(double x) {
-		this.x = x;
-	}
+    private void resolveMatrix() {
+        matrix = Matrix4f.translate(x, y, z).multiply(Matrix4f.scale(scale, scale, scale));
+    }
 
-	@Override
-	public double getGlobalY() {
-		return this.getY() + parent.getGlobalY();
-	}
+    public boolean getVisibility() {
+        return this.visible;
+    }
 
-	public double getY() {
-		return y;
-	}
+    public void setVisibility(boolean visible) {
+        this.visible = visible;
+    }
 
-	public void setY(double y) {
-		this.y = y;
-	}
+    public void addText(TextObject text) {
+        this.textObjects.add(text);
+    }
 
-	public int getWidth() {
-		return w;
-	}
+    public void removeText(TextObject text) {
+        this.textObjects.remove(text);
+    }
 
-	public void setWidth(int w) {
-		this.w = w;
-	}
+    public void draw() {
+        GameEngine.getEngine().getWindow().getWorldShader().setModelMatrix(matrix);
+        GameEngine.getEngine().getWindow().getWorldShader().setWorldObjectID(id);
 
-	public int getHeight() {
-		return h;
-	}
+        model.getModelReference().draw();
+    }
 
-	public void setHeight(int h) {
-		this.h = h;
-	}
+    public Parentable getParent() {
+        return parent;
+    }
 
-	public int getLength() {
-		return l;
-	}
+    public boolean isParentWorldObject() {
+        return parentIsWorldObject;
+    }
 
-	public void setLength(int l) {
-		this.l = l;
-	}
+    public List<WorldObject> getParentWorldObjectList() {
+        List<WorldObject> list;
 
-	public boolean getVisibility() {
-		return this.visible;
-	}
+        if (parentIsWorldObject) {
+            list = ((WorldObject) parent).getParentWorldObjectList();
+            list.add((WorldObject) parent);
+        } else {
+            list = new ArrayList<WorldObject>();
+        }
 
-	public void setVisibility(boolean visible) {
-		this.visible = visible;
-	}
+        return list;
+    }
 
-	public void addText(TextObject text) {
-		this.textObjects.add(text);
-	}
+    public void addChild(WorldObject child) {
+        children.add(child);
+    }
 
-	public void removeText(TextObject text) {
-		this.textObjects.remove(text);
-	}
+    public void removeAllChildren() {
+        children.clear();
+    }
 
-	public void draw() {
-		GameEngine.getEngine().getWindow().getWorldShader().setWorldObjectID(id);
+    public void removeChild(WorldObject child) {
+        children.remove(child);
+    }
 
-		this.animatedReference.draw(animationstate, GameEngine.getEngine().getSystemTime() - timeOffset);
-	}
+    public void addMouseHandler(MouseHandler c) {
+        this.clickHandlers.add(c);
+    }
 
-	public Parentable getParent() {
-		return parent;
-	}
+    public boolean isMouseHovering() {
+        return mousehovering;
+    }
 
-	public boolean isParentWorldObject() {
-		return parentIsWorldObject;
-	}
+    final public void checkMouseMovement(boolean hovering) {
+        if (!isMouseHovering() && hovering) {
+            onMouseEnter();
+        } else if (isMouseHovering() && !hovering) {
+            onMouseLeave();
+        } else if (hovering) {
+            onMouseMove();
+        }
 
-	public List<WorldObject> getParentWorldObjectList() {
-		List<WorldObject> list;
+        mousehovering = hovering;
+    }
 
-		if (parentIsWorldObject) {
-			list = ((WorldObject)parent).getParentWorldObjectList();
-			list.add((WorldObject)parent);
-		} else {
-			list = new ArrayList<WorldObject>();
-		}
+    final public void onMouseEnter() {
+        for (MouseHandler c : clickHandlers) c.onMouseEnter();
+    }
 
-		return list;
-	}
+    final public void onMouseMove() {
+        for (MouseHandler c : clickHandlers) c.onMouseMove();
+    }
 
-	public void addChild(WorldObject child) {
-		children.add(child);
-	}
-	
-	public void removeAllChildren() {
-		children.clear();
-	}
+    final public void onMouseLeave() {
+        for (MouseHandler c : clickHandlers) c.onMouseLeave();
+    }
 
-	public void removeChild(WorldObject child) {
-		children.remove(child);
-	}
+    final public void onMouseClick() {
+        for (MouseHandler c : clickHandlers) c.onMouseClick();
+    }
 
-	public void addMouseHandler(MouseHandler c) {
-		this.clickHandlers.add(c);
-	}
+    final public void update(float deltaTime) {
+        this.onUpdate(deltaTime);
 
-	public boolean isMouseHovering() {
-		return mousehovering;
-	}
+        for (WorldObject c : children) {
+            c.update(deltaTime);
+        }
+    }
 
-	final public void checkMouseMovement(boolean hovering) {
-		if (!isMouseHovering() && hovering) {
-			onMouseEnter();
-		} else if (isMouseHovering() && !hovering) {
-			onMouseLeave();
-		} else if (hovering) {
-			onMouseMove();
-		}
+    public void onUpdate(float deltaTime) {
 
-		mousehovering = hovering;
-	}
-
-	final public void onMouseEnter() {
-		for (MouseHandler c : clickHandlers) c.onMouseEnter();
-	}
-
-	final public void onMouseMove() {
-		for (MouseHandler c : clickHandlers) c.onMouseMove();
-	}
-
-	final public void onMouseLeave() {
-		for (MouseHandler c : clickHandlers) c.onMouseLeave();
-	}
-
-	final public void onMouseClick() {
-		for (MouseHandler c : clickHandlers) c.onMouseClick();
-	}
-
-	final public void update(float deltaTime) {
-		this.onUpdate(deltaTime);
-
-		for (WorldObject c : children) {
-			c.update(deltaTime);
-		}
-	}
-
-	public void onUpdate(float deltaTime) {
-
-	}
+    }
 }

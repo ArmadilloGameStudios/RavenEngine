@@ -84,32 +84,25 @@ public class Layer implements Parentable {
 	}
 
 	@Override
-	public double getGlobalX() {
+	public float getGlobalX() {
 		return 0;
 	}
 
 	@Override
-	public double getGlobalY() {
+	public float getGlobalY() {
 		return 0;
 	}
 	
 	@Override
-	public double getGlobalZ() {
+	public float getGlobalZ() {
 		return 0;
 	}
 
-	@Override
 	public int getWidth() {
 		return scene.getWidth();
 	}
 
-	@Override
 	public int getHeight() {
 		return scene.getHeight();
-	}
-	
-	@Override
-	public int getLength() {
-		return 0;
 	}
 }

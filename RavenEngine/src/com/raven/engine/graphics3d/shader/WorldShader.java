@@ -258,17 +258,17 @@ public class WorldShader extends Shader {
     }
 
     public void setViewMatrix(Matrix4f m) {
-        model_matrix = m;
-
-        if(GameEngine.getEngine().getWindow().getActiveShader() == this)
-            glUniformMatrix4fv(view_location, false, model_matrix.toBuffer());
-    }
-
-    public void setModelMatrix(Matrix4f m) {
         view_matrix = m;
 
         if(GameEngine.getEngine().getWindow().getActiveShader() == this)
             glUniformMatrix4fv(view_location, false, view_matrix.toBuffer());
+    }
+
+    public void setModelMatrix(Matrix4f m) {
+        model_matrix = m;
+
+        if(GameEngine.getEngine().getWindow().getActiveShader() == this)
+            glUniformMatrix4fv(model_location, false, model_matrix.toBuffer());
     }
 
     public void setWorldObjectID(int id) {
