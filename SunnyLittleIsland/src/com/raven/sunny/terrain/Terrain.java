@@ -29,4 +29,8 @@ public class Terrain extends WorldObject {
     public ModelData getModelData() {
         return model;
     }
+
+    public TerrainMap getTerrainMap() {
+        return map;
+    }
 }

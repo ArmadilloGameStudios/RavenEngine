@@ -147,7 +147,7 @@ public class GameWindow3D {
         glCullFace(GL_BACK);
 
         // Setup ModelReference Error
-        ModelReference.setBlankModel();
+        ModelReference.loadBlankModel();
     }
 
     public long getWindowHandler() {

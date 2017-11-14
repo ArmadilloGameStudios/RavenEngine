@@ -1,5 +1,6 @@
 package com.raven.engine.worldobject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,7 @@ public abstract class WorldObject implements Parentable {
     }
 
     private int id;
-    private float x, y, z, scale = 1f;
+    private float x, y, z, scale = 1f, rotation = 0f;
     private Matrix4f matrix;
     private boolean visible = true;
     private List<WorldObject> children = new CopyOnWriteArrayList<WorldObject>();
@@ -38,6 +39,10 @@ public abstract class WorldObject implements Parentable {
 
     private Parentable parent;
     private boolean parentIsWorldObject;
+
+    public WorldObject(Parentable parent, String modelsrc) {
+        this(parent, GameEngine.getEngine().getModelData(GameEngine.getEngine().getGame().getMainDirectory() + File.separator + modelsrc));
+    }
 
     public WorldObject(Parentable parent, ModelData model) {
         this.parent = parent;
@@ -70,7 +75,6 @@ public abstract class WorldObject implements Parentable {
         // TODO
         return 0;
     }
-
 
     @Override
     public float getGlobalZ() {
@@ -119,8 +123,15 @@ public abstract class WorldObject implements Parentable {
         resolveMatrix();
     }
 
+    public void setRotation(float rotation) {
+        this.rotation = rotation;
+        resolveMatrix();
+    }
+
     private void resolveMatrix() {
-        matrix = Matrix4f.translate(x, y, z).multiply(Matrix4f.scale(scale, scale, scale));
+        matrix = Matrix4f.translate(x, y, z)
+                .multiply(Matrix4f.rotate(rotation, 0f, 1f, 0f))
+                .multiply(Matrix4f.scale(scale, scale, scale));
     }
 
     public boolean getVisibility() {

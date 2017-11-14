@@ -6,14 +6,15 @@ import com.raven.engine.graphics3d.PlyImporter;
 import com.raven.engine.graphics3d.VertexData;
 import com.raven.engine.scene.Layer;
 import com.raven.engine.scene.Scene;
+import com.raven.engine.util.Vector3f;
 import com.raven.engine.worldobject.WorldObject;
 import com.raven.sunny.SunnyLittleIslandGame;
+import com.raven.sunny.Tree;
 import com.raven.sunny.terrain.Terrain;
+import com.raven.sunny.terrain.TerrainData;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -53,19 +54,20 @@ public class RandomScene extends Scene {
         // water
         water = new ModelData();
 
-        float y = -.03f;
+        float y = -.0f;
+        float size = 500f;
 
-        Float[] v = new Float[] {
-                50f, y, 50f,
-                50f, y, -50f,
-                -50f, y, 50f,
+        Float[] v = new Float[]{
+                size, y, size,
+                size, y, -size,
+                -size, y, size,
 
-                -50f, y, 50f,
-                50f, y, -50f,
-                -50f, y, -50f,
+                -size, y, size,
+                size, y, -size,
+                -size, y, -size,
         };
 
-        Float[] n = new Float[] {
+        Float[] n = new Float[]{
                 0f, 1f, 0f,
                 0f, 1f, 0f,
                 0f, 1f, 0f,
@@ -75,7 +77,7 @@ public class RandomScene extends Scene {
                 0f, 1f, 0f,
         };
 
-        Float[] c = new Float[] {
+        Float[] c = new Float[]{
                 .2f, .6f, .8f,
                 .2f, .6f, .8f,
                 .2f, .6f, .8f,
@@ -108,19 +110,55 @@ public class RandomScene extends Scene {
         });
 
         // load trees
-        ModelData tree = PlyImporter.Import(new File(GameEngine.getEngine().getGame().getMainDirectory() + File.separator + "Blender" + File.separator + "palmtree.ply"));
-
+        // ModelData tree = PlyImporter.Import(new File(GameEngine.getEngine().getGame().getMainDirectory() + File.separator + "Blender" + File.separator + "bush.ply"));
+        ModelData tree = GameEngine.getEngine().getModelData(GameEngine.getEngine().getGame().getMainDirectory() + File.separator + "models" + File.separator + "palmtree.ply");
         mds.add(tree);
 
         Random r = new Random();
-        for (int i = 0; i < 100; i++) {
-            WorldObject woTree;
+        for (TerrainData[] tds : t.getTerrainMap().getTerrainData()) {
+            for (TerrainData td : tds) {
+                if (td.getType() == TerrainData.Sand && r.nextFloat() < .3f) {
 
-            landLayer.addChild(woTree = new WorldObject(landLayer, tree) {});
+                    WorldObject woTree = new Tree(landLayer);
+                    landLayer.addChild(woTree);
+//                    landLayer.addChild(woTree = new WorldObject(landLayer, tree) {
+//                    });
 
-            woTree.setX((r.nextFloat() - .5f) * 20f);
-            woTree.setZ((r.nextFloat() - .5f) * 20f);
+                    Vector3f center = td.getCenter();
+
+                    woTree.setX(center.x);
+                    woTree.setY(center.y);
+                    woTree.setZ(center.z);
+                    woTree.setScale(.35f);
+                    woTree.setRotation(r.nextFloat() * 360);
+                }
+
+            }
         }
+
+        // load trees
+//        ModelData tree2 = PlyImporter.Import(new File(GameEngine.getEngine().getGame().getMainDirectory() + File.separator + "Blender" + File.separator + "palmtree.ply"));
+//        mds.add(tree2);
+//
+//        for (TerrainData[] tds : t.getTerrainMap().getTerrainData()) {
+//            for (TerrainData td : tds) {
+//                if (td.getType() == TerrainData.Sand && r.nextFloat() < .01f) {
+//
+//                    WorldObject woTree;
+//                    landLayer.addChild(woTree = new WorldObject(landLayer, tree2) {
+//                    });
+//
+//                    Vector3f center = td.getCenter();
+//
+//                    woTree.setX(center.x);
+//                    woTree.setY(center.y);
+//                    woTree.setZ(center.z);
+//                    woTree.setScale(.35f);
+//                    woTree.setRotation(r.nextFloat() * 360);
+//                }
+//
+//            }
+//        }
 
         return mds;
     }

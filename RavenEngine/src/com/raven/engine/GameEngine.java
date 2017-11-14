@@ -4,11 +4,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataQuery;
@@ -16,6 +12,7 @@ import com.raven.engine.database.GameDatabase;
 import com.raven.engine.graphics3d.GameWindow3D;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.ModelReference;
+import com.raven.engine.graphics3d.PlyModelData;
 import com.raven.engine.worldobject.WorldObject;
 
 public class GameEngine implements Runnable {
@@ -41,9 +38,9 @@ public class GameEngine implements Runnable {
 	private Game game;
 	private Thread thread;
 	private GameWindow3D window;
-	private List<String> modelAssets = new ArrayList<>();
 	private List<WorldObject> oldMouseList = new ArrayList<>();
 	private GameDatabase gdb;
+	private Map<String, ModelData> modelDataMap = new HashMap<>();
 	private float deltaTime;
 	private long systemTime;
 	private boolean breakthread = false;
@@ -112,7 +109,7 @@ public class GameEngine implements Runnable {
 		window.setup();
 
 		System.out.println("Loading Assets");
-		loadDatabaseAndModels();
+		loadDatabase();
 
 		game.setup();
 
@@ -161,7 +158,6 @@ public class GameEngine implements Runnable {
 
 	private void draw() {
 		game.draw3d();
-		// game.draw3d();
 
 		// window.getBloomShader().useProgram();
 		// window.drawFBO();
@@ -199,16 +195,13 @@ public class GameEngine implements Runnable {
 		window.processInput(oldMouseList);
 	}
 
-	private void loadDatabaseAndModels() {
-		// searchAndLoadAssets(new File("assets"));
+	private void loadDatabase() {
+		// load models
 
-		File modelDirectory = new File(game.getMainDirectory() + File.separator + "model");
+		File modelDirectory = new File(game.getMainDirectory() + File.separator + "models");
 		loadModels(modelDirectory);
 
-		for (String img : modelAssets) {
-			System.out.println(img);
-		}
-
+        // load database
 		gdb = new GameDatabase();
 		gdb.load();
 	}
@@ -217,10 +210,14 @@ public class GameEngine implements Runnable {
 		for (File f : base.listFiles()) {
 			if (f.isFile()) {
 				System.out.println(f.getPath());
-				modelAssets.add(f.getPath());
+				modelDataMap.put(f.getPath(), new PlyModelData(f.getPath()));
 			} else if (f.isDirectory()) {
 				loadModels(f);
 			}
 		}
 	}
+
+	public ModelData getModelData(String modelsrc) {
+	    return modelDataMap.get(modelsrc);
+    }
 }

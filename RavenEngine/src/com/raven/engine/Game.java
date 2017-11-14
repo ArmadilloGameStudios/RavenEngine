@@ -1,17 +1,10 @@
 package com.raven.engine;
 
-import static org.lwjgl.opengl.GL11.glFlush;
-import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-
 import java.awt.image.BufferedImage;
 
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.ModelReference;
 import com.raven.engine.scene.Scene;
-import com.raven.engine.util.Matrix4f;
-
-import javax.jws.WebParam;
 
 public abstract class Game {
 	private GameEngine engine;
@@ -60,7 +53,7 @@ public abstract class Game {
 		}
 
 		ModelReference.clearBuffers();
-		ModelReference.setBlankModel();
+		ModelReference.loadBlankModel();
 		for (ModelData md : scene.getSceneModels()) {
 			ModelReference.load(md);
 		}

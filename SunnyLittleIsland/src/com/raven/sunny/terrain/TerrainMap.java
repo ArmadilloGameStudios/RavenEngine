@@ -80,19 +80,50 @@ public class TerrainMap {
 
             for (int z = 0; z < height * 2 - 1; z++) {
                 TerrainData d = new TerrainData(this, x, z);
+
+                Vector3f[] vs;
+
                 if (x % 2 == 0) {
                     if (z % 2 == 0) {
-                        d.setVertices(heightPoints[x + 1][z / 2], heightPoints[x][z / 2], heightPoints[x + 1][z / 2 + 1]);
+                        vs = new Vector3f[] { heightPoints[x + 1][z / 2], heightPoints[x][z / 2], heightPoints[x + 1][z / 2 + 1] };
                     } else {
-                        d.setVertices(heightPoints[x + 1][z / 2 + 1], heightPoints[x][z / 2], heightPoints[x][z / 2 + 1]);
+                        vs = new Vector3f[] { heightPoints[x + 1][z / 2 + 1], heightPoints[x][z / 2], heightPoints[x][z / 2 + 1] };
                     }
                 } else {
                     if (z % 2 == 0) {
-                        d.setVertices(heightPoints[x][z / 2], heightPoints[x][z / 2 + 1], heightPoints[x + 1][z / 2]);
+                        vs = new Vector3f[] { heightPoints[x][z / 2], heightPoints[x][z / 2 + 1], heightPoints[x + 1][z / 2] };
                     } else {
-                        d.setVertices(heightPoints[x][z / 2 + 1], heightPoints[x + 1][z / 2 + 1], heightPoints[x + 1][z / 2]);
+                    vs = new Vector3f[] { heightPoints[x][z / 2 + 1], heightPoints[x + 1][z / 2 + 1], heightPoints[x + 1][z / 2] };
                     }
                 }
+
+                // Smooth Water edges
+                int countBelow = 0;
+                for (Vector3f v : vs) {
+                    if (v.y < 0f) {
+                        countBelow += 1;
+                    }
+                }
+
+                if (countBelow == 1 || countBelow == 2) {
+                    // more points above than below
+                    for (Vector3f v : vs) {
+                        if (v.y > .2f) {
+                            v.y = .2f;
+                        } else if (v.y < -.1f) {
+                            v.y = -.1f;
+                        }
+                    }
+                }
+//                else if (countBelow == 2) {
+//                    for (Vector3f v : vs) {
+//                        if (v.y > 0.05f) {
+//                            v.y = 0.05f;
+//                        }
+//                    }
+//                }
+
+                d.setVertices(vs);
 
                 data[x][z] = d;
             }
@@ -102,7 +133,7 @@ public class TerrainMap {
         for (TerrainData[] ds : data) {
             for (TerrainData d : ds) {
                 if (d.getMinHeight() > .05f) {
-                    d.setType(TerrainData.Grass);
+                    d.setType(TerrainData.Sand);
                 }
 
                 if (d.getNormal().y < .6f) {

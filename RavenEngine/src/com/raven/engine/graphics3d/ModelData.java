@@ -21,11 +21,19 @@ public class ModelData {
 
     void setModelReference(ModelReference modelReference) {
         this.modelReference = modelReference;
+
+        // delete the list
+        vertexList.clear();
+        vertexList = null;
     }
 
     public ModelReference getModelReference() {
         // If this has a null reference
         // then the ModelData probably wasn't loaded to the gpu
         return modelReference;
+    }
+
+    void load() {
+
     }
 }

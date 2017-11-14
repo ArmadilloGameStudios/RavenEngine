@@ -18,7 +18,7 @@ void main(void)
 
 	float ambiantLight = .5;
 	
-	float NdotL = dot(normalize((V * M * vec4(vertex_normal, 0.0)).xyz), normalize(V * M * vec4(lightDirection, 0.0)).xyz);
+	float NdotL = dot(normalize((V * M * vec4(vertex_normal, 0.0)).xyz), normalize(V * vec4(lightDirection, 0.0)).xyz);
 	float directionalLight = max(0.0, NdotL) * .5;
 
 	light = vec3(ambiantLight + directionalLight);

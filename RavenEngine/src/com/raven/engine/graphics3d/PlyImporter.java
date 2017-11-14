@@ -9,11 +9,16 @@ import java.util.stream.Stream;
  * Created by cookedbird on 11/8/17.
  */
 public class PlyImporter {
-
-
-
     static public ModelData Import(File file) {
+        return Import(file, null);
+    }
+
+    static public ModelData Import(File file, ModelData model) {
         try {
+            if (model == null) {
+                model = new ModelData();
+            }
+
             BufferedReader br;
             br = new BufferedReader(new FileReader(file));
 
@@ -71,27 +76,9 @@ public class PlyImporter {
             }
 
             // load the faces
-            ModelData model = new ModelData();
             for (int i = 0; i < face_count; i++) {
                 line = br.readLine();
                 lineData = line.split(" ");
-
-//                for (Integer vertexId : new Integer[] {
-//                        Integer.parseInt(lineData[1]),
-//                        Integer.parseInt(lineData[2]),
-//                        Integer.parseInt(lineData[2])
-//                }) {
-//                    VertexData vertexData = vertices.get(vertexId);
-//                    v.add(vertexData.x);
-//                    v.add(vertexData.y);
-//                    v.add(vertexData.z);
-//                    n.add(vertexData.nx);
-//                    n.add(vertexData.ny);
-//                    n.add(vertexData.nz);
-//                    c.add(vertexData.red / 255f);
-//                    c.add(vertexData.green / 255f);
-//                    c.add(vertexData.blue / 255f);
-//                }
 
                 Stream.of(
                         Integer.parseInt(lineData[1]),
@@ -103,6 +90,7 @@ public class PlyImporter {
 
             return model;
         } catch (IOException e) {
+            System.err.println(e);
             return null;
         }
     }

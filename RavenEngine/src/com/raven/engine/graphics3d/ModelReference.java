@@ -28,6 +28,9 @@ public class ModelReference {
     private static Float[][][][] mapColor;
 
     public static void load(ModelData modelData) {
+        // make sure all the data is loaded into the modelData
+        modelData.load();
+
         ModelReference modelr = new ModelReference();
 
         int vertex_start = vertex_list.size();
@@ -117,7 +120,7 @@ public class ModelReference {
         normal_list.clear();
     }
 
-    public static void setBlankModel() {
+    public static void loadBlankModel() {
         int vertex_start = vertex_list.size();
 
         blank = new ModelReference();

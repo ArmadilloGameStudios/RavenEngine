@@ -9,7 +9,7 @@ import java.util.List;
  * Created by cookedbird on 5/20/17.
  */
 public class TerrainData {
-    static final int Sand = 0, Grass = 1, Stone = 2, Stone_add = 3, Water = 4;
+    public static final int Beach = 0, Sand = 1, Stone = 2, Stone_add = 3, Water = 4;
 
     private int x_arr, z_arr;
 
@@ -18,26 +18,25 @@ public class TerrainData {
 
     private TerrainMap map;
 
-    public TerrainData(TerrainMap map, int x, int z) {
-        this.map=map;
-        x_arr = x;
-        z_arr = z;
-    }
-
     public static Float[] getColorOfType(int type) {
         switch (type) {
-            case Grass:
-                return new Float[] {0x01 / 255f, 0x99 / 255f, 0x0F / 255f};
             case Stone:
                 return new Float[] {0x99 / 255f, 0x99 / 255f, 0x99 / 255f};
-            case Stone_add:
+            case Stone_add:  // shouldn't be drawn
                 return new Float[] {0xFF / 255f, 0xFF / 255f, 0xFF / 255f};
             case Water:
                 return new Float[] {0x40 / 255f, 0x40 / 255f, 0xB2 / 255f};
             case Sand:
+            case Beach:
             default:
                 return new Float[] {0xE1 / 255f, 0xC0 / 255f, 0x8F / 255f};
         }
+    }
+
+    public TerrainData(TerrainMap map, int x, int z) {
+        this.map=map;
+        x_arr = x;
+        z_arr = z;
     }
 
     public int getType() {
@@ -95,6 +94,16 @@ public class TerrainData {
         }
 
         return maxHeight;
+    }
+
+    public Vector3f getCenter() {
+        Vector3f v = new Vector3f();
+
+        v.x = (vertices[0].x + vertices[1].x +vertices[2].x) / 3f;
+        v.y = (vertices[0].y + vertices[1].y +vertices[2].y) / 3f;
+        v.z = (vertices[0].z + vertices[1].z +vertices[2].z) / 3f;
+
+        return v;
     }
 
     public TerrainData[] getAdjacentTerrainData() {
