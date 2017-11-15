@@ -2,9 +2,9 @@ package com.raven.engine.database;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-public class GameDataTable {
-	private List<GameData> data = new ArrayList<GameData>();
+public class GameDataTable extends GameDataList {
 	private String name;
 
 	public GameDataTable(String name) {
@@ -13,42 +13,5 @@ public class GameDataTable {
 
 	public String getName() {
 		return name;
-	}
-
-	public GameData getFirst(GameDataQuery query) {
-		for (GameData row : data) {
-			if (query.matches(row)) {
-				return row;
-			}
-		}
-		return null;
-	}
-	
-
-	public List<GameData> getAll(GameDataQuery query) {
-		List<GameData> l = new ArrayList<GameData>();
-		
-		for (GameData row : data) {
-			if (query.matches(row)) {
-				l.add(row);
-			}
-		}
-		return l;
-	}
-
-	public List<GameData> getRows() {
-		return data;
-	}
-
-	public int getRowCount() {
-		return data.size();
-	}
-
-	public void addRow(GameData val) {
-		data.add(val);
-	}
-
-	public void deleteRow(int row) {
-		data.remove(row);
 	}
 }

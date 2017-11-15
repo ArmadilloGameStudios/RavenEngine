@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class GameData {
 	private Map<String, GameData> vals;
-	private List<GameData> list;
+	private GameDataList list;
 	private Integer integer;
 	private boolean bool;
 	private boolean isBool;
@@ -16,7 +16,7 @@ public class GameData {
 		this.vals = vals;
 	}
 
-	public GameData(List<GameData> list) {
+	public GameData(GameDataList list) {
 		this.list = list;
 	}
 
@@ -54,42 +54,58 @@ public class GameData {
 		return list != null;
 	}
 
-	public List<GameData> getList() {
+	public GameDataList asList() {
 		return list;
 	}
-	
+
+	public GameDataList getList(String prop) {
+        return getData(prop).asList();
+    }
+
 	public boolean isString() {
 		return str != null;
 	}
 	
-	public String getString() {
+	public String asString() {
 		return str;
 	}
+
+	public String getString(String prop) {
+	    return getData(prop).asString();
+    }
 	
 	public boolean isBoolean() {
 		return isBool;
 	}
 
-	public boolean getBoolean() {
+	public boolean asBoolean() {
 		return bool;
 	}
-	
+
+	public boolean getBoolean(String prop) {
+	    return getData(prop).asBoolean();
+    }
+
 	public boolean isInteger() {
 		return integer != null;
 	}
 	
-	public int getInteger() {
+	public int asInteger() {
 		return integer;
 	}
-	
+
+	public int getInteger(String prop) {
+	    return getData(prop).asInteger();
+    }
+
 	@Override
 	public String toString() {
 		if (isBoolean()) {
-			return String.valueOf(this.getBoolean());
+			return String.valueOf(this.asBoolean());
 		} else if (isInteger()) {
-			return String.valueOf(getInteger());
+			return String.valueOf(asInteger());
 		} else if (isString()) {
-			return String.format("\"%1$s\"", getString());
+			return String.format("\"%1$s\"", asString());
 		} else if (this.isData()) {
 			return String.valueOf(vals);
 		} else if (this.isList()) {

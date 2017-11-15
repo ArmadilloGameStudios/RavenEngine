@@ -77,22 +77,6 @@ public class GameEngine implements Runnable {
 		return gdb;
 	}
 
-	public GameData getFirstFromGameDatabase(String table, GameDataQuery query) {
-		return gdb.getTable(table).getFirst(query);
-	}
-
-	public List<GameData> getAllFromGameDatabase(String table,
-			GameDataQuery query) {
-		return gdb.getTable(table).getAll(query);
-	}
-
-	public GameData getRandomFromGameDatabase(String table, GameDataQuery query) {
-		List<GameData> rows = gdb.getTable(table).getAll(query);
-
-		Random r = new Random();
-		return rows.get(r.nextInt(rows.size()));
-	}
-
 	public void breakThread() {
 		System.out
 				.println("Breaking Thread. Was it alive? " + thread.isAlive());

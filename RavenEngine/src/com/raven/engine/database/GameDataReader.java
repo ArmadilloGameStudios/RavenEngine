@@ -41,7 +41,7 @@ public class GameDataReader {
 
 	private static GameData readData(char[] chars, boolean array) {
 		Map<String, GameData> data = new HashMap<String, GameData>();
-		List<GameData> list = new ArrayList<GameData>();
+		GameDataList list = new GameDataList();
 
 		ReadDataState state = ReadDataState.Open;
 		ValueType type = ValueType.GameData;
