@@ -14,11 +14,11 @@ vec3 lightDirection = normalize(vec3(1, 3, 2));
 
 void main(void)
 {
-	gl_Position = P * M * V * vec4(vertex_pos, 1.0);
+	gl_Position = P * V * M * vec4(vertex_pos, 1.0);
 
 	float ambiantLight = .5;
 
-	float NdotL = dot(normalize((M * V * vec4(vertex_normal, 0.0)).xyz), (M * V * vec4(lightDirection, 0.0)).xyz);
+	float NdotL = dot(normalize((V * M * vec4(vertex_normal, 0.0)).xyz), normalize(V * vec4(lightDirection, 0.0)).xyz);
 	float directionalLight = max(0.0, NdotL) * .5;
 
 	light = vec3(ambiantLight + directionalLight);

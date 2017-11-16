@@ -1,6 +1,7 @@
 package com.raven.engine.graphics3d.shader;
 
 import com.raven.engine.GameEngine;
+import com.raven.engine.GameProperties;
 import org.lwjgl.BufferUtils;
 
 import java.nio.IntBuffer;
@@ -44,8 +45,8 @@ public class BloomShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, bloom_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
                 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -67,8 +68,8 @@ public class BloomShader extends Shader {
         renderbuffer_handel = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer_handel);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight());
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight());
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                 GL_RENDERBUFFER, renderbuffer_handel);
 
@@ -90,17 +91,17 @@ public class BloomShader extends Shader {
         glUniform1i(texture_glow_location, WorldShader.GLOW);
 
         glUniform2f(bloom_step_location,
-                1f / GameEngine.getEngine().getGame().getWidth(), 0f);
+                1f / GameProperties.getScreenWidth(), 0f);
 
         glUniform2i(screen_size_location,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight());
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight());
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
 
         glViewport(0, 0,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight());
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight());
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

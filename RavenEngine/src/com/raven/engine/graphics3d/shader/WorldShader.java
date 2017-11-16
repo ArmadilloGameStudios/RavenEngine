@@ -1,6 +1,7 @@
 package com.raven.engine.graphics3d.shader;
 
 import com.raven.engine.GameEngine;
+import com.raven.engine.GameProperties;
 import com.raven.engine.util.Matrix4f;
 import org.lwjgl.BufferUtils;
 
@@ -77,8 +78,8 @@ public class WorldShader extends Shader {
 
         glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
                 ms_count, GL_RGBA,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
                 true);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, ms_color_texture, 0);
@@ -91,8 +92,8 @@ public class WorldShader extends Shader {
 
         glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
                 ms_count, GL_RGB,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
                 true);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE, ms_glow_texture, 0);
@@ -104,8 +105,8 @@ public class WorldShader extends Shader {
 
         glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
                 ms_count, GL_RGB,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
                 true);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D_MULTISAMPLE, ms_id_texture, 0);
@@ -117,8 +118,8 @@ public class WorldShader extends Shader {
 
         glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
                 ms_count, GL_DEPTH_COMPONENT32,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
                 true);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, ms_depth_texture, 0);
@@ -154,8 +155,8 @@ public class WorldShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, color_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
                 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -168,8 +169,8 @@ public class WorldShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, bloom_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
                 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -182,8 +183,8 @@ public class WorldShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, id_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
                 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -196,8 +197,8 @@ public class WorldShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, depth_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
                 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -225,8 +226,8 @@ public class WorldShader extends Shader {
         glBindFramebuffer(GL_FRAMEBUFFER, ms_framebuffer_handel);
 
         glViewport(0, 0,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight());
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight());
 
         glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -295,7 +296,7 @@ public class WorldShader extends Shader {
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glReadBuffer(GL_COLOR_ATTACHMENT2);
         glReadPixels((int)coursorXPosBuffer.get(),
-                GameEngine.getEngine().getGame().getHeight() - (int)coursorYPosBuffer.get(),
+                GameProperties.getScreenHeight() - (int)coursorYPosBuffer.get(),
                 1, 1, GL_RGB, GL_UNSIGNED_BYTE, pixelreadBuffer);
 
         int id = pixelreadBuffer.get();
@@ -346,11 +347,11 @@ public class WorldShader extends Shader {
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
         glBlitFramebuffer(
                 0, 0,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
                 0, 0,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
                 GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
         buffers.rewind();

@@ -1,8 +1,6 @@
 package com.raven.sunny.scenes;
 
-import com.raven.engine.GameEngine;
 import com.raven.engine.graphics3d.ModelData;
-import com.raven.engine.graphics3d.PlyImporter;
 import com.raven.engine.graphics3d.VertexData;
 import com.raven.engine.scene.Layer;
 import com.raven.engine.scene.Scene;
@@ -13,7 +11,6 @@ import com.raven.sunny.Tree;
 import com.raven.sunny.terrain.Terrain;
 import com.raven.sunny.terrain.TerrainData;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -28,13 +25,13 @@ public class RandomScene extends Scene {
     private Layer landLayer;
     private Layer waterLayer;
 
-    public RandomScene(SunnyLittleIslandGame game) {
-        super(game);
+    public RandomScene() {
+        super();
 
-        landLayer = new Layer(this);
+        landLayer = new Layer();
         this.addLayer(landLayer);
 
-        waterLayer = new Layer(this, Layer.Destination.Water);
+        waterLayer = new Layer(Layer.Destination.Water);
         this.addLayer(waterLayer);
 
         t = Terrain.genTerrain(landLayer, 60, 45);
@@ -105,24 +102,21 @@ public class RandomScene extends Scene {
 
         mds.add(water);
 
-        waterLayer.addChild(new WorldObject(landLayer, water) {
+        waterLayer.addChild(new WorldObject(water) {
 
         });
 
         // load trees
-        // ModelData tree = PlyImporter.Import(new File(GameEngine.getEngine().getGame().getMainDirectory() + File.separator + "Blender" + File.separator + "bush.ply"));
-        ModelData tree = GameEngine.getEngine().getModelData(GameEngine.getEngine().getGame().getMainDirectory() + File.separator + "models" + File.separator + "palmtree.ply");
-        mds.add(tree);
+        for (ModelData data : Tree.getModelData())
+            mds.add(data);
 
         Random r = new Random();
         for (TerrainData[] tds : t.getTerrainMap().getTerrainData()) {
             for (TerrainData td : tds) {
                 if (td.getType() == TerrainData.Sand && r.nextFloat() < .3f) {
 
-                    WorldObject woTree = new Tree(landLayer);
+                    WorldObject woTree = new Tree();
                     landLayer.addChild(woTree);
-//                    landLayer.addChild(woTree = new WorldObject(landLayer, tree) {
-//                    });
 
                     Vector3f center = td.getCenter();
 
@@ -135,30 +129,6 @@ public class RandomScene extends Scene {
 
             }
         }
-
-        // load trees
-//        ModelData tree2 = PlyImporter.Import(new File(GameEngine.getEngine().getGame().getMainDirectory() + File.separator + "Blender" + File.separator + "palmtree.ply"));
-//        mds.add(tree2);
-//
-//        for (TerrainData[] tds : t.getTerrainMap().getTerrainData()) {
-//            for (TerrainData td : tds) {
-//                if (td.getType() == TerrainData.Sand && r.nextFloat() < .01f) {
-//
-//                    WorldObject woTree;
-//                    landLayer.addChild(woTree = new WorldObject(landLayer, tree2) {
-//                    });
-//
-//                    Vector3f center = td.getCenter();
-//
-//                    woTree.setX(center.x);
-//                    woTree.setY(center.y);
-//                    woTree.setZ(center.z);
-//                    woTree.setScale(.35f);
-//                    woTree.setRotation(r.nextFloat() * 360);
-//                }
-//
-//            }
-//        }
 
         return mds;
     }

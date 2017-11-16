@@ -4,35 +4,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.raven.engine.Game;
+import com.raven.engine.graphics3d.Camera;
 import com.raven.engine.graphics3d.ModelData;
 
 public abstract class Scene {
-	private Game game;
-	private List<Layer> layers = new ArrayList<Layer>();
+	private List<Layer> layers = new ArrayList<>();
+	private Camera camera;
 	
-	public Scene(Game game) {
-		this.game = game;
-	}
-	
-	protected int getWidth() {
-		return game.getWidth();
+	public Scene() {
+        camera = new Camera();
 	}
 
-	protected int getHeight() {
-		return game.getHeight();
-	}
-	
+    public Camera getCamera() {
+        return camera;
+    }
+
 	protected List<Layer> getLayers() {
 		return layers;
 	}
 	
 	protected void addLayer(Layer l) {
+		l.setScene(this);
 		layers.add(l);
 	}
 	
 	final public void draw() {
 		for (Layer l : layers) {
-			l.draw();
+			l.draw(camera);
 		}
 	}
 
@@ -45,4 +43,5 @@ public abstract class Scene {
     abstract public List<ModelData> getSceneModels();
     abstract public void enterScene();
 	abstract public void exitScene();
+
 }

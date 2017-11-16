@@ -24,9 +24,9 @@ package com.raven.engine.util;
  * SOFTWARE.
  */
 
-import java.nio.FloatBuffer;
-
 import org.lwjgl.BufferUtils;
+
+import java.nio.FloatBuffer;
 
 /**
  * This class represents a 4x4-Matrix. GLSL equivalent to mat4.
@@ -39,6 +39,8 @@ public class Matrix4f {
     private float m10, m11, m12, m13;
     private float m20, m21, m22, m23;
     private float m30, m31, m32, m33;
+    FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+
 
     /**
      * Creates a 4x4 identity matrix.
@@ -104,7 +106,6 @@ public class Matrix4f {
      * Adds this matrix to another matrix.
      *
      * @param other The other matrix
-     *
      * @return Sum of this + other
      */
     public Matrix4f add(Matrix4f other) {
@@ -146,7 +147,6 @@ public class Matrix4f {
      * Subtracts this matrix from another matrix.
      *
      * @param other The other matrix
-     *
      * @return Difference of this - other
      */
     public Matrix4f subtract(Matrix4f other) {
@@ -157,7 +157,6 @@ public class Matrix4f {
      * Multiplies this matrix with a scalar.
      *
      * @param scalar The scalar
-     *
      * @return Scalar product of this * scalar
      */
     public Matrix4f multiply(float scalar) {
@@ -190,7 +189,6 @@ public class Matrix4f {
      * Multiplies this matrix to a vector.
      *
      * @param vector The vector
-     *
      * @return Vector product of this * other
      */
     public Vector4f multiply(Vector4f vector) {
@@ -205,7 +203,6 @@ public class Matrix4f {
      * Multiplies this matrix to another matrix.
      *
      * @param other The other matrix
-     *
      * @return Matrix product of this * other
      */
     public Matrix4f multiply(Matrix4f other) {
@@ -271,12 +268,12 @@ public class Matrix4f {
      * @param buffer The buffer to store the matrix data
      */
     public FloatBuffer toBuffer() {
-    	FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
         buffer.put(m00).put(m10).put(m20).put(m30);
         buffer.put(m01).put(m11).put(m21).put(m31);
         buffer.put(m02).put(m12).put(m22).put(m32);
         buffer.put(m03).put(m13).put(m23).put(m33);
         buffer.flip();
+
         return buffer;
     }
 
@@ -290,7 +287,6 @@ public class Matrix4f {
      * @param top    Coordinate for the bottom horizontal clipping pane
      * @param near   Coordinate for the near depth clipping pane
      * @param far    Coordinate for the far depth clipping pane
-     *
      * @return Orthographic matrix
      */
     public static Matrix4f orthographic(float left, float right, float bottom, float top, float near, float far) {
@@ -322,7 +318,6 @@ public class Matrix4f {
      *               positive
      * @param far    Coordinate for the far depth clipping pane, must be
      *               positive
-     *
      * @return Perspective matrix
      */
     public static Matrix4f frustum(float left, float right, float bottom, float top, float near, float far) {
@@ -355,7 +350,6 @@ public class Matrix4f {
      *               be positive
      * @param far    Distance from the viewer to the far clipping plane, must be
      *               positive
-     *
      * @return Perspective matrix
      */
     public static Matrix4f perspective(float fovy, float aspect, float near, float far) {
@@ -380,7 +374,6 @@ public class Matrix4f {
      * @param x x coordinate of translation vector
      * @param y y coordinate of translation vector
      * @param z z coordinate of translation vector
-     *
      * @return Translation matrix
      */
     public static Matrix4f translate(float x, float y, float z) {
@@ -401,7 +394,6 @@ public class Matrix4f {
      * @param x     x coordinate of the rotation vector
      * @param y     y coordinate of the rotation vector
      * @param z     z coordinate of the rotation vector
-     *
      * @return Rotation matrix
      */
     public static Matrix4f rotate(float angle, float x, float y, float z) {
@@ -436,7 +428,6 @@ public class Matrix4f {
      * @param x Scale factor along the x coordinate
      * @param y Scale factor along the y coordinate
      * @param z Scale factor along the z coordinate
-     *
      * @return Scaling matrix
      */
     public static Matrix4f scale(float x, float y, float z) {

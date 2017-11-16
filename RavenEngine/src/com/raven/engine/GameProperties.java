@@ -7,11 +7,15 @@ package com.raven.engine;
  */
 public class GameProperties {
     public static int getScreenWidth() {
-        return GameEngine.getEngine().getGame().getWidth();
+        return 1920;
     }
 
     public static int getScreenHeight() {
-        return GameEngine.getEngine().getGame().getHeight();
+        return 1080;
+    }
+
+    public static String getMainDirectory() {
+        return GameEngine.getEngine().getGame().getMainDirectory();
     }
 
     private GameProperties() {}

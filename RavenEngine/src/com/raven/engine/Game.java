@@ -8,7 +8,6 @@ import com.raven.engine.scene.Scene;
 
 public abstract class Game {
 	private GameEngine engine;
-	private BufferedImage view;
 	private Scene currentScene;
 	private Scene readyTransitionScene;
 	private boolean isrunning = false;
@@ -23,12 +22,6 @@ public abstract class Game {
 
 	public void setEngine(GameEngine engine) {
 		this.engine = engine;
-		this.view = new BufferedImage(getWidth(), getHeight(),
-				BufferedImage.TYPE_INT_RGB);
-	}
-
-	protected BufferedImage getImage() {
-		return view;
 	}
 
 	final public Scene getCurrentScene() {
@@ -77,10 +70,6 @@ public abstract class Game {
 	abstract public void breakdown();
 
 	abstract public Scene loadInitialScene();
-
-	abstract public int getWidth();
-
-	abstract public int getHeight();
 
 	abstract public String getTitle();
 

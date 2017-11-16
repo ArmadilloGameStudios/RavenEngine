@@ -27,17 +27,7 @@ public class SunnyLittleIslandGame extends Game {
 
     @Override
     public Scene loadInitialScene() {
-        return new RandomScene(this);
-    }
-
-    @Override
-    public int getWidth() {
-        return 1424;
-    }
-
-    @Override
-    public int getHeight() {
-        return 856;
+        return new RandomScene();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.raven.engine.graphics3d.shader;
 
 import com.raven.engine.GameEngine;
+import com.raven.engine.GameProperties;
 import com.raven.engine.util.Matrix4f;
 import org.lwjgl.BufferUtils;
 
@@ -71,8 +72,8 @@ public class WaterShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, color_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
                 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -86,8 +87,8 @@ public class WaterShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, bloom_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
                 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -105,8 +106,8 @@ public class WaterShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, depth_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight(),
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
                 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -131,8 +132,8 @@ public class WaterShader extends Shader {
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
 
         glViewport(0, 0,
-                GameEngine.getEngine().getGame().getWidth(),
-                GameEngine.getEngine().getGame().getHeight());
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight());
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -159,23 +160,21 @@ public class WaterShader extends Shader {
     public void setProjectionMatrix(Matrix4f m) {
         projection_matrix = m;
 
-        if(GameEngine.getEngine().getWindow().getActiveShader() == this)
-            glUniformMatrix4fv(projection_location, false, projection_matrix.toBuffer());
+        glUniformMatrix4fv(projection_location, false, projection_matrix.toBuffer());
     }
 
     public void setViewMatrix(Matrix4f m) {
-        model_matrix = m;
+        view_matrix = m;
 
-        if(GameEngine.getEngine().getWindow().getActiveShader() == this)
-            glUniformMatrix4fv(view_location, false, model_matrix.toBuffer());
+        glUniformMatrix4fv(view_location, false, view_matrix.toBuffer());
     }
 
     public void setModelMatrix(Matrix4f m) {
-        view_matrix = m;
+        model_matrix = m;
 
-        if(GameEngine.getEngine().getWindow().getActiveShader() == this)
-            glUniformMatrix4fv(view_location, false, view_matrix.toBuffer());
+        glUniformMatrix4fv(model_location, false, model_matrix.toBuffer());
     }
+
     public int getColorTexture() {
         return color_texture;
     }

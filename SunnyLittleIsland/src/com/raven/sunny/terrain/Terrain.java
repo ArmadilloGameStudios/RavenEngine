@@ -11,8 +11,8 @@ public class Terrain extends WorldObject {
     TerrainMap map;
     ModelData model;
 
-    private Terrain(Parentable parent, ModelData model) {
-        super(parent, model);
+    private Terrain(ModelData model) {
+        super(model);
 
         this.model = model;
     }
@@ -20,7 +20,7 @@ public class Terrain extends WorldObject {
     public static Terrain genTerrain(Parentable parent, int width, int height) {
         TerrainMap map = new TerrainMap(width, height);
 
-        Terrain terrain = new Terrain(parent, map.getModelData());
+        Terrain terrain = new Terrain(map.getModelData());
         terrain.map = map;
 
         return terrain;

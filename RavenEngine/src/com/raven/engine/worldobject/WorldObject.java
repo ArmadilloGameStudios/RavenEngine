@@ -1,19 +1,17 @@
 package com.raven.engine.worldobject;
 
-import java.io.File;
+import com.raven.engine.GameEngine;
+import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.util.Matrix4f;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.raven.engine.GameEngine;
-import com.raven.engine.graphics3d.ModelData;
-import com.raven.engine.graphics3d.ModelReference;
-import com.raven.engine.util.Matrix4f;
-
 public abstract class WorldObject implements Parentable {
     private static int last_id = 0;
-    private static HashMap<Integer, WorldObject> worldObjectIDMap = new HashMap<Integer, WorldObject>();
+    private static HashMap<Integer, WorldObject> worldObjectIDMap = new HashMap<>();
 
     public static void resetObjectIDs() {
         worldObjectIDMap.clear();
@@ -30,7 +28,6 @@ public abstract class WorldObject implements Parentable {
     private boolean visible = true;
     private List<WorldObject> children = new CopyOnWriteArrayList<WorldObject>();
     private ModelData model;
-    private String animationstate = "idle";
     private boolean mousehovering = false;
     private List<MouseHandler> clickHandlers = new ArrayList<MouseHandler>();
     private long timeOffset = 0;
@@ -40,13 +37,11 @@ public abstract class WorldObject implements Parentable {
     private Parentable parent;
     private boolean parentIsWorldObject;
 
-    public WorldObject(Parentable parent, String modelsrc) {
-        this(parent, GameEngine.getEngine().getModelData(GameEngine.getEngine().getGame().getMainDirectory() + File.separator + modelsrc));
+    public WorldObject(String modelsrc) {
+        this(GameEngine.getEngine().getModelData(modelsrc));
     }
 
-    public WorldObject(Parentable parent, ModelData model) {
-        this.parent = parent;
-
+    public WorldObject(ModelData model) {
         // model
         this.model = model;
 
@@ -60,20 +55,6 @@ public abstract class WorldObject implements Parentable {
         this.z = 0;
 
         resolveMatrix();
-    }
-
-    public String getAnimationState() {
-        return animationstate;
-    }
-
-    public int setAnimationState(String animationstate) {
-        // TODO
-        return 0;
-    }
-
-    public int getAnimationTime(String animationstate) {
-        // TODO
-        return 0;
     }
 
     @Override
@@ -134,6 +115,10 @@ public abstract class WorldObject implements Parentable {
                 .multiply(Matrix4f.scale(scale, scale, scale));
     }
 
+    public Matrix4f getModelMatirx() {
+        return matrix;
+    }
+
     public boolean getVisibility() {
         return this.visible;
     }
@@ -151,10 +136,13 @@ public abstract class WorldObject implements Parentable {
     }
 
     public void draw() {
-        GameEngine.getEngine().getWindow().getWorldShader().setModelMatrix(matrix);
         GameEngine.getEngine().getWindow().getWorldShader().setWorldObjectID(id);
 
         model.getModelReference().draw();
+    }
+
+    public void setParent(Parentable parent) {
+        this.parent = parent;
     }
 
     public Parentable getParent() {

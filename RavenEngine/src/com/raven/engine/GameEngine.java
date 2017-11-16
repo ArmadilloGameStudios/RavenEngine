@@ -6,13 +6,13 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import java.io.File;
 import java.util.*;
 
-import com.raven.engine.database.GameData;
-import com.raven.engine.database.GameDataQuery;
 import com.raven.engine.database.GameDatabase;
 import com.raven.engine.graphics3d.GameWindow3D;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.ModelReference;
 import com.raven.engine.graphics3d.PlyModelData;
+import com.raven.engine.input.Keyboard;
+import com.raven.engine.input.Mouse;
 import com.raven.engine.worldobject.WorldObject;
 
 public class GameEngine implements Runnable {
@@ -44,6 +44,8 @@ public class GameEngine implements Runnable {
 	private float deltaTime;
 	private long systemTime;
 	private boolean breakthread = false;
+	private Mouse mouse = new Mouse();
+	private Keyboard keyboard = new Keyboard();
 
 	// Accessors
 	public Thread getThread() {
@@ -56,6 +58,7 @@ public class GameEngine implements Runnable {
 
 	private GameEngine(Game game) {
 		this.game = game;
+
 		game.setEngine(this);
 
 		systemTime = System.nanoTime() / 1000000L;
@@ -113,8 +116,8 @@ public class GameEngine implements Runnable {
 			input();
 			game.update(deltaTime);
 
-			if (frame % 120 == 0) {
-                System.out.println("FPS: " + 1000f / (framesdt / 120f));
+			if (frame % 60 == 0) {
+                System.out.println("FPS: " + 1000f / (framesdt / 60f));
                 framesdt = 0;
             }
 
@@ -147,10 +150,13 @@ public class GameEngine implements Runnable {
 		// window.drawFBO();
 
 		window.getCombinationShader().useProgram();
+		window.getCombinationShader().setProjectionMatrix(game.getCurrentScene().getCamera().getProjectionMatrix());
 		window.drawFBO();
-	}
+    }
 
 	private void input() {
+        glfwPollEvents();
+
 		int id = window.getWorldShader().getWorldObjectID();
 		if (id != 0 && false) {
 			System.out.println("id: " + id);
@@ -175,8 +181,6 @@ public class GameEngine implements Runnable {
 
 			oldMouseList.clear();
 		}
-
-		window.processInput(oldMouseList);
 	}
 
 	private void loadDatabase() {
@@ -202,6 +206,31 @@ public class GameEngine implements Runnable {
 	}
 
 	public ModelData getModelData(String modelsrc) {
-	    return modelDataMap.get(modelsrc);
+	    return modelDataMap.get(game.getMainDirectory() + File.separator + modelsrc);
+    }
+
+    // input
+    public void inputMouseButton(int button, int action, int mods) {
+        mouse.buttonAction(button, action);
+    }
+
+    public void inputMouseMove(double xpos, double ypos) {
+        if (mouse.isMiddleButtonDown())
+            this.getGame().getCurrentScene().getCamera().rotate(xpos - mouse.getX(), ypos - mouse.getY());
+
+        if (mouse.isRightButtonDown()) {
+            this.getGame().getCurrentScene().getCamera().move(xpos - mouse.getX(), ypos - mouse.getY());
+        }
+
+        mouse.setPos(xpos, ypos);
+    }
+
+    public void inputKey(int key, int action, int mods) {
+
+    }
+
+    public void inputScroll(double xoffset, double yoffset) {
+        this.getGame().getCurrentScene().getCamera().zoom(yoffset);
+
     }
 }
