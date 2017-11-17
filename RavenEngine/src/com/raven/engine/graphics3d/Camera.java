@@ -8,6 +8,7 @@ import com.raven.engine.util.Matrix4f;
  */
 public class Camera {
     float x, y, zoom = -30f, zoomMin = -25f, zoomMax = -50f, xr, yr = 40, yrMin = 20, yrMax = 89;
+    float xs = x, ys = y, zooms = zoom, xrs = xr, yrs = yr;
 
     private Matrix4f viewMatrix;
     private Matrix4f projectionMatrix;
@@ -27,34 +28,46 @@ public class Camera {
         return projectionMatrix;
     }
 
-    public void zoom(double yoffset) {zoom += yoffset * 2f;
+    public void zoom(double yoffset) {
+        zoom += yoffset * 3f;
         zoom = Math.min(zoomMin, Math.max(zoomMax, zoom));
-
-        updateViewMatrix();
     }
 
     public void rotate(double x, double y) {
-        xr += x;
+        xr += x * .2f;
         yr += y * .2f;
         yr = Math.max(yrMin, Math.min(yrMax, yr));
-
-        updateViewMatrix();
     }
 
     public void move(double x, double y) {
-        this.x += x * .1f;
-        this.y += y * .1f;
-
-        updateViewMatrix();
+        this.x += (x * +Math.cos(xrs / 180.0 * Math.PI) +
+                   y * -Math.sin(xrs / 180.0 * Math.PI)) *
+                -zoom * .001f;
+        this.y += (x * +Math.sin(xrs / 180.0 * Math.PI) +
+                   y * +Math.cos(xrs / 180.0 * Math.PI)) *
+                -zoom * .001f;
     }
 
     private void updateViewMatrix() {
-        viewMatrix = Matrix4f.translate(0, 0, zoom);
-        viewMatrix = viewMatrix.multiply(Matrix4f.rotate(yr, 1f, 0f, 0f));
-        viewMatrix = viewMatrix.multiply(Matrix4f.translate(x, 0, y));
-        viewMatrix = viewMatrix.multiply(Matrix4f.rotate(xr, 0f, 1f, 0f));
+        viewMatrix = new Matrix4f();
 
-        // viewMatrix = viewMatrix.multiply(Matrix4f.rotate((float)x * .2f, 0f, 1f, 0f).multiply(Matrix4f.rotate((float)y * -.2f, 1f, 0f, 0f)));
+        viewMatrix = viewMatrix.multiply(Matrix4f.translate(0, 0, zooms));
+        viewMatrix = viewMatrix.multiply(Matrix4f.rotate(yrs, 1f, 0f, 0f));
+
+        viewMatrix = viewMatrix.multiply(Matrix4f.rotate(xrs, 0f, 1f, 0f));
+        viewMatrix = viewMatrix.multiply(Matrix4f.translate(xs, 0, ys));
+
     }
 
+    public void update(float deltaTime) {
+        // smooth motion
+        float deltaCorrection = .04f;
+        zooms += (zoom - zooms) * .1f * deltaTime * deltaCorrection;
+        xs += (x - xs) * .3f * deltaTime * deltaCorrection;
+        ys += (y - ys) * .3f * deltaTime * deltaCorrection;
+        xrs += (xr - xrs) * .3f * deltaTime * deltaCorrection;
+        yrs += (yr - yrs) * .3f * deltaTime * deltaCorrection;
+
+        updateViewMatrix();
+    }
 }

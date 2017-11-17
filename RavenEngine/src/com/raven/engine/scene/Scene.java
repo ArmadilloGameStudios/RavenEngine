@@ -35,6 +35,8 @@ public abstract class Scene {
 	}
 
 	final public void update(float deltaTime) {
+	    camera.update(deltaTime);
+
 		for (Layer l : layers) {
 			l.update(deltaTime);
 		}
