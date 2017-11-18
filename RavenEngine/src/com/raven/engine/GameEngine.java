@@ -14,6 +14,7 @@ import com.raven.engine.graphics3d.PlyModelData;
 import com.raven.engine.input.Keyboard;
 import com.raven.engine.input.Mouse;
 import com.raven.engine.worldobject.WorldObject;
+import org.lwjgl.glfw.GLFW;
 
 public class GameEngine implements Runnable {
 	private static GameEngine engine;
@@ -43,7 +44,6 @@ public class GameEngine implements Runnable {
 	private Map<String, ModelData> modelDataMap = new HashMap<>();
 	private float deltaTime;
 	private long systemTime;
-	private boolean breakthread = false;
 	private Mouse mouse = new Mouse();
 	private Keyboard keyboard = new Keyboard();
 
@@ -80,10 +80,15 @@ public class GameEngine implements Runnable {
 		return gdb;
 	}
 
+    public Mouse getMouse() {
+        return mouse;
+    }
+
 	public void breakThread() {
 		System.out
 				.println("Breaking Thread. Was it alive? " + thread.isAlive());
-		breakthread = true;
+
+		game.breakdown();
 	}
 
 	int frame = 0;
@@ -108,7 +113,7 @@ public class GameEngine implements Runnable {
 		// game.getCurrentScene().enterScene();
 
 		while (game.isRunning()
-				|| !glfwWindowShouldClose(window.getWindowHandler())) {
+				&& !glfwWindowShouldClose(window.getWindowHandler())) {
 
 			long start = System.nanoTime();
 
@@ -120,7 +125,6 @@ public class GameEngine implements Runnable {
                 System.out.println("FPS: " + 1000f / (framesdt / 60f));
                 framesdt = 0;
             }
-
 
 			glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
 
@@ -149,6 +153,9 @@ public class GameEngine implements Runnable {
 		// window.getBloomShader().useProgram();
 		// window.drawFBO();
 
+        window.getIDShader().useProgram();
+        window.drawFBO();
+
 		window.getCombinationShader().useProgram();
 		window.getCombinationShader().setProjectionMatrix(game.getCurrentScene().getCamera().getProjectionMatrix());
 		window.drawFBO();
@@ -157,9 +164,9 @@ public class GameEngine implements Runnable {
 	private void input() {
         glfwPollEvents();
 
-		int id = window.getWorldShader().getWorldObjectID();
-		if (id != 0 && false) {
-			System.out.println("id: " + id);
+		int id = window.getIDShader().getWorldObjectID();
+		if (id != 0) {
+			// System.out.println("id: " + id);
 
 			WorldObject clicked = WorldObject.getWorldObjectFromID(id);
 
@@ -226,7 +233,9 @@ public class GameEngine implements Runnable {
     }
 
     public void inputKey(int key, int action, int mods) {
-
+        if (GLFW.GLFW_KEY_ESCAPE == key && GLFW.GLFW_PRESS == action) {
+            this.breakThread();
+        }
     }
 
     public void inputScroll(double xoffset, double yoffset) {

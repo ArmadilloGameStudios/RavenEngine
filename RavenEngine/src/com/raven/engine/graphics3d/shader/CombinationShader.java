@@ -23,7 +23,9 @@ public class CombinationShader extends Shader {
     private Matrix4f projection_matrix = new Matrix4f();
 
     public CombinationShader() {
-        super("vertex2.glsl", "fragment2.glsl");
+        super("vertex2.glsl", "combination_fragment.glsl");
+
+        glBindAttribLocation(getProgramHandel(), 0, "vertex_pos");
 
         projection_location = glGetUniformLocation(getProgramHandel(), "P");
 

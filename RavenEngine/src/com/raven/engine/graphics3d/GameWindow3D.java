@@ -30,6 +30,7 @@ public class GameWindow3D {
     private WorldShader worldShader;
     private WaterShader waterShader;
     private BloomShader bloomShader;
+    private IDShader idShader;
     private CombinationShader combinationShader;
 
     private GameEngine engine;
@@ -60,15 +61,15 @@ public class GameWindow3D {
         // Create the window
         window = glfwCreateWindow(GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight(),
-                engine.getGame().getTitle(), NULL, // glfwGetPrimaryMonitor(),
+                engine.getGame().getTitle(), glfwGetPrimaryMonitor(),
                 NULL);
         if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 
         // Get the thread stack and push a new frame
         try (MemoryStack stack = stackPush()) {
-            IntBuffer pWidth = stack.mallocInt(1); // int*
-            IntBuffer pHeight = stack.mallocInt(1); // int*
+            IntBuffer pWidth = stack.mallocInt(1);
+            IntBuffer pHeight = stack.mallocInt(1);
 
             // Get the window size passed to glfwCreateWindow
             glfwGetWindowSize(window, pWidth, pHeight);
@@ -104,6 +105,7 @@ public class GameWindow3D {
         worldShader = new WorldShader();
         waterShader = new WaterShader();
         bloomShader = new BloomShader();
+        idShader = new IDShader();
         combinationShader = new CombinationShader();
 
         // Enable multisample
@@ -130,6 +132,10 @@ public class GameWindow3D {
 
     public BloomShader getBloomShader() {
         return bloomShader;
+    }
+
+    public IDShader getIDShader() {
+        return idShader;
     }
 
     public WaterShader getWaterShader() {

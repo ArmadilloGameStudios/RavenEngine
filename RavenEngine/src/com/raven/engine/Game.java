@@ -65,6 +65,10 @@ public abstract class Game {
 		return isrunning;
 	}
 
+	final protected void setRunning(boolean running) {
+		this.isrunning = running;
+	}
+
 	abstract public void setup();
 
 	abstract public void breakdown();

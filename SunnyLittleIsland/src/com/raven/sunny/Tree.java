@@ -6,6 +6,7 @@ import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataList;
 import com.raven.engine.database.GameDatabase;
 import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.worldobject.MouseHandler;
 import com.raven.engine.worldobject.Parentable;
 import com.raven.engine.worldobject.WorldObject;
 
@@ -20,6 +21,27 @@ public class Tree extends WorldObject {
 
     public Tree() {
         super(dataList.getRandom().getString("model"));
+
+        Tree tree = this;
+        this.addMouseHandler(new MouseHandler() {
+            @Override
+            public void onMouseClick() {
+                tree.setY(tree.getY() - 10.0f);
+            }
+
+            @Override
+            public void onMouseEnter() {
+            }
+
+            @Override
+            public void onMouseLeave() {
+
+            }
+
+            @Override
+            public void onMouseHover() {
+            }
+        });
     }
 
     public static List<ModelData> getModelData() {

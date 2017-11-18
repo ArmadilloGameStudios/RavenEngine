@@ -61,12 +61,12 @@ public class Camera {
 
     public void update(float deltaTime) {
         // smooth motion
-        float deltaCorrection = .04f;
-        zooms += (zoom - zooms) * .1f * deltaTime * deltaCorrection;
-        xs += (x - xs) * .3f * deltaTime * deltaCorrection;
-        ys += (y - ys) * .3f * deltaTime * deltaCorrection;
-        xrs += (xr - xrs) * .3f * deltaTime * deltaCorrection;
-        yrs += (yr - yrs) * .3f * deltaTime * deltaCorrection;
+        float deltaCorrection = .004f;
+        zooms += (zoom - zooms) * 1f * deltaTime * deltaCorrection;
+        xs += (x - xs) * 3f * deltaTime * deltaCorrection;
+        ys += (y - ys) * 3f * deltaTime * deltaCorrection;
+        xrs += (xr - xrs) * 3f * deltaTime * deltaCorrection;
+        yrs += (yr - yrs) * 3f * deltaTime * deltaCorrection;
 
         updateViewMatrix();
     }

@@ -5,7 +5,6 @@ import com.raven.engine.GameProperties;
 import com.raven.engine.util.Matrix4f;
 import org.lwjgl.BufferUtils;
 
-import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
@@ -30,6 +29,7 @@ public class WorldShader extends Shader {
     public static final int
             COLOR = getNextTexture(),
             GLOW = getNextTexture(),
+            ID = getNextTexture(),
             DEPTH = getNextTexture();
 
     private int projection_location, model_location, view_location, id_location;
@@ -47,7 +47,7 @@ public class WorldShader extends Shader {
     public WorldShader() {
         super("vertex.glsl", "fragment.glsl");
 
-        int bfs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+        int bfs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
         buffers = BufferUtils.createIntBuffer(bfs.length);
         for (int i = 0; i < bfs.length; i++)
             buffers.put(bfs[i]);
@@ -101,6 +101,7 @@ public class WorldShader extends Shader {
 
         // ID
         ms_id_texture = glGenTextures();
+        glActiveTexture(GL_TEXTURE0 + ID);
         glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_id_texture);
 
         glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
@@ -229,7 +230,7 @@ public class WorldShader extends Shader {
                 GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight());
 
-        glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -254,58 +255,33 @@ public class WorldShader extends Shader {
     public void setProjectionMatrix(Matrix4f m) {
         projection_matrix = m;
 
-        if(GameEngine.getEngine().getWindow().getActiveShader() == this)
+        if (GameEngine.getEngine().getWindow().getActiveShader() == this)
             glUniformMatrix4fv(projection_location, false, projection_matrix.toBuffer());
     }
 
     public void setViewMatrix(Matrix4f m) {
         view_matrix = m;
 
-        if(GameEngine.getEngine().getWindow().getActiveShader() == this)
+        if (GameEngine.getEngine().getWindow().getActiveShader() == this)
             glUniformMatrix4fv(view_location, false, view_matrix.toBuffer());
     }
 
     public void setModelMatrix(Matrix4f m) {
         model_matrix = m;
 
-        if(GameEngine.getEngine().getWindow().getActiveShader() == this)
+        if (GameEngine.getEngine().getWindow().getActiveShader() == this)
             glUniformMatrix4fv(model_location, false, model_matrix.toBuffer());
     }
 
     public void setWorldObjectID(int id) {
-        if (id != 0) {
-            int r = (id & 0x000000FF) >> 0;
-            int g = (id & 0x0000FF00) >> 8;
-            int b = (id & 0x00FF0000) >> 16;
+        if (GameEngine.getEngine().getWindow().getActiveShader() == this)
+            if (id != 0) {
+                int r = (id & 0x000000FF) >> 0;
+                int g = (id & 0x0000FF00) >> 8;
+                int b = (id & 0x00FF0000) >> 16;
 
-            glUniform3f(id_location, r / 255.0f, g / 255.0f, b / 255.0f);
-        }
-    }
-
-    private IntBuffer pixelreadBuffer = BufferUtils.createIntBuffer(1);
-    private DoubleBuffer coursorXPosBuffer = BufferUtils.createDoubleBuffer(1);
-    private DoubleBuffer coursorYPosBuffer = BufferUtils.createDoubleBuffer(1);
-    public int getWorldObjectID() {
-        glfwGetCursorPos(GameEngine.getEngine().getWindow().getWindowHandler(),
-                coursorXPosBuffer, coursorYPosBuffer);
-
-        glFlush();
-        glFinish();
-
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glReadBuffer(GL_COLOR_ATTACHMENT2);
-        glReadPixels((int)coursorXPosBuffer.get(),
-                GameProperties.getScreenHeight() - (int)coursorYPosBuffer.get(),
-                1, 1, GL_RGB, GL_UNSIGNED_BYTE, pixelreadBuffer);
-
-        int id = pixelreadBuffer.get();
-
-        pixelreadBuffer.flip();
-        coursorXPosBuffer.flip();
-        coursorYPosBuffer.flip();
-
-        return id;
+                glUniform3f(id_location, r / 255.0f, g / 255.0f, b / 255.0f);
+            }
     }
 
     public int getColorTexture() {

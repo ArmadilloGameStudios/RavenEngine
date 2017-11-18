@@ -203,7 +203,7 @@ public abstract class WorldObject implements Parentable {
     }
 
     final public void onMouseMove() {
-        for (MouseHandler c : clickHandlers) c.onMouseMove();
+        for (MouseHandler c : clickHandlers) c.onMouseHover();
     }
 
     final public void onMouseLeave() {

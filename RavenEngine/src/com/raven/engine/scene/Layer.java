@@ -53,6 +53,7 @@ public class Layer implements Parentable {
                 window.getWaterShader().setProjectionMatrix(camera.getProjectionMatrix());
                 window.getWaterShader().setViewMatrix(camera.getViewMatrix());
 
+
                 for (WorldObject o : gameObjectList) {
                     window.getWaterShader().setModelMatrix(o.getModelMatirx());
                     o.draw();

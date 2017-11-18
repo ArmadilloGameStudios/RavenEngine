@@ -22,7 +22,7 @@ public class SunnyLittleIslandGame extends Game {
 
     @Override
     public void breakdown() {
-
+        this.setRunning(false);
     }
 
     @Override
