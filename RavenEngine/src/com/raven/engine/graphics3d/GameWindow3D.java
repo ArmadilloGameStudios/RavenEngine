@@ -28,7 +28,8 @@ public class GameWindow3D {
     private int ms_count = 4;
 
     private WorldShader worldShader;
-    private WaterShader waterShader;
+    private WaterRefractionShader waterRefractionShader;
+    private WaterReflectionShader waterReflectionShader;
     private WorldWaterShader worldWaterShader;
     private BloomShader bloomShader;
     private IDShader idShader;
@@ -104,7 +105,8 @@ public class GameWindow3D {
 
         // Shaders
         worldShader = new WorldShader();
-        waterShader = new WaterShader();
+        waterRefractionShader = new WaterRefractionShader();
+        waterReflectionShader = new WaterReflectionShader();
         worldWaterShader = new WorldWaterShader(worldShader);
         bloomShader = new BloomShader();
         idShader = new IDShader();
@@ -144,8 +146,12 @@ public class GameWindow3D {
         return idShader;
     }
 
-    public WaterShader getWaterShader() {
-        return waterShader;
+    public WaterRefractionShader getWaterRefractionShader() {
+        return waterRefractionShader;
+    }
+
+    public WaterReflectionShader getWaterReflectionShader() {
+        return waterReflectionShader;
     }
 
     public CombinationShader getCombinationShader() {

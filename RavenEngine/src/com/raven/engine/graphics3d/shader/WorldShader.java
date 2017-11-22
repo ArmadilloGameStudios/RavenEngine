@@ -230,8 +230,12 @@ public class WorldShader extends Shader {
                 GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight());
 
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.6f, 0.7f, 1f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // make sure the id buffer isn't colored
+        glClearBufferfv(GL_COLOR, 2,
+                new float[]{ 0f, 0f, 0f, 0f });
 
 
         // Enable the custom mode attribute

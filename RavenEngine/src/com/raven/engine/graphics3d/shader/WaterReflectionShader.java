@@ -1,32 +1,23 @@
 package com.raven.engine.graphics3d.shader;
 
-import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
 import com.raven.engine.util.Matrix4f;
+import com.raven.engine.util.Plane;
 import org.lwjgl.BufferUtils;
 
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
-import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
-import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 import static org.lwjgl.opengl.GL32.glFramebufferTexture;
-import static org.lwjgl.opengl.GL32.glTexImage2DMultisample;
-import static org.lwjgl.opengl.GL45.glNamedFramebufferDrawBuffers;
 
 /**
- * Created by cookedbird on 5/29/17.
+ * Created by cookedbird on 11/22/17.
  */
-public class WaterShader extends Shader {
+public class WaterReflectionShader extends Shader {
 
     public static final int
             COLOR = getNextTexture(),
@@ -40,10 +31,12 @@ public class WaterShader extends Shader {
             model_matrix = new Matrix4f(),
             view_matrix = new Matrix4f();
 
+    private Plane plane = new Plane(0,1,0,0);
+
     private IntBuffer buffers;
 
-    public WaterShader() {
-        super("water_vertex.glsl", "water_fragment.glsl");
+    public WaterReflectionShader() {
+        super("water_reflection_vertex.glsl", "water_fragment.glsl");
 
         int bfs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
         buffers = BufferUtils.createIntBuffer(bfs.length);
@@ -118,7 +111,7 @@ public class WaterShader extends Shader {
 
         // Errors
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            System.out.println("Water Shader Failed: 0x"
+            System.out.println("Water Reflection Shader Failed: 0x"
                     + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
         }
     }
@@ -135,9 +128,8 @@ public class WaterShader extends Shader {
                 GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight());
 
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.6f, 0.7f, 1f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
         // Enable the custom mode attribute
         glEnableVertexAttribArray(0);
@@ -149,6 +141,7 @@ public class WaterShader extends Shader {
         glUniformMatrix4fv(view_location, false, view_matrix.toBuffer());
 
         glEnable(GL_CLIP_DISTANCE0);
+        glCullFace(GL_FRONT);
     }
 
     @Override
@@ -159,6 +152,7 @@ public class WaterShader extends Shader {
         glDisableVertexAttribArray(2);
 
         glDisable(GL_CLIP_DISTANCE0);
+        glCullFace(GL_BACK);
     }
 
     public void setProjectionMatrix(Matrix4f m) {
@@ -170,7 +164,7 @@ public class WaterShader extends Shader {
     public void setViewMatrix(Matrix4f m) {
         view_matrix = m;
 
-        glUniformMatrix4fv(view_location, false, view_matrix.toBuffer());
+        glUniformMatrix4fv(view_location, false, view_matrix.multiply(Matrix4f.reflection(plane)).toBuffer());
     }
 
     public void setModelMatrix(Matrix4f m) {

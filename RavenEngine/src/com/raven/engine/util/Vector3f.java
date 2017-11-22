@@ -24,6 +24,8 @@ package com.raven.engine.util;
  * SOFTWARE.
  */
 
+import org.lwjgl.BufferUtils;
+
 import java.nio.FloatBuffer;
 
 /**
@@ -36,6 +38,8 @@ public class Vector3f {
     public float x;
     public float y;
     public float z;
+
+    private FloatBuffer buffer = BufferUtils.createFloatBuffer(3);
 
     /**
      * Creates a default 3-tuple vector with all values set to 0.
@@ -192,6 +196,11 @@ public class Vector3f {
     public void toBuffer(FloatBuffer buffer) {
         buffer.put(x).put(y).put(z);
         buffer.flip();
+    }
+
+    public FloatBuffer toBuffer() {
+        toBuffer(buffer);
+        return buffer;
     }
 
     public Float[] toArray() {

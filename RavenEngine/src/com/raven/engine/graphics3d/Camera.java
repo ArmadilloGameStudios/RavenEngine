@@ -2,6 +2,7 @@ package com.raven.engine.graphics3d;
 
 import com.raven.engine.GameProperties;
 import com.raven.engine.util.Matrix4f;
+import com.raven.engine.util.Vector3f;
 
 /**
  * Created by cookedbird on 11/15/17.
@@ -15,7 +16,7 @@ public class Camera {
 
     public Camera() {
         projectionMatrix = Matrix4f.perspective(60.0f, ((float) GameProperties.getScreenWidth())
-                / ((float) GameProperties.getScreenHeight()), 2f, 100.0f);
+                / ((float) GameProperties.getScreenHeight()), .2f, 100.0f);
 
         updateViewMatrix();
     }
@@ -69,5 +70,9 @@ public class Camera {
         yrs += (yr - yrs) * 3f * deltaTime * deltaCorrection;
 
         updateViewMatrix();
+    }
+
+    public float getPitch() {
+        return yrs;
     }
 }

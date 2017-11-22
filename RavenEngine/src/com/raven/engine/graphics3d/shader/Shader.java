@@ -96,7 +96,7 @@ public abstract class Shader {
         }
     }
 
-    public void useProgram() {
+    protected void useProgram() {
         if (GameEngine.getEngine().getWindow().getActiveShader() != this) {
             GameEngine.getEngine().getWindow().endActiveShader();
             GameEngine.getEngine().getWindow().setActiveShader(this);

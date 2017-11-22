@@ -2,12 +2,12 @@ package com.raven.engine.graphics3d.shader;
 
 import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
+import com.raven.engine.graphics3d.Camera;
 import com.raven.engine.util.Matrix4f;
+import com.raven.engine.util.Vector3f;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
@@ -15,7 +15,9 @@ import static org.lwjgl.opengl.GL30.glBindFramebuffer;
  * Created by cookedbird on 11/21/17.
  */
 public class WorldWaterShader extends Shader {
-    private int projection_location, model_location, view_location, id_location, texture_water_color_location, texture_water_depth_location;
+    private int projection_location, model_location, view_location,
+            texture_refract_color_location, texture_refract_depth_location,
+            texture_reflect_color_location, texture_reflect_depth_location;
 
     private Matrix4f projection_matrix = new Matrix4f(),
             model_matrix = new Matrix4f(),
@@ -36,16 +38,17 @@ public class WorldWaterShader extends Shader {
         model_location = glGetUniformLocation(getProgramHandel(), "M");
         view_location = glGetUniformLocation(getProgramHandel(), "V");
 
-        id_location = glGetUniformLocation(getProgramHandel(), "id");
+        texture_refract_color_location = glGetUniformLocation(getProgramHandel(), "refractColorTexture");
+        texture_refract_depth_location = glGetUniformLocation(getProgramHandel(), "refractDepthTexture");
 
-        texture_water_color_location = glGetUniformLocation(getProgramHandel(), "waterColorTexture");
-        texture_water_depth_location = glGetUniformLocation(getProgramHandel(), "waterDepthTexture");
+        texture_reflect_color_location = glGetUniformLocation(getProgramHandel(), "reflectColorTexture");
+        texture_reflect_depth_location = glGetUniformLocation(getProgramHandel(), "reflectDepthTexture");
 
         glLinkProgram(getProgramHandel());
     }
 
-    @Override
-    public void useProgram() {
+
+    public void useProgram(Camera camera) {
         super.useProgram();
 
         glUseProgram(getProgramHandel());
@@ -56,8 +59,11 @@ public class WorldWaterShader extends Shader {
                 GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight());
 
-        glUniform1i(texture_water_color_location, WaterShader.COLOR);
-        glUniform1i(texture_water_depth_location, WaterShader.DEPTH);
+        glUniform1i(texture_refract_color_location, WaterRefractionShader.COLOR);
+        glUniform1i(texture_refract_depth_location, WaterRefractionShader.DEPTH);
+
+        glUniform1i(texture_reflect_color_location, WaterReflectionShader.COLOR);
+        glUniform1i(texture_reflect_depth_location, WaterReflectionShader.DEPTH);
 
         // Enable the custom mode attribute
         glEnableVertexAttribArray(0);

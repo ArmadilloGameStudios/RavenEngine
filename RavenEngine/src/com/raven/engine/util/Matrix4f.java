@@ -262,11 +262,6 @@ public class Matrix4f {
         return result;
     }
 
-    /**
-     * Stores the matrix in a given Buffer.
-     *
-     * @param buffer The buffer to store the matrix data
-     */
     public FloatBuffer toBuffer() {
         buffer.put(m00).put(m10).put(m20).put(m30);
         buffer.put(m01).put(m11).put(m21).put(m31);
@@ -440,4 +435,15 @@ public class Matrix4f {
         return scaling;
     }
 
+    public static Matrix4f reflection(Plane p)
+    {
+        Matrix4f r = new Matrix4f();
+
+        r.m00 = 1-2*p.a*p.a; r.m01 =  -2*p.a*p.b; r.m02 =  -2*p.a*p.c; r.m03 = -2*p.a*p.d;
+        r.m10 =  -2*p.a*p.b; r.m11 = 1-2*p.b*p.b; r.m12 =  -2*p.b*p.c; r.m13 = -2*p.b*p.d;
+        r.m20 =  -2*p.a*p.c; r.m21 =  -2*p.b*p.c; r.m22 = 1-2*p.c*p.c; r.m23 = -2*p.c*p.d;
+        r.m30 = 0.0f; r.m31 = 0.0f; r.m32 = 0.0f; r.m33 = 1.0f;
+
+        return r;
+    }
 }
