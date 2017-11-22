@@ -17,203 +17,210 @@ import com.raven.engine.worldobject.WorldObject;
 import org.lwjgl.glfw.GLFW;
 
 public class GameEngine implements Runnable {
-	private static GameEngine engine;
+    private static GameEngine engine;
 
-	public static GameEngine Launch(Game game) {
-		GameEngine engine = new GameEngine(game);
+    public static GameEngine Launch(Game game) {
+        GameEngine engine = new GameEngine(game);
 
-		GameEngine.engine = engine;
+        GameEngine.engine = engine;
 
-		engine.window = new GameWindow3D(engine);
+        engine.window = new GameWindow3D(engine);
 
-		engine.thread = new Thread(engine);
-		engine.thread.start();
+        engine.thread = new Thread(engine);
+        engine.thread.start();
 
-		return engine;
-	}
+        return engine;
+    }
 
-	public static GameEngine getEngine() {
-		return engine;
-	}
+    public static GameEngine getEngine() {
+        return engine;
+    }
 
-	private Game game;
-	private Thread thread;
-	private GameWindow3D window;
-	private List<WorldObject> oldMouseList = new ArrayList<>();
-	private GameDatabase gdb;
-	private Map<String, ModelData> modelDataMap = new HashMap<>();
-	private float deltaTime;
-	private long systemTime;
-	private Mouse mouse = new Mouse();
-	private Keyboard keyboard = new Keyboard();
+    private Game game;
+    private Thread thread;
+    private GameWindow3D window;
+    private List<WorldObject> oldMouseList = new ArrayList<>();
+    private GameDatabase gdb;
+    private Map<String, ModelData> modelDataMap = new HashMap<>();
+    private float deltaTime;
+    private long systemTime;
+    private Mouse mouse = new Mouse();
+    private Keyboard keyboard = new Keyboard();
 
-	// Accessors
-	public Thread getThread() {
-		return thread;
-	}
+    // Accessors
+    public Thread getThread() {
+        return thread;
+    }
 
-	public Game getGame() {
-		return game;
-	}
+    public Game getGame() {
+        return game;
+    }
 
-	private GameEngine(Game game) {
-		this.game = game;
+    private GameEngine(Game game) {
+        this.game = game;
 
-		game.setEngine(this);
+        game.setEngine(this);
 
-		systemTime = System.nanoTime() / 1000000L;
-	}
+        systemTime = System.nanoTime() / 1000000L;
+    }
 
-	public float getDeltaTime() {
-		return deltaTime;
-	}
+    public float getDeltaTime() {
+        return deltaTime;
+    }
 
-	public long getSystemTime() {
-		return systemTime;
-	}
+    public long getSystemTime() {
+        return systemTime;
+    }
 
-	public GameWindow3D getWindow() {
-		return window;
-	}
+    public GameWindow3D getWindow() {
+        return window;
+    }
 
-	public GameDatabase getGameDatabase() {
-		return gdb;
-	}
+    public GameDatabase getGameDatabase() {
+        return gdb;
+    }
 
     public Mouse getMouse() {
         return mouse;
     }
 
-	public void breakThread() {
-		System.out
-				.println("Breaking Thread. Was it alive? " + thread.isAlive());
+    public void breakThread() {
+        System.out
+                .println("Breaking Thread. Was it alive? " + thread.isAlive());
 
-		game.breakdown();
-	}
+        game.breakdown();
+    }
 
-	int frame = 0;
-	float framesdt = 0;
-	@Override
-	public void run() {
-		System.out.println("Started Run");
+    int frame = 0;
+    float framesdt = 0;
 
-		System.out.println("Starting OpenGL");
-		window.setup();
+    @Override
+    public void run() {
+        System.out.println("Started Run");
 
-		System.out.println("Loading Assets");
-		loadDatabase();
+        System.out.println("Starting OpenGL");
+        window.setup();
 
-		game.setup();
+        System.out.println("Loading Assets");
+        loadDatabase();
 
-		game.transitionScene(game.loadInitialScene());
+        game.setup();
 
-		ModelReference.compileBuffer();
-		window.printErrors("Compile Buffer Error: ");
+        game.transitionScene(game.loadInitialScene());
 
-		// game.getCurrentScene().enterScene();
+        ModelReference.compileBuffer();
+        window.printErrors("Compile Buffer Error: ");
 
-		while (game.isRunning()
-				&& !glfwWindowShouldClose(window.getWindowHandler())) {
+        // game.getCurrentScene().enterScene();
 
-			long start = System.nanoTime();
+        while (game.isRunning()
+                && !glfwWindowShouldClose(window.getWindowHandler())) {
 
-			draw();
-			input();
-			game.update(deltaTime);
+            long start = System.nanoTime();
 
-			if (frame % 60 == 0) {
+            draw();
+            input(deltaTime);
+            game.update(deltaTime);
+
+            if (frame % 60 == 0) {
                 System.out.println("FPS: " + 1000f / (framesdt / 60f));
                 framesdt = 0;
             }
 
-			glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
+            glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
 
             long currentTime = System.nanoTime();
-			deltaTime = (currentTime - start) / 1000000.0f;
-			systemTime = currentTime / 1000000L;
+            deltaTime = (currentTime - start) / 1000000.0f;
+            systemTime = currentTime / 1000000L;
 
             framesdt += deltaTime;
             frame++;
 
             window.printErrors("Errors: ");
-		}
+        }
 
-		System.out.println("End Run");
+        System.out.println("End Run");
 
-		game.breakdown();
+        game.breakdown();
 
-		System.out.println("Exit");
+        System.out.println("Exit");
 
-		System.exit(0);
-	}
+        System.exit(0);
+    }
 
-	private void draw() {
-		game.draw3d();
-
-		// window.getBloomShader().useProgram();
-		// window.drawFBO();
+    private void draw() {
+        game.renderWorld(window);
 
         window.getIDShader().useProgram();
         window.drawFBO();
 
-		window.getCombinationShader().useProgram();
-		window.getCombinationShader().setProjectionMatrix(game.getCurrentScene().getCamera().getProjectionMatrix());
-		window.drawFBO();
+        if (true) {
+            window.getCombinationShader().useProgram();
+            window.drawFBO();
+        } else {
+            window.getWorldShader().blitFramebuffer();
+        }
     }
 
-	private void input() {
+    private void input(float delta) {
         glfwPollEvents();
 
-		int id = window.getIDShader().getWorldObjectID();
-		if (id != 0) {
-			// System.out.println("id: " + id);
+        int id = window.getIDShader().getWorldObjectID();
+        if (id != 0) {
+            WorldObject hover = WorldObject.getWorldObjectFromID(id);
 
-			WorldObject clicked = WorldObject.getWorldObjectFromID(id);
+            // clicks - might cause a problem with the order of enter and leave
+            if (mouse.isLeftButtonClick()) {
+                hover.onMouseClick();
+                mouse.setLeftButtonClick(false);
+            }
 
-			List<WorldObject> newList = clicked.getParentWorldObjectList();
-			newList.add(clicked);
-			for (WorldObject o : oldMouseList) {
-				if (newList.contains(o))
-					o.checkMouseMovement(true);
-				else {
-					o.checkMouseMovement(false);
-				}
-			}
+            // hover
+            List<WorldObject> newList = hover.getParentWorldObjectList();
+            newList.add(hover);
 
-			oldMouseList = newList;
-		} else {
-			for (WorldObject o : oldMouseList) {
-				o.checkMouseMovement(false);
-			}
+            for (WorldObject o : oldMouseList) {
+                if (newList.contains(o))
+                    o.checkMouseMovement(true, delta);
+                else {
+                    o.checkMouseMovement(false, delta);
+                }
+            }
 
-			oldMouseList.clear();
-		}
-	}
+            oldMouseList = newList;
+        } else {
+            for (WorldObject o : oldMouseList) {
+                o.checkMouseMovement(false, delta);
+            }
 
-	private void loadDatabase() {
-		// load models
+            oldMouseList.clear();
+        }
+    }
 
-		File modelDirectory = new File(game.getMainDirectory() + File.separator + "models");
-		loadModels(modelDirectory);
+    private void loadDatabase() {
+        // load models
+
+        File modelDirectory = new File(game.getMainDirectory() + File.separator + "models");
+        loadModels(modelDirectory);
 
         // load database
-		gdb = new GameDatabase();
-		gdb.load();
-	}
+        gdb = new GameDatabase();
+        gdb.load();
+    }
 
-	private void loadModels(File base) {
-		for (File f : base.listFiles()) {
-			if (f.isFile()) {
-				System.out.println(f.getPath());
-				modelDataMap.put(f.getPath(), new PlyModelData(f.getPath()));
-			} else if (f.isDirectory()) {
-				loadModels(f);
-			}
-		}
-	}
+    private void loadModels(File base) {
+        for (File f : base.listFiles()) {
+            if (f.isFile()) {
+                System.out.println(f.getPath());
+                modelDataMap.put(f.getPath(), new PlyModelData(f.getPath()));
+            } else if (f.isDirectory()) {
+                loadModels(f);
+            }
+        }
+    }
 
-	public ModelData getModelData(String modelsrc) {
-	    return modelDataMap.get(game.getMainDirectory() + File.separator + modelsrc);
+    public ModelData getModelData(String modelsrc) {
+        return modelDataMap.get(game.getMainDirectory() + File.separator + modelsrc);
     }
 
     // input

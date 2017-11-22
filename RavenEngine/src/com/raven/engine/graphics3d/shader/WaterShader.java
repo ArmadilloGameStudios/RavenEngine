@@ -147,6 +147,8 @@ public class WaterShader extends Shader {
         glUniformMatrix4fv(projection_location, false, projection_matrix.toBuffer());
         glUniformMatrix4fv(model_location, false, model_matrix.toBuffer());
         glUniformMatrix4fv(view_location, false, view_matrix.toBuffer());
+
+        glEnable(GL_CLIP_DISTANCE0);
     }
 
     @Override
@@ -155,6 +157,8 @@ public class WaterShader extends Shader {
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
+
+        glDisable(GL_CLIP_DISTANCE0);
     }
 
     public void setProjectionMatrix(Matrix4f m) {

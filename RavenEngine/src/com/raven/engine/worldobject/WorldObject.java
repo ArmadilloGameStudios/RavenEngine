@@ -186,13 +186,13 @@ public abstract class WorldObject implements Parentable {
         return mousehovering;
     }
 
-    final public void checkMouseMovement(boolean hovering) {
+    final public void checkMouseMovement(boolean hovering, float delta) {
         if (!isMouseHovering() && hovering) {
             onMouseEnter();
         } else if (isMouseHovering() && !hovering) {
             onMouseLeave();
         } else if (hovering) {
-            onMouseMove();
+            onMouseHover(delta);
         }
 
         mousehovering = hovering;
@@ -202,8 +202,8 @@ public abstract class WorldObject implements Parentable {
         for (MouseHandler c : clickHandlers) c.onMouseEnter();
     }
 
-    final public void onMouseMove() {
-        for (MouseHandler c : clickHandlers) c.onMouseHover();
+    final public void onMouseHover(float delta) {
+        for (MouseHandler c : clickHandlers) c.onMouseHover(delta);
     }
 
     final public void onMouseLeave() {

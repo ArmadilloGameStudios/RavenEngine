@@ -45,34 +45,6 @@ public class Layer implements Parentable {
         this.scene = scene;
     }
 
-	public void draw(Camera camera) {
-		switch (destination) {
-			case Water:
-				window.getWaterShader().useProgram();
-
-                window.getWaterShader().setProjectionMatrix(camera.getProjectionMatrix());
-                window.getWaterShader().setViewMatrix(camera.getViewMatrix());
-
-
-                for (WorldObject o : gameObjectList) {
-                    window.getWaterShader().setModelMatrix(o.getModelMatirx());
-                    o.draw();
-                }
-				break;
-			case Normal:
-			default:
-				window.getWorldShader().useProgram();
-
-                window.getWorldShader().setProjectionMatrix(camera.getProjectionMatrix());
-                window.getWorldShader().setViewMatrix(camera.getViewMatrix());
-
-                for (WorldObject o : gameObjectList) {
-                    window.getWorldShader().setModelMatrix(o.getModelMatirx());
-                    o.draw();
-                }
-				break;
-		}
-	}
 
 	public void update(float deltaTime) {
 		for (WorldObject o : gameObjectList) {
@@ -94,4 +66,8 @@ public class Layer implements Parentable {
 	public float getGlobalZ() {
 		return 0;
 	}
+
+	public Destination getDestination() {
+	    return destination;
+    }
 }

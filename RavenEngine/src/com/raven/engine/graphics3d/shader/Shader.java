@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -21,20 +22,31 @@ public abstract class Shader {
     int vertex_handel, fragment_handel, program_handel;
 
     private static int nextTexture = 0;
+
     protected static int getNextTexture() {
         nextTexture++;
         return nextTexture;
     }
 
-    public Shader (String vertex_shader, String fragment_shader) {
+    public Shader(String vertex_shader, String fragment_shader) {
         try {
+            // Get the variable map
+            Map<String, String> variables = getGLSLVariableMap();
+
             // Create Shaders
             // Vertex Shader
             File shaderv = new File("RavenEngine" + File.separator + "shaders" + File.separator
                     + vertex_shader);
             vertex_handel = glCreateShader(GL_VERTEX_SHADER);
-            glShaderSource(vertex_handel,
-                    new String(Files.readAllBytes(shaderv.toPath())));
+
+            String vertex_file_string = new String(Files.readAllBytes(shaderv.toPath()));
+
+            if (variables != null)
+                for (String key : variables.keySet()) {
+                    vertex_file_string = vertex_file_string.replaceAll("@" + key, variables.get(key));
+                }
+
+            glShaderSource(vertex_handel, vertex_file_string);
             glCompileShader(vertex_handel);
 
             IntBuffer iVal = BufferUtils.createIntBuffer(1);
@@ -48,8 +60,15 @@ public abstract class Shader {
             File shaderf = new File("RavenEngine" + File.separator + "shaders" + File.separator
                     + fragment_shader);
             fragment_handel = glCreateShader(GL_FRAGMENT_SHADER);
-            glShaderSource(fragment_handel,
-                    new String(Files.readAllBytes(shaderf.toPath())));
+
+            String fragment_file_string = new String(Files.readAllBytes(shaderf.toPath()));
+
+            if (variables != null)
+                for (String key : variables.keySet()) {
+                    fragment_file_string = fragment_file_string.replaceAll("@" + key, variables.get(key));
+                }
+
+            glShaderSource(fragment_handel, fragment_file_string);
             glCompileShader(fragment_handel);
 
             iVal = BufferUtils.createIntBuffer(1);
@@ -83,6 +102,7 @@ public abstract class Shader {
             GameEngine.getEngine().getWindow().setActiveShader(this);
         }
     }
+
     public abstract void endProgram();
 
     protected final int getVertexHandel() {
@@ -95,5 +115,9 @@ public abstract class Shader {
 
     protected final int getProgramHandel() {
         return program_handel;
+    }
+
+    protected Map<String, String> getGLSLVariableMap() {
+        return null;
     }
 }

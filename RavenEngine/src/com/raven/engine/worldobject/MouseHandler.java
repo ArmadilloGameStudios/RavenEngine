@@ -4,5 +4,5 @@ public interface MouseHandler {
 	void onMouseClick();
 	void onMouseEnter();
 	void onMouseLeave();
-	void onMouseHover();
+	void onMouseHover(float delta);
 }

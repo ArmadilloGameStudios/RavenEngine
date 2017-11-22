@@ -9,6 +9,7 @@ uniform mat4 V;
 uniform mat4 M;
 
 out vec3 light, lightGlow, color;
+out float gl_ClipDistance[1];
 
 vec3 lightDirection = normalize(vec3(1, 3, 2));
 
@@ -23,4 +24,6 @@ void main(void)
 
 	light = vec3(ambiantLight + directionalLight);
 	color = vertex_color;
+
+    gl_ClipDistance[0] = dot(M * vec4(vertex_pos, 1.0), vec4(0, -1, 0, .2));
 }

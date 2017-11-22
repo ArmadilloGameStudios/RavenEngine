@@ -39,7 +39,7 @@ public class Tree extends WorldObject {
             }
 
             @Override
-            public void onMouseHover() {
+            public void onMouseHover(float delta) {
             }
         });
     }

@@ -45,13 +45,7 @@ public class WorldShader extends Shader {
     private IntBuffer buffers;
 
     public WorldShader() {
-        super("vertex.glsl", "fragment.glsl");
-
-        int bfs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
-        buffers = BufferUtils.createIntBuffer(bfs.length);
-        for (int i = 0; i < bfs.length; i++)
-            buffers.put(bfs[i]);
-        buffers.flip();
+        super("world_vertex.glsl", "world_fragment.glsl");
 
         glBindAttribLocation(getProgramHandel(), 0, "vertex_pos");
         glBindAttribLocation(getProgramHandel(), 1, "vertex_color");
@@ -64,6 +58,12 @@ public class WorldShader extends Shader {
         id_location = glGetUniformLocation(getProgramHandel(), "id");
 
         glLinkProgram(getProgramHandel());
+
+        int bfs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
+        buffers = BufferUtils.createIntBuffer(bfs.length);
+        for (int i = 0; i < bfs.length; i++)
+            buffers.put(bfs[i]);
+        buffers.flip();
 
         int ms_count = GameEngine.getEngine().getWindow().getMultisampleCount();
 
@@ -242,6 +242,8 @@ public class WorldShader extends Shader {
         glUniformMatrix4fv(projection_location, false, projection_matrix.toBuffer());
         glUniformMatrix4fv(model_location, false, model_matrix.toBuffer());
         glUniformMatrix4fv(view_location, false, view_matrix.toBuffer());
+
+        glEnable(GL_CLIP_DISTANCE0);
     }
 
     @Override
@@ -250,6 +252,8 @@ public class WorldShader extends Shader {
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
+
+        glDisable(GL_CLIP_DISTANCE0);
     }
 
     public void setProjectionMatrix(Matrix4f m) {
@@ -296,31 +300,17 @@ public class WorldShader extends Shader {
         return ms_depth_texture;
     }
 
+    public int getFrameBuffer() {
+        return ms_framebuffer_handel;
+    }
+
     public void blitFramebuffer() {
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer_handel);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glDrawBuffer(GL_BACK);
+
         glBindFramebuffer(GL_READ_FRAMEBUFFER, ms_framebuffer_handel);
-
-//        buffers.rewind();
-//        while (buffers.hasRemaining()) {
-//            int buffer = buffers.get();
-//
-//            glReadBuffer(buffer);
-//            glDrawBuffer(buffer);
-//
-//            glBlitFramebuffer(
-//                    0, 0,
-//                    GameEngine.getEngine().getGame().getWidth(),
-//                    GameEngine.getEngine().getGame().getHeight(),
-//                    0, 0,
-//                    GameEngine.getEngine().getGame().getWidth(),
-//                    GameEngine.getEngine().getGame().getHeight(),
-//                    GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-//        }
-
-        // Not sure which is faster, or if it matters
-
         glReadBuffer(GL_COLOR_ATTACHMENT0);
-        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
         glBlitFramebuffer(
                 0, 0,
                 GameProperties.getScreenWidth(),
@@ -329,13 +319,5 @@ public class WorldShader extends Shader {
                 GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight(),
                 GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-
-        buffers.rewind();
-        glBindFramebuffer(GL_FRAMEBUFFER, ms_framebuffer_handel);
-        glDrawBuffers(buffers);
-
-        buffers.rewind();
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
-        glDrawBuffers(buffers);
     }
 }

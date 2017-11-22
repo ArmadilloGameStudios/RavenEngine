@@ -29,6 +29,7 @@ public class GameWindow3D {
 
     private WorldShader worldShader;
     private WaterShader waterShader;
+    private WorldWaterShader worldWaterShader;
     private BloomShader bloomShader;
     private IDShader idShader;
     private CombinationShader combinationShader;
@@ -104,6 +105,7 @@ public class GameWindow3D {
         // Shaders
         worldShader = new WorldShader();
         waterShader = new WaterShader();
+        worldWaterShader = new WorldWaterShader(worldShader);
         bloomShader = new BloomShader();
         idShader = new IDShader();
         combinationShader = new CombinationShader();
@@ -132,6 +134,10 @@ public class GameWindow3D {
 
     public BloomShader getBloomShader() {
         return bloomShader;
+    }
+
+    public WorldWaterShader getWorldWaterShader() {
+        return worldWaterShader;
     }
 
     public IDShader getIDShader() {
@@ -180,5 +186,4 @@ public class GameWindow3D {
     public Shader getActiveShader() {
         return activeShader;
     }
-
 }
