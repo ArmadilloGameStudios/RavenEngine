@@ -14,7 +14,6 @@ out vec3 water_color;
 out vec2 coord;
 
 out vec3 camera_vector;
-out vec3 camera_vector_2;
 
 vec3 lightDirection = normalize(vec3(1, 3, 2));
 
@@ -27,6 +26,5 @@ void main(void)
     camera_vector =  IV[3].xyz - world_pos.xyz;
 
 	water_color = vertex_color;
-	coord = (vertex_pos.xy + 1.0) / 2.0;
-
+	coord = vertex_pos.xz;
 }
