@@ -19,6 +19,14 @@ import static org.lwjgl.opengl.GL32.glFramebufferTexture;
  */
 public class WaterReflectionShader extends Shader {
 
+    public static class Quality {
+        public static final int
+                HIGH = 1,
+                MEDIUM = 2,
+                LOW = 4,
+                VERY_LOW = 8;
+    }
+
     public static final int
             COLOR = getNextTexture(),
             GLOW = getNextTexture(),
@@ -26,6 +34,7 @@ public class WaterReflectionShader extends Shader {
 
     private int projection_location, model_location, view_location;
     private int framebuffer_handel, color_texture, bloom_texture, depth_texture;
+    private int quality = Quality.HIGH;
 
     private Matrix4f projection_matrix = new Matrix4f(),
             model_matrix = new Matrix4f(),
@@ -65,12 +74,12 @@ public class WaterReflectionShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, color_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight(),
+                GameProperties.getScreenWidth() / quality,
+                GameProperties.getScreenHeight() / quality,
                 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, color_texture, 0);
         glActiveTexture(GL_TEXTURE0);
@@ -80,12 +89,12 @@ public class WaterReflectionShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, bloom_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight(),
+                GameProperties.getScreenWidth() / quality,
+                GameProperties.getScreenHeight() / quality,
                 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, bloom_texture, 0);
 
@@ -99,12 +108,12 @@ public class WaterReflectionShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, depth_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight(),
+                GameProperties.getScreenWidth() / quality,
+                GameProperties.getScreenHeight() / quality,
                 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
         glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_texture, 0);
         glActiveTexture(GL_TEXTURE0);
@@ -125,8 +134,8 @@ public class WaterReflectionShader extends Shader {
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
 
         glViewport(0, 0,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight());
+                GameProperties.getScreenWidth() / quality,
+                GameProperties.getScreenHeight() / quality);
 
         glClearColor(0.6f, 0.7f, 1f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

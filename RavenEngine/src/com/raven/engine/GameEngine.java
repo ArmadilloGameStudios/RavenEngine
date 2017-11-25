@@ -118,9 +118,9 @@ public class GameEngine implements Runnable {
 
             long start = System.nanoTime();
 
-            draw();
-            input(deltaTime);
             game.update(deltaTime);
+            input(deltaTime);
+            draw();
 
             if (frame % 60 == 0) {
                 System.out.println("FPS: " + 1000f / (framesdt / 60f));
