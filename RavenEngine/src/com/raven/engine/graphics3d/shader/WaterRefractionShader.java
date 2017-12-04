@@ -8,6 +8,7 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
+import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.*;
@@ -15,6 +16,8 @@ import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
+import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
 import static org.lwjgl.opengl.GL32.glFramebufferTexture;
 import static org.lwjgl.opengl.GL45.glNamedFramebufferDrawBuffers;
 
@@ -23,22 +26,12 @@ import static org.lwjgl.opengl.GL45.glNamedFramebufferDrawBuffers;
  */
 public class WaterRefractionShader extends Shader {
 
-    public static class Quality {
-        public static final int
-                HIGH = 1,
-                MEDIUM = 2,
-                LOW = 4,
-                VERY_LOW = 8;
-    }
-
     public static final int
             COLOR = getNextTexture(),
             GLOW = getNextTexture(),
             DEPTH = getNextTexture();
 
-    private int projection_location, model_location, view_location;
     private int framebuffer_handel, color_texture, bloom_texture, depth_texture;
-    private int quality = Quality.HIGH;
 
     private Matrix4f projection_matrix = new Matrix4f(),
             model_matrix = new Matrix4f(),
@@ -59,11 +52,11 @@ public class WaterRefractionShader extends Shader {
         glBindAttribLocation(getProgramHandel(), 1, "vertex_color");
         glBindAttribLocation(getProgramHandel(), 2, "vertex_normal");
 
-        projection_location = glGetUniformLocation(getProgramHandel(), "P");
-        model_location = glGetUniformLocation(getProgramHandel(), "M");
-        view_location = glGetUniformLocation(getProgramHandel(), "V");
+        int blockIndex = glGetUniformBlockIndex(getProgramHandel(), "DirectionalLight");
+        glUniformBlockBinding(getProgramHandel(), blockIndex, DIRECTIONAL_LIGHT);
 
-        glLinkProgram(getProgramHandel());
+        blockIndex = glGetUniformBlockIndex(getProgramHandel(), "Matrices");
+        glUniformBlockBinding(getProgramHandel(), blockIndex, MATRICES);
 
         // FBO
         framebuffer_handel = glGenFramebuffers();
@@ -75,13 +68,16 @@ public class WaterRefractionShader extends Shader {
         glActiveTexture(GL_TEXTURE0 + COLOR);
         glBindTexture(GL_TEXTURE_2D, color_texture);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                GameProperties.getScreenWidth() / quality,
-                GameProperties.getScreenHeight() / quality,
-                0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                GameProperties.getScreenWidth() / GameProperties.getWaterQuality(),
+                GameProperties.getScreenHeight() / GameProperties.getWaterQuality(),
+                0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, color_texture, 0);
         glActiveTexture(GL_TEXTURE0);
@@ -91,8 +87,8 @@ public class WaterRefractionShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, bloom_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                GameProperties.getScreenWidth() / quality,
-                GameProperties.getScreenHeight() / quality,
+                GameProperties.getScreenWidth() / GameProperties.getWaterQuality(),
+                GameProperties.getScreenHeight() / GameProperties.getWaterQuality(),
                 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -110,8 +106,8 @@ public class WaterRefractionShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, depth_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-                GameProperties.getScreenWidth() / quality,
-                GameProperties.getScreenHeight() / quality,
+                GameProperties.getScreenWidth() / GameProperties.getWaterQuality(),
+                GameProperties.getScreenHeight() / GameProperties.getWaterQuality(),
                 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -136,10 +132,10 @@ public class WaterRefractionShader extends Shader {
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
 
         glViewport(0, 0,
-                GameProperties.getScreenWidth() / quality,
-                GameProperties.getScreenHeight() / quality);
+                GameProperties.getScreenWidth() / GameProperties.getWaterQuality(),
+                GameProperties.getScreenHeight() / GameProperties.getWaterQuality());
 
-        glClearColor(0.6f, 0.7f, 1f, 0.0f);
+        glClearColor(0.6f, 0.7f, 1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -147,10 +143,6 @@ public class WaterRefractionShader extends Shader {
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
-
-        glUniformMatrix4fv(projection_location, false, projection_matrix.toBuffer());
-        glUniformMatrix4fv(model_location, false, model_matrix.toBuffer());
-        glUniformMatrix4fv(view_location, false, view_matrix.toBuffer());
 
         glEnable(GL_CLIP_DISTANCE0);
     }
@@ -163,24 +155,6 @@ public class WaterRefractionShader extends Shader {
         glDisableVertexAttribArray(2);
 
         glDisable(GL_CLIP_DISTANCE0);
-    }
-
-    public void setProjectionMatrix(Matrix4f m) {
-        projection_matrix = m;
-
-        glUniformMatrix4fv(projection_location, false, projection_matrix.toBuffer());
-    }
-
-    public void setViewMatrix(Matrix4f m) {
-        view_matrix = m;
-
-        glUniformMatrix4fv(view_location, false, view_matrix.toBuffer());
-    }
-
-    public void setModelMatrix(Matrix4f m) {
-        model_matrix = m;
-
-        glUniformMatrix4fv(model_location, false, model_matrix.toBuffer());
     }
 
     public int getColorTexture() {

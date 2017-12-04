@@ -1,4 +1,5 @@
 #version 430
+#define NUM_SAMPLES 4
 
 layout(location = 0) out vec3 frag_color;
 
@@ -12,7 +13,7 @@ in vec2 coord;
 
 const ivec2 int_coord = ivec2(gl_FragCoord.xy);
 
-const int num_samples = @NUM_SAMPLES;
+const int num_samples = NUM_SAMPLES;
 
 void main(void) {
     vec3 color = vec3(0.0f);

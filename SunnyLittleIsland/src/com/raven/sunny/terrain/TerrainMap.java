@@ -2,8 +2,11 @@ package com.raven.sunny.terrain;
 
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.VertexData;
+import com.raven.engine.scene.Scene;
 import com.raven.engine.util.SimplexNoise;
 import com.raven.engine.util.Vector3f;
+import com.raven.engine.worldobject.WorldObject;
+import com.raven.sunny.Tree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,28 +17,19 @@ import java.util.Random;
  * Created by cookedbird on 5/26/17.
  */
 public class TerrainMap {
-    private int width, height;
     private Vector3f[][] heightPoints;
     private TerrainData[][] data;
 
-
-    public TerrainMap(int width, int height) {
-        this.width = width;
-        this.height = height;
-
-        genMap();
-    }
-
-    public void genMap() {
+    public static Terrain genTerrain(Scene scene, int width, int height) {
         // Create starting vertices
-        Random r = new Random();
+        Random r = new Random(0);
         // int seed = -377377594;
         // int seed = -699290749;
         int seed = r.nextInt();
         System.out.println("Seed: " + seed);
         SimplexNoise noise = new SimplexNoise(seed);
 
-        heightPoints = new Vector3f[width + 1][];
+        Vector3f[][] heightPoints = new Vector3f[width + 1][];
         float length_modifier = (float)Math.sqrt(.5);
 
         for (int x = 0; x < width + 1; x++) {
@@ -74,12 +68,12 @@ public class TerrainMap {
         }
 
         // Create faces
-        data = new TerrainData[width][];
+        TerrainData[][] data = new TerrainData[width][];
         for (int x = 0; x < width; x++) {
             data[x] = new TerrainData[height * 2 - 1];
 
             for (int z = 0; z < height * 2 - 1; z++) {
-                TerrainData d = new TerrainData(this, x, z);
+                TerrainData d = new TerrainData(data, x, z);
 
                 Vector3f[] vs;
 
@@ -108,10 +102,10 @@ public class TerrainMap {
                 if (countBelow == 1 || countBelow == 2) {
                     // more points above than below
                     for (Vector3f v : vs) {
-                        if (v.y > .2f) {
-                            v.y = .2f;
-                        } else if (v.y < -.1f) {
-                            v.y = -.1f;
+                        if (v.y > 0f) {
+                            v.y = .05f + .05f * r.nextFloat();
+                        } else {
+                            v.y = -.05f - .05f * r.nextFloat();
                         }
                     }
                 }
@@ -164,9 +158,25 @@ public class TerrainMap {
                 }
             }
         }
+
+        Terrain terrain = new Terrain(scene, getModelData(width, height, data), data);
+
+        // Add decor
+        for (TerrainData[] tds : data) {
+            for (TerrainData td : tds) {
+                if (td.getType() == TerrainData.Sand && r.nextFloat() < .3f) {
+
+                    WorldObject woTree = new Tree(scene);
+                    td.setDecor(woTree);
+                    woTree.setRotation(r.nextFloat() * 360);
+                }
+            }
+        }
+
+        return terrain;
     }
 
-    public ModelData getModelData() {
+    private static ModelData getModelData(int width, int height, TerrainData[][] data) {
         ModelData model = new ModelData();
 
         List<Float> vertices = new ArrayList<>();
@@ -212,17 +222,5 @@ public class TerrainMap {
 //        model.setColorData(colors);
 
         return model;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public TerrainData[][] getTerrainData() {
-        return this.data;
     }
 }

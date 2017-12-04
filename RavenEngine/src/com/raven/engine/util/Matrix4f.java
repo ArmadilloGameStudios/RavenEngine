@@ -35,18 +35,23 @@ import java.nio.FloatBuffer;
  */
 public class Matrix4f {
 
+    FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
     private float m00, m01, m02, m03;
     private float m10, m11, m12, m13;
     private float m20, m21, m22, m23;
     private float m30, m31, m32, m33;
-    FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+    
+    private float n00, n01, n02, n03;
+    private float n10, n11, n12, n13;
+    private float n20, n21, n22, n23;
+    private float n30, n31, n32, n33;
 
 
     /**
      * Creates a 4x4 identity matrix.
      */
     public Matrix4f() {
-        setIdentity();
+        identity();
     }
 
     /**
@@ -80,9 +85,209 @@ public class Matrix4f {
     }
 
     /**
+     * Creates a orthographic projection matrix. Similar to
+     * <code>glOrtho(left, right, bottom, top, near, far)</code>.
+     *
+     * @param left   Coordinate for the left vertical clipping pane
+     * @param right  Coordinate for the right vertical clipping pane
+     * @param bottom Coordinate for the bottom horizontal clipping pane
+     * @param top    Coordinate for the bottom horizontal clipping pane
+     * @param near   Coordinate for the near depth clipping pane
+     * @param far    Coordinate for the far depth clipping pane
+     * @return Orthographic matrix
+     */
+    public static Matrix4f orthographic(float left, float right, float bottom, float top, float near, float far) {
+        Matrix4f ortho = new Matrix4f();
+
+        float tx = -(right + left) / (right - left);
+        float ty = -(top + bottom) / (top - bottom);
+        float tz = -(far + near) / (far - near);
+
+        ortho.m00 = 2f / (right - left);
+        ortho.m11 = 2f / (top - bottom);
+        ortho.m22 = -2f / (far - near);
+        ortho.m03 = tx;
+        ortho.m13 = ty;
+        ortho.m23 = tz;
+
+        return ortho;
+    }
+
+    /**
+     * Creates a perspective projection matrix. Similar to
+     * <code>glFrustum(left, right, bottom, top, near, far)</code>.
+     *
+     * @param left   Coordinate for the left vertical clipping pane
+     * @param right  Coordinate for the right vertical clipping pane
+     * @param bottom Coordinate for the bottom horizontal clipping pane
+     * @param top    Coordinate for the bottom horizontal clipping pane
+     * @param near   Coordinate for the near depth clipping pane, must be
+     *               positive
+     * @param far    Coordinate for the far depth clipping pane, must be
+     *               positive
+     * @return Perspective matrix
+     */
+    public static Matrix4f frustum(float left, float right, float bottom, float top, float near, float far) {
+        Matrix4f frustum = new Matrix4f();
+
+        float a = (right + left) / (right - left);
+        float b = (top + bottom) / (top - bottom);
+        float c = -(far + near) / (far - near);
+        float d = -(2f * far * near) / (far - near);
+
+        frustum.m00 = (2f * near) / (right - left);
+        frustum.m11 = (2f * near) / (top - bottom);
+        frustum.m02 = a;
+        frustum.m12 = b;
+        frustum.m22 = c;
+        frustum.m32 = -1f;
+        frustum.m23 = d;
+        frustum.m33 = 0f;
+
+        return frustum;
+    }
+
+    /**
+     * Creates a perspective projection matrix. Similar to
+     * <code>gluPerspective(fovy, aspec, zNear, zFar)</code>.
+     *
+     * @param fovy   Field of view angle in degrees
+     * @param aspect The aspect ratio is the ratio of width to height
+     * @param near   Distance from the viewer to the near clipping plane, must
+     *               be positive
+     * @param far    Distance from the viewer to the far clipping plane, must be
+     *               positive
+     * @return Perspective matrix
+     */
+    public static Matrix4f perspective(float fovy, float aspect, float near, float far) {
+        Matrix4f perspective = new Matrix4f();
+
+        float f = (float) (1f / Math.tan(Math.toRadians(fovy) / 2f));
+
+        perspective.m00 = f / aspect;
+        perspective.m11 = f;
+        perspective.m22 = (far + near) / (near - far);
+        perspective.m32 = -1f;
+        perspective.m23 = (2f * far * near) / (near - far);
+        perspective.m33 = 0f;
+
+        return perspective;
+    }
+
+    /**
+     * Creates a translation matrix. Similar to
+     * <code>glTranslate(x, y, z)</code>.
+     *
+     * @param x x coordinate of translation vector
+     * @param y y coordinate of translation vector
+     * @param z z coordinate of translation vector
+     * @return Translation matrix
+     */
+    public Matrix4f translate(float x, float y, float z) {
+        nIdentity();
+
+        n03 = x;
+        n13 = y;
+        n23 = z;
+
+        nMultiply();
+
+        return this;
+    }
+
+
+    private Vector3f vec = new Vector3f();
+    /**
+     * Creates a rotation matrix. Similar to
+     * <code>glRotate(angle, x, y, z)</code>.
+     *
+     * @param angle Angle of rotation in degrees
+     * @param x     x coordinate of the rotation vector
+     * @param y     y coordinate of the rotation vector
+     * @param z     z coordinate of the rotation vector
+     * @return Rotation matrix
+     */
+    public Matrix4f rotate(float angle, float x, float y, float z) {
+        nIdentity();
+
+        float c = (float) Math.cos(Math.toRadians(angle));
+        float s = (float) Math.sin(Math.toRadians(angle));
+
+        vec.x = x;
+        vec.y = y;
+        vec.z = z;
+
+        float len = vec.length();
+
+        if (len != 1f) {
+
+            x = vec.x / len;
+            y = vec.y / len;
+            z = vec.z / len;
+        }
+
+        n00 = x * x * (1f - c) + c;
+        n10 = y * x * (1f - c) + z * s;
+        n20 = x * z * (1f - c) - y * s;
+        n01 = x * y * (1f - c) - z * s;
+        n11 = y * y * (1f - c) + c;
+        n21 = y * z * (1f - c) + x * s;
+        n02 = x * z * (1f - c) + y * s;
+        n12 = y * z * (1f - c) - x * s;
+        n22 = z * z * (1f - c) + c;
+
+        nMultiply();
+        
+        return this;
+    }
+
+    /**
+     * Creates a scaling matrix. Similar to <code>glScale(x, y, z)</code>.
+     *
+     * @param x Scale factor along the x coordinate
+     * @param y Scale factor along the y coordinate
+     * @param z Scale factor along the z coordinate
+     * @return Scaling matrix
+     */
+    public Matrix4f scale(float x, float y, float z) {
+        nIdentity();
+
+        n00 = x;
+        n11 = y;
+        n22 = z;
+
+        nMultiply();
+
+        return this;
+    }
+
+    public static Matrix4f reflection(Plane p) {
+        Matrix4f r = new Matrix4f();
+
+        r.m00 = 1 - 2 * p.a * p.a;
+        r.m01 = -2 * p.a * p.b;
+        r.m02 = -2 * p.a * p.c;
+        r.m03 = -2 * p.a * p.d;
+        r.m10 = -2 * p.a * p.b;
+        r.m11 = 1 - 2 * p.b * p.b;
+        r.m12 = -2 * p.b * p.c;
+        r.m13 = -2 * p.b * p.d;
+        r.m20 = -2 * p.a * p.c;
+        r.m21 = -2 * p.b * p.c;
+        r.m22 = 1 - 2 * p.c * p.c;
+        r.m23 = -2 * p.c * p.d;
+        r.m30 = 0.0f;
+        r.m31 = 0.0f;
+        r.m32 = 0.0f;
+        r.m33 = 1.0f;
+
+        return r;
+    }
+
+    /**
      * Sets this matrix to the identity matrix.
      */
-    public final void setIdentity() {
+    public final Matrix4f identity() {
         m00 = 1f;
         m11 = 1f;
         m22 = 1f;
@@ -100,6 +305,28 @@ public class Matrix4f {
         m30 = 0f;
         m31 = 0f;
         m32 = 0f;
+
+        return this;
+    }
+
+    private final void nIdentity() {
+        n00 = 1f;
+        n11 = 1f;
+        n22 = 1f;
+        n33 = 1f;
+
+        n01 = 0f;
+        n02 = 0f;
+        n03 = 0f;
+        n10 = 0f;
+        n12 = 0f;
+        n13 = 0f;
+        n20 = 0f;
+        n21 = 0f;
+        n23 = 0f;
+        n30 = 0f;
+        n31 = 0f;
+        n32 = 0f;
     }
 
     /**
@@ -231,6 +458,54 @@ public class Matrix4f {
         return result;
     }
 
+    private void nMultiply() {
+
+        float t00, t01, t02, t03;
+        float t10, t11, t12, t13;
+        float t20, t21, t22, t23;
+        float t30, t31, t32, t33;
+        
+        t00 = m00 * n00 + m01 * n10 + m02 * n20 + m03 * n30;
+        t10 = m10 * n00 + m11 * n10 + m12 * n20 + m13 * n30;
+        t20 = m20 * n00 + m21 * n10 + m22 * n20 + m23 * n30;
+        t30 = m30 * n00 + m31 * n10 + m32 * n20 + m33 * n30;
+
+        t01 = m00 * n01 + m01 * n11 + m02 * n21 + m03 * n31;
+        t11 = m10 * n01 + m11 * n11 + m12 * n21 + m13 * n31;
+        t21 = m20 * n01 + m21 * n11 + m22 * n21 + m23 * n31;
+        t31 = m30 * n01 + m31 * n11 + m32 * n21 + m33 * n31;
+
+        t02 = m00 * n02 + m01 * n12 + m02 * n22 + m03 * n32;
+        t12 = m10 * n02 + m11 * n12 + m12 * n22 + m13 * n32;
+        t22 = m20 * n02 + m21 * n12 + m22 * n22 + m23 * n32;
+        t32 = m30 * n02 + m31 * n12 + m32 * n22 + m33 * n32;
+
+        t03 = m00 * n03 + m01 * n13 + m02 * n23 + m03 * n33;
+        t13 = m10 * n03 + m11 * n13 + m12 * n23 + m13 * n33;
+        t23 = m20 * n03 + m21 * n13 + m22 * n23 + m23 * n33;
+        t33 = m30 * n03 + m31 * n13 + m32 * n23 + m33 * n33;
+
+        m00 = t00;
+        m01 = t01;
+        m02 = t02;
+        m03 = t03;
+
+        m10 = t10;
+        m11 = t11;
+        m12 = t12;
+        m13 = t13;
+
+        m20 = t20;
+        m21 = t21;
+        m22 = t22;
+        m23 = t23;
+        
+        m30 = t30;
+        m31 = t31;
+        m32 = t32;
+        m33 = t33;
+    }
+
     /**
      * Transposes this matrix.
      *
@@ -262,188 +537,144 @@ public class Matrix4f {
         return result;
     }
 
-    public FloatBuffer toBuffer() {
+    public Matrix4f inverse() {
+        Matrix4f inv = new Matrix4f();
+
+        float det;
+        int i;
+
+        inv.m00 = m11 * m22 * m33 -
+                m11 * m23 * m32 -
+                m21 * m12 * m33 +
+                m21 * m13 * m32 +
+                m31 * m12 * m23 -
+                m31 * m13 * m22;
+
+        inv.m10 = -m10 * m22 * m33 +
+                m10 * m23 * m32 +
+                m20 * m12 * m33 -
+                m20 * m13 * m32 -
+                m30 * m12 * m23 +
+                m30 * m13 * m22;
+
+        inv.m20 = m10 * m21 * m33 -
+                m10 * m23 * m31 -
+                m20 * m11 * m33 +
+                m20 * m13 * m31 +
+                m30 * m11 * m23 -
+                m30 * m13 * m21;
+
+        inv.m30 = -m10 * m21 * m32 +
+                m10 * m22 * m31 +
+                m20 * m11 * m32 -
+                m20 * m12 * m31 -
+                m30 * m11 * m22 +
+                m30 * m12 * m21;
+
+        inv.m01 = -m01 * m22 * m33 +
+                m01 * m23 * m32 +
+                m21 * m02 * m33 -
+                m21 * m03 * m32 -
+                m31 * m02 * m23 +
+                m31 * m03 * m22;
+
+        inv.m11 = m00 * m22 * m33 -
+                m00 * m23 * m32 -
+                m20 * m02 * m33 +
+                m20 * m03 * m32 +
+                m30 * m02 * m23 -
+                m30 * m03 * m22;
+
+        inv.m21 = -m00 * m21 * m33 +
+                m00 * m23 * m31 +
+                m20 * m01 * m33 -
+                m20 * m03 * m31 -
+                m30 * m01 * m23 +
+                m30 * m03 * m21;
+
+        inv.m31 = m00 * m21 * m32 -
+                m00 * m22 * m31 -
+                m20 * m01 * m32 +
+                m20 * m02 * m31 +
+                m30 * m01 * m22 -
+                m30 * m02 * m21;
+
+        inv.m02 = m01 * m12 * m33 -
+                m01 * m13 * m32 -
+                m11 * m02 * m33 +
+                m11 * m03 * m32 +
+                m31 * m02 * m13 -
+                m31 * m03 * m12;
+
+        inv.m12 = -m00 * m12 * m33 +
+                m00 * m13 * m32 +
+                m10 * m02 * m33 -
+                m10 * m03 * m32 -
+                m30 * m02 * m13 +
+                m30 * m03 * m12;
+
+        inv.m22 = m00 * m11 * m33 -
+                m00 * m13 * m31 -
+                m10 * m01 * m33 +
+                m10 * m03 * m31 +
+                m30 * m01 * m13 -
+                m30 * m03 * m11;
+
+        inv.m32 = -m00 * m11 * m32 +
+                m00 * m12 * m31 +
+                m10 * m01 * m32 -
+                m10 * m02 * m31 -
+                m30 * m01 * m12 +
+                m30 * m02 * m11;
+
+        inv.m03 = -m01 * m12 * m23 +
+                m01 * m13 * m22 +
+                m11 * m02 * m23 -
+                m11 * m03 * m22 -
+                m21 * m02 * m13 +
+                m21 * m03 * m12;
+
+        inv.m13 = m00 * m12 * m23 -
+                m00 * m13 * m22 -
+                m10 * m02 * m23 +
+                m10 * m03 * m22 +
+                m20 * m02 * m13 -
+                m20 * m03 * m12;
+
+        inv.m23 = -m00 * m11 * m23 +
+                m00 * m13 * m21 +
+                m10 * m01 * m23 -
+                m10 * m03 * m21 -
+                m20 * m01 * m13 +
+                m20 * m03 * m11;
+
+        inv.m33 = m00 * m11 * m22 -
+                m00 * m12 * m21 -
+                m10 * m01 * m22 +
+                m10 * m02 * m21 +
+                m20 * m01 * m12 -
+                m20 * m02 * m11;
+
+        det = m00 * inv.m00 + m01 * inv.m10 + m02 * inv.m20 + m03 * inv.m30;
+
+        det = 1.0f / det;
+
+        inv = inv.multiply(det);
+
+        return inv;
+    }
+
+    public void toBuffer(FloatBuffer buffer) {
         buffer.put(m00).put(m10).put(m20).put(m30);
         buffer.put(m01).put(m11).put(m21).put(m31);
         buffer.put(m02).put(m12).put(m22).put(m32);
         buffer.put(m03).put(m13).put(m23).put(m33);
+    }
+
+    public FloatBuffer toBuffer() {
+        toBuffer(buffer);
         buffer.flip();
 
         return buffer;
-    }
-
-    /**
-     * Creates a orthographic projection matrix. Similar to
-     * <code>glOrtho(left, right, bottom, top, near, far)</code>.
-     *
-     * @param left   Coordinate for the left vertical clipping pane
-     * @param right  Coordinate for the right vertical clipping pane
-     * @param bottom Coordinate for the bottom horizontal clipping pane
-     * @param top    Coordinate for the bottom horizontal clipping pane
-     * @param near   Coordinate for the near depth clipping pane
-     * @param far    Coordinate for the far depth clipping pane
-     * @return Orthographic matrix
-     */
-    public static Matrix4f orthographic(float left, float right, float bottom, float top, float near, float far) {
-        Matrix4f ortho = new Matrix4f();
-
-        float tx = -(right + left) / (right - left);
-        float ty = -(top + bottom) / (top - bottom);
-        float tz = -(far + near) / (far - near);
-
-        ortho.m00 = 2f / (right - left);
-        ortho.m11 = 2f / (top - bottom);
-        ortho.m22 = -2f / (far - near);
-        ortho.m03 = tx;
-        ortho.m13 = ty;
-        ortho.m23 = tz;
-
-        return ortho;
-    }
-
-    /**
-     * Creates a perspective projection matrix. Similar to
-     * <code>glFrustum(left, right, bottom, top, near, far)</code>.
-     *
-     * @param left   Coordinate for the left vertical clipping pane
-     * @param right  Coordinate for the right vertical clipping pane
-     * @param bottom Coordinate for the bottom horizontal clipping pane
-     * @param top    Coordinate for the bottom horizontal clipping pane
-     * @param near   Coordinate for the near depth clipping pane, must be
-     *               positive
-     * @param far    Coordinate for the far depth clipping pane, must be
-     *               positive
-     * @return Perspective matrix
-     */
-    public static Matrix4f frustum(float left, float right, float bottom, float top, float near, float far) {
-        Matrix4f frustum = new Matrix4f();
-
-        float a = (right + left) / (right - left);
-        float b = (top + bottom) / (top - bottom);
-        float c = -(far + near) / (far - near);
-        float d = -(2f * far * near) / (far - near);
-
-        frustum.m00 = (2f * near) / (right - left);
-        frustum.m11 = (2f * near) / (top - bottom);
-        frustum.m02 = a;
-        frustum.m12 = b;
-        frustum.m22 = c;
-        frustum.m32 = -1f;
-        frustum.m23 = d;
-        frustum.m33 = 0f;
-
-        return frustum;
-    }
-
-    /**
-     * Creates a perspective projection matrix. Similar to
-     * <code>gluPerspective(fovy, aspec, zNear, zFar)</code>.
-     *
-     * @param fovy   Field of view angle in degrees
-     * @param aspect The aspect ratio is the ratio of width to height
-     * @param near   Distance from the viewer to the near clipping plane, must
-     *               be positive
-     * @param far    Distance from the viewer to the far clipping plane, must be
-     *               positive
-     * @return Perspective matrix
-     */
-    public static Matrix4f perspective(float fovy, float aspect, float near, float far) {
-        Matrix4f perspective = new Matrix4f();
-
-        float f = (float) (1f / Math.tan(Math.toRadians(fovy) / 2f));
-
-        perspective.m00 = f / aspect;
-        perspective.m11 = f;
-        perspective.m22 = (far + near) / (near - far);
-        perspective.m32 = -1f;
-        perspective.m23 = (2f * far * near) / (near - far);
-        perspective.m33 = 0f;
-
-        return perspective;
-    }
-
-    /**
-     * Creates a translation matrix. Similar to
-     * <code>glTranslate(x, y, z)</code>.
-     *
-     * @param x x coordinate of translation vector
-     * @param y y coordinate of translation vector
-     * @param z z coordinate of translation vector
-     * @return Translation matrix
-     */
-    public static Matrix4f translate(float x, float y, float z) {
-        Matrix4f translation = new Matrix4f();
-
-        translation.m03 = x;
-        translation.m13 = y;
-        translation.m23 = z;
-
-        return translation;
-    }
-
-    /**
-     * Creates a rotation matrix. Similar to
-     * <code>glRotate(angle, x, y, z)</code>.
-     *
-     * @param angle Angle of rotation in degrees
-     * @param x     x coordinate of the rotation vector
-     * @param y     y coordinate of the rotation vector
-     * @param z     z coordinate of the rotation vector
-     * @return Rotation matrix
-     */
-    public static Matrix4f rotate(float angle, float x, float y, float z) {
-        Matrix4f rotation = new Matrix4f();
-
-        float c = (float) Math.cos(Math.toRadians(angle));
-        float s = (float) Math.sin(Math.toRadians(angle));
-        Vector3f vec = new Vector3f(x, y, z);
-        if (vec.length() != 1f) {
-            vec = vec.normalize();
-            x = vec.x;
-            y = vec.y;
-            z = vec.z;
-        }
-
-        rotation.m00 = x * x * (1f - c) + c;
-        rotation.m10 = y * x * (1f - c) + z * s;
-        rotation.m20 = x * z * (1f - c) - y * s;
-        rotation.m01 = x * y * (1f - c) - z * s;
-        rotation.m11 = y * y * (1f - c) + c;
-        rotation.m21 = y * z * (1f - c) + x * s;
-        rotation.m02 = x * z * (1f - c) + y * s;
-        rotation.m12 = y * z * (1f - c) - x * s;
-        rotation.m22 = z * z * (1f - c) + c;
-
-        return rotation;
-    }
-
-    /**
-     * Creates a scaling matrix. Similar to <code>glScale(x, y, z)</code>.
-     *
-     * @param x Scale factor along the x coordinate
-     * @param y Scale factor along the y coordinate
-     * @param z Scale factor along the z coordinate
-     * @return Scaling matrix
-     */
-    public static Matrix4f scale(float x, float y, float z) {
-        Matrix4f scaling = new Matrix4f();
-
-        scaling.m00 = x;
-        scaling.m11 = y;
-        scaling.m22 = z;
-
-        return scaling;
-    }
-
-    public static Matrix4f reflection(Plane p)
-    {
-        Matrix4f r = new Matrix4f();
-
-        r.m00 = 1-2*p.a*p.a; r.m01 =  -2*p.a*p.b; r.m02 =  -2*p.a*p.c; r.m03 = -2*p.a*p.d;
-        r.m10 =  -2*p.a*p.b; r.m11 = 1-2*p.b*p.b; r.m12 =  -2*p.b*p.c; r.m13 = -2*p.b*p.d;
-        r.m20 =  -2*p.a*p.c; r.m21 =  -2*p.b*p.c; r.m22 = 1-2*p.c*p.c; r.m23 = -2*p.c*p.d;
-        r.m30 = 0.0f; r.m31 = 0.0f; r.m32 = 0.0f; r.m33 = 1.0f;
-
-        return r;
     }
 }

@@ -195,11 +195,11 @@ public class Vector3f {
      */
     public void toBuffer(FloatBuffer buffer) {
         buffer.put(x).put(y).put(z);
-        buffer.flip();
     }
 
     public FloatBuffer toBuffer() {
         toBuffer(buffer);
+        buffer.flip();
         return buffer;
     }
 

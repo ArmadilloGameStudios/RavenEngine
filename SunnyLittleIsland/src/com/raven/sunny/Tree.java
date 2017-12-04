@@ -6,6 +6,7 @@ import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataList;
 import com.raven.engine.database.GameDatabase;
 import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.scene.Scene;
 import com.raven.engine.worldobject.MouseHandler;
 import com.raven.engine.worldobject.Parentable;
 import com.raven.engine.worldobject.WorldObject;
@@ -19,18 +20,22 @@ import java.util.List;
 public class Tree extends WorldObject {
     private static GameDataList dataList = GameDatabase.queryAll("plants", "type", "tree");
 
-    public Tree() {
-        super(dataList.getRandom().getString("model"));
+    float rote = .2f;
+
+    public Tree(Scene scene) {
+        super(scene, dataList.getRandom().getString("model"));
+
+        scene.getLayerDetails().addWorldObject(this);
 
         Tree tree = this;
         this.addMouseHandler(new MouseHandler() {
             @Override
             public void onMouseClick() {
-                tree.setY(tree.getY() - 10.0f);
             }
 
             @Override
             public void onMouseEnter() {
+                rote *= -1;
             }
 
             @Override
@@ -52,5 +57,9 @@ public class Tree extends WorldObject {
         }
 
         return data;
+    }
+
+    public void onUpdate(float delta) {
+        setRotation(getRotation() + delta * rote);
     }
 }

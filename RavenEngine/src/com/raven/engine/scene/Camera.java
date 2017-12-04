@@ -1,4 +1,4 @@
-package com.raven.engine.graphics3d;
+package com.raven.engine.scene;
 
 import com.raven.engine.GameProperties;
 import com.raven.engine.util.Matrix4f;
@@ -8,15 +8,15 @@ import com.raven.engine.util.Vector3f;
  * Created by cookedbird on 11/15/17.
  */
 public class Camera {
-    float x, y, zoom = -30f, zoomMin = -25f, zoomMax = -50f, xr, yr = 40, yrMin = 20, yrMax = 89;
+    float x, y, zoom = -30f, zoomMin = -25f, zoomMax = -50f, xr, yr = 40, yrMin = 10f, yrMax = 85;
     float xs = x, ys = y, zooms = zoom, xrs = xr, yrs = yr;
 
-    private Matrix4f viewMatrix;
+    private Matrix4f viewMatrix = new Matrix4f();
     private Matrix4f projectionMatrix;
 
     public Camera() {
         projectionMatrix = Matrix4f.perspective(60f, ((float) GameProperties.getScreenWidth())
-                / ((float) GameProperties.getScreenHeight()), 2f, 100.0f);
+                / ((float) GameProperties.getScreenHeight()), 2f, 200.0f);
 
         updateViewMatrix();
     }
@@ -50,14 +50,13 @@ public class Camera {
     }
 
     private void updateViewMatrix() {
-        viewMatrix = new Matrix4f();
+        viewMatrix.identity();
 
-        viewMatrix = viewMatrix.multiply(Matrix4f.translate(0, 0, zooms));
-        viewMatrix = viewMatrix.multiply(Matrix4f.rotate(yrs, 1f, 0f, 0f));
+        viewMatrix.translate(0, 0, zooms);
+        viewMatrix.rotate(yrs, 1f, 0f, 0f);
 
-        viewMatrix = viewMatrix.multiply(Matrix4f.rotate(xrs, 0f, 1f, 0f));
-        viewMatrix = viewMatrix.multiply(Matrix4f.translate(xs, 0, ys));
-
+        viewMatrix.rotate(xrs, 0f, 1f, 0f);
+        viewMatrix.translate(xs, 0, ys);
     }
 
     public void update(float deltaTime) {

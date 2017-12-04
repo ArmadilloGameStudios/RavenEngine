@@ -5,6 +5,6 @@
 },
 {
     name: "bush",
-    type: "tree",
+    type: "bush",
     model: "models/bush.ply"
 }

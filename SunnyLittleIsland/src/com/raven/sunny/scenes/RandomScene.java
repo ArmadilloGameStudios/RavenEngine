@@ -10,6 +10,7 @@ import com.raven.sunny.SunnyLittleIslandGame;
 import com.raven.sunny.Tree;
 import com.raven.sunny.terrain.Terrain;
 import com.raven.sunny.terrain.TerrainData;
+import com.raven.sunny.terrain.TerrainMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,20 +23,11 @@ public class RandomScene extends Scene {
     private Terrain t;
     private ModelData water;
 
-    private Layer landLayer;
-    private Layer waterLayer;
-
     public RandomScene() {
         super();
 
-        landLayer = new Layer();
-        this.addLayer(landLayer);
-
-        waterLayer = new Layer(Layer.Destination.Water);
-        this.addLayer(waterLayer);
-
-        t = Terrain.genTerrain(landLayer, 60, 45);
-        landLayer.addChild(t);
+        t = TerrainMap.genTerrain(this, 60, 45);
+        getLayerTerrain().addWorldObject(t);
     }
 
     @Override
@@ -46,7 +38,6 @@ public class RandomScene extends Scene {
         ModelData land = t.getModelData();
 
         mds.add(land);
-
 
         // water
         water = new ModelData();
@@ -102,7 +93,7 @@ public class RandomScene extends Scene {
 
         mds.add(water);
 
-        waterLayer.addChild(new WorldObject(water) {
+        getLayerWater().addWorldObject(new WorldObject(this, water) {
 
         });
 
@@ -110,25 +101,6 @@ public class RandomScene extends Scene {
         for (ModelData data : Tree.getModelData())
             mds.add(data);
 
-        Random r = new Random();
-        for (TerrainData[] tds : t.getTerrainMap().getTerrainData()) {
-            for (TerrainData td : tds) {
-                if (td.getType() == TerrainData.Sand && r.nextFloat() < .3f) {
-
-                    WorldObject woTree = new Tree();
-                    landLayer.addChild(woTree);
-
-                    Vector3f center = td.getCenter();
-
-                    woTree.setX(center.x);
-                    woTree.setY(center.y);
-                    woTree.setZ(center.z);
-                    woTree.setScale(.35f);
-                    woTree.setRotation(r.nextFloat() * 360);
-                }
-
-            }
-        }
 
         return mds;
     }
@@ -141,5 +113,21 @@ public class RandomScene extends Scene {
     @Override
     public void exitScene() {
 
+    }
+
+    float f = 0;
+    @Override
+    public void onUpdate(float deltaTime) {
+        f += deltaTime;
+        Vector3f dir = this.getDirectionalLight().direction;
+        dir.z = (float)Math.cos(f / 10000f);
+        dir.y = (float)Math.sin(f / 10000f);
+
+        Vector3f color = this.getDirectionalLight().color;
+        color.x = 1f;
+        color.y = dir.y;
+        color.z = (float)Math.pow(dir.y, 3.0);
+
+        this.getDirectionalLight().intensity = Math.min(1f, Math.max(0f, dir.y * 1.5f + 1f));
     }
 }

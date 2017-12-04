@@ -1,20 +1,21 @@
 package com.raven.engine.scene;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.raven.engine.graphics3d.Camera;
+import com.raven.engine.GameProperties;
 import com.raven.engine.graphics3d.GameWindow3D;
 import com.raven.engine.graphics3d.ModelData;
-import com.raven.engine.graphics3d.shader.WaterReflectionShader;
-import com.raven.engine.graphics3d.shader.WaterRefractionShader;
-import com.raven.engine.graphics3d.shader.WorldShader;
-import com.raven.engine.graphics3d.shader.WorldWaterShader;
+import com.raven.engine.graphics3d.shader.*;
+import com.raven.engine.scene.light.DirectionalLight;
 import com.raven.engine.worldobject.WorldObject;
 
 public abstract class Scene {
-    private List<Layer> layers = new ArrayList<>();
+    private Layer layerTerrain = new Layer(Layer.Destination.Terrain);
+    private Layer layerWater = new Layer(Layer.Destination.Water);
+    private Layer layerDetails = new Layer(Layer.Destination.Details);
+
     private Camera camera;
+    private DirectionalLight light = new DirectionalLight("sunLight");
 
     public Scene() {
         camera = new Camera();
@@ -24,42 +25,39 @@ public abstract class Scene {
         return camera;
     }
 
-    protected List<Layer> getLayers() {
-        return layers;
-    }
-
-    protected void addLayer(Layer l) {
-        l.setScene(this);
-        layers.add(l);
+    public DirectionalLight getDirectionalLight() {
+        return light;
     }
 
     final public void draw(GameWindow3D window) {
+        // update the sun block
+        Shader.setSunLight(light);
+        Shader.setProjectionViewMatrices(camera);
+
         // 1 Draw world refraction water
         WaterRefractionShader waterRefrShader = window.getWaterRefractionShader();
 
         waterRefrShader.useProgram();
-        waterRefrShader.setProjectionMatrix(camera.getProjectionMatrix());
-        waterRefrShader.setViewMatrix(camera.getViewMatrix());
 
-        for (Layer l : layers) {
-            if (l.getDestination() != Layer.Destination.Water)
-                for (WorldObject o : l.getGameObjectList()) {
-                    waterRefrShader.setModelMatrix(o.getModelMatirx());
-                    o.draw();
-                }
+        for (WorldObject o : layerTerrain.getGameObjectList()) {
+            Shader.setModelMatrix(o.getModelMatirx());
+            o.draw();
         }
 
         // 2 Draw world reflection water
         WaterReflectionShader waterReflShader = window.getWaterReflectionShader();
 
-        waterReflShader.useProgram();
-        waterReflShader.setProjectionMatrix(camera.getProjectionMatrix());
-        waterReflShader.setViewMatrix(camera.getViewMatrix());
+        if (GameProperties.getReflectTerrain()) {
+            waterReflShader.useProgram();
 
-        for (Layer l : layers) {
-            if (l.getDestination() != Layer.Destination.Water)
-                for (WorldObject o : l.getGameObjectList()) {
-                    waterReflShader.setModelMatrix(o.getModelMatirx());
+            for (WorldObject o : layerTerrain.getGameObjectList()) {
+                Shader.setModelMatrix(o.getModelMatirx());
+                o.draw();
+            }
+
+            if (GameProperties.getReflectObjects())
+                for (WorldObject o : layerDetails.getGameObjectList()) {
+                    Shader.setModelMatrix(o.getModelMatirx());
                     o.draw();
                 }
         }
@@ -68,38 +66,59 @@ public abstract class Scene {
         WorldShader worldShader = window.getWorldShader();
 
         worldShader.useProgram();
-        worldShader.setProjectionMatrix(camera.getProjectionMatrix());
-        worldShader.setViewMatrix(camera.getViewMatrix());
 
-        for (Layer l : layers) {
-            if (l.getDestination() != Layer.Destination.Water)
-                for (WorldObject o : l.getGameObjectList()) {
-                    worldShader.setModelMatrix(o.getModelMatirx());
-                    o.draw();
-                }
+        for (WorldObject o : layerTerrain.getGameObjectList()) {
+            Shader.setModelMatrix(o.getModelMatirx());
+            o.draw();
+        }
+
+        for (WorldObject o : layerDetails.getGameObjectList()) {
+            Shader.setModelMatrix(o.getModelMatirx());
+            o.draw();
         }
 
         // 4 Draw water
         WorldWaterShader worldWaterShader = window.getWorldWaterShader();
 
-        worldWaterShader.useProgram(camera);
-        worldWaterShader.setProjectionMatrix(camera.getProjectionMatrix());
-        worldWaterShader.setViewMatrix(camera.getViewMatrix());
+        worldWaterShader.useProgram();
 
-        for (Layer l : layers) {
-            if (l.getDestination() == Layer.Destination.Water)
-                for (WorldObject o : l.getGameObjectList()) {
-                    worldWaterShader.setModelMatrix(o.getModelMatirx());
-                    o.draw();
-                }
+        for (WorldObject o : layerWater.getGameObjectList()) {
+            Shader.setModelMatrix(o.getModelMatirx());
+            o.draw();
         }
     }
 
     final public void update(float deltaTime) {
         camera.update(deltaTime);
 
-        for (Layer l : layers) {
-            l.update(deltaTime);
+        onUpdate(deltaTime);
+
+        layerTerrain.update(deltaTime);
+        layerWater.update(deltaTime);
+        layerDetails.update(deltaTime);
+    }
+
+    final public Layer getLayerTerrain() {
+        return layerTerrain;
+    }
+
+    final public Layer getLayerWater() {
+        return layerWater;
+    }
+
+    final public Layer getLayerDetails() {
+        return layerDetails;
+    }
+
+    public Layer getLayer(Layer.Destination destination) {
+        switch (destination) {
+            case Water:
+                return getLayerWater();
+            case Terrain:
+                return getLayerTerrain();
+            case Details:
+            default:
+                return getLayerDetails();
         }
     }
 
@@ -108,5 +127,7 @@ public abstract class Scene {
     abstract public void enterScene();
 
     abstract public void exitScene();
+
+    abstract public void onUpdate(float deltaTime);
 
 }

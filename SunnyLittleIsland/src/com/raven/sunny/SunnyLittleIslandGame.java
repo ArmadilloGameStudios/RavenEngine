@@ -2,6 +2,7 @@ package com.raven.sunny;
 
 import com.raven.engine.Game;
 import com.raven.engine.GameEngine;
+import com.raven.engine.launcher.GameLauncher;
 import com.raven.engine.scene.Scene;
 import com.raven.sunny.scenes.RandomScene;
 
@@ -11,7 +12,7 @@ import com.raven.sunny.scenes.RandomScene;
 public class SunnyLittleIslandGame extends Game {
 
     public static void main(String[] args) {
-        GameEngine.Launch(new SunnyLittleIslandGame());
+        GameLauncher.Open(new SunnyLittleIslandGame());
         System.out.println("Lunched");
     }
 
@@ -32,7 +33,7 @@ public class SunnyLittleIslandGame extends Game {
 
     @Override
     public String getTitle() {
-        return "Sunny Little Island";
+        return "Little Island";
     }
 
     @Override

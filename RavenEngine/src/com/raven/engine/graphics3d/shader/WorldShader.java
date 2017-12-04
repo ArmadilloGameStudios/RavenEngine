@@ -9,6 +9,7 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
@@ -16,6 +17,8 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
+import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
+import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 import static org.lwjgl.opengl.GL32.glFramebufferTexture;
 import static org.lwjgl.opengl.GL32.glTexImage2DMultisample;
@@ -32,7 +35,7 @@ public class WorldShader extends Shader {
             ID = getNextTexture(),
             DEPTH = getNextTexture();
 
-    private int projection_location, model_location, view_location, id_location;
+    private int id_location;
     private int ms_framebuffer_handel, ms_renderbuffer_handel, ms_color_texture, ms_glow_texture,
             ms_id_texture, ms_depth_texture;
     private int framebuffer_handel, renderbuffer_handel, color_texture, bloom_texture,
@@ -51,13 +54,13 @@ public class WorldShader extends Shader {
         glBindAttribLocation(getProgramHandel(), 1, "vertex_color");
         glBindAttribLocation(getProgramHandel(), 2, "vertex_normal");
 
-        projection_location = glGetUniformLocation(getProgramHandel(), "P");
-        model_location = glGetUniformLocation(getProgramHandel(), "M");
-        view_location = glGetUniformLocation(getProgramHandel(), "V");
-
         id_location = glGetUniformLocation(getProgramHandel(), "id");
 
-        glLinkProgram(getProgramHandel());
+        int blockIndex = glGetUniformBlockIndex(getProgramHandel(), "DirectionalLight");
+        glUniformBlockBinding(getProgramHandel(), blockIndex, DIRECTIONAL_LIGHT);
+
+        blockIndex = glGetUniformBlockIndex(getProgramHandel(), "Matrices");
+        glUniformBlockBinding(getProgramHandel(), blockIndex, MATRICES);
 
         int bfs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
         buffers = BufferUtils.createIntBuffer(bfs.length);
@@ -226,9 +229,9 @@ public class WorldShader extends Shader {
 
         glBindFramebuffer(GL_FRAMEBUFFER, ms_framebuffer_handel);
 
-        glViewport(0, 0,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight());
+//        glViewport(0, 0,
+//                GameProperties.getScreenWidth(),
+//                GameProperties.getScreenHeight());
 
         glClearColor(0.6f, 0.7f, 1f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -243,10 +246,6 @@ public class WorldShader extends Shader {
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
 
-        glUniformMatrix4fv(projection_location, false, projection_matrix.toBuffer());
-        glUniformMatrix4fv(model_location, false, model_matrix.toBuffer());
-        glUniformMatrix4fv(view_location, false, view_matrix.toBuffer());
-
         glEnable(GL_CLIP_DISTANCE0);
     }
 
@@ -258,27 +257,6 @@ public class WorldShader extends Shader {
         glDisableVertexAttribArray(2);
 
         glDisable(GL_CLIP_DISTANCE0);
-    }
-
-    public void setProjectionMatrix(Matrix4f m) {
-        projection_matrix = m;
-
-        if (GameEngine.getEngine().getWindow().getActiveShader() == this)
-            glUniformMatrix4fv(projection_location, false, projection_matrix.toBuffer());
-    }
-
-    public void setViewMatrix(Matrix4f m) {
-        view_matrix = m;
-
-        if (GameEngine.getEngine().getWindow().getActiveShader() == this)
-            glUniformMatrix4fv(view_location, false, view_matrix.toBuffer());
-    }
-
-    public void setModelMatrix(Matrix4f m) {
-        model_matrix = m;
-
-        if (GameEngine.getEngine().getWindow().getActiveShader() == this)
-            glUniformMatrix4fv(model_location, false, model_matrix.toBuffer());
     }
 
     public void setWorldObjectID(int id) {

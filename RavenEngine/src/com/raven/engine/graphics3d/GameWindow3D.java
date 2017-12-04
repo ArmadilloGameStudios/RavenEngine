@@ -15,8 +15,12 @@ import java.util.Map;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
+import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL30.glBindBufferBase;
+import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
+import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -34,6 +38,8 @@ public class GameWindow3D {
     private BloomShader bloomShader;
     private IDShader idShader;
     private CombinationShader combinationShader;
+
+    private int sun_light_buffer_handel, matrices_buffer_handel;
 
     private GameEngine engine;
 
@@ -58,6 +64,7 @@ public class GameWindow3D {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        ms_count = GameProperties.getMultisampleCount();
         glfwWindowHint(GLFW_SAMPLES, ms_count);
 
         // Create the window
@@ -102,6 +109,19 @@ public class GameWindow3D {
         glfwSetScrollCallback(window, (window, xoffset, yoffset) -> engine.inputScroll(xoffset, yoffset));
 
         GL.createCapabilities();
+
+        // Buffer Data
+        sun_light_buffer_handel = glGenBuffers();
+        glBindBuffer(GL_UNIFORM_BUFFER, sun_light_buffer_handel);
+        glBindBufferBase(GL_UNIFORM_BUFFER, Shader.DIRECTIONAL_LIGHT, sun_light_buffer_handel);
+        glBufferData(GL_UNIFORM_BUFFER, new float[4*2+1], GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+        matrices_buffer_handel = glGenBuffers();
+        glBindBuffer(GL_UNIFORM_BUFFER, matrices_buffer_handel);
+        glBindBufferBase(GL_UNIFORM_BUFFER, Shader.MATRICES, matrices_buffer_handel);
+        glBufferData(GL_UNIFORM_BUFFER, new float[4*4*6], GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
         // Shaders
         worldShader = new WorldShader();
@@ -156,6 +176,14 @@ public class GameWindow3D {
 
     public CombinationShader getCombinationShader() {
         return combinationShader;
+    }
+
+    public int getSunLightHandel() {
+        return sun_light_buffer_handel;
+    }
+
+    public int getMatricesHandel() {
+        return matrices_buffer_handel;
     }
 
     public void drawFBO() {

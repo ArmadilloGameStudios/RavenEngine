@@ -2,6 +2,8 @@ package com.raven.engine.worldobject;
 
 import com.raven.engine.GameEngine;
 import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.scene.Layer;
+import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Matrix4f;
 
 import java.util.ArrayList;
@@ -12,37 +14,27 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public abstract class WorldObject implements Parentable {
     private static int last_id = 0;
     private static HashMap<Integer, WorldObject> worldObjectIDMap = new HashMap<>();
-
-    public static void resetObjectIDs() {
-        worldObjectIDMap.clear();
-        last_id = 0;
-    }
-
-    public static WorldObject getWorldObjectFromID(int id) {
-        return worldObjectIDMap.get(id);
-    }
-
+    List<WorldObject> list = new ArrayList();
+    private Scene scene;
     private int id;
     private float x, y, z, scale = 1f, rotation = 0f;
-    private Matrix4f matrix;
+    private Matrix4f matrix = new Matrix4f();
     private boolean visible = true;
     private List<WorldObject> children = new CopyOnWriteArrayList<WorldObject>();
     private ModelData model;
     private boolean mousehovering = false;
     private List<MouseHandler> clickHandlers = new ArrayList<MouseHandler>();
     private long timeOffset = 0;
-
     private List<TextObject> textObjects = new ArrayList<TextObject>();
-
     private Parentable parent;
     private boolean parentIsWorldObject;
-
-    public WorldObject(String modelsrc) {
-        this(GameEngine.getEngine().getModelData(modelsrc));
+    public WorldObject(Scene scene, String modelsrc) {
+        this(scene, GameEngine.getEngine().getModelData(modelsrc));
     }
 
-    public WorldObject(ModelData model) {
+    public WorldObject(Scene scene, ModelData model) {
         // model
+        this.scene = scene;
         this.model = model;
 
         // click id
@@ -55,6 +47,15 @@ public abstract class WorldObject implements Parentable {
         this.z = 0;
 
         resolveMatrix();
+    }
+
+    public static void resetObjectIDs() {
+        worldObjectIDMap.clear();
+        last_id = 0;
+    }
+
+    public static WorldObject getWorldObjectFromID(int id) {
+        return worldObjectIDMap.get(id);
     }
 
     @Override
@@ -99,9 +100,17 @@ public abstract class WorldObject implements Parentable {
         resolveMatrix();
     }
 
+    public Scene getScene() {
+        return scene;
+    }
+
     public void setScale(float scale) {
         this.scale = scale;
         resolveMatrix();
+    }
+
+    public float getRotation() {
+        return rotation;
     }
 
     public void setRotation(float rotation) {
@@ -110,9 +119,10 @@ public abstract class WorldObject implements Parentable {
     }
 
     private void resolveMatrix() {
-        matrix = Matrix4f.translate(x, y, z)
-                .multiply(Matrix4f.rotate(rotation, 0f, 1f, 0f))
-                .multiply(Matrix4f.scale(scale, scale, scale));
+        matrix = matrix.identity()
+                .translate(x, y, z)
+                .rotate(rotation, 0f, 1f, 0f)
+                .scale(scale, scale, scale);
     }
 
     public Matrix4f getModelMatirx() {
@@ -141,12 +151,12 @@ public abstract class WorldObject implements Parentable {
         model.getModelReference().draw();
     }
 
-    public void setParent(Parentable parent) {
-        this.parent = parent;
-    }
-
     public Parentable getParent() {
         return parent;
+    }
+
+    public void setParent(Parentable parent) {
+        this.parent = parent;
     }
 
     public boolean isParentWorldObject() {
@@ -154,13 +164,11 @@ public abstract class WorldObject implements Parentable {
     }
 
     public List<WorldObject> getParentWorldObjectList() {
-        List<WorldObject> list;
+        list.clear();
 
         if (parentIsWorldObject) {
-            list = ((WorldObject) parent).getParentWorldObjectList();
+            list.addAll(((WorldObject) parent).getParentWorldObjectList());
             list.add((WorldObject) parent);
-        } else {
-            list = new ArrayList<WorldObject>();
         }
 
         return list;

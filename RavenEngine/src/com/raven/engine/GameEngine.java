@@ -2,6 +2,8 @@ package com.raven.engine;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.glFinish;
+import static org.lwjgl.opengl.GL11.glFlush;
 
 import java.io.File;
 import java.util.*;
@@ -127,6 +129,8 @@ public class GameEngine implements Runnable {
                 framesdt = 0;
             }
 
+//            glFlush();
+//            glFinish();
             glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
 
             long currentTime = System.nanoTime();
@@ -162,6 +166,7 @@ public class GameEngine implements Runnable {
         }
     }
 
+    private List<WorldObject> newList = new ArrayList();
     private void input(float delta) {
         glfwPollEvents();
 
@@ -176,7 +181,8 @@ public class GameEngine implements Runnable {
             }
 
             // hover
-            List<WorldObject> newList = hover.getParentWorldObjectList();
+            newList.clear();
+            newList.addAll(hover.getParentWorldObjectList());
             newList.add(hover);
 
             for (WorldObject o : oldMouseList) {
@@ -187,7 +193,8 @@ public class GameEngine implements Runnable {
                 }
             }
 
-            oldMouseList = newList;
+            oldMouseList.clear();
+            oldMouseList.addAll(newList);
         } else {
             for (WorldObject o : oldMouseList) {
                 o.checkMouseMovement(false, delta);

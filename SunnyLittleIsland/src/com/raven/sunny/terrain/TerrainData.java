@@ -1,6 +1,8 @@
 package com.raven.sunny.terrain;
 
+import com.raven.engine.scene.Layer;
 import com.raven.engine.util.Vector3f;
+import com.raven.engine.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +18,9 @@ public class TerrainData {
     private Vector3f[] vertices;
     private int type;
 
-    private TerrainMap map;
+    private Terrain terrain;
+    private TerrainData[][] data;
+    private WorldObject decor;
 
     public static Float[] getColorOfType(int type) {
         switch (type) {
@@ -33,8 +37,9 @@ public class TerrainData {
         }
     }
 
-    public TerrainData(TerrainMap map, int x, int z) {
-        this.map=map;
+    public TerrainData(TerrainData[][] data, int x, int z) {
+        this.terrain = terrain;
+        this.data = data;
         x_arr = x;
         z_arr = z;
     }
@@ -109,8 +114,6 @@ public class TerrainData {
     public TerrainData[] getAdjacentTerrainData() {
         List<TerrainData> adjList = new ArrayList<>();
 
-        TerrainData[][] data = map.getTerrainData();
-
         int adjCount = 1;
 
         if ((x_arr % 2 + z_arr % 2) % 2 == 0 && x_arr != data.length - 1) {
@@ -133,5 +136,20 @@ public class TerrainData {
 
         TerrainData[] adj = new TerrainData[adjCount];
         return adjList.toArray(adj);
+    }
+
+    public void setTerrain(Terrain terrain) {
+        this.terrain = terrain;
+    }
+
+    public void setDecor(WorldObject decor) {
+        this.decor = decor;
+
+        Vector3f center = getCenter();
+
+        decor.setX(center.x);
+        decor.setY(center.y);
+        decor.setZ(center.z);
+        decor.setScale(.35f);
     }
 }

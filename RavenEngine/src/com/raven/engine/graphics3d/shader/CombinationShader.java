@@ -70,7 +70,7 @@ public class CombinationShader extends Shader {
     protected Map<String, String> getGLSLVariableMap() {
         Map<String, String> map = new HashMap<>();
 
-        map.put("NUM_SAMPLES", Integer.toString(GameEngine.getEngine().getWindow().getMultisampleCount()));
+        map.put("NUM_SAMPLES", Integer.toString(GameProperties.getMultisampleCount()));
 
         return map;
     }

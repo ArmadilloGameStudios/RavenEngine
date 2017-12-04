@@ -91,8 +91,8 @@ public class IDShader extends Shader {
     }
     private IntBuffer pixelReadBuffer = BufferUtils.createIntBuffer(1);
     public int getWorldObjectID() {
-        glFlush();
-        glFinish();
+//        glFlush();
+//        glFinish();
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

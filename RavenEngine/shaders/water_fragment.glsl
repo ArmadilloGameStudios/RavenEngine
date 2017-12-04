@@ -7,8 +7,16 @@ uniform vec3 id;
 
 in vec3 light, lightGlow, color;
 
+in float water_camera_distance;
+
+in float murk;
+
 void main(void) {
-    frag_color = vec4(color * light, 1.0);
+
+    float c_murk = clamp(murk, 0.0, 1.0);
+
+    frag_color = vec4(color * light * (1.0 - c_murk / 4.0), c_murk);
+
 	frag_glow = lightGlow;
 	frag_id = id;
 }
