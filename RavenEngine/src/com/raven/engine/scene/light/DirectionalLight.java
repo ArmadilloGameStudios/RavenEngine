@@ -17,27 +17,32 @@ import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
  * Created by cookedbird on 11/30/17.
  */
 public class DirectionalLight extends Light {
-    private String name;
     public Vector3f color = new Vector3f();
     public float intensity = 1f;
     public Vector3f direction = new Vector3f();
 
-    public DirectionalLight(String name) {
-        this.name = name;
+    public DirectionalLight() {
         this.color = new Vector3f(1,1,0);
         this.intensity = .5f;
         this.direction = new Vector3f(0, -1, 0);
     }
 
-    public DirectionalLight(String name, Vector3f color, float intensity, Vector3f direction) {
-        this.name = name;
+    public DirectionalLight(Vector3f color, float intensity, Vector3f direction) {
         this.color = color;
         this.intensity = intensity;
         this.direction = direction;
     }
 
     @Override
-    public void toBlock(int handel) {
+    public void toFloatBuffer(FloatBuffer buffer) {
+        color.toBuffer(buffer);
+        buffer.put(intensity);
+        direction.toBuffer(buffer);
+    }
 
+    @Override
+    public int getLightType() {
+        return Light.DIRECTIONAL;
     }
 }
+

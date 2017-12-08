@@ -1,4 +1,4 @@
-#version 430
+#version 400
 layout(location = 0) out vec4 frag_color;
 layout(location = 1) out vec3 frag_glow;
 layout(location = 2) out vec3 frag_id;

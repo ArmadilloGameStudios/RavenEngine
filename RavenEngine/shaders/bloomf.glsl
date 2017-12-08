@@ -1,4 +1,4 @@
-#version 430
+#version 400
 
 layout(location = 0) out vec3 frag_glow;
 

@@ -53,7 +53,7 @@ public class WaterRefractionShader extends Shader {
         glBindAttribLocation(getProgramHandel(), 2, "vertex_normal");
 
         int blockIndex = glGetUniformBlockIndex(getProgramHandel(), "DirectionalLight");
-        glUniformBlockBinding(getProgramHandel(), blockIndex, DIRECTIONAL_LIGHT);
+        glUniformBlockBinding(getProgramHandel(), blockIndex, LIGHT);
 
         blockIndex = glGetUniformBlockIndex(getProgramHandel(), "Matrices");
         glUniformBlockBinding(getProgramHandel(), blockIndex, MATRICES);

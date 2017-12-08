@@ -8,5 +8,9 @@ import java.nio.FloatBuffer;
  * Created by cookedbird on 11/30/17.
  */
 public abstract class Light {
-    public abstract void toBlock(int handel);
+    public final static int AMBIANT = 0, DIRECTIONAL = 1;
+
+    public abstract void toFloatBuffer(FloatBuffer buffer);
+
+    public abstract int getLightType();
 }

@@ -77,18 +77,20 @@ public class IDShader extends Shader {
         glEnableVertexAttribArray(0);
 
         // Bind the id
-        glUniform1i(texture_id_location, WorldShader.ID);
+        glUniform1i(texture_id_location, WorldMSShader.ID);
 
         // Bind the mouse
         glUniform2i(coord_location,
                 (int)GameEngine.getEngine().getMouse().getX(),
                 GameProperties.getScreenHeight() - (int)GameEngine.getEngine().getMouse().getY());
     }
+
     @Override
     public void endProgram() {
         // Disable the custom mode attribute
         glDisableVertexAttribArray(0);
     }
+
     private IntBuffer pixelReadBuffer = BufferUtils.createIntBuffer(1);
     public int getWorldObjectID() {
 //        glFlush();

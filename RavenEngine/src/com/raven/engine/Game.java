@@ -1,8 +1,6 @@
 package com.raven.engine;
 
-import java.awt.image.BufferedImage;
-
-import com.raven.engine.graphics3d.GameWindow3D;
+import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.ModelReference;
 import com.raven.engine.scene.Scene;
@@ -29,8 +27,16 @@ public abstract class Game {
 		return currentScene;
 	}
 
-	final public void renderWorld(GameWindow3D window) {
-		currentScene.draw(window);
+	final public void renderWorld4ms(GameWindow window) {
+		currentScene.draw4ms(window);
+	}
+
+    final public void renderWorld4(GameWindow window) {
+        currentScene.draw4(window);
+    }
+
+	final public void renderWorld2(GameWindow window) {
+		currentScene.draw2(window);
 	}
 
 	final public void update(float deltaTime) {

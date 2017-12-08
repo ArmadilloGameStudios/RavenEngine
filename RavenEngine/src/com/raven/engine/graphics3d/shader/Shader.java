@@ -1,8 +1,9 @@
 package com.raven.engine.graphics3d.shader;
 
 import com.raven.engine.GameEngine;
+import com.raven.engine.GameProperties;
 import com.raven.engine.scene.Camera;
-import com.raven.engine.scene.light.DirectionalLight;
+import com.raven.engine.scene.light.Light;
 import com.raven.engine.util.Matrix4f;
 import com.raven.engine.util.Plane;
 import org.lwjgl.BufferUtils;
@@ -12,10 +13,11 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.lwjgl.opengl.GL11.GL_TRUE;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
 import static org.lwjgl.opengl.GL20.*;
@@ -29,7 +31,7 @@ import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 public abstract class Shader {
     int vertex_handel, fragment_handel, program_handel;
 
-    public final static int DIRECTIONAL_LIGHT = 1, MATRICES = 2;
+    public final static int LIGHT = 1, MATRICES = 2;
 
     private static int nextTexture = 0;
 
@@ -67,17 +69,11 @@ public abstract class Shader {
 
     private static FloatBuffer slBuffer = BufferUtils.createFloatBuffer(7);
 
-    public static void setSunLight(DirectionalLight sunLight) {
-        slBuffer.put(sunLight.color.x);
-        slBuffer.put(sunLight.color.y);
-        slBuffer.put(sunLight.color.z);
-        slBuffer.put(sunLight.intensity);
-        slBuffer.put(sunLight.direction.x);
-        slBuffer.put(sunLight.direction.y);
-        slBuffer.put(sunLight.direction.z);
+    public static void setLight(Light light) {
+        light.toFloatBuffer(slBuffer);
         slBuffer.flip();
 
-        glBindBuffer(GL_UNIFORM_BUFFER, GameEngine.getEngine().getWindow().getSunLightHandel());
+        glBindBuffer(GL_UNIFORM_BUFFER, GameEngine.getEngine().getWindow().getLightHandel());
         glBufferSubData(GL_UNIFORM_BUFFER, 0, slBuffer);
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
@@ -166,7 +162,6 @@ public abstract class Shader {
         }
     }
 
-
     protected void useProgram() {
         if (GameEngine.getEngine().getWindow().getActiveShader() != this) {
             GameEngine.getEngine().getWindow().endActiveShader();
@@ -188,7 +183,11 @@ public abstract class Shader {
         return program_handel;
     }
 
-    protected Map<String, String> getGLSLVariableMap() {
-        return null;
+    private final Map<String, String> getGLSLVariableMap() {
+        Map<String, String> map = new HashMap<>();
+
+        map.put("NUM_SAMPLES", Integer.toString(GameProperties.getMultisampleCount()));
+
+        return map;
     }
 }

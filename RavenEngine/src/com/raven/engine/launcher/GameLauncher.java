@@ -3,9 +3,25 @@ package com.raven.engine.launcher;
 import com.raven.engine.Game;
 import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.system.MemoryStack;
 
 import javax.swing.*;
 import java.awt.*;
+import java.nio.IntBuffer;
+
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
+import static org.lwjgl.opengl.GL11.GL_VERSION;
+import static org.lwjgl.opengl.GL11.glGetString;
+import static org.lwjgl.opengl.GL20.GL_SHADING_LANGUAGE_VERSION;
+import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
  * Created by cookedbird on 11/26/17.
@@ -14,7 +30,22 @@ public class GameLauncher {
 
     public static void Open(Game game) {
 
-        // Doesn't work on linux
+        if (isOpenGL4Supported()) {
+            OpenAdvanced(game);
+        } else {
+            OpenBasic(game);
+        }
+    }
+
+    // OpenGL 2.0
+    private static void OpenBasic(Game game) {
+        GameProperties.setSupportsOpenGL4(false);
+        GameEngine.Launch(game);
+    }
+
+    // OpenGL 4.0
+    private static void OpenAdvanced(Game game) {
+        // Doesn't work on linux and nvidia
         GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] devices = g.getScreenDevices();
         for (GraphicsDevice device : devices) {
@@ -123,5 +154,36 @@ public class GameLauncher {
         // Show
         winMain.pack();
         winMain.setVisible(true);
+    }
+
+    public static boolean isOpenGL4Supported() {
+        GLFWErrorCallback.createPrint(System.err).set();
+
+        // Initialize GLFW.
+        if (!glfwInit())
+            throw new IllegalStateException("Unable to initialize GLFW");
+
+        glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+
+        long window = glfwCreateWindow(1, 1,
+                "", NULL, NULL);
+
+        glfwMakeContextCurrent(window);
+
+        GL.createCapabilities();
+
+        GLCapabilities cat = GL.getCapabilities();
+
+        boolean supported = cat.OpenGL40;
+
+        // destory the window
+        glfwFreeCallbacks(window);
+        glfwDestroyWindow(window);
+
+        // Terminate GLFW and free the error callback
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
+
+        return supported;
     }
 }

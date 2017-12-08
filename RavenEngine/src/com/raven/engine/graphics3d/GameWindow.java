@@ -3,6 +3,7 @@ package com.raven.engine.graphics3d;
 import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
 import com.raven.engine.graphics3d.shader.*;
+import com.raven.engine.scene.light.DirectionalLight;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -12,32 +13,44 @@ import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.ARBImaging.GL_TABLE_TOO_LARGE;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
 import static org.lwjgl.opengl.GL30.glBindBufferBase;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
+import static org.lwjgl.opengl.GL45.GL_CONTEXT_LOST;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class GameWindow3D {
+public class GameWindow {
 
     // The window handle
     private long window;
 
     private int ms_count = 4;
 
-    private WorldShader worldShader;
+    private WorldMSShader worldMSShader;
     private WaterRefractionShader waterRefractionShader;
     private WaterReflectionShader waterReflectionShader;
     private WorldWaterShader worldWaterShader;
     private BloomShader bloomShader;
     private IDShader idShader;
-    private CombinationShader combinationShader;
+    private SimpleDirectionalLightShader simpleDirLightShader;
+    private ComplexDirectionalLightShader complexDirLightShader;
+    private ComplexSampleStencilShader complexSampleStencilShader;
+
+    private WorldShader worldShader;
+    private DirectionalLightShader dirLightShader;
+    private FXAAShader fxaaShader;
+
+    private BasicShader basicShader;
 
     private int sun_light_buffer_handel, matrices_buffer_handel;
 
@@ -47,11 +60,11 @@ public class GameWindow3D {
     private Map<Integer, Boolean> mouse = new HashMap<>();
     private Shader activeShader;
 
-    public GameWindow3D(GameEngine engine) {
+    public GameWindow(GameEngine engine) {
         this.engine = engine;
     }
 
-    public void setup() {
+    public void create() {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
@@ -64,8 +77,10 @@ public class GameWindow3D {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+
         ms_count = GameProperties.getMultisampleCount();
-        glfwWindowHint(GLFW_SAMPLES, ms_count);
+        if (ms_count != 0)
+            glfwWindowHint(GLFW_SAMPLES, ms_count);
 
         // Create the window
         window = glfwCreateWindow(GameProperties.getScreenWidth(),
@@ -110,30 +125,42 @@ public class GameWindow3D {
 
         GL.createCapabilities();
 
-        // Buffer Data
-        sun_light_buffer_handel = glGenBuffers();
-        glBindBuffer(GL_UNIFORM_BUFFER, sun_light_buffer_handel);
-        glBindBufferBase(GL_UNIFORM_BUFFER, Shader.DIRECTIONAL_LIGHT, sun_light_buffer_handel);
-        glBufferData(GL_UNIFORM_BUFFER, new float[4*2+1], GL_DYNAMIC_DRAW);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+        if (GameProperties.supportsOpenGL4()) {
+            // Buffer Data
+            sun_light_buffer_handel = glGenBuffers();
+            glBindBuffer(GL_UNIFORM_BUFFER, sun_light_buffer_handel);
+            glBindBufferBase(GL_UNIFORM_BUFFER, Shader.LIGHT, sun_light_buffer_handel);
+            glBufferData(GL_UNIFORM_BUFFER, new float[4 * 2 + 1], GL_DYNAMIC_DRAW);
+            glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-        matrices_buffer_handel = glGenBuffers();
-        glBindBuffer(GL_UNIFORM_BUFFER, matrices_buffer_handel);
-        glBindBufferBase(GL_UNIFORM_BUFFER, Shader.MATRICES, matrices_buffer_handel);
-        glBufferData(GL_UNIFORM_BUFFER, new float[4*4*6], GL_DYNAMIC_DRAW);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+            matrices_buffer_handel = glGenBuffers();
+            glBindBuffer(GL_UNIFORM_BUFFER, matrices_buffer_handel);
+            glBindBufferBase(GL_UNIFORM_BUFFER, Shader.MATRICES, matrices_buffer_handel);
+            glBufferData(GL_UNIFORM_BUFFER, new float[4 * 4 * 6], GL_DYNAMIC_DRAW);
+            glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-        // Shaders
-        worldShader = new WorldShader();
-        waterRefractionShader = new WaterRefractionShader();
-        waterReflectionShader = new WaterReflectionShader();
-        worldWaterShader = new WorldWaterShader(worldShader);
-        bloomShader = new BloomShader();
-        idShader = new IDShader();
-        combinationShader = new CombinationShader();
+            if (ms_count != 0) {
+                // Shaders
+                worldMSShader = new WorldMSShader();
+//                waterRefractionShader = new WaterRefractionShader();
+//                waterReflectionShader = new WaterReflectionShader();
+//                worldWaterShader = new WorldWaterShader(worldMSShader);
+//                bloomShader = new BloomShader();
+                idShader = new IDShader();
+                complexSampleStencilShader = new ComplexSampleStencilShader();
+                simpleDirLightShader = new SimpleDirectionalLightShader(complexSampleStencilShader);
+                complexDirLightShader = new ComplexDirectionalLightShader(complexSampleStencilShader);
 
-        // Enable multisample
-        glEnable(GL_MULTISAMPLE);
+                // Enable multisample
+                glEnable(GL_MULTISAMPLE);
+            } else {
+                worldShader = new WorldShader();
+                dirLightShader = new DirectionalLightShader();
+                fxaaShader = new FXAAShader();
+            }
+        } else {
+            basicShader = new BasicShader();
+        }
 
         // Enable depth test
         glEnable(GL_DEPTH_TEST);
@@ -146,12 +173,23 @@ public class GameWindow3D {
         ModelReference.loadBlankModel();
     }
 
+    public void destroy() {
+        glfwFreeCallbacks(window);
+        glfwDestroyWindow(window);
+
+        // Terminate GLFW and free the error callback
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
+
+        System.out.println("Window Destroyed");
+    }
+
     public long getWindowHandler() {
         return window;
     }
 
-    public WorldShader getWorldShader() {
-        return worldShader;
+    public WorldMSShader getWorldMSShader() {
+        return worldMSShader;
     }
 
     public BloomShader getBloomShader() {
@@ -174,11 +212,35 @@ public class GameWindow3D {
         return waterReflectionShader;
     }
 
-    public CombinationShader getCombinationShader() {
-        return combinationShader;
+    public ComplexSampleStencilShader getComplexSampleStencilShader() {
+        return complexSampleStencilShader;
     }
 
-    public int getSunLightHandel() {
+    public ComplexDirectionalLightShader getComplexDirectionalLightShader() {
+        return complexDirLightShader;
+    }
+
+    public SimpleDirectionalLightShader getSimpleDirLightShader() {
+        return simpleDirLightShader;
+    }
+
+    public WorldShader getWorldShader() {
+        return worldShader;
+    }
+
+    public DirectionalLightShader getDirLightShader() {
+        return dirLightShader;
+    }
+
+    public FXAAShader getFXAAShader() {
+        return fxaaShader;
+    }
+
+    public BasicShader getBasicShader() {
+        return basicShader;
+    }
+
+    public int getLightHandel() {
         return sun_light_buffer_handel;
     }
 
@@ -186,7 +248,7 @@ public class GameWindow3D {
         return matrices_buffer_handel;
     }
 
-    public void drawFBO() {
+    public void drawQuad() {
         // Draw FBO
         glEnableVertexAttribArray(0);
         ModelReference.getBlankModel().draw();
@@ -195,10 +257,6 @@ public class GameWindow3D {
 
     public int getMultisampleCount() {
         return ms_count;
-    }
-
-    public void setActiveShader(Shader activeShader) {
-        this.activeShader = activeShader;
     }
 
     public void endActiveShader() {
@@ -213,11 +271,43 @@ public class GameWindow3D {
     public void printErrors(String tag) {
         int err;
         while ((err = glGetError()) != GL_NO_ERROR) {
-            System.out.println(tag + "0x" + Integer.toHexString(err));
+            switch (err) {
+                case GL_INVALID_ENUM:
+                    System.out.println(tag + "GL_INVALID_ENUM 0x" + Integer.toHexString(err));
+                    break;
+                case GL_INVALID_VALUE:
+                    System.out.println(tag + "GL_INVALID_VALUE 0x" + Integer.toHexString(err));
+                    break;
+                case GL_INVALID_OPERATION:
+                    System.out.println(tag + "GL_INVALID_OPERATION 0x" + Integer.toHexString(err));
+                    break;
+                case GL_STACK_OVERFLOW:
+                    System.out.println(tag + "GL_STACK_OVERFLOW 0x" + Integer.toHexString(err));
+                    break;
+                case GL_OUT_OF_MEMORY:
+                    System.out.println(tag + "GL_OUT_OF_MEMORY 0x" + Integer.toHexString(err));
+                    break;
+                case GL_INVALID_FRAMEBUFFER_OPERATION:
+                    System.out.println(tag + "GL_INVALID_FRAMEBUFFER_OPERATION 0x" + Integer.toHexString(err));
+                    break;
+                case GL_CONTEXT_LOST:
+                    System.out.println(tag + "GL_CONTEXT_LOST 0x" + Integer.toHexString(err));
+                    break;
+                case GL_TABLE_TOO_LARGE:
+                    System.out.println(tag + "GL_TABLE_TOO_LARGE 0x" + Integer.toHexString(err));
+                    break;
+                default:
+                    System.out.println(tag + "0x" + Integer.toHexString(err));
+                    break;
+            }
         }
     }
 
     public Shader getActiveShader() {
         return activeShader;
+    }
+
+    public void setActiveShader(Shader activeShader) {
+        this.activeShader = activeShader;
     }
 }

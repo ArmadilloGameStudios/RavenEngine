@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.raven.engine.GameEngine;
-import com.raven.engine.graphics3d.GameWindow3D;
-import com.raven.engine.worldobject.Parentable;
+import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.worldobject.WorldObject;
 
 public class Layer {
@@ -16,7 +15,7 @@ public class Layer {
 	private Destination destination;
 	private List<WorldObject> gameObjectList = new CopyOnWriteArrayList<>();
 
-	private GameWindow3D window;
+	private GameWindow window;
 
 	public Layer(Destination destination) {
 		this.destination = destination;

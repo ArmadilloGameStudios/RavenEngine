@@ -7,7 +7,7 @@ package com.raven.engine;
  */
 public class GameProperties {
     private static int multiSample = 0, waterQuality = 1;
-    private static boolean reflectTerrain, reflectObjects;
+    private static boolean reflectTerrain, reflectObjects, supportsOpenGL4 = true;
 
     public static int getScreenWidth() {
         return 1920;
@@ -50,6 +50,14 @@ public class GameProperties {
 
     public static boolean getReflectObjects() {
         return reflectObjects;
+    }
+
+    public static void setSupportsOpenGL4(boolean supportsOpenGL4) {
+        GameProperties.supportsOpenGL4 = supportsOpenGL4;
+    }
+
+    public static boolean supportsOpenGL4() {
+        return supportsOpenGL4;
     }
 
     private GameProperties() {}

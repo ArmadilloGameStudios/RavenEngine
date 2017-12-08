@@ -2,14 +2,12 @@ package com.raven.engine;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL11.glFinish;
-import static org.lwjgl.opengl.GL11.glFlush;
 
 import java.io.File;
 import java.util.*;
 
 import com.raven.engine.database.GameDatabase;
-import com.raven.engine.graphics3d.GameWindow3D;
+import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.ModelReference;
 import com.raven.engine.graphics3d.PlyModelData;
@@ -26,7 +24,7 @@ public class GameEngine implements Runnable {
 
         GameEngine.engine = engine;
 
-        engine.window = new GameWindow3D(engine);
+        engine.window = new GameWindow(engine);
 
         engine.thread = new Thread(engine);
         engine.thread.start();
@@ -40,7 +38,7 @@ public class GameEngine implements Runnable {
 
     private Game game;
     private Thread thread;
-    private GameWindow3D window;
+    private GameWindow window;
     private List<WorldObject> oldMouseList = new ArrayList<>();
     private GameDatabase gdb;
     private Map<String, ModelData> modelDataMap = new HashMap<>();
@@ -74,7 +72,7 @@ public class GameEngine implements Runnable {
         return systemTime;
     }
 
-    public GameWindow3D getWindow() {
+    public GameWindow getWindow() {
         return window;
     }
 
@@ -101,7 +99,7 @@ public class GameEngine implements Runnable {
         System.out.println("Started Run");
 
         System.out.println("Starting OpenGL");
-        window.setup();
+        window.create();
 
         System.out.println("Loading Assets");
         loadDatabase();
@@ -113,25 +111,39 @@ public class GameEngine implements Runnable {
         ModelReference.compileBuffer();
         window.printErrors("Compile Buffer Error: ");
 
-        // game.getCurrentScene().enterScene();
-
         while (game.isRunning()
                 && !glfwWindowShouldClose(window.getWindowHandler())) {
 
             long start = System.nanoTime();
 
             game.update(deltaTime);
-            input(deltaTime);
-            draw();
+            window.printErrors("Update Error: ");
+
+            if (GameProperties.supportsOpenGL4()) {
+                input(deltaTime);
+                window.printErrors("Input 4 Error: ");
+
+                if (GameProperties.getMultisampleCount() != 0) {
+                    draw4ms();
+                    window.printErrors("Draw MSAA Error: ");
+                } else {
+                    draw4();
+                    window.printErrors("Draw FXAA Error: ");
+                }
+            } else {
+                input(deltaTime);
+                draw2();
+                window.printErrors("Draw 2 Error: ");
+            }
 
             if (frame % 60 == 0) {
-                System.out.println("FPS: " + 1000f / (framesdt / 60f));
+                System.out.println("FPS: " + 1000f / (framesdt / 60f) + " MPF: " + framesdt / 60f);
                 framesdt = 0;
             }
 
-//            glFlush();
-//            glFinish();
             glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
+
+            window.printErrors("Swap Error: ");
 
             long currentTime = System.nanoTime();
             deltaTime = (currentTime - start) / 1000000.0f;
@@ -147,30 +159,47 @@ public class GameEngine implements Runnable {
 
         game.breakdown();
 
+        window.destroy();
+
         System.out.println("Exit");
 
         System.exit(0);
     }
 
-    private void draw() {
-        game.renderWorld(window);
+    private void draw4ms() {
+        game.renderWorld4ms(window);
 
         window.getIDShader().useProgram();
-        window.drawFBO();
+        window.drawQuad();
 
-        if (true) {
-            window.getCombinationShader().useProgram();
-            window.drawFBO();
-        } else {
-            window.getWorldShader().blitFramebuffer();
-        }
+//        if (true) {
+//
+//        } else if (true) {
+//            window.getComplexDirectionalLightShader().useProgram();
+//            window.drawQuad();
+//        } else {
+//            // window.getWorldMSShader().blitComplexValue();
+//        }
+    }
+
+    private void draw4() {
+        game.renderWorld4(window);
+
+//        window.getIDShader().useProgram();
+//        window.drawQuad();
+    }
+
+    private void draw2() {
+        game.renderWorld2(window);
+
+        // render world as input
     }
 
     private List<WorldObject> newList = new ArrayList();
     private void input(float delta) {
         glfwPollEvents();
 
-        int id = window.getIDShader().getWorldObjectID();
+        int id = 0; // window.getIDShader().getWorldObjectID();
         if (id != 0) {
             WorldObject hover = WorldObject.getWorldObjectFromID(id);
 

@@ -1,6 +1,5 @@
 package com.raven.engine.graphics3d.shader;
 
-import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
 import org.lwjgl.BufferUtils;
 
@@ -88,7 +87,7 @@ public class BloomShader extends Shader {
 
         // Bind the glow
         // set the texture
-        glUniform1i(texture_glow_location, WorldShader.GLOW);
+        glUniform1i(texture_glow_location, WorldMSShader.NORMAL);
 
         glUniform2f(bloom_step_location,
                 1f / GameProperties.getScreenWidth(), 0f);

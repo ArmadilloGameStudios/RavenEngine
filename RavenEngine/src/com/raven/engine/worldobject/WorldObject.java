@@ -2,7 +2,6 @@ package com.raven.engine.worldobject;
 
 import com.raven.engine.GameEngine;
 import com.raven.engine.graphics3d.ModelData;
-import com.raven.engine.scene.Layer;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Matrix4f;
 
@@ -125,7 +124,7 @@ public abstract class WorldObject implements Parentable {
                 .scale(scale, scale, scale);
     }
 
-    public Matrix4f getModelMatirx() {
+    public Matrix4f getModelMatrix() {
         return matrix;
     }
 
@@ -145,9 +144,19 @@ public abstract class WorldObject implements Parentable {
         this.textObjects.remove(text);
     }
 
-    public void draw() {
+    public void draw4ms() {
+        GameEngine.getEngine().getWindow().getWorldMSShader().setWorldObjectID(id);
+
+        model.getModelReference().draw();
+    }
+
+    public void draw4() {
         GameEngine.getEngine().getWindow().getWorldShader().setWorldObjectID(id);
 
+        model.getModelReference().draw();
+    }
+
+    public void draw2() {
         model.getModelReference().draw();
     }
 

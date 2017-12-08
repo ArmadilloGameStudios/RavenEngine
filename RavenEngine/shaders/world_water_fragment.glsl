@@ -1,4 +1,5 @@
-#version 430
+#version 400
+#define NUM_SAMPLES 4
 #define PI 3.141592653589793238462643383279502884197169399375105820974
 
 layout (std140) uniform DirectionalLight
@@ -19,8 +20,9 @@ layout (std140) uniform Matrices
 } matrix;
 
 layout(location = 0) out vec4 frag_color;
-layout(location = 1) out vec3 frag_glow;
+layout(location = 1) out vec4 frag_normal;
 layout(location = 2) out vec3 frag_id;
+layout(location = 3) out vec3 frag_complex;
 
 uniform sampler2D refractColorTexture;
 uniform sampler2D refractDepthTexture;
@@ -34,9 +36,9 @@ in vec2 coord;
 
 in vec3 camera_vector;
 
-void main(void) {
-    vec2 coord2 = vec2(gl_FragCoord.xy / vec2(1920, 1080));
+const int sampleMask = (1 << NUM_SAMPLES) - 1;
 
+void main(void) {
     // create a uv map for the water ripples
     float distance_smooth = (1.0 - pow(gl_FragCoord.z, 5));
 
@@ -60,11 +62,11 @@ void main(void) {
         2,
         (b + a) * .06 * distance_smooth * ripple_mag));
 
-    vec4 refract_color_texture = texture(refractColorTexture, coord2 + water_uv.xz);
+    vec4 refract_color_texture = texture(refractColorTexture, coord + water_uv.xz);
     vec3 refract_color = refract_color_texture.rgb;
     float diff = refract_color_texture.a;
 
-    vec3 reflect_color = texture(reflectColorTexture, coord2 + water_uv.xz * .4).rgb;
+    vec3 reflect_color = texture(reflectColorTexture, coord + water_uv.xz * .4).rgb;
 
     refract_color = (light * water_color) * diff + refract_color * (1.0 - diff);
 
@@ -80,7 +82,8 @@ void main(void) {
 
     vec3 specularComponent = specularCoefficient * sunLight.color * sunLight.intensity;
 
-    frag_color += vec4(specularComponent, 1);
-
+    frag_color += vec4(specularComponent, 0.0);
+    frag_normal = vec4(0,1,0,0);
     frag_id = vec3(0);
+    frag_complex = vec3((gl_SampleMaskIn[0] != sampleMask) ? 1.0 : 0.0);
 }

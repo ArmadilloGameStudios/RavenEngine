@@ -2,7 +2,6 @@ package com.raven.engine.graphics3d.shader;
 
 import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
-import com.raven.engine.util.Matrix4f;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
@@ -21,12 +20,12 @@ public class WorldWaterShader extends Shader {
             texture_reflect_color_location, texture_reflect_depth_location,
             time_location;
 
-    private WorldShader worldShader;
+    private WorldMSShader worldMSShader;
 
-    public WorldWaterShader(WorldShader worldShader) {
+    public WorldWaterShader(WorldMSShader worldMSShader) {
         super("world_water_vertex.glsl", "world_water_fragment.glsl");
 
-        this.worldShader = worldShader;
+        this.worldMSShader = worldMSShader;
 
         glBindAttribLocation(getProgramHandel(), 0, "vertex_pos");
         glBindAttribLocation(getProgramHandel(), 1, "vertex_color");
@@ -41,7 +40,7 @@ public class WorldWaterShader extends Shader {
         time_location = glGetUniformLocation(getProgramHandel(), "time");
 
         int blockIndex = glGetUniformBlockIndex(getProgramHandel(), "DirectionalLight");
-        glUniformBlockBinding(getProgramHandel(), blockIndex, DIRECTIONAL_LIGHT);
+        glUniformBlockBinding(getProgramHandel(), blockIndex, LIGHT);
 
         blockIndex = glGetUniformBlockIndex(getProgramHandel(), "Matrices");
         glUniformBlockBinding(getProgramHandel(), blockIndex, MATRICES);
@@ -52,7 +51,7 @@ public class WorldWaterShader extends Shader {
 
         glUseProgram(getProgramHandel());
 
-        glBindFramebuffer(GL_FRAMEBUFFER, worldShader.getFrameBuffer());
+        glBindFramebuffer(GL_FRAMEBUFFER, worldMSShader.getMSFramebuffer());
 
         glViewport(0, 0,
                 GameProperties.getScreenWidth(),

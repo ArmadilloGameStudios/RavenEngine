@@ -20,7 +20,7 @@ import java.util.List;
 public class Tree extends WorldObject {
     private static GameDataList dataList = GameDatabase.queryAll("plants", "type", "tree");
 
-    float rote = .2f;
+    float rote = 0f;
 
     public Tree(Scene scene) {
         super(scene, dataList.getRandom().getString("model"));
@@ -35,12 +35,10 @@ public class Tree extends WorldObject {
 
             @Override
             public void onMouseEnter() {
-                rote *= -1;
             }
 
             @Override
             public void onMouseLeave() {
-
             }
 
             @Override
@@ -60,6 +58,6 @@ public class Tree extends WorldObject {
     }
 
     public void onUpdate(float delta) {
-        setRotation(getRotation() + delta * rote);
+
     }
 }
