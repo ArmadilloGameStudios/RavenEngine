@@ -13,6 +13,7 @@ public class Camera {
 
     private Matrix4f viewMatrix = new Matrix4f();
     private Matrix4f projectionMatrix;
+    private Matrix4f inverseProjectionViewMatrix = new Matrix4f();
 
     public Camera() {
         projectionMatrix = Matrix4f.perspective(60f, ((float) GameProperties.getScreenWidth())
@@ -27,6 +28,10 @@ public class Camera {
 
     public Matrix4f getProjectionMatrix() {
         return projectionMatrix;
+    }
+
+    public Matrix4f getInverseProjectionViewMatrix() {
+        return inverseProjectionViewMatrix;
     }
 
     public void zoom(double yoffset) {
@@ -49,7 +54,9 @@ public class Camera {
                 -zoom * .001f;
     }
 
+    // has 'memory leak'
     private void updateViewMatrix() {
+        // view
         viewMatrix.identity();
 
         viewMatrix.translate(0, 0, zooms);
@@ -57,6 +64,11 @@ public class Camera {
 
         viewMatrix.rotate(xrs, 0f, 1f, 0f);
         viewMatrix.translate(xs, 0, ys);
+
+        // IPV
+        inverseProjectionViewMatrix.identity();
+        inverseProjectionViewMatrix = inverseProjectionViewMatrix.multiply(projectionMatrix).multiply(viewMatrix);
+        inverseProjectionViewMatrix.invert();
     }
 
     public void update(float deltaTime) {

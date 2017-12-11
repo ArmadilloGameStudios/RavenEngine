@@ -116,12 +116,10 @@ public class GameEngine implements Runnable {
 
             long start = System.nanoTime();
 
-            game.update(deltaTime);
-            window.printErrors("Update Error: ");
 
             if (GameProperties.supportsOpenGL4()) {
                 input(deltaTime);
-                window.printErrors("Input 4 Error: ");
+                window.printErrors("Input MS Error: ");
 
                 if (GameProperties.getMultisampleCount() != 0) {
                     draw4ms();
@@ -133,8 +131,11 @@ public class GameEngine implements Runnable {
             } else {
                 input(deltaTime);
                 draw2();
-                window.printErrors("Draw 2 Error: ");
+                window.printErrors("Draw Basic Error: ");
             }
+
+            game.update(deltaTime);
+            window.printErrors("Update Error: ");
 
             if (frame % 60 == 0) {
                 System.out.println("FPS: " + 1000f / (framesdt / 60f) + " MPF: " + framesdt / 60f);

@@ -21,7 +21,7 @@ public class RandomScene extends Scene {
     float f = 0;
     private Terrain t;
     private ModelData water;
-    private DirectionalLight sunLight, sunLight2;
+    private DirectionalLight sunLight;
     private AmbientLight ambientLight;
 
     public RandomScene() {
@@ -31,9 +31,12 @@ public class RandomScene extends Scene {
         getLayerTerrain().addWorldObject(t);
 
         sunLight = new DirectionalLight();
+
         addLight(sunLight);
-        sunLight2 = new DirectionalLight();
-        addLight(sunLight2);
+//        addLight(sunLight);
+//        addLight(sunLight);
+//        addLight(sunLight);
+//        addLight(sunLight);
 
         ambientLight = new AmbientLight();
         ambientLight.intensity = .2f;
@@ -128,9 +131,10 @@ public class RandomScene extends Scene {
     @Override
     public void onUpdate(float deltaTime) {
         f += deltaTime;
-        Vector3f dir = sunLight.direction;
+        Vector3f dir = sunLight.getDirection();
         dir.z = (float) Math.cos(f / 10000f);
         dir.y = (float) Math.sin(f / 10000f);
+        sunLight.setDirection(dir);
 
         Vector3f color = sunLight.color;
         color.x = 1f;
@@ -138,17 +142,5 @@ public class RandomScene extends Scene {
         color.z = (float) Math.pow(dir.y, 3.0);
 
         sunLight.intensity = Math.min(1f, Math.max(0f, dir.y * 1.5f + 1f));
-
-        f += deltaTime;
-        dir = sunLight2.direction;
-        dir.z = (float) Math.cos(f / -10000f);
-        dir.y = (float) Math.sin(f / -10000f);
-
-        color = sunLight2.color;
-        color.y = 1f;
-        color.x = dir.y;
-        color.z = (float) Math.pow(dir.y, 3.0);
-
-        sunLight2.intensity = Math.min(1f, Math.max(0f, dir.y * 1.5f + 1f));
     }
 }

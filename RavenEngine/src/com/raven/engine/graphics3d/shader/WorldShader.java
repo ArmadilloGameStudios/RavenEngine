@@ -144,8 +144,6 @@ public class WorldShader extends Shader {
     public void useProgram() {
         super.useProgram();
 
-        glUseProgram(getProgramHandel());
-
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
 
         glViewport(0, 0,

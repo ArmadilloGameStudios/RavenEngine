@@ -69,6 +69,6 @@ public class BasicShader extends Shader {
     public void setUniformLight(DirectionalLight uniformLight) {
         glUniform3fv(light_color_location, uniformLight.color.toBuffer());
         glUniform1f(light_intensity_location, uniformLight.intensity);
-        glUniform3fv(light_direction_location, uniformLight.direction.toBuffer());
+        glUniform3fv(light_direction_location, uniformLight.getDirection().toBuffer());
     }
 }

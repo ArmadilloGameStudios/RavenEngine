@@ -174,6 +174,82 @@ public class Matrix4f {
         return perspective;
     }
 
+    public static Matrix4f lookAt (
+            float eyex, float eyey, float eyez,
+            float atx, float aty, float atz,
+            float upx, float upy, float upz)
+    {
+        Matrix4f mat = new Matrix4f();
+
+        Vector3f at = new Vector3f(atx-eyex, aty-eyey, atz-eyez).normalize();
+
+        // ?
+        if (at.z > 0) {
+            upy *= -1;
+        }
+
+        Vector3f up = new Vector3f(upx, upy, upz);
+        Vector3f xaxis = at.cross(up).normalize();
+
+        up = xaxis.cross(at);
+        at.scale(-1f);
+
+        mat.m00 = xaxis.x; mat.m01 = xaxis.y; mat.m02 = xaxis.z; mat.m03 = 0f;
+        mat.m10 = up.x; mat.m11 = up.y; mat.m12 = up.z; mat.m13 = 0f;
+        mat.m20 = at.x; mat.m21 = at.y; mat.m22 = at.z; mat.m23 = 0f;
+        mat.m30 = eyex; mat.m31 = eyey; mat.m32 = eyez; mat.m33 = 1f;
+
+        return mat.transpose();
+    }
+
+    public static Matrix4f direction(Vector3f direction, Matrix4f mat) {
+
+        if (mat == null) {
+            mat = new Matrix4f();
+        } else {
+            mat.identity();
+        }
+
+        Vector3f zaxis = direction.normalize();
+        Vector3f xaxis = new Vector3f(0, 1, 0).cross(direction).normalize();
+        Vector3f yaxis = zaxis.cross(xaxis);     // The "up" vector.
+
+        // Create a 4x4 orientation matrix from the right, up, and forward vectors
+        // This is transposed which is equivalent to performing an inverse
+        // if the matrix is orthonormalized (in this case, it is).
+        mat.m00 = xaxis.x; mat.m01 = yaxis.x; mat.m02 = zaxis.x; mat.m03 = 0f;
+        mat.m10 = xaxis.y; mat.m11 = yaxis.y; mat.m12 = zaxis.y; mat.m13 = 0f;
+        mat.m20 = xaxis.z; mat.m21 = yaxis.z; mat.m22 = zaxis.z; mat.m23 = 0f;
+        mat.m30 = 0f; mat.m31 = 0f; mat.m32 = 0f; mat.m33 = 0f;
+
+        // Create a 4x4 translation matrix.
+        // The eye position is negated which is equivalent
+        // to the inverse of the translation matrix.
+        // T(v)^-1 == T(-v)
+//        mat4 translation = {
+//                vec4(   1,      0,      0,   0 ),
+//                vec4(   0,      1,      0,   0 ),
+//                vec4(   0,      0,      1,   0 ),
+//                vec4(-eye.x, -eye.y, -eye.z, 1 )
+//        };
+
+        // Combine the orientation and translation to compute
+        // the final view matrix
+        Matrix4f cat = new Matrix4f();
+        cat.translate(direction.normalize().scale(-30f));
+        cat.invert();
+
+        mat = mat.multiply(cat);
+
+        System.out.println(mat);
+
+        return mat;
+    }
+
+    public Matrix4f direction(Vector3f direction) {
+        return direction(direction, this);
+    }
+
     /**
      * Creates a translation matrix. Similar to
      * <code>glTranslate(x, y, z)</code>.
@@ -195,6 +271,9 @@ public class Matrix4f {
         return this;
     }
 
+    public Matrix4f translate(Vector3f t) {
+        return translate(t.x, t.y, t.z);
+    }
 
     private Vector3f vec = new Vector3f();
     /**
@@ -506,6 +585,28 @@ public class Matrix4f {
         m33 = t33;
     }
 
+    private void nToM() {
+        this.m00 = n00;
+        this.m01 = n01;
+        this.m02 = n02;
+        this.m03 = n03;
+
+        this.m10 = n10;
+        this.m11 = n11;
+        this.m12 = n12;
+        this.m13 = n13;
+
+        this.m20 = n20;
+        this.m21 = n21;
+        this.m22 = n22;
+        this.m23 = n23;
+
+        this.m30 = n30;
+        this.m31 = n31;
+        this.m32 = n32;
+        this.m33 = n33;
+    }
+
     /**
      * Transposes this matrix.
      *
@@ -539,9 +640,6 @@ public class Matrix4f {
 
     public Matrix4f inverse() {
         Matrix4f inv = new Matrix4f();
-
-        float det;
-        int i;
 
         inv.m00 = m11 * m22 * m33 -
                 m11 * m23 * m32 -
@@ -655,13 +753,139 @@ public class Matrix4f {
                 m20 * m01 * m12 -
                 m20 * m02 * m11;
 
-        det = m00 * inv.m00 + m01 * inv.m10 + m02 * inv.m20 + m03 * inv.m30;
+        float det = m00 * inv.m00 + m01 * inv.m10 + m02 * inv.m20 + m03 * inv.m30;
 
         det = 1.0f / det;
 
         inv = inv.multiply(det);
 
         return inv;
+    }
+
+    public Matrix4f invert() {
+        nIdentity();
+
+        n00 = m11 * m22 * m33 -
+                m11 * m23 * m32 -
+                m21 * m12 * m33 +
+                m21 * m13 * m32 +
+                m31 * m12 * m23 -
+                m31 * m13 * m22;
+
+        n10 = -m10 * m22 * m33 +
+                m10 * m23 * m32 +
+                m20 * m12 * m33 -
+                m20 * m13 * m32 -
+                m30 * m12 * m23 +
+                m30 * m13 * m22;
+
+        n20 = m10 * m21 * m33 -
+                m10 * m23 * m31 -
+                m20 * m11 * m33 +
+                m20 * m13 * m31 +
+                m30 * m11 * m23 -
+                m30 * m13 * m21;
+
+        n30 = -m10 * m21 * m32 +
+                m10 * m22 * m31 +
+                m20 * m11 * m32 -
+                m20 * m12 * m31 -
+                m30 * m11 * m22 +
+                m30 * m12 * m21;
+
+        n01 = -m01 * m22 * m33 +
+                m01 * m23 * m32 +
+                m21 * m02 * m33 -
+                m21 * m03 * m32 -
+                m31 * m02 * m23 +
+                m31 * m03 * m22;
+
+        n11 = m00 * m22 * m33 -
+                m00 * m23 * m32 -
+                m20 * m02 * m33 +
+                m20 * m03 * m32 +
+                m30 * m02 * m23 -
+                m30 * m03 * m22;
+
+        n21 = -m00 * m21 * m33 +
+                m00 * m23 * m31 +
+                m20 * m01 * m33 -
+                m20 * m03 * m31 -
+                m30 * m01 * m23 +
+                m30 * m03 * m21;
+
+        n31 = m00 * m21 * m32 -
+                m00 * m22 * m31 -
+                m20 * m01 * m32 +
+                m20 * m02 * m31 +
+                m30 * m01 * m22 -
+                m30 * m02 * m21;
+
+        n02 = m01 * m12 * m33 -
+                m01 * m13 * m32 -
+                m11 * m02 * m33 +
+                m11 * m03 * m32 +
+                m31 * m02 * m13 -
+                m31 * m03 * m12;
+
+        n12 = -m00 * m12 * m33 +
+                m00 * m13 * m32 +
+                m10 * m02 * m33 -
+                m10 * m03 * m32 -
+                m30 * m02 * m13 +
+                m30 * m03 * m12;
+
+        n22 = m00 * m11 * m33 -
+                m00 * m13 * m31 -
+                m10 * m01 * m33 +
+                m10 * m03 * m31 +
+                m30 * m01 * m13 -
+                m30 * m03 * m11;
+
+        n32 = -m00 * m11 * m32 +
+                m00 * m12 * m31 +
+                m10 * m01 * m32 -
+                m10 * m02 * m31 -
+                m30 * m01 * m12 +
+                m30 * m02 * m11;
+
+        n03 = -m01 * m12 * m23 +
+                m01 * m13 * m22 +
+                m11 * m02 * m23 -
+                m11 * m03 * m22 -
+                m21 * m02 * m13 +
+                m21 * m03 * m12;
+
+        n13 = m00 * m12 * m23 -
+                m00 * m13 * m22 -
+                m10 * m02 * m23 +
+                m10 * m03 * m22 +
+                m20 * m02 * m13 -
+                m20 * m03 * m12;
+
+        n23 = -m00 * m11 * m23 +
+                m00 * m13 * m21 +
+                m10 * m01 * m23 -
+                m10 * m03 * m21 -
+                m20 * m01 * m13 +
+                m20 * m03 * m11;
+
+        n33 = m00 * m11 * m22 -
+                m00 * m12 * m21 -
+                m10 * m01 * m22 +
+                m10 * m02 * m21 +
+                m20 * m01 * m12 -
+                m20 * m02 * m11;
+
+        float det = m00 * n00 + m01 * n10 + m02 * n20 + m03 * n30;
+
+        det = 1.0f / det;
+
+        nToM();
+
+        multiply(det);
+
+        return this;
     }
 
     public void toBuffer(FloatBuffer buffer) {
@@ -676,5 +900,13 @@ public class Matrix4f {
         buffer.flip();
 
         return buffer;
+    }
+
+    public String toString() {
+        return String.join(", ",
+                "\n" + Float.toString(m00), Float.toString(m01), Float.toString(m02), Float.toString(m03),
+                "\n" + Float.toString(m10), Float.toString(m11), Float.toString(m12), Float.toString(m13),
+                "\n" + Float.toString(m20), Float.toString(m21), Float.toString(m22), Float.toString(m23),
+                "\n" + Float.toString(m30), Float.toString(m31), Float.toString(m32), Float.toString(m33));
     }
 }

@@ -130,13 +130,13 @@ public class GameWindow {
             sun_light_buffer_handel = glGenBuffers();
             glBindBuffer(GL_UNIFORM_BUFFER, sun_light_buffer_handel);
             glBindBufferBase(GL_UNIFORM_BUFFER, Shader.LIGHT, sun_light_buffer_handel);
-            glBufferData(GL_UNIFORM_BUFFER, new float[4 * 2 + 1], GL_DYNAMIC_DRAW);
+            glBufferData(GL_UNIFORM_BUFFER, new float[4 * 2 + 1 + 16 * 2], GL_DYNAMIC_DRAW);
             glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
             matrices_buffer_handel = glGenBuffers();
             glBindBuffer(GL_UNIFORM_BUFFER, matrices_buffer_handel);
             glBindBufferBase(GL_UNIFORM_BUFFER, Shader.MATRICES, matrices_buffer_handel);
-            glBufferData(GL_UNIFORM_BUFFER, new float[4 * 4 * 6], GL_DYNAMIC_DRAW);
+            glBufferData(GL_UNIFORM_BUFFER, new float[4 * 4 * 7], GL_DYNAMIC_DRAW);
             glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
             if (ms_count != 0) {

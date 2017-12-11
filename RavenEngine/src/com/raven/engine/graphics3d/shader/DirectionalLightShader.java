@@ -1,5 +1,7 @@
 package com.raven.engine.graphics3d.shader;
 
+import com.raven.engine.GameProperties;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
@@ -16,7 +18,9 @@ public class DirectionalLightShader extends LightShader {
 
     private int texture_color_location,
                 texture_normal_location,
-                texture_depth_location;
+                texture_depth_location,
+                texture_shadow_location,
+                texture_shadow_distance_location;
 
     public DirectionalLightShader() {
         super("dir_light_fragment.glsl");
@@ -26,6 +30,9 @@ public class DirectionalLightShader extends LightShader {
         texture_color_location = glGetUniformLocation(getProgramHandel(), "colorTexture");
         texture_normal_location = glGetUniformLocation(getProgramHandel(), "normalTexture");
         texture_depth_location = glGetUniformLocation(getProgramHandel(), "depthTexture");
+
+        texture_shadow_location = glGetUniformLocation(getProgramHandel(), "shadowTexture");
+        texture_shadow_distance_location = glGetUniformLocation(getProgramHandel(), "shadowDistanceTexture");
 
         int blockIndex = glGetUniformBlockIndex(getProgramHandel(), "DirectionalLight");
         glUniformBlockBinding(getProgramHandel(), blockIndex, Shader.LIGHT);
@@ -42,6 +49,15 @@ public class DirectionalLightShader extends LightShader {
         glUniform1i(texture_color_location, WorldShader.COLOR);
         glUniform1i(texture_normal_location, WorldShader.NORMAL);
         glUniform1i(texture_depth_location, WorldShader.DEPTH);
+
+        glUniform1i(texture_shadow_location, ShadowShader.DEPTH);
+        glUniform1i(texture_shadow_distance_location, ShadowShader.DEPTH_COPY);
+
+        glViewport(0, 0,
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight());
+
+        glDisable(GL_DEPTH_TEST);
     }
 
     @Override

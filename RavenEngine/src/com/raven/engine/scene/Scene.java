@@ -7,6 +7,7 @@ import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.shader.*;
 import com.raven.engine.scene.light.Light;
+import com.raven.engine.util.Matrix4f;
 import com.raven.engine.worldobject.WorldObject;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -113,12 +114,12 @@ public abstract class Scene {
         WorldShader worldShader = window.getWorldShader();
         worldShader.useProgram();
 
-        for (WorldObject o : layerTerrain.getGameObjectList()) {
+        for (WorldObject o : layerDetails.getGameObjectList()) {
             Shader.setModelMatrix(o.getModelMatrix());
             o.draw4();
         }
 
-        for (WorldObject o : layerDetails.getGameObjectList()) {
+        for (WorldObject o : layerTerrain.getGameObjectList()) {
             Shader.setModelMatrix(o.getModelMatrix());
             o.draw4();
         }
@@ -146,8 +147,29 @@ public abstract class Scene {
                 case Light.AMBIANT:
                     break;
                 case Light.DIRECTIONAL:
-                    // update the light block
+                    // Update the light/shadow block
                     Shader.setLight(light);
+
+                    // Gen Shadow
+                    ShadowShader shadowShader = light.getShadowShader();
+                    shadowShader.useProgram();
+
+                    for (WorldObject o : layerDetails.getGameObjectList()) {
+                        Shader.setModelMatrix(o.getModelMatrix());
+                        o.draw4();
+                    }
+
+                    glDisable(GL_CULL_FACE);
+
+                    for (WorldObject o : layerTerrain.getGameObjectList()) {
+                        Matrix4f mat = o.getModelMatrix();
+                        mat.translate(0,-.04f,0);
+                        Shader.setModelMatrix(mat);
+                        mat.translate(0,.04f,0);
+                        o.draw4();
+                    }
+
+                    glEnable(GL_CULL_FACE);
 
                     // Combine Simple
                     window.getDirLightShader().useProgram();

@@ -206,4 +206,8 @@ public class Vector3f {
     public Float[] toArray() {
         return new Float[] { x, y, z };
     }
+
+    public String toString() {
+        return "" + x + ", " + y + ", " + z;
+    }
 }
