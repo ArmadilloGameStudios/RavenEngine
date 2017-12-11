@@ -54,7 +54,7 @@ void main(void) {
     float percentage = 0;
     float distance = 0.0;
 
-    float shadowStep = .0001;
+    float shadowStep = .001;
     int shadowSampleCount = 3;
     vec2 shadowOffset = vec2(-shadowStep);
     int blockers = 0;
@@ -66,7 +66,7 @@ void main(void) {
 
             float z = texture(shadowDistanceTexture, shadowCoord.xy + shadowOffset).z;
 
-            if (z != 1) {
+            if (z < shadowCoord.z) {
                 blockers++;
                 distance += z;
             }
@@ -81,9 +81,11 @@ void main(void) {
     if (blockers != 0) {
         distance /= blockers;
 
-        distance = (shadowCoord.z - distance * .5) / distance;
+        distance = (((shadowCoord.z - distance * .5) / distance) - .5) * 2.0;
 
-        shadowStep = .0011 * (distance);
+//        distance = pow(distance);
+
+        shadowStep = .0013 * (distance);
         shadowOffset = shadowOffset = vec2(-shadowStep);
         for (int x = 0; x < shadowSampleCount; x++) {
             shadowOffset.y = -shadowStep;

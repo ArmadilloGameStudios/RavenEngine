@@ -1,6 +1,5 @@
 package com.raven.engine.scene.light;
 
-import com.raven.engine.GameProperties;
 import com.raven.engine.graphics3d.shader.ShadowShader;
 import com.raven.engine.util.Matrix4f;
 import com.raven.engine.util.Vector3f;
@@ -26,7 +25,7 @@ public class DirectionalLight extends Light {
         this.intensity = intensity;
         this.direction = direction;
 
-        shadowProjectionMatrix = Matrix4f.orthographic(-size, size, -size, size, 1f, 80f);
+        shadowProjectionMatrix = Matrix4f.orthographic(-size, size, -size, size, 1f, 60f);
 
         shadowViewMatrix = new Matrix4f().translate(0, 0, -30); // Matrix4f.direction(direction, null);
 
@@ -44,7 +43,7 @@ public class DirectionalLight extends Light {
 
     @Override
     public int getLightType() {
-        return Light.DIRECTIONAL;
+        return Light.GLOBAL_DIRECTIONAL;
     }
 
     public Vector3f getDirection() {

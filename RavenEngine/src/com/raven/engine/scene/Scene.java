@@ -85,7 +85,7 @@ public abstract class Scene {
             switch (light.getLightType()) {
                 case Light.AMBIANT:
                     break;
-                case Light.DIRECTIONAL:
+                case Light.GLOBAL_DIRECTIONAL:
                     // update the light block
                     Shader.setLight(light);
 
@@ -110,7 +110,7 @@ public abstract class Scene {
         // update the matrix block
         Shader.setProjectionViewMatrices(camera);
 
-        // 3 Draw world above water
+        // Draw the world
         WorldShader worldShader = window.getWorldShader();
         worldShader.useProgram();
 
@@ -124,21 +124,6 @@ public abstract class Scene {
             o.draw4();
         }
 
-        for (WorldObject o : layerWater.getGameObjectList()) {
-            Shader.setModelMatrix(o.getModelMatrix());
-            o.draw4();
-        }
-
-        // 4 Draw water
-//        WorldWaterShader worldWaterShader = window.getWorldWaterShader();
-//
-//        worldWaterShader.useProgram();
-//
-//        for (WorldObject o : layerWater.getGameObjectList()) {
-//            Shader.setModelMatrix(o.getModelMatrix());
-//            o.draw4();
-//        }
-
         LightShader.clear();
 
         // Accum lights
@@ -146,7 +131,7 @@ public abstract class Scene {
             switch (light.getLightType()) {
                 case Light.AMBIANT:
                     break;
-                case Light.DIRECTIONAL:
+                case Light.GLOBAL_DIRECTIONAL:
                     // Update the light/shadow block
                     Shader.setLight(light);
 
@@ -163,20 +148,22 @@ public abstract class Scene {
 
                     for (WorldObject o : layerTerrain.getGameObjectList()) {
                         Matrix4f mat = o.getModelMatrix();
-                        mat.translate(0,-.04f,0);
+                        mat.translate(0,-.06f,0); // .1 or .04?
                         Shader.setModelMatrix(mat);
-                        mat.translate(0,.04f,0);
+                        mat.translate(0,.06f,0);
                         o.draw4();
                     }
 
                     glEnable(GL_CULL_FACE);
 
-                    // Combine Simple
+                    // Draw the light
                     window.getDirLightShader().useProgram();
                     window.drawQuad();
                     break;
             }
         }
+
+        // Water
 
         // FXAA
         window.getFXAAShader().useProgram();
