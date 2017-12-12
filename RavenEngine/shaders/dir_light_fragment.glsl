@@ -8,6 +8,7 @@ layout (std140) uniform DirectionalLight
     vec3 color;
     float intensity;
     vec3 direction;
+    vec3 ambient;
 } light;
 
 layout (std140) uniform Matrices
@@ -27,10 +28,12 @@ uniform sampler2D colorTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D depthTexture;
 
-uniform sampler2DShadow shadowTexture;
-uniform sampler2D shadowDistanceTexture;
+uniform sampler2D shadowTexture;
 
 in vec2 coord;
+
+const int shadowSampleCount = 3;
+const float shadowStep = .001 * 3.0 / shadowSampleCount;
 
 ivec2 int_coord = ivec2(gl_FragCoord.xy);
 
@@ -54,17 +57,15 @@ void main(void) {
     float percentage = 0;
     float distance = 0.0;
 
-    float shadowStep = .001;
-    int shadowSampleCount = 3;
-    vec2 shadowOffset = vec2(-shadowStep);
+    vec2 shadowOffset = vec2(-shadowStep * (shadowSampleCount * .5 - .5));
     int blockers = 0;
 
     for (int x = 0; x < shadowSampleCount; x++) {
-        shadowOffset.y = -shadowStep;
+        shadowOffset.y = -shadowStep * (shadowSampleCount * .5 - .5);
 
         for (int y = 0; y < shadowSampleCount; y++) {
 
-            float z = texture(shadowDistanceTexture, shadowCoord.xy + shadowOffset).z;
+            float z = texture(shadowTexture, shadowCoord.xy + shadowOffset).z;
 
             if (z < shadowCoord.z) {
                 blockers++;
@@ -81,23 +82,21 @@ void main(void) {
     if (blockers != 0) {
         distance /= blockers;
 
-        distance = (((shadowCoord.z - distance * .5) / distance) - .5) * 2.0;
+        distance = (shadowCoord.z - distance) / distance;
 
-//        distance = pow(distance);
-
-        shadowStep = .0013 * (distance);
-        shadowOffset = shadowOffset = vec2(-shadowStep);
+        float shadowStep2 = .002 * (distance) * 3.0 / shadowSampleCount;
+        shadowOffset = vec2(-shadowStep2 * (shadowSampleCount * .5 - .5));
         for (int x = 0; x < shadowSampleCount; x++) {
-            shadowOffset.y = -shadowStep;
+            shadowOffset.y = -shadowStep2 * (shadowSampleCount * .5 - .5);
 
             for (int y = 0; y < shadowSampleCount; y++) {
 
-                percentage += texture(shadowTexture, shadowCoord.xyz + vec3(shadowOffset, .0000));
+                percentage += texture(shadowTexture, shadowCoord.xy + shadowOffset).r > shadowCoord.z ? 1.0 : 0.0;
 
-                shadowOffset.y += shadowStep;
+                shadowOffset.y += shadowStep2;
             }
 
-            shadowOffset.x += shadowStep;
+            shadowOffset.x += shadowStep2;
         }
 
         percentage /= (shadowSampleCount * shadowSampleCount);
@@ -108,5 +107,5 @@ void main(void) {
     // light
 	float NdotL = dot(normalize((matrix.view * vec4(normal, 0.0)).xyz), normalize(matrix.view * vec4(light.direction, 0.0)).xyz);
 
-    frag_light = color * max(0.0, NdotL) * light.color * percentage;
+    frag_light = color * light.ambient + max(vec3(0.0), color * max(0.0, NdotL) * light.color * percentage);
 }

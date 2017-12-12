@@ -48,6 +48,8 @@ public class GameWindow {
 
     private WorldShader worldShader;
     private DirectionalLightShader dirLightShader;
+    private WaterShader waterShader;
+    private CombinationShader combinationShader;
     private FXAAShader fxaaShader;
 
     private BasicShader basicShader;
@@ -130,7 +132,7 @@ public class GameWindow {
             sun_light_buffer_handel = glGenBuffers();
             glBindBuffer(GL_UNIFORM_BUFFER, sun_light_buffer_handel);
             glBindBufferBase(GL_UNIFORM_BUFFER, Shader.LIGHT, sun_light_buffer_handel);
-            glBufferData(GL_UNIFORM_BUFFER, new float[4 * 2 + 1 + 16 * 2], GL_DYNAMIC_DRAW);
+            glBufferData(GL_UNIFORM_BUFFER, new float[4 * 3 + 1 + 16 * 2], GL_DYNAMIC_DRAW);
             glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
             matrices_buffer_handel = glGenBuffers();
@@ -156,6 +158,8 @@ public class GameWindow {
             } else {
                 worldShader = new WorldShader();
                 dirLightShader = new DirectionalLightShader();
+                waterShader = new WaterShader(worldShader);
+                combinationShader = new CombinationShader(waterShader);
                 fxaaShader = new FXAAShader();
             }
         } else {
@@ -230,6 +234,14 @@ public class GameWindow {
 
     public DirectionalLightShader getDirLightShader() {
         return dirLightShader;
+    }
+
+    public WaterShader getWaterShader() {
+        return waterShader;
+    }
+
+    public CombinationShader getCombinationShader() {
+        return combinationShader;
     }
 
     public FXAAShader getFXAAShader() {

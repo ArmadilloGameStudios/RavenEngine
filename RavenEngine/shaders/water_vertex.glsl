@@ -2,10 +2,13 @@
 
 layout (std140) uniform DirectionalLight
 {
+    mat4 view;
+    mat4 projection;
     vec3 color;
     float intensity;
     vec3 direction;
-} sunLight;
+    vec3 ambient;
+} light;
 
 layout (std140) uniform Matrices
 {
@@ -15,35 +18,26 @@ layout (std140) uniform Matrices
     mat4 inverse_view;
     mat4 projection;
     mat4 inverse_projection;
+    mat4 inverse_projection_view;
 } matrix;
 
 layout(location = 0) in vec3 vertex_pos;
 layout(location = 1) in vec3 vertex_normal;
 layout(location = 2) in vec3 vertex_color;
 
-out vec3 light, lightGlow, color;
-out float gl_ClipDistance[1];
+out vec3 water_color, camera_vector;
 
-out float murk;
+out vec2 coord;
 
 void main(void)
 {
     vec4 world_pos = matrix.model * vec4(vertex_pos, 1.0);
-
 	gl_Position = matrix.projection * matrix.view * world_pos;
 
-	float ambiantLight = .2;
+    float NdotL = dot(normalize((matrix.view * vec4(0.0, 1.0, 0.0, 0.0)).xyz), normalize(matrix.view * vec4(light.direction, 0.0)).xyz);
 
-	float NdotL = dot(normalize((matrix.view * matrix.model * vec4(vertex_normal, 0.0)).xyz), normalize(matrix.view * vec4(sunLight.direction, 0.0)).xyz);
-	float light_magnitude = max(0.0, NdotL) * .8;
+    water_color = vertex_color * light.ambient + max(vec3(0.0), vertex_color * max(0.0, NdotL) * light.color);
 
-	light = ambiantLight + light_magnitude * sunLight.color * sunLight.intensity;
-
-	color = vertex_color;
-
-	float water_camera_distance = (world_pos.y / normalize(world_pos.xyz - matrix.inverse_view[3].xyz).y);
-
-    murk = -world_pos.y * .3 + water_camera_distance * .2 + .2;
-
-    gl_ClipDistance[0] = (matrix.model * vec4(vertex_pos, 0)).y * -1.0 + .3;
+    camera_vector = matrix.inverse_view[3].xyz - world_pos.xyz;
+    coord = (world_pos).xz;
 }

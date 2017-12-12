@@ -13,7 +13,7 @@ public abstract class Light {
 
     protected ShadowShader shadowShader;
 
-    public abstract void toFloatBuffer(FloatBuffer buffer);
+    public abstract FloatBuffer toFloatBuffer();
 
     public abstract int getLightType();
 

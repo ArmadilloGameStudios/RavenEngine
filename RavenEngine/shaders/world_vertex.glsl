@@ -1,12 +1,5 @@
 #version 400
 
-layout (std140) uniform DirectionalLight
-{
-    vec3 color;
-    float intensity;
-    vec3 direction;
-} sunLight;
-
 layout (std140) uniform Matrices
 {
     mat4 model;

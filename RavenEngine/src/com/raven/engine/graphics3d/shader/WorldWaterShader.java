@@ -23,7 +23,7 @@ public class WorldWaterShader extends Shader {
     private WorldMSShader worldMSShader;
 
     public WorldWaterShader(WorldMSShader worldMSShader) {
-        super("world_water_vertex.glsl", "world_water_fragment.glsl");
+        super("world_water_vertex.glsl", "water_fragment.glsl");
 
         this.worldMSShader = worldMSShader;
 

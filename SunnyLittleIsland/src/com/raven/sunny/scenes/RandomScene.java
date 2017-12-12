@@ -3,7 +3,6 @@ package com.raven.sunny.scenes;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.VertexData;
 import com.raven.engine.scene.Scene;
-import com.raven.engine.scene.light.AmbientLight;
 import com.raven.engine.scene.light.DirectionalLight;
 import com.raven.engine.util.Vector3f;
 import com.raven.engine.worldobject.WorldObject;
@@ -22,7 +21,6 @@ public class RandomScene extends Scene {
     private Terrain t;
     private ModelData water;
     private DirectionalLight sunLight;
-    private AmbientLight ambientLight;
 
     public RandomScene() {
         super();
@@ -37,10 +35,6 @@ public class RandomScene extends Scene {
 //        addLight(sunLight);
 //        addLight(sunLight);
 //        addLight(sunLight);
-
-        ambientLight = new AmbientLight();
-        ambientLight.intensity = .2f;
-        //addLight(ambientLight);
     }
 
     @Override

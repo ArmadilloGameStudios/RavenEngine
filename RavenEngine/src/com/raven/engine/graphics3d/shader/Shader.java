@@ -74,11 +74,9 @@ public abstract class Shader {
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
-    private static FloatBuffer slBuffer = BufferUtils.createFloatBuffer(7 + 16*2);
-
     public static void setLight(Light light) {
-        light.toFloatBuffer(slBuffer);
-        slBuffer.flip();
+        FloatBuffer slBuffer = light.toFloatBuffer();
+//        slBuffer.flip(); Assume Flipped
 
         glBindBuffer(GL_UNIFORM_BUFFER, GameEngine.getEngine().getWindow().getLightHandel());
         glBufferSubData(GL_UNIFORM_BUFFER, 0, slBuffer);

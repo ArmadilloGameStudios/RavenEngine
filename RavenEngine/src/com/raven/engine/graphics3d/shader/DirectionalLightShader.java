@@ -51,7 +51,6 @@ public class DirectionalLightShader extends LightShader {
         glUniform1i(texture_depth_location, WorldShader.DEPTH);
 
         glUniform1i(texture_shadow_location, ShadowShader.DEPTH);
-        glUniform1i(texture_shadow_distance_location, ShadowShader.DEPTH_COPY);
 
         glViewport(0, 0,
                 GameProperties.getScreenWidth(),
@@ -62,6 +61,6 @@ public class DirectionalLightShader extends LightShader {
 
     @Override
     public void endProgram() {
-//        glDisable(GL_BLEND);
+        glDisable(GL_BLEND);
     }
 }

@@ -164,6 +164,17 @@ public abstract class Scene {
         }
 
         // Water
+        WaterShader waterShader = window.getWaterShader();
+        waterShader.useProgram();
+
+        for (WorldObject o : layerWater.getGameObjectList()) {
+            Shader.setModelMatrix(o.getModelMatrix());
+            o.draw4();
+        }
+
+        // Combine
+        window.getCombinationShader().useProgram();
+        window.drawQuad();
 
         // FXAA
         window.getFXAAShader().useProgram();

@@ -46,10 +46,7 @@ public class WorldShader extends Shader {
 
         id_location = glGetUniformLocation(getProgramHandel(), "id");
 
-        int blockIndex = glGetUniformBlockIndex(getProgramHandel(), "DirectionalLight");
-        glUniformBlockBinding(getProgramHandel(), blockIndex, LIGHT);
-
-        blockIndex = glGetUniformBlockIndex(getProgramHandel(), "Matrices");
+        int blockIndex = glGetUniformBlockIndex(getProgramHandel(), "Matrices");
         glUniformBlockBinding(getProgramHandel(), blockIndex, MATRICES);
 
         int bfs[] = {
@@ -91,7 +88,7 @@ public class WorldShader extends Shader {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
                 GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight(),
-                0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+                0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -123,11 +120,10 @@ public class WorldShader extends Shader {
                 GameProperties.getScreenHeight(),
                 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
         glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_texture, 0);
-        glActiveTexture(GL_TEXTURE0);
 
         // Draw buffers
         buffers.rewind();
@@ -182,5 +178,13 @@ public class WorldShader extends Shader {
 
                 glUniform3f(id_location, r / 255.0f, g / 255.0f, b / 255.0f);
             }
+    }
+
+    public int getDepthTexture() {
+        return depth_texture;
+    }
+
+    public int getFramebufferHandel() {
+        return framebuffer_handel;
     }
 }

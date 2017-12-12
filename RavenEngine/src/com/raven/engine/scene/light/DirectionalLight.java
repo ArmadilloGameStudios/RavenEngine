@@ -3,6 +3,7 @@ package com.raven.engine.scene.light;
 import com.raven.engine.graphics3d.shader.ShadowShader;
 import com.raven.engine.util.Matrix4f;
 import com.raven.engine.util.Vector3f;
+import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
 
@@ -12,9 +13,10 @@ import java.nio.FloatBuffer;
 public class DirectionalLight extends Light {
     public Vector3f color = new Vector3f();
     public float intensity = 1f;
-    private Vector3f direction = new Vector3f();
-    private Matrix4f shadowProjectionMatrix;
     private Matrix4f shadowViewMatrix;
+    private Matrix4f shadowProjectionMatrix;
+    private Vector3f direction = new Vector3f();
+    private Vector3f ambient = new Vector3f(.1f, .1f, .1f);
 
     public DirectionalLight() {
         this(new Vector3f(1, 1, 0), .5f, new Vector3f(0, -1, 0), 25f);
@@ -32,13 +34,19 @@ public class DirectionalLight extends Light {
         shadowShader = new ShadowShader();
     }
 
+    FloatBuffer lBuffer = BufferUtils.createFloatBuffer(16 * 2 + 4 * 3);
+
     @Override
-    public void toFloatBuffer(FloatBuffer buffer) {
-        shadowViewMatrix.toBuffer(buffer);
-        shadowProjectionMatrix.toBuffer(buffer);
-        color.toBuffer(buffer);
-        buffer.put(intensity);
-        direction.toBuffer(buffer);
+    public FloatBuffer toFloatBuffer() {
+        shadowViewMatrix.toBuffer(lBuffer);
+        shadowProjectionMatrix.toBuffer(lBuffer);
+        color.toBuffer(lBuffer);
+        lBuffer.put(intensity);
+        direction.toBuffer(lBuffer);
+        lBuffer.put(0.0f);
+        ambient.toBuffer(lBuffer);
+        lBuffer.flip();
+        return lBuffer;
     }
 
     @Override
@@ -56,8 +64,8 @@ public class DirectionalLight extends Light {
 
         shadowViewMatrix = Matrix4f.lookAt(
                 -this.direction.x, -this.direction.y, -this.direction.z,
-                0f,0f,0f,
-                0f,1f,0f);
+                0f, 0f, 0f,
+                0f, 1f, 0f);
         shadowViewMatrix = shadowViewMatrix.translate(this.direction.scale(-30f));
     }
 }

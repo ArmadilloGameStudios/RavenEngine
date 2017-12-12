@@ -101,7 +101,7 @@ public class GameLauncher {
         winMain.add(conMultisample);
 
         JCheckBox chbMultisample = new JCheckBox("Multisample");
-        chbMultisample.setSelected(true);
+//        chbMultisample.setSelected(true);
         conMultisample.add(chbMultisample);
 
         JLabel lblMultisampleCount = new JLabel("Samples");
