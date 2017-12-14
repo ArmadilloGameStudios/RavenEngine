@@ -22,7 +22,7 @@ public class ShadowShader extends Shader {
             DEPTH = getNextTexture();
 
     private int framebuffer_handel, depth_texture;
-    private int quality = 16;
+    private int quality = 32;
 
     public ShadowShader() {
         super("shadow_vertex.glsl", "shadow_fragment.glsl");
@@ -82,9 +82,9 @@ public class ShadowShader extends Shader {
         glEnableVertexAttribArray(0);
 
 //        glCullFace(GL_FRONT);
-//
-//        glEnable(GL_POLYGON_OFFSET_FILL);
-//        glPolygonOffset(1.1f, 4.0f);
+
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(-.2f, -.2f);
     }
 
 
@@ -93,6 +93,6 @@ public class ShadowShader extends Shader {
         glActiveTexture(GL_TEXTURE0);
 
 //        glCullFace(GL_BACK);
-//        glDisable(GL_POLYGON_OFFSET_FILL);
+        glDisable(GL_POLYGON_OFFSET_FILL);
     }
 }

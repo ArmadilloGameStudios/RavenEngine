@@ -6,6 +6,7 @@ import com.raven.engine.scene.Scene;
 import com.raven.engine.util.SimplexNoise;
 import com.raven.engine.util.Vector3f;
 import com.raven.engine.worldobject.WorldObject;
+import com.raven.sunny.Bush;
 import com.raven.sunny.Tree;
 
 import java.util.ArrayList;
@@ -164,11 +165,20 @@ public class TerrainMap {
         // Add decor
         for (TerrainData[] tds : data) {
             for (TerrainData td : tds) {
-                if (td.getType() == TerrainData.Sand && r.nextFloat() < .3f) {
+                if (td.getType() == TerrainData.Sand) {
+                    float chance = r.nextFloat();
 
-                    WorldObject woTree = new Tree(scene);
-                    td.setDecor(woTree);
-                    woTree.setRotation(r.nextFloat() * 360);
+                    if (chance < .1f) {
+
+                        WorldObject woTree = new Tree(scene);
+                        td.setDecor(woTree);
+                        woTree.setRotation(r.nextFloat() * 360);
+                    } else if (chance < .3f) {
+
+                        WorldObject woBush = new Bush(scene);
+                        td.setDecor(woBush);
+                        woBush.setRotation(r.nextFloat() * 360);
+                    }
                 }
             }
         }

@@ -7,8 +7,8 @@ uniform vec2 frameBufSize = vec2(1920, 1080);
 in vec2 coord;
 
 void main(void) {
-    //gl_FragColor.xyz = texture2D(buf0,coord).xyz;
-    //return;
+//    gl_FragColor.xyz = texture2D(buf0,coord).xyz;
+//    return;
 
     float FXAA_SPAN_MAX = 8.0;
     float FXAA_REDUCE_MUL = 1.0/8.0;

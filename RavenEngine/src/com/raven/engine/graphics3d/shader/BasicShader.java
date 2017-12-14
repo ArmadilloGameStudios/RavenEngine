@@ -1,8 +1,7 @@
 package com.raven.engine.graphics3d.shader;
 
-import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
-import com.raven.engine.scene.light.DirectionalLight;
+import com.raven.engine.scene.light.GlobalDirectionalLight;
 import com.raven.engine.util.Matrix4f;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -66,7 +65,7 @@ public class BasicShader extends Shader {
         glUniformMatrix4fv(model_matrix_location, false, unifromModelMatrix.toBuffer());
     }
 
-    public void setUniformLight(DirectionalLight uniformLight) {
+    public void setUniformLight(GlobalDirectionalLight uniformLight) {
         glUniform3fv(light_color_location, uniformLight.color.toBuffer());
         glUniform1f(light_intensity_location, uniformLight.intensity);
         glUniform3fv(light_direction_location, uniformLight.getDirection().toBuffer());

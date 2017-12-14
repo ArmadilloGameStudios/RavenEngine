@@ -67,8 +67,7 @@ public class IDShader extends Shader {
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
 
         glViewport(0, 0,
-                1,
-                1);
+                1, 1);
 
         glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);

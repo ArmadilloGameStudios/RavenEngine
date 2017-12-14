@@ -31,7 +31,7 @@ public class FXAAShader extends Shader {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-//        glUniform1i(texture_buf_location, WorldShader.COLOR);
+//        glUniform1i(texture_buf_location, ShadowShader.DEPTH);
         glUniform1i(texture_buf_location, WaterShader.COLOR);
 
         glUniform2f(frameBufSize_location,

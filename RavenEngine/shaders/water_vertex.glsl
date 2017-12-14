@@ -36,7 +36,7 @@ void main(void)
 
     float NdotL = dot(normalize((matrix.view * vec4(0.0, 1.0, 0.0, 0.0)).xyz), normalize(matrix.view * vec4(light.direction, 0.0)).xyz);
 
-    water_color = vertex_color * light.ambient + max(vec3(0.0), vertex_color * max(0.0, NdotL) * light.color);
+    water_color = vertex_color * light.ambient + max(vec3(0.0), vertex_color * max(0.0, NdotL) * light.color * light.intensity);
 
     camera_vector = matrix.inverse_view[3].xyz - world_pos.xyz;
     coord = (world_pos).xz;

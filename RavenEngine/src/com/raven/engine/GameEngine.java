@@ -200,7 +200,14 @@ public class GameEngine implements Runnable {
     private void input(float delta) {
         glfwPollEvents();
 
-        int id = 0; // window.getIDShader().getWorldObjectID();
+        int id = 0;
+
+        if (GameProperties.getMultisampleCount() == 0) {
+            id = window.getWorldShader().getWorldObjectID();
+        } else {
+            id = window.getIDShader().getWorldObjectID();
+        }
+
         if (id != 0) {
             WorldObject hover = WorldObject.getWorldObjectFromID(id);
 

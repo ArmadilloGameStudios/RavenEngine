@@ -222,26 +222,13 @@ public class Matrix4f {
         mat.m20 = xaxis.z; mat.m21 = yaxis.z; mat.m22 = zaxis.z; mat.m23 = 0f;
         mat.m30 = 0f; mat.m31 = 0f; mat.m32 = 0f; mat.m33 = 0f;
 
-        // Create a 4x4 translation matrix.
-        // The eye position is negated which is equivalent
-        // to the inverse of the translation matrix.
-        // T(v)^-1 == T(-v)
-//        mat4 translation = {
-//                vec4(   1,      0,      0,   0 ),
-//                vec4(   0,      1,      0,   0 ),
-//                vec4(   0,      0,      1,   0 ),
-//                vec4(-eye.x, -eye.y, -eye.z, 1 )
-//        };
 
-        // Combine the orientation and translation to compute
         // the final view matrix
         Matrix4f cat = new Matrix4f();
         cat.translate(direction.normalize().scale(-30f));
         cat.invert();
 
         mat = mat.multiply(cat);
-
-        System.out.println(mat);
 
         return mat;
     }
@@ -908,5 +895,59 @@ public class Matrix4f {
                 "\n" + Float.toString(m10), Float.toString(m11), Float.toString(m12), Float.toString(m13),
                 "\n" + Float.toString(m20), Float.toString(m21), Float.toString(m22), Float.toString(m23),
                 "\n" + Float.toString(m30), Float.toString(m31), Float.toString(m32), Float.toString(m33));
+    }
+
+    public Matrix4f shadowSkew(Vector3f direction, Vector3f size, boolean x_front) {
+        return shadowSkew(direction, size, x_front, this);
+    }
+
+    public static Matrix4f shadowSkew(Vector3f direction, Vector3f size, boolean x_front, Matrix4f mat) {
+
+        if (mat == null)
+            mat = new Matrix4f();
+
+        if (x_front) {
+            mat.m00 = -direction.y / ((Math.abs(direction.x) + Math.abs(direction.y)) * size.x);
+            mat.m01 = direction.x / ((Math.abs(direction.x) + Math.abs(direction.y)) * size.x);
+            mat.m02 = 0;
+            mat.m03 = 0;
+
+            mat.m10 = 0;
+            mat.m11 = 0;
+            mat.m12 = 1 / size.z;
+            mat.m13 = 0;
+
+            mat.m20 = 0;
+            mat.m21 = 1 / -size.y;
+            mat.m22 = 0;
+            mat.m23 = 0;
+
+            mat.m30 = 0;
+            mat.m31 = 0;
+            mat.m32 = 0;
+            mat.m33 = 1;
+        } else {
+            mat.m00 = 0;
+            mat.m01 = direction.z / ((Math.abs(direction.z) + Math.abs(direction.y)) * size.z);
+            mat.m02 = -direction.y / ((Math.abs(direction.z) + Math.abs(direction.y)) * size.z);
+            mat.m03 = 0;
+
+            mat.m10 = 1 / size.x;
+            mat.m11 = 0;
+            mat.m12 = 0;
+            mat.m13 = 0;
+
+            mat.m20 = 0;
+            mat.m21 = 1 / -size.y;
+            mat.m22 = 0;
+            mat.m23 = 0;
+
+            mat.m30 = 0;
+            mat.m31 = 0;
+            mat.m32 = 0;
+            mat.m33 = 1;
+        }
+
+        return mat;
     }
 }

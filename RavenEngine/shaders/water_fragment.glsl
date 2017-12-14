@@ -81,9 +81,6 @@ void main(void) {
 
     refract_color = mix(refract_color, water_color, clamp(pow(depth, .5) * .8 + .2, 0.0, 1.0));
 
-    float refract_percent = pow(dot(normalize(camera_vector), vec3(0,1,0)), .5);
-
-    frag_color = mix(refract_color, water_color, clamp(refract_percent * .5, 0.0, 1.0));
     frag_color = vec3(refract_color);
 
     float waterShininess = 2000;
@@ -94,5 +91,5 @@ void main(void) {
 
     vec3 specularComponent = specularCoefficient * light.color * light.intensity;
 
-    frag_color += specularComponent;
+    frag_color += max(vec3(0.0), specularComponent);
 }

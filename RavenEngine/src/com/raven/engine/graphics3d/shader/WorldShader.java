@@ -2,6 +2,7 @@ package com.raven.engine.graphics3d.shader;
 
 import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
+import com.raven.engine.input.Mouse;
 import org.lwjgl.BufferUtils;
 
 import java.nio.IntBuffer;
@@ -169,6 +170,30 @@ public class WorldShader extends Shader {
         glDisableVertexAttribArray(2);
     }
 
+    private IntBuffer pixelReadBuffer = BufferUtils.createIntBuffer(1);
+    public int getWorldObjectID() {
+//        glFlush();
+//        glFinish();
+
+        Mouse mouse = GameEngine.getEngine().getMouse();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glReadBuffer(GL_COLOR_ATTACHMENT2);
+        glReadPixels(
+                (int)mouse.getX(),
+                GameProperties.getScreenHeight() - (int)mouse.getY(),
+                1, 1,
+                GL_RGB, GL_UNSIGNED_BYTE,
+                pixelReadBuffer);
+
+        int id = pixelReadBuffer.get();
+
+        pixelReadBuffer.flip();
+
+        return id;
+    }
+
     public void setWorldObjectID(int id) {
         if (GameEngine.getEngine().getWindow().getActiveShader() == this)
             if (id != 0) {
@@ -187,4 +212,5 @@ public class WorldShader extends Shader {
     public int getFramebufferHandel() {
         return framebuffer_handel;
     }
+
 }

@@ -3,7 +3,6 @@ package com.raven.engine.graphics3d;
 import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
 import com.raven.engine.graphics3d.shader.*;
-import com.raven.engine.scene.light.DirectionalLight;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;

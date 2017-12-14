@@ -1,14 +1,12 @@
 package com.raven.sunny;
 
 import com.raven.engine.GameEngine;
-import com.raven.engine.GameProperties;
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataList;
 import com.raven.engine.database.GameDatabase;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.worldobject.MouseHandler;
-import com.raven.engine.worldobject.Parentable;
 import com.raven.engine.worldobject.WorldObject;
 
 import java.util.ArrayList;
@@ -17,27 +15,25 @@ import java.util.List;
 /**
  * Created by cookedbird on 11/13/17.
  */
-public class Tree extends WorldObject {
-    private static GameDataList dataList = GameDatabase.queryAll("plants", "type", "tree");
+public class Bush extends WorldObject {
+    private static GameDataList dataList = GameDatabase.queryAll("plants", "type", "bush");
 
-    float rote = .1f;
-    boolean doRote = false;
+    float rote = 0f;
 
-    public Tree(Scene scene) {
+    public Bush(Scene scene) {
         super(scene, dataList.getRandom().getString("model"));
 
         scene.getLayerDetails().addWorldObject(this);
 
-        Tree tree = this;
+        Bush bush = this;
         this.addMouseHandler(new MouseHandler() {
             @Override
             public void onMouseClick() {
-                doRote = !doRote;
+                bush.setY(-10f);
             }
 
             @Override
             public void onMouseEnter() {
-                rote *= -1f;
             }
 
             @Override
@@ -61,8 +57,6 @@ public class Tree extends WorldObject {
     }
 
     public void onUpdate(float delta) {
-        if (doRote) {
-            this.setRotation(this.getRotation() + rote * delta);
-        }
+
     }
 }

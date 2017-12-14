@@ -124,6 +124,7 @@ public abstract class Scene {
             o.draw4();
         }
 
+        // Lights
         LightShader.clear();
 
         // Accum lights
@@ -144,17 +145,17 @@ public abstract class Scene {
                         o.draw4();
                     }
 
-                    glDisable(GL_CULL_FACE);
+//                    glDisable(GL_CULL_FACE);
 
                     for (WorldObject o : layerTerrain.getGameObjectList()) {
                         Matrix4f mat = o.getModelMatrix();
-                        mat.translate(0,-.06f,0); // .1 or .04?
+                        mat.translate(0,-.02f,0); // .1 or .04?
                         Shader.setModelMatrix(mat);
-                        mat.translate(0,.06f,0);
+                        mat.translate(0,.02f,0);
                         o.draw4();
                     }
 
-                    glEnable(GL_CULL_FACE);
+//                    glEnable(GL_CULL_FACE);
 
                     // Draw the light
                     window.getDirLightShader().useProgram();

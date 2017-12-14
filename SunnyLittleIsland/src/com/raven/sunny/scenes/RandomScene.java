@@ -3,9 +3,10 @@ package com.raven.sunny.scenes;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.VertexData;
 import com.raven.engine.scene.Scene;
-import com.raven.engine.scene.light.DirectionalLight;
+import com.raven.engine.scene.light.GlobalDirectionalLight;
 import com.raven.engine.util.Vector3f;
 import com.raven.engine.worldobject.WorldObject;
+import com.raven.sunny.Bush;
 import com.raven.sunny.Tree;
 import com.raven.sunny.terrain.Terrain;
 import com.raven.sunny.terrain.TerrainMap;
@@ -20,7 +21,7 @@ public class RandomScene extends Scene {
     float f = 0;
     private Terrain t;
     private ModelData water;
-    private DirectionalLight sunLight;
+    private GlobalDirectionalLight sunLight;
 
     public RandomScene() {
         super();
@@ -28,7 +29,7 @@ public class RandomScene extends Scene {
         t = TerrainMap.genTerrain(this, 60, 45);
         getLayerTerrain().addWorldObject(t);
 
-        sunLight = new DirectionalLight();
+        sunLight = new GlobalDirectionalLight();
 
         addLight(sunLight);
 //        addLight(sunLight);
@@ -108,6 +109,9 @@ public class RandomScene extends Scene {
         for (ModelData data : Tree.getModelData())
             mds.add(data);
 
+        for (ModelData data : Bush.getModelData())
+            mds.add(data);
+
 
         return mds;
     }
@@ -124,17 +128,23 @@ public class RandomScene extends Scene {
 
     @Override
     public void onUpdate(float deltaTime) {
-        f += deltaTime;
+        f += deltaTime * .2f;
         Vector3f dir = sunLight.getDirection();
+        dir.x = 0;
         dir.z = (float) Math.cos(f / 10000f);
         dir.y = (float) Math.sin(f / 10000f);
         sunLight.setDirection(dir);
 
         Vector3f color = sunLight.color;
         color.x = 1f;
-        color.y = dir.y;
-        color.z = (float) Math.pow(dir.y, 3.0);
+        color.y = (float) Math.pow(dir.y, .75);
+        color.z = (float) Math.pow(dir.y, 1.75);
 
-        sunLight.intensity = Math.min(1f, Math.max(0f, dir.y * 1.5f + 1f));
+//        float intensity = Math.min(1f, Math.max(0f, dir.y * 10.0f));
+//        color = color.normalize();
+//        sunLight.color = color.scale(intensity);
+
+        sunLight.intensity = Math.min(1f, Math.max(0f, dir.y * 3.0f));
+        sunLight.shadowTransparency = 0.5f;
     }
 }
