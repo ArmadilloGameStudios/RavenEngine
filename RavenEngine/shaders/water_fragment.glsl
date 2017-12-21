@@ -54,7 +54,8 @@ void main(void) {
     float ground_camera_depth = (unprojected / unprojected.w).z;
 
     float camera_depth = water_camera_depth - ground_camera_depth;
-    float ripple_mag = min((camera_depth) * .275, .4);
+//    float ripple_mag = min((camera_depth) * .275, .4);
+    float ripple_mag = min((camera_depth) * 1.675, .5);
 
     vec3 water_uv = normalize(vec3(
         mix(d, e, f) * .03 * distance_smooth * ripple_mag,

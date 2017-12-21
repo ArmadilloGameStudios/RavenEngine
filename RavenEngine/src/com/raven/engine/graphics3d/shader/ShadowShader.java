@@ -81,10 +81,11 @@ public class ShadowShader extends Shader {
 
         glEnableVertexAttribArray(0);
 
-//        glCullFace(GL_FRONT);
+        glCullFace(GL_FRONT);
 
-        glEnable(GL_POLYGON_OFFSET_FILL);
-        glPolygonOffset(-.2f, -.2f);
+//        glEnable(GL_POLYGON_OFFSET_FILL);
+//        glPolygonOffset(-.2f, -.2f);
+//        glPolygonOffset(1f, 1f);
     }
 
 
@@ -92,7 +93,7 @@ public class ShadowShader extends Shader {
     public void endProgram() {
         glActiveTexture(GL_TEXTURE0);
 
-//        glCullFace(GL_BACK);
-        glDisable(GL_POLYGON_OFFSET_FILL);
+        glCullFace(GL_BACK);
+//        glDisable(GL_POLYGON_OFFSET_FILL);
     }
 }

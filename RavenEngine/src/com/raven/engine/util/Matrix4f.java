@@ -897,56 +897,53 @@ public class Matrix4f {
                 "\n" + Float.toString(m30), Float.toString(m31), Float.toString(m32), Float.toString(m33));
     }
 
-    public Matrix4f shadowSkew(Vector3f direction, Vector3f size, boolean x_front) {
-        return shadowSkew(direction, size, x_front, this);
+    public Matrix4f shadowSkew(Vector3f direction, Vector3f origin,  float size, float height) {
+        return shadowSkew(direction, origin, size, height, this);
     }
 
-    public static Matrix4f shadowSkew(Vector3f direction, Vector3f size, boolean x_front, Matrix4f mat) {
+    private static Vector3f staticVec = new Vector3f();
+    public static Matrix4f shadowSkew(Vector3f direction, Vector3f origin,  float size, float height, Matrix4f mat) {
+
+        staticVec.x = direction.x;
+        staticVec.y = 0f;
+        staticVec.z = direction.z;
+
+        float mag = staticVec.length();
+
+        staticVec = staticVec.normalize();
 
         if (mat == null)
             mat = new Matrix4f();
 
-        if (x_front) {
-            mat.m00 = -direction.y / ((Math.abs(direction.x) + Math.abs(direction.y)) * size.x);
-            mat.m01 = direction.x / ((Math.abs(direction.x) + Math.abs(direction.y)) * size.x);
-            mat.m02 = 0;
-            mat.m03 = 0;
+        mat.m00 = -direction.y / ((Math.abs(mag) + Math.abs(direction.y)) * size);
+        mat.m01 = mag / ((Math.abs(mag) + Math.abs(direction.y)) * size);
+        mat.m02 = 0;
+        mat.m03 = 0;
 
-            mat.m10 = 0;
-            mat.m11 = 0;
-            mat.m12 = 1 / size.z;
-            mat.m13 = 0;
+        mat.m10 = 0;
+        mat.m11 = 0;
+        mat.m12 = 1 / size;
+        mat.m13 = 0;
 
-            mat.m20 = 0;
-            mat.m21 = 1 / -size.y;
-            mat.m22 = 0;
-            mat.m23 = 0;
+        mat.m20 = 0;
+        mat.m21 = 1 / -height;
+        mat.m22 = 0;
+        mat.m23 = 0;
 
-            mat.m30 = 0;
-            mat.m31 = 0;
-            mat.m32 = 0;
-            mat.m33 = 1;
-        } else {
-            mat.m00 = 0;
-            mat.m01 = direction.z / ((Math.abs(direction.z) + Math.abs(direction.y)) * size.z);
-            mat.m02 = -direction.y / ((Math.abs(direction.z) + Math.abs(direction.y)) * size.z);
-            mat.m03 = 0;
+        mat.m30 = 0;
+        mat.m31 = 0;
+        mat.m32 = 0;
+        mat.m33 = 1;
 
-            mat.m10 = 1 / size.x;
-            mat.m11 = 0;
-            mat.m12 = 0;
-            mat.m13 = 0;
 
-            mat.m20 = 0;
-            mat.m21 = 1 / -size.y;
-            mat.m22 = 0;
-            mat.m23 = 0;
+        float rotation;
+        if (staticVec.z < 0)
+            rotation = (float)Math.toDegrees(-Math.acos(staticVec.x));
+        else
+            rotation = (float)Math.toDegrees(Math.acos(staticVec.x));
 
-            mat.m30 = 0;
-            mat.m31 = 0;
-            mat.m32 = 0;
-            mat.m33 = 1;
-        }
+        mat.rotate(rotation, 0, 1, 0);
+        mat.translate(origin.negate());
 
         return mat;
     }

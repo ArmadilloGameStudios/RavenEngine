@@ -16,6 +16,7 @@ public class GlobalDirectionalLight extends Light {
     public Vector3f color = new Vector3f();
     public float intensity = 1f;
     private Vector3f direction = new Vector3f();
+    public Vector3f origin = new Vector3f();
     public float shadowTransparency = 1.0f;
     private Vector3f ambient = new Vector3f(.1f, .1f, .1f);
 
@@ -73,7 +74,10 @@ public class GlobalDirectionalLight extends Light {
 //                0f, 1f, 0f);
 //        shadowViewMatrix = shadowViewMatrix.translate(this.direction.scale(-30f));
 
-        shadowViewMatrix.shadowSkew(this.direction, new Vector3f(21.5f, 6f, 23f), false);
+        shadowViewMatrix.shadowSkew(
+                this.direction,
+                origin,
+                18f, 4f);
     }
 }
 
