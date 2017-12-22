@@ -129,9 +129,9 @@ public class RandomScene extends Scene {
 
     @Override
     public void onUpdate(float deltaTime) {
-        f += deltaTime * .2f;
+        f += deltaTime * 3.2f;
         Vector3f dir = sunLight.getDirection();
-        dir.x = (float) Math.sin(f / 10000f) / 5f;
+        dir.x = (float) Math.sin(f / 10000f) / 4f;
         dir.z = (float) Math.cos(f / 10000f);
         dir.y = (float) Math.abs(Math.sin(f / 10000f));
         dir = dir.normalize();
@@ -143,6 +143,6 @@ public class RandomScene extends Scene {
         color.z = (float) Math.pow(dir.y, 1.75);
 
         sunLight.intensity = Math.min(1f, Math.max(0f, dir.y * 3.0f));
-        sunLight.shadowTransparency = 0.3f;
+        sunLight.shadowTransparency = 0.2f;
     }
 }

@@ -115,7 +115,7 @@ void main(void) {
 	        normalize((matrix.view * vec4(normal, 0.0)).xyz),
 	        normalize(matrix.view * vec4(light.direction, 0.0)).xyz));
 
-    percentage = mix(NdotL, percentage, 1.0 - NdotL * light.shadow_transparency);
+    percentage = mix(NdotL, percentage, 1.0 - NdotL * light.shadow_transparency * 2.0);
 
     frag_light = max(vec3(0.0), color * (light.ambient + light.color * light.intensity * NdotL * percentage));
 }

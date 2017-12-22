@@ -77,7 +77,7 @@ public class GlobalDirectionalLight extends Light {
         shadowViewMatrix.shadowSkew(
                 this.direction,
                 origin,
-                18f, 4f);
+                20f, 4f);
     }
 }
 
