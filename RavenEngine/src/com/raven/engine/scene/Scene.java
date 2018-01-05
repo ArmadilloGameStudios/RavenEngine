@@ -145,8 +145,6 @@ public abstract class Scene {
                         o.draw4();
                     }
 
-//                    glDisable(GL_CULL_FACE);
-
                     for (WorldObject o : layerTerrain.getGameObjectList()) {
                         Matrix4f mat = o.getModelMatrix();
                         mat.translate(0,-.02f,0); // .1 or .04?
@@ -154,8 +152,6 @@ public abstract class Scene {
                         mat.translate(0,.02f,0);
                         o.draw4();
                     }
-
-//                    glEnable(GL_CULL_FACE);
 
                     // Draw the light
                     window.getDirLightShader().useProgram();

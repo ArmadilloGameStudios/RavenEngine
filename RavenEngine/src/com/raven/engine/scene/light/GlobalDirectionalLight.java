@@ -11,14 +11,16 @@ import java.nio.FloatBuffer;
  * Created by cookedbird on 11/30/17.
  */
 public class GlobalDirectionalLight extends Light {
+    public Vector3f origin = new Vector3f();
+
     private Matrix4f shadowViewMatrix;
     private Matrix4f shadowProjectionMatrix;
     public Vector3f color = new Vector3f();
     public float intensity = 1f;
     private Vector3f direction = new Vector3f();
-    public Vector3f origin = new Vector3f();
-    public float shadowTransparency = 1.0f;
+    public float length = 1f;
     private Vector3f ambient = new Vector3f(.1f, .1f, .1f);
+    public float shadowTransparency = 1.0f;
 
     public GlobalDirectionalLight() {
         this(new Vector3f(1, 1, 0), .5f, new Vector3f(0, -1, 0), 25f);
@@ -49,8 +51,9 @@ public class GlobalDirectionalLight extends Light {
         color.toBuffer(lBuffer);
         lBuffer.put(intensity);
         direction.toBuffer(lBuffer);
-        lBuffer.put(shadowTransparency);
+        lBuffer.put(length);
         ambient.toBuffer(lBuffer);
+        lBuffer.put(shadowTransparency);
         lBuffer.flip();
         return lBuffer;
     }
@@ -68,16 +71,12 @@ public class GlobalDirectionalLight extends Light {
     public void setDirection(Vector3f direction) {
         this.direction = direction.normalize();
 
-//        shadowViewMatrix = Matrix4f.lookAt(
-//                -this.direction.x, -this.direction.y, -this.direction.z,
-//                0f, 0f, 0f,
-//                0f, 1f, 0f);
-//        shadowViewMatrix = shadowViewMatrix.translate(this.direction.scale(-30f));
-
         shadowViewMatrix.shadowSkew(
                 this.direction,
                 origin,
                 20f, 4f);
+
+        length = Matrix4f.shadowSkewLength(this.direction, 20f, 4f);
     }
 }
 

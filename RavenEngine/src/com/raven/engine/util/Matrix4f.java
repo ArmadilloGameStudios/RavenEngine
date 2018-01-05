@@ -192,7 +192,7 @@ public class Matrix4f {
         Vector3f xaxis = at.cross(up).normalize();
 
         up = xaxis.cross(at);
-        at.scale(-1f);
+        at.scale(1f);
 
         mat.m00 = xaxis.x; mat.m01 = xaxis.y; mat.m02 = xaxis.z; mat.m03 = 0f;
         mat.m10 = up.x; mat.m11 = up.y; mat.m12 = up.z; mat.m13 = 0f;
@@ -897,12 +897,24 @@ public class Matrix4f {
                 "\n" + Float.toString(m30), Float.toString(m31), Float.toString(m32), Float.toString(m33));
     }
 
+
+    private static Vector3f staticVec = new Vector3f();
+
+    public static float shadowSkewLength(Vector3f direction, float size, float height) {
+        staticVec.x = direction.x;
+        staticVec.y = 0f;
+        staticVec.z = direction.z;
+
+        float len = staticVec.length();
+
+        return Math.abs(height * direction.y) + Math.abs(size * len);
+    }
+
     public Matrix4f shadowSkew(Vector3f direction, Vector3f origin,  float size, float height) {
         return shadowSkew(direction, origin, size, height, this);
     }
 
-    private static Vector3f staticVec = new Vector3f();
-    public static Matrix4f shadowSkew(Vector3f direction, Vector3f origin,  float size, float height, Matrix4f mat) {
+    public static Matrix4f shadowSkew(Vector3f direction, Vector3f origin, float size, float height, Matrix4f mat) {
 
         staticVec.x = direction.x;
         staticVec.y = 0f;
@@ -915,65 +927,31 @@ public class Matrix4f {
         if (mat == null)
             mat = new Matrix4f();
 
+        mat.m00 = 0;
+        mat.m01 = 0;
+        mat.m02 = -1 / size;
+        mat.m03 = 0;
+
+        mat.m10 = -direction.y / ((Math.abs(len) * height + Math.abs(direction.y) * size));
+        mat.m11 = len / ((Math.abs(len) * height + Math.abs(direction.y) * size));
+        mat.m12 = 0;
+        mat.m13 = 0;
+
+        mat.m20 = -len / (size + height);
+        mat.m21 = -direction.y / (size + height);
+        mat.m22 = 0;
+        mat.m23 = 0;
+
+        mat.m30 = 0;
+        mat.m31 = 0;
+        mat.m32 = 0;
+        mat.m33 = 1;
+
         float rotation;
-
-        if (Math.abs(height * len / direction.y) < Math.abs(size * direction.y / len)
-//                && false) {
-//                || true) {
-                ) {
-            mat.m00 = 0;
-            mat.m01 = 0;
-            mat.m02 = -1 / size;
-            mat.m03 = 0;
-
-            mat.m10 = -direction.y / ((Math.abs(len) * height + Math.abs(direction.y) * size));
-            mat.m11 = len / ((Math.abs(len) * height + Math.abs(direction.y) * size));
-            mat.m12 = 0;
-            mat.m13 = 0;
-
-            mat.m20 = 0;
-            mat.m21 = -1 / height;
-            mat.m22 = 0;
-            mat.m23 = 0;
-
-            mat.m30 = 0;
-            mat.m31 = 0;
-            mat.m32 = 0;
-            mat.m33 = 1;
-
-            if (staticVec.z < 0)
-                rotation = (float)Math.toDegrees(-Math.acos(staticVec.x));
-            else
-                rotation = (float)Math.toDegrees(Math.acos(staticVec.x));
-
-//            rotation = 90f;
-        } else {
-            mat.m00 = 1 / size;
-            mat.m01 = 0;
-            mat.m02 = 0;
-            mat.m03 = 0;
-
-            mat.m10 = 0;
-            mat.m11 = len / ((Math.abs(len) * height + Math.abs(direction.y) * size));
-            mat.m12 = -direction.y / ((Math.abs(len) * height + Math.abs(direction.y) * size));
-            mat.m13 = 0;
-
-            mat.m20 = 0;
-            mat.m21 = 0;
-            mat.m22 = -1 / size;
-            mat.m23 = 0;
-
-            mat.m30 = 0;
-            mat.m31 = 0;
-            mat.m32 = 0;
-            mat.m33 = 1;
-
-            if (staticVec.z < 0)
-                rotation = (float)Math.toDegrees(-Math.acos(staticVec.x)) - 90f;
-            else
-                rotation = (float)Math.toDegrees(Math.acos(staticVec.x)) - 90f;
-
-        }
+        if (staticVec.z < 0)
+            rotation = (float)Math.toDegrees(-Math.acos(staticVec.x));
+        else
+            rotation = (float)Math.toDegrees(Math.acos(staticVec.x));
 
         mat.rotate(rotation, 0, 1, 0);
         mat.translate(origin.negate());

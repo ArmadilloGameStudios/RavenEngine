@@ -129,7 +129,7 @@ public class RandomScene extends Scene {
 
     @Override
     public void onUpdate(float deltaTime) {
-        f += deltaTime * 3.2f;
+        f += deltaTime * 1.2f;
         Vector3f dir = sunLight.getDirection();
         dir.x = (float) Math.sin(f / 10000f) / 4f;
         dir.z = (float) Math.cos(f / 10000f);
