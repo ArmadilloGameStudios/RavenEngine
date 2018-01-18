@@ -18,7 +18,9 @@ out vec3 color, normal;
 
 void main(void)
 {
-	gl_Position = matrix.projection * matrix.view * matrix.model * vec4(vertex_pos, 1.0);
+    vec4 world_pos = matrix.model * vec4(vertex_pos, 1.0);
+
+	gl_Position = matrix.projection * matrix.view * world_pos;
 
 	color = vertex_color;
 	normal = normalize((matrix.model * vec4(vertex_normal, 0.0)).xyz);

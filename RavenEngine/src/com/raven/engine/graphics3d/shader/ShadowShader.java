@@ -4,6 +4,8 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
+import static org.lwjgl.opengl.GL14.GL_TEXTURE_COMPARE_FUNC;
+import static org.lwjgl.opengl.GL14.GL_TEXTURE_COMPARE_MODE;
 import static org.lwjgl.opengl.GL20.glBindAttribLocation;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.*;
@@ -22,7 +24,7 @@ public class ShadowShader extends Shader {
             DEPTH = getNextTexture();
 
     private int framebuffer_handel, depth_texture;
-    private int quality = 32;
+    private int quality = 64;
 
     public ShadowShader() {
         super("shadow_vertex.glsl", "shadow_fragment.glsl");
@@ -54,6 +56,9 @@ public class ShadowShader extends Shader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+
         glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_texture, 0);
 
         // Errors
@@ -81,11 +86,10 @@ public class ShadowShader extends Shader {
 
         glEnableVertexAttribArray(0);
 
-        glCullFace(GL_FRONT);
+//        glCullFace(GL_FRONT);
 
-//        glEnable(GL_POLYGON_OFFSET_FILL);
-//        glPolygonOffset(-.2f, -.2f);
-//        glPolygonOffset(1f, 1f);
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(1f, 1f);
     }
 
 
@@ -93,7 +97,7 @@ public class ShadowShader extends Shader {
     public void endProgram() {
         glActiveTexture(GL_TEXTURE0);
 
-        glCullFace(GL_BACK);
-//        glDisable(GL_POLYGON_OFFSET_FILL);
+//        glCullFace(GL_BACK);
+        glDisable(GL_POLYGON_OFFSET_FILL);
     }
 }

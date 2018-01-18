@@ -1,0 +1,24 @@
+{
+    name: "obelisk",
+    model: "models/obelisk.ply"
+},
+{
+    name: "tall corner",
+    model: "models/corner_tall.ply"
+},
+{
+    name: "tall wall",
+    model: "models/wall_tall.ply"
+},
+{
+    name: "tall ceiling",
+    model: "models/ceiling_tall.ply"
+},
+{
+    name: "short wall",
+    model: "models/wall_short.ply"
+},
+{
+    name: "tall short wall",
+    model: "models/wall_tall_short.ply"
+}

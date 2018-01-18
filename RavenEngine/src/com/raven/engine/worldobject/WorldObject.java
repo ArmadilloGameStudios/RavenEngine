@@ -2,6 +2,7 @@ package com.raven.engine.worldobject;
 
 import com.raven.engine.GameEngine;
 import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.graphics3d.shader.Shader;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Matrix4f;
 
@@ -19,7 +20,7 @@ public abstract class WorldObject implements Parentable {
     private float x, y, z, scale = 1f, rotation = 0f;
     private Matrix4f matrix = new Matrix4f();
     private boolean visible = true;
-    private List<WorldObject> children = new CopyOnWriteArrayList<WorldObject>();
+    private List<WorldObject> children = new ArrayList<WorldObject>();
     private ModelData model;
     private boolean mousehovering = false;
     private List<MouseHandler> clickHandlers = new ArrayList<MouseHandler>();
@@ -27,6 +28,7 @@ public abstract class WorldObject implements Parentable {
     private List<TextObject> textObjects = new ArrayList<TextObject>();
     private Parentable parent;
     private boolean parentIsWorldObject;
+
     public WorldObject(Scene scene, String modelsrc) {
         this(scene, GameEngine.getEngine().getModelData(modelsrc));
     }
@@ -153,7 +155,24 @@ public abstract class WorldObject implements Parentable {
     public void draw4() {
         GameEngine.getEngine().getWindow().getWorldShader().setWorldObjectID(id);
 
+        Shader.setModelMatrix(getModelMatrix());
         model.getModelReference().draw();
+
+        for (WorldObject child : children) {
+            child.draw4(getModelMatrix());
+        }
+    }
+
+    // TODO fix memory
+    public void draw4(Matrix4f parentMatrix) {
+        GameEngine.getEngine().getWindow().getWorldShader().setWorldObjectID(id);
+
+        Shader.setModelMatrix(parentMatrix.multiply(getModelMatrix()));
+        model.getModelReference().draw();
+
+        for (WorldObject child : children) {
+            child.draw4();
+        }
     }
 
     public void draw2() {
@@ -228,6 +247,8 @@ public abstract class WorldObject implements Parentable {
     }
 
     final public void onMouseClick() {
+        System.out.println(this.id);
+
         for (MouseHandler c : clickHandlers) c.onMouseClick();
     }
 

@@ -26,6 +26,8 @@ public class RandomScene extends Scene {
     public RandomScene() {
         super();
 
+        setRenderWater(true);
+
         t = TerrainMap.genTerrain(this, 60, 45);
         getLayerTerrain().addWorldObject(t);
 
@@ -129,7 +131,7 @@ public class RandomScene extends Scene {
 
     @Override
     public void onUpdate(float deltaTime) {
-        f += deltaTime * 1.2f;
+        f += deltaTime * 0.2f;
         Vector3f dir = sunLight.getDirection();
         dir.x = (float) Math.sin(f / 10000f) / 4f;
         dir.z = (float) Math.cos(f / 10000f);

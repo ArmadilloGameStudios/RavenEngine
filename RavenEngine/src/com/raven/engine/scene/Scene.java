@@ -20,6 +20,8 @@ public abstract class Scene {
     private Layer layerWater = new Layer(Layer.Destination.Water);
     private Layer layerDetails = new Layer(Layer.Destination.Details);
 
+    private boolean renderWater = false;
+
     private Camera camera;
 
     private List<Light> lights = new ArrayList<>();
@@ -115,12 +117,10 @@ public abstract class Scene {
         worldShader.useProgram();
 
         for (WorldObject o : layerDetails.getGameObjectList()) {
-            Shader.setModelMatrix(o.getModelMatrix());
             o.draw4();
         }
 
         for (WorldObject o : layerTerrain.getGameObjectList()) {
-            Shader.setModelMatrix(o.getModelMatrix());
             o.draw4();
         }
 
@@ -141,15 +141,10 @@ public abstract class Scene {
                     shadowShader.useProgram();
 
                     for (WorldObject o : layerDetails.getGameObjectList()) {
-                        Shader.setModelMatrix(o.getModelMatrix());
                         o.draw4();
                     }
 
                     for (WorldObject o : layerTerrain.getGameObjectList()) {
-                        Matrix4f mat = o.getModelMatrix();
-                        mat.translate(0,-.02f,0); // .1 or .04?
-                        Shader.setModelMatrix(mat);
-                        mat.translate(0,.02f,0);
                         o.draw4();
                     }
 
@@ -161,20 +156,21 @@ public abstract class Scene {
         }
 
         // Water
-        WaterShader waterShader = window.getWaterShader();
-        waterShader.useProgram();
+        if (renderWater) {
+            WaterShader waterShader = window.getWaterShader();
+            waterShader.useProgram();
 
-        for (WorldObject o : layerWater.getGameObjectList()) {
-            Shader.setModelMatrix(o.getModelMatrix());
-            o.draw4();
+            for (WorldObject o : layerWater.getGameObjectList()) {
+                o.draw4();
+            }
+
+            // Combine
+            window.getCombinationShader().useProgram();
+            window.drawQuad();
         }
 
-        // Combine
-        window.getCombinationShader().useProgram();
-        window.drawQuad();
-
         // FXAA
-        window.getFXAAShader().useProgram();
+        window.getFXAAShader().useProgram(renderWater);
         window.drawQuad();
     }
 
@@ -261,5 +257,13 @@ public abstract class Scene {
 
     public void removeLight(Light light) {
         lights.remove(light);
+    }
+
+    public void setRenderWater(boolean renderWater) {
+        this.renderWater = renderWater;
+    }
+
+    public boolean getRenderWater() {
+        return renderWater;
     }
 }

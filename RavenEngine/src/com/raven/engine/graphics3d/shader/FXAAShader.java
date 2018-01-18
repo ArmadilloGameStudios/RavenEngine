@@ -24,15 +24,20 @@ public class FXAAShader extends Shader {
         frameBufSize_location = glGetUniformLocation(getProgramHandel(), "frameBufSize");
     }
 
-    public void useProgram() {
+    public void useProgram(boolean water) {
         super.useProgram();
 
         glUseProgram(getProgramHandel());
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+        if (water)
+            glUniform1i(texture_buf_location, WaterShader.COLOR);
+        else
+            glUniform1i(texture_buf_location, LightShader.LIGHT);
+
 //        glUniform1i(texture_buf_location, ShadowShader.DEPTH);
-        glUniform1i(texture_buf_location, WaterShader.COLOR);
+//        glUniform1i(texture_buf_location, WorldShader.ID);
 
         glUniform2f(frameBufSize_location,
                 GameProperties.getScreenWidth(),

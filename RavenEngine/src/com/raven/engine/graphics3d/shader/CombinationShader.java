@@ -30,13 +30,15 @@ public class CombinationShader extends Shader {
     public void useProgram() {
         super.useProgram();
 
-//        glBindFramebuffer(GL_FRAMEBUFFER, waterShader.getFramebufferHandel());
+        glBindFramebuffer(GL_FRAMEBUFFER, waterShader.getFramebufferHandel());
 
         glViewport(0, 0,
                 GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight());
 
         glUniform1i(texture_color_location, LightShader.LIGHT);
+
+        glEnable(GL_DEPTH_TEST);
 
         glEnable(GL_STENCIL_TEST);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);

@@ -90,5 +90,10 @@ public class GameDatabase {
 			}
 		});
 	}
-	//</editor-fold>
+
+
+	public static GameDataList all(String table) {
+		return GameEngine.getEngine().getGameDatabase().getTable(table);
+	}
+    //</editor-fold>
 }

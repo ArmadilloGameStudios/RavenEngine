@@ -1,0 +1,4 @@
+{
+    name: "sand",
+    model: "models/sand.ply"
+}
