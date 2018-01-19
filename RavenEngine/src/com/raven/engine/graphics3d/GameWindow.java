@@ -49,6 +49,7 @@ public class GameWindow {
     private DirectionalLightShader dirLightShader;
     private WaterShader waterShader;
     private CombinationShader combinationShader;
+    private HighlightShader highlightShader;
     private FXAAShader fxaaShader;
 
     private BasicShader basicShader;
@@ -159,6 +160,7 @@ public class GameWindow {
                 dirLightShader = new DirectionalLightShader();
                 waterShader = new WaterShader(worldShader);
                 combinationShader = new CombinationShader(waterShader);
+                highlightShader = new HighlightShader();
                 fxaaShader = new FXAAShader();
             }
         } else {
@@ -241,6 +243,10 @@ public class GameWindow {
 
     public CombinationShader getCombinationShader() {
         return combinationShader;
+    }
+
+    public HighlightShader getHighlightShader() {
+        return highlightShader;
     }
 
     public FXAAShader getFXAAShader() {

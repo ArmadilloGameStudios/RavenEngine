@@ -3,23 +3,31 @@ package com.raven.engine.worldobject;
 import com.raven.engine.GameEngine;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.shader.Shader;
+import com.raven.engine.graphics3d.shader.WorldShader;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Matrix4f;
+import com.raven.engine.util.Vector4f;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class WorldObject implements Parentable {
+
     private static int last_id = 0;
     private static HashMap<Integer, WorldObject> worldObjectIDMap = new HashMap<>();
-    List<WorldObject> list = new ArrayList();
+
+    private List<WorldObject> list = new ArrayList();
     private Scene scene;
     private int id;
+
     private float x, y, z, scale = 1f, rotation = 0f;
     private Matrix4f matrix = new Matrix4f();
+
+    private Vector4f highlight = new Vector4f();
+
     private boolean visible = true;
+
     private List<WorldObject> children = new ArrayList<WorldObject>();
     private ModelData model;
     private boolean mousehovering = false;
@@ -130,6 +138,17 @@ public abstract class WorldObject implements Parentable {
         return matrix;
     }
 
+    public void setHighlight(float r, float g, float b, float a) {
+        highlight.x = r;
+        highlight.y = g;
+        highlight.z = b;
+        highlight.w = a;
+    }
+
+    public Vector4f getHighlight() {
+        return highlight;
+    }
+
     public boolean getVisibility() {
         return this.visible;
     }
@@ -179,17 +198,6 @@ public abstract class WorldObject implements Parentable {
         model.getModelReference().draw();
     }
 
-    public Parentable getParent() {
-        return parent;
-    }
-
-    public void setParent(Parentable parent) {
-        this.parent = parent;
-    }
-
-    public boolean isParentWorldObject() {
-        return parentIsWorldObject;
-    }
 
     public List<WorldObject> getParentWorldObjectList() {
         list.clear();
@@ -203,6 +211,9 @@ public abstract class WorldObject implements Parentable {
     }
 
     public void addChild(WorldObject child) {
+        child.parentIsWorldObject = true;
+        child.parent = this;
+
         children.add(child);
     }
 

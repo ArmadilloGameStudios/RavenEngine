@@ -8,6 +8,7 @@ import com.raven.engine.database.GameDataQuery;
 import com.raven.engine.database.GameDatabase;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.scene.Scene;
+import com.raven.engine.worldobject.MouseHandler;
 import com.raven.engine.worldobject.WorldObject;
 
 import java.util.ArrayList;
@@ -19,12 +20,6 @@ public class Terrain extends WorldObject {
     private int x, y;
     private Decal decal;
 
-    public Terrain(Scene scene, int x, int y) {
-        super(scene, dataList.getRandom().getString("model"));
-        this.x = x;
-        this.y = y;
-    }
-
     public Terrain(Scene scene, String name, int x, int y) {
         super(scene, dataList.queryRandom(new GameDataQuery() {
             @Override
@@ -35,6 +30,28 @@ public class Terrain extends WorldObject {
 
         this.x = x;
         this.y = y;
+
+        this.addMouseHandler(new MouseHandler() {
+            @Override
+            public void onMouseClick() {
+
+            }
+
+            @Override
+            public void onMouseEnter() {
+                setHighlight(.2f, .8f, 1f, .5f);
+            }
+
+            @Override
+            public void onMouseLeave() {
+                setHighlight(0, 0, 0, 0f);
+            }
+
+            @Override
+            public void onMouseHover(float delta) {
+
+            }
+        });
     }
 
     public static List<ModelData> getModelData() {

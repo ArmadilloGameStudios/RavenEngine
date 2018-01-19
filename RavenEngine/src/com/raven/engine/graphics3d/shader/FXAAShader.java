@@ -38,6 +38,7 @@ public class FXAAShader extends Shader {
 
 //        glUniform1i(texture_buf_location, ShadowShader.DEPTH);
 //        glUniform1i(texture_buf_location, WorldShader.ID);
+//        glUniform1i(texture_buf_location, WorldShader.HIGHLIGHT);
 
         glUniform2f(frameBufSize_location,
                 GameProperties.getScreenWidth(),

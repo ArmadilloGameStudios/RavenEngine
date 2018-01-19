@@ -7,7 +7,6 @@ import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.shader.*;
 import com.raven.engine.scene.light.Light;
-import com.raven.engine.util.Matrix4f;
 import com.raven.engine.worldobject.WorldObject;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -117,10 +116,14 @@ public abstract class Scene {
         worldShader.useProgram();
 
         for (WorldObject o : layerDetails.getGameObjectList()) {
+            worldShader.setHighlight(o.getHighlight());
+
             o.draw4();
         }
 
         for (WorldObject o : layerTerrain.getGameObjectList()) {
+            worldShader.setHighlight(o.getHighlight());
+
             o.draw4();
         }
 
@@ -167,7 +170,15 @@ public abstract class Scene {
             // Combine
             window.getCombinationShader().useProgram();
             window.drawQuad();
+
+            // Highlight
+        } else {
+            // Highlight
+            window.getHighlightShader().useProgram(false);
+            window.drawQuad();
         }
+
+
 
         // FXAA
         window.getFXAAShader().useProgram(renderWater);

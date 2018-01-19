@@ -3,6 +3,7 @@ package com.raven.engine.graphics3d.shader;
 import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
 import com.raven.engine.input.Mouse;
+import com.raven.engine.util.Vector4f;
 import org.lwjgl.BufferUtils;
 
 import java.nio.IntBuffer;
@@ -25,14 +26,16 @@ public class WorldShader extends Shader {
     public static final int
             COLOR = getNextTexture(),
             NORMAL = getNextTexture(),
+            HIGHLIGHT = getNextTexture(),
             ID = getNextTexture(),
             DEPTH = getNextTexture();
 
-    private int id_location;
+    private int id_location, highlight_location;
 
     private int framebuffer_handel,
             color_texture,
             normal_texture,
+            highlight_texture,
             id_texture,
             depth_texture;
 
@@ -46,6 +49,7 @@ public class WorldShader extends Shader {
         glBindAttribLocation(getProgramHandel(), 2, "vertex_normal");
 
         id_location = glGetUniformLocation(getProgramHandel(), "id");
+        highlight_location = glGetUniformLocation(getProgramHandel(), "highlight");
 
         int blockIndex = glGetUniformBlockIndex(getProgramHandel(), "Matrices");
         glUniformBlockBinding(getProgramHandel(), blockIndex, MATRICES);
@@ -53,7 +57,8 @@ public class WorldShader extends Shader {
         int bfs[] = {
                 GL_COLOR_ATTACHMENT0, // Color
                 GL_COLOR_ATTACHMENT1, // Normal
-                GL_COLOR_ATTACHMENT2, // ID
+                GL_COLOR_ATTACHMENT2, // HIGHLIGHT
+                GL_COLOR_ATTACHMENT3, // ID
         };
 
         buffers = BufferUtils.createIntBuffer(bfs.length);
@@ -96,6 +101,21 @@ public class WorldShader extends Shader {
 
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, normal_texture, 0);
 
+        // Highlight
+        highlight_texture = glGenTextures();
+        glActiveTexture(GL_TEXTURE0 + HIGHLIGHT);
+        glBindTexture(GL_TEXTURE_2D, highlight_texture);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight(),
+                0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, highlight_texture, 0);
+
         // ID
         id_texture = glGenTextures();
         glActiveTexture(GL_TEXTURE0 + ID);
@@ -109,7 +129,7 @@ public class WorldShader extends Shader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, id_texture, 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, id_texture, 0);
 
         // Depth
         depth_texture = glGenTextures();
@@ -150,8 +170,12 @@ public class WorldShader extends Shader {
         glClearColor(0.6f, 0.7f, 1f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // make sure the id buffer isn't colored
+        // make sure the highlight buffer isn't colored
         glClearBufferfv(GL_COLOR, 2,
+                new float[]{ 0f, 0f, 0f, 0f });
+
+        // make sure the id buffer isn't colored
+        glClearBufferfv(GL_COLOR, 3,
                 new float[]{ 0f, 0f, 0f, 0f });
 
         glEnable(GL_DEPTH_TEST);
@@ -172,14 +196,11 @@ public class WorldShader extends Shader {
 
     private IntBuffer pixelReadBuffer = BufferUtils.createIntBuffer(1);
     public int getWorldObjectID() {
-//        glFlush();
-//        glFinish();
-
         Mouse mouse = GameEngine.getEngine().getMouse();
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glReadBuffer(GL_COLOR_ATTACHMENT2);
+        glReadBuffer(GL_COLOR_ATTACHMENT3);
         glReadPixels(
                 (int)mouse.getX(),
                 GameProperties.getScreenHeight() - (int)mouse.getY(),
@@ -205,6 +226,11 @@ public class WorldShader extends Shader {
             }
     }
 
+    public void setHighlight(Vector4f highlight) {
+        if (GameEngine.getEngine().getWindow().getActiveShader() == this)
+            glUniform4f(highlight_location, highlight.x, highlight.y, highlight.z, highlight.w);
+    }
+
     public int getDepthTexture() {
         return depth_texture;
     }
@@ -212,5 +238,4 @@ public class WorldShader extends Shader {
     public int getFramebufferHandel() {
         return framebuffer_handel;
     }
-
 }
