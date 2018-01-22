@@ -211,17 +211,21 @@ public class GameEngine implements Runnable {
         if (id != 0) {
             WorldObject hover = WorldObject.getWorldObjectFromID(id);
 
-            // clicks - might cause a problem with the order of enter and leave
-            if (mouse.isLeftButtonClick()) {
-                hover.onMouseClick();
-                mouse.setLeftButtonClick(false);
-            }
-
-            // hover
             newList.clear();
             newList.addAll(hover.getParentWorldObjectList());
             newList.add(hover);
 
+            // clicks - might cause a problem with the order of enter and leave
+            if (mouse.isLeftButtonClick()) {
+                for (WorldObject o : oldMouseList) {
+                    if (newList.contains(o))
+                        o.onMouseClick();
+                }
+                
+                mouse.setLeftButtonClick(false);
+            }
+
+            // hover
             for (WorldObject o : oldMouseList) {
                 if (newList.contains(o))
                     o.checkMouseMovement(true, delta);

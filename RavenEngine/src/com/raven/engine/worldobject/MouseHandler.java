@@ -1,8 +1,8 @@
 package com.raven.engine.worldobject;
 
 public interface MouseHandler {
-	void onMouseClick();
-	void onMouseEnter();
-	void onMouseLeave();
-	void onMouseHover(float delta);
+	void handleMouseClick();
+	void handleMouseEnter();
+	void handleMouseLeave();
+	void handleMouseHover(float delta);
 }

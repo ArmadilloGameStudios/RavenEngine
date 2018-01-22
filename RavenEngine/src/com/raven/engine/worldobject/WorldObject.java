@@ -3,7 +3,6 @@ package com.raven.engine.worldobject;
 import com.raven.engine.GameEngine;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.shader.Shader;
-import com.raven.engine.graphics3d.shader.WorldShader;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Matrix4f;
 import com.raven.engine.util.Vector4f;
@@ -12,19 +11,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class WorldObject implements Parentable {
+public abstract class WorldObject<S extends Scene, P extends Parentable> implements Parentable {
 
     private static int last_id = 0;
     private static HashMap<Integer, WorldObject> worldObjectIDMap = new HashMap<>();
 
     private List<WorldObject> list = new ArrayList();
-    private Scene scene;
+    private S scene;
     private int id;
 
     private float x, y, z, scale = 1f, rotation = 0f;
     private Matrix4f matrix = new Matrix4f();
 
-    private Vector4f highlight = new Vector4f();
+    private Highlight highlight = new Highlight();
 
     private boolean visible = true;
 
@@ -34,14 +33,14 @@ public abstract class WorldObject implements Parentable {
     private List<MouseHandler> clickHandlers = new ArrayList<MouseHandler>();
     private long timeOffset = 0;
     private List<TextObject> textObjects = new ArrayList<TextObject>();
-    private Parentable parent;
+    private P parent;
     private boolean parentIsWorldObject;
 
-    public WorldObject(Scene scene, String modelsrc) {
+    public WorldObject(S scene, String modelsrc) {
         this(scene, GameEngine.getEngine().getModelData(modelsrc));
     }
 
-    public WorldObject(Scene scene, ModelData model) {
+    public WorldObject(S scene, ModelData model) {
         // model
         this.scene = scene;
         this.model = model;
@@ -109,7 +108,7 @@ public abstract class WorldObject implements Parentable {
         resolveMatrix();
     }
 
-    public Scene getScene() {
+    public S getScene() {
         return scene;
     }
 
@@ -138,14 +137,11 @@ public abstract class WorldObject implements Parentable {
         return matrix;
     }
 
-    public void setHighlight(float r, float g, float b, float a) {
-        highlight.x = r;
-        highlight.y = g;
-        highlight.z = b;
-        highlight.w = a;
+    public void setHighlight(Highlight h) {
+        highlight = h;
     }
 
-    public Vector4f getHighlight() {
+    public Highlight getHighlight() {
         return highlight;
     }
 
@@ -198,6 +194,9 @@ public abstract class WorldObject implements Parentable {
         model.getModelReference().draw();
     }
 
+    public P getParent() {
+        return parent;
+    }
 
     public List<WorldObject> getParentWorldObjectList() {
         list.clear();
@@ -246,21 +245,19 @@ public abstract class WorldObject implements Parentable {
     }
 
     final public void onMouseEnter() {
-        for (MouseHandler c : clickHandlers) c.onMouseEnter();
+        for (MouseHandler c : clickHandlers) c.handleMouseEnter();
     }
 
     final public void onMouseHover(float delta) {
-        for (MouseHandler c : clickHandlers) c.onMouseHover(delta);
+        for (MouseHandler c : clickHandlers) c.handleMouseHover(delta);
     }
 
     final public void onMouseLeave() {
-        for (MouseHandler c : clickHandlers) c.onMouseLeave();
+        for (MouseHandler c : clickHandlers) c.handleMouseLeave();
     }
 
     final public void onMouseClick() {
-        System.out.println(this.id);
-
-        for (MouseHandler c : clickHandlers) c.onMouseClick();
+        for (MouseHandler c : clickHandlers) c.handleMouseClick();
     }
 
     final public void update(float deltaTime) {

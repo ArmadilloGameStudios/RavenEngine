@@ -1,24 +1,64 @@
 {
-    name: "obelisk",
-    model: "models/obelisk.ply"
+    description: "Obelisk",
+    model: "models/obelisk.ply",
+    type: [
+        "obelisk",
+        "blocker"
+    ],
+    passable: false
 },
 {
-    name: "tall corner",
-    model: "models/corner_tall.ply"
+    description: "Wall, Tall",
+    model: "models/corner_tall.ply",
+    type: [
+        "tall",
+        "wall",
+        "corner",
+        "blocker"
+    ],
+    passable: false
 },
 {
-    name: "tall wall",
-    model: "models/wall_tall.ply"
+    description: "Wall, Tall",
+    model: "models/wall_tall.ply",
+    type: [
+        "tall",
+        "wall",
+        "straight",
+        "blocker"
+    ],
+    passable: false
 },
 {
-    name: "tall ceiling",
-    model: "models/ceiling_tall.ply"
+    description: "Wall, Tall",
+    model: "models/ceiling_tall.ply",
+    type: [
+        "tall",
+        "ceiling",
+        "blocker"
+    ],
+    passable: false
 },
 {
-    name: "short wall",
-    model: "models/wall_short.ply"
+    description: "Wall, Short",
+    model: "models/wall_short.ply",
+    type: [
+        "short",
+        "wall",
+        "straight",
+        "blocker"
+    ],
+    passable: false
 },
 {
-    name: "tall short wall",
-    model: "models/wall_tall_short.ply"
+    description: "Wall, Tall",
+    model: "models/wall_tall_short.ply",
+    type: [
+        "short",
+        "tall"
+        "wall",
+        "transition",
+        "blocker"
+    ],
+    passable: false
 }

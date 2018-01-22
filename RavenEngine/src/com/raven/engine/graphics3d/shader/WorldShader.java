@@ -4,6 +4,7 @@ import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
 import com.raven.engine.input.Mouse;
 import com.raven.engine.util.Vector4f;
+import com.raven.engine.worldobject.Highlight;
 import org.lwjgl.BufferUtils;
 
 import java.nio.IntBuffer;
@@ -226,9 +227,9 @@ public class WorldShader extends Shader {
             }
     }
 
-    public void setHighlight(Vector4f highlight) {
+    public void setHighlight(Highlight highlight) {
         if (GameEngine.getEngine().getWindow().getActiveShader() == this)
-            glUniform4f(highlight_location, highlight.x, highlight.y, highlight.z, highlight.w);
+            glUniform4f(highlight_location, highlight.r, highlight.g, highlight.b, highlight.a);
     }
 
     public int getDepthTexture() {
