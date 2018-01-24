@@ -5,6 +5,7 @@ import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.shader.Shader;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Matrix4f;
+import com.raven.engine.util.Vector3f;
 import com.raven.engine.util.Vector4f;
 
 import java.util.ArrayList;
@@ -80,6 +81,10 @@ public abstract class WorldObject<S extends Scene, P extends Parentable> impleme
         resolveMatrix();
     }
 
+    public void moveZ(float z) {
+        setZ(getZ() + z);
+    }
+
     @Override
     public float getGlobalX() {
         return this.getX() + parent.getGlobalX();
@@ -94,6 +99,10 @@ public abstract class WorldObject<S extends Scene, P extends Parentable> impleme
         resolveMatrix();
     }
 
+    public void moveX(float x) {
+        setX(getX() + x);
+    }
+
     @Override
     public float getGlobalY() {
         return this.getY() + parent.getGlobalY();
@@ -106,6 +115,25 @@ public abstract class WorldObject<S extends Scene, P extends Parentable> impleme
     public void setY(float y) {
         this.y = y;
         resolveMatrix();
+    }
+
+    public void moveY(float y) {
+        setY(getY() + y);
+    }
+
+    public Vector3f getPosition() {
+        return new Vector3f(x, y, z);
+    }
+
+    public void setPosition(Vector3f position) {
+        this.x = position.x;
+        this.y = position.y;
+        this.z = position.z;
+        resolveMatrix();
+    }
+
+    public void move(Vector3f amount) {
+        setPosition(getPosition().add(amount));
     }
 
     public S getScene() {
@@ -234,8 +262,10 @@ public abstract class WorldObject<S extends Scene, P extends Parentable> impleme
 
     final public void checkMouseMovement(boolean hovering, float delta) {
         if (!isMouseHovering() && hovering) {
+            mousehovering = hovering;
             onMouseEnter();
         } else if (isMouseHovering() && !hovering) {
+            mousehovering = hovering;
             onMouseLeave();
         } else if (hovering) {
             onMouseHover(delta);

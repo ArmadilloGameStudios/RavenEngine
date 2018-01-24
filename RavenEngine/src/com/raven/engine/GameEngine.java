@@ -137,10 +137,10 @@ public class GameEngine implements Runnable {
             game.update(deltaTime);
             window.printErrors("Update Error: ");
 
-            if (frame % 60 == 0) {
-                System.out.println("FPS: " + 1000f / (framesdt / 60f) + " MPF: " + framesdt / 60f);
-                framesdt = 0;
-            }
+//            if (frame % 60 == 0) {
+//                System.out.println("FPS: " + 1000f / (framesdt / 60f) + " MPF: " + framesdt / 60f);
+//                framesdt = 0;
+//            }
 
             glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
 
@@ -231,6 +231,12 @@ public class GameEngine implements Runnable {
                     o.checkMouseMovement(true, delta);
                 else {
                     o.checkMouseMovement(false, delta);
+                }
+            }
+
+            for (WorldObject o : newList) {
+                if (!oldMouseList.contains(o)) {
+                    o.checkMouseMovement(true, delta);
                 }
             }
 

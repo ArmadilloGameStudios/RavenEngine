@@ -5,13 +5,13 @@ import com.raven.breakingsands.scenes.decal.DecalFactory;
 import com.raven.breakingsands.scenes.pawn.Pawn;
 import com.raven.breakingsands.scenes.pawn.PawnFactory;
 import com.raven.breakingsands.scenes.terrain.Terrain;
-import com.raven.engine.Game;
 import com.raven.engine.GameEngine;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.scene.light.GlobalDirectionalLight;
 import com.raven.engine.util.Vector3f;
 import com.raven.engine.util.pathfinding.Path;
+import com.raven.engine.util.pathfinding.PathAdjacentNode;
 import com.raven.engine.util.pathfinding.PathFinder;
 import com.raven.engine.worldobject.Highlight;
 
@@ -31,12 +31,23 @@ public class TestScene extends Scene {
             GREEN = new Highlight(.3f, 1f, .2f, .75f),
             GREEN_CHANGING = new Highlight(.3f, 1f, .2f, .5f);
 
+    public enum State {
+        MOVING, MOVE
+    }
 
     private GlobalDirectionalLight sunLight;
     private Terrain[][] terrain;
 
+    private HashMap<Terrain, Path<Terrain>> pathMap;
+    private Path<Terrain> currentPath;
+    private int pathIndex = 0;
+    private float pathSpeed = 100f;
+    private float pathMoveTime = 0f;
+
     private List<Pawn> pawns = new ArrayList<>();
     private Pawn activePawn;
+
+    private State state;
 
     private int size = 32;
 
@@ -83,12 +94,6 @@ public class TestScene extends Scene {
                 getLayerTerrain().addWorldObject(terrain[x][y]);
             }
         }
-
-        PawnFactory pf = new PawnFactory(this);
-        Pawn p = pf.getInstance();
-        pawns.add(p);
-
-        terrain[28][28].setPawn(p);
 
         DecalFactory f = new DecalFactory(this);
         f.addTypeRestriction("tall");
@@ -401,7 +406,40 @@ public class TestScene extends Scene {
         decal.setRotation(90);
         terrain[20][11].setDecal(decal);
 
+        // pawn
+        PawnFactory pf = new PawnFactory(this);
+        Pawn p = pf.getInstance();
+        pawns.add(p);
+
+        terrain[28][28].setPawn(p);
+
+        p = pf.getInstance();
+        pawns.add(p);
+
+        terrain[28][27].setPawn(p);
+
+        p = pf.getInstance();
+        pawns.add(p);
+
+        terrain[28][26].setPawn(p);
+
+        p = pf.getInstance();
+        pawns.add(p);
+
+        terrain[29][28].setPawn(p);
+
+        p = pf.getInstance();
+        pawns.add(p);
+
+        terrain[29][27].setPawn(p);
+
+        p = pf.getInstance();
+        pawns.add(p);
+
+        terrain[29][26].setPawn(p);
+
         setActivePawn(p);
+        setState(State.MOVE);
     }
 
     @Override
@@ -411,9 +449,67 @@ public class TestScene extends Scene {
 
     @Override
     public void onUpdate(float deltaTime) {
-        float a = (float)(Math.cos(GameEngine.getEngine().getSystemTime() * .002) * .15 + .5);
+        float a = (float)(Math.cos(GameEngine.getEngine().getSystemTime() * .004) * .075 + .3);
 
         BLUE_CHANGING.a = RED_CHANGING.a = GREEN_CHANGING.a = YELLOW_CHANGING.a = a;
+
+        switch (state) {
+            case MOVING:
+                movePawn(deltaTime);
+                break;
+        }
+    }
+
+    public float movePawn(float delta) {
+
+        Terrain current = currentPath.get(pathIndex).getNode();
+
+        if (pathIndex + 1 < currentPath.size()) {
+            PathAdjacentNode<Terrain> next = currentPath.get(pathIndex + 1);
+            float cost = next.getCost();
+
+            pathMoveTime += delta;
+
+            float overflow = 0f;
+
+            if (pathMoveTime > pathSpeed * cost) {
+                overflow = pathMoveTime - pathSpeed * cost;
+                delta -= overflow;
+
+                pathMoveTime = 0f;
+            }
+
+            Vector3f movement = next.getNode().getPosition().subtract(current.getPosition());
+
+            activePawn.move(movement.scale(delta / (pathSpeed * cost)));
+
+            if (overflow > 0f) {
+                pathIndex += 1;
+                movePawn(overflow);
+            }
+        } else {
+            pathIndex = 0;
+            pathMoveTime = 0f;
+
+            activePawn.setPosition(new Vector3f());
+            current.setPawn(activePawn);
+
+            setActivePawn(getNextPawn());
+
+            setState(State.MOVE);
+        }
+
+        return delta;
+    }
+
+    public Pawn getNextPawn() {
+        int i = pawns.indexOf(activePawn) + 1;
+
+        if (i == pawns.size()) {
+            i = 0;
+        }
+
+        return pawns.get(i);
     }
 
     public Terrain[][] getTerrainMap() {
@@ -426,17 +522,75 @@ public class TestScene extends Scene {
 
     public void setActivePawn(Pawn pawn) {
         this.activePawn = pawn;
-
-        PathFinder<Terrain> pf = new PathFinder<>();
-
-        HashMap<Terrain, Path<Terrain>> map = pf.findDistance(pawn.getParent(), 4);
-
-        for (Terrain t : map.keySet()) {
-            t.setHighlight(BLUE_CHANGING);
-        }
     }
 
     public Pawn getActivePawn() {
         return activePawn;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+
+        switch (state) {
+            case MOVE:
+                for (Terrain[] row : terrain) {
+                    for (Terrain t : row) {
+                        t.setState(Terrain.State.UNSELECTABLE);
+                    }
+                }
+                currentPath = null;
+
+                PathFinder<Terrain> pf = new PathFinder<>();
+
+                pathMap = pf.findDistance(activePawn.getParent(), 10);
+
+                for (Terrain t : pathMap.keySet()) {
+                    t.setState(Terrain.State.SELECTABLE);
+                }
+
+                break;
+            case MOVING:
+                for (Terrain[] row : terrain) {
+                    for (Terrain t : row) {
+                        t.setState(Terrain.State.UNSELECTABLE);
+                    }
+                }
+
+                break;
+        }
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void selectPath(Terrain t) {
+        currentPath = pathMap.get(t);
+
+        if (currentPath != null) {
+            for (PathAdjacentNode<Terrain> p : currentPath) {
+                Terrain node = p.getNode();
+
+                node.setState(Terrain.State.SELECTED);
+            }
+        }
+    }
+
+    public void clearPath() {
+        if (currentPath != null) {
+            for (PathAdjacentNode<Terrain> p : currentPath) {
+                Terrain node = p.getNode();
+
+                node.setState(Terrain.State.SELECTABLE);
+            }
+        }
+    }
+
+    public void clearAllPaths() {
+        for (Terrain t : pathMap.keySet()) {
+            t.setState(Terrain.State.UNSELECTABLE);
+        }
+
+        pathMap.clear();
     }
 }

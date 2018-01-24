@@ -20,6 +20,14 @@ import java.util.List;
 public class Terrain extends WorldObject<TestScene, WorldObject> implements MouseHandler, PathNode<Terrain> {
     private static GameDataList dataList = GameDatabase.all("terrain");
 
+    public enum State {
+        SELECTABLE,
+        UNSELECTABLE,
+        SELECTED,
+    }
+
+    private State state;
+
     private int x, y;
 
     private boolean passable = true;
@@ -39,60 +47,32 @@ public class Terrain extends WorldObject<TestScene, WorldObject> implements Mous
         this.y = y;
 
         this.addMouseHandler(this);
+
+        this.setState(State.UNSELECTABLE);
     }
 
     @Override
     public void handleMouseClick() {
-        String desc = "Sand";
-
-        if (decal != null) {
-            desc = decal.getDescription();
-        }
-
-        desc += "\n";
-        desc += "Passable: " + passable;
-
-        if (pawn != null) {
-            desc += "\n" + pawn.getName();
-        }
-
-        System.out.println(desc);
-
-        if (pawn != null) {
-            setHighlight(TestScene.GREEN);
-        } else {
-            if (passable) {
-                setHighlight(TestScene.BLUE);
-
-                Pawn p = getScene().getActivePawn();
-
-                if (this != p.getParent()) {
-                    this.setPawn(p);
-                    setHighlight(TestScene.GREEN);
-                }
-            }
-            else
-                setHighlight(TestScene.YELLOW);
+        switch (state) {
+            case SELECTED:
+                getScene().clearAllPaths();
+                getScene().setState(TestScene.State.MOVING);
+                break;
         }
     }
 
     @Override
     public void handleMouseEnter() {
-        if (pawn != null) {
-            setHighlight(TestScene.GREEN);
-        } else {
-            if (passable) {
-                setHighlight(TestScene.BLUE);
-            }
-            else
-                setHighlight(TestScene.YELLOW);
+        if (getScene().getState() == TestScene.State.MOVE) {
+            getScene().selectPath(this);
         }
-
     }
 
     @Override
     public void handleMouseLeave() {
-        setHighlight(TestScene.OFF);
+        if (getScene().getState() == TestScene.State.MOVE) {
+            getScene().clearPath();
+        }
     }
 
     @Override
@@ -108,24 +88,75 @@ public class Terrain extends WorldObject<TestScene, WorldObject> implements Mous
         Terrain[][] map = scene.getTerrainMap();
         int size = scene.getTerrainMapSize();
 
+        Terrain a1 = null, a2 = null, b1 = null, b2 = null;
 
-        for (int i = -1; i <=1; i += 2) {
-            if (x + i > 0 && x + i < size) {
-                Terrain n = map[x + i][y];
+        if (x + 1 < size) {
+            Terrain n = map[x + 1][y];
 
-                if (n.passable)
-                    neighbors.add(new PathAdjacentNode<>(map[x + i][y], 1));
+            if (n.passable && n.pawn == null) {
+                a1 = n;
+                neighbors.add(new PathAdjacentNode<>(n, 2));
             }
         }
 
-        for (int j = -1; j <= 1; j += 2) {
-            if (y + j > 0 && y + j < size) {
-                Terrain n = map[x][y + j];
+        if (y + 1 < size) {
+            Terrain n = map[x][y + 1];
 
-                if (n.passable)
-                    neighbors.add(new PathAdjacentNode<>(map[x][y + j], 1));
+            if (n.passable && n.pawn == null) {
+                b1 = n;
+                neighbors.add(new PathAdjacentNode<>(n, 2));
             }
         }
+
+        if (y - 1 >= 0) {
+            Terrain n = map[x][y - 1];
+
+            if (n.passable && n.pawn == null) {
+                b2 = n;
+                neighbors.add(new PathAdjacentNode<>(n, 2));
+            }
+        }
+
+        if (x - 1 >= 0) {
+            Terrain n = map[x - 1][y];
+
+            if (n.passable && n.pawn == null) {
+                a2 = n;
+                neighbors.add(new PathAdjacentNode<>(n, 2));
+            }
+        }
+
+//        if (a1 != null && b1 != null) {
+//            Terrain n = map[x + 1][y + 1];
+//
+//            if (n.passable && scene.getActivePawn() != n.pawn) {
+//                neighbors.add(new PathAdjacentNode<>(n, 3));
+//            }
+//        }
+//
+//        if (a1 != null && b2 != null) {
+//            Terrain n = map[x + 1][y - 1];
+//
+//            if (n.passable && scene.getActivePawn() != n.pawn) {
+//                neighbors.add(new PathAdjacentNode<>(n, 3));
+//            }
+//        }
+//
+//        if (a2 != null && b1 != null) {
+//            Terrain n = map[x - 1][y + 1];
+//
+//            if (n.passable && scene.getActivePawn() != n.pawn) {
+//                neighbors.add(new PathAdjacentNode<>(n, 3));
+//            }
+//        }
+//
+//        if (a2 != null && b2 != null) {
+//            Terrain n = map[x - 1][y - 1];
+//
+//            if (n.passable && scene.getActivePawn() != n.pawn) {
+//                neighbors.add(new PathAdjacentNode<>(n, 3));
+//            }
+//        }
 
         return neighbors;
     }
@@ -158,16 +189,67 @@ public class Terrain extends WorldObject<TestScene, WorldObject> implements Mous
         }
 
         if (pawn.getParent() != null)
-            pawn.getParent().removePawn(pawn);
+            pawn.getParent().removePawn();
 
         this.pawn = pawn;
 
         this.addChild(pawn);
     }
 
-    public void removePawn(Pawn pawn) {
+    public void removePawn() {
+        this.removeChild(this.pawn);
         this.pawn = null;
+    }
 
-        this.removeChild(pawn);
+    public void setState(State state) {
+        this.state = state;
+
+        switch (state) {
+            case UNSELECTABLE:
+                break;
+            case SELECTABLE:
+                if (this.pawn == getScene().getActivePawn()) {
+                    this.state = State.UNSELECTABLE;
+                }
+                break;
+        }
+
+        selectHighlight();
+    }
+
+    private void selectHighlight() {
+        switch (state) {
+            case UNSELECTABLE:
+                if (getScene().getState() == TestScene.State.MOVING) {
+                    setHighlight(TestScene.OFF);
+                } else {
+                    if (pawn == getScene().getActivePawn()) {
+                        setHighlight(TestScene.GREEN);
+                    } else {
+                        setHighlight(TestScene.OFF);
+                    }
+                }
+                break;
+            case SELECTABLE:
+                if (pawn != null) {
+                    setHighlight(TestScene.GREEN_CHANGING);
+                } else {
+                    if (passable) {
+                        setHighlight(TestScene.BLUE_CHANGING);
+                    } else
+                        setHighlight(TestScene.YELLOW_CHANGING);
+                }
+                break;
+            case SELECTED:
+                if (pawn != null) {
+                    setHighlight(TestScene.GREEN);
+                } else {
+                    if (passable) {
+                        setHighlight(TestScene.BLUE);
+                    } else
+                        setHighlight(TestScene.YELLOW);
+                }
+                break;
+        }
     }
 }
