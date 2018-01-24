@@ -13,6 +13,7 @@ import com.raven.engine.util.Vector3f;
 import com.raven.engine.util.pathfinding.Path;
 import com.raven.engine.util.pathfinding.PathAdjacentNode;
 import com.raven.engine.util.pathfinding.PathFinder;
+import com.raven.engine.worldobject.HUDObject;
 import com.raven.engine.worldobject.Highlight;
 
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public class TestScene extends Scene {
                 terrain[x][y].setX(x * 2 - size);
                 terrain[x][y].setZ(y * 2 - size);
 
-                getLayerTerrain().addWorldObject(terrain[x][y]);
+                getLayerTerrain().addChild(terrain[x][y]);
             }
         }
 
@@ -440,6 +441,9 @@ public class TestScene extends Scene {
 
         setActivePawn(p);
         setState(State.MOVE);
+
+        HUDObject obj = new HUDObject(this, 50f, 50f);
+        getLayerHUD().addChild(obj);
     }
 
     @Override

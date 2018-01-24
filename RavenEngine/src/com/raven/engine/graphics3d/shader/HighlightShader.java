@@ -21,7 +21,7 @@ public class HighlightShader extends Shader {
         texture_highlight_location = glGetUniformLocation(getProgramHandel(), "highlight");
     }
 
-    public void useProgram(boolean water) {
+    public void useProgram() {
         super.useProgram();
 
         glUseProgram(getProgramHandel());
@@ -39,5 +39,6 @@ public class HighlightShader extends Shader {
     @Override
     public void endProgram() {
         glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
     }
 }

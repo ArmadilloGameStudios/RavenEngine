@@ -12,7 +12,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class WorldObject<S extends Scene, P extends Parentable> implements Parentable {
+public abstract class WorldObject<
+            S extends Scene,
+            P extends Parentable<WorldObject>,
+            C extends WorldObject>
+        implements Parentable<C>, Childable<P> {
 
     private static int last_id = 0;
     private static HashMap<Integer, WorldObject> worldObjectIDMap = new HashMap<>();
@@ -28,14 +32,15 @@ public abstract class WorldObject<S extends Scene, P extends Parentable> impleme
 
     private boolean visible = true;
 
-    private List<WorldObject> children = new ArrayList<WorldObject>();
+    private List<C> children = new ArrayList<>();
     private ModelData model;
     private boolean mousehovering = false;
     private List<MouseHandler> clickHandlers = new ArrayList<MouseHandler>();
     private long timeOffset = 0;
     private List<TextObject> textObjects = new ArrayList<TextObject>();
-    private P parent;
-    private boolean parentIsWorldObject;
+
+    P parent;
+    boolean parentIsWorldObject;
 
     public WorldObject(S scene, String modelsrc) {
         this(scene, GameEngine.getEngine().getModelData(modelsrc));
@@ -67,11 +72,6 @@ public abstract class WorldObject<S extends Scene, P extends Parentable> impleme
         return worldObjectIDMap.get(id);
     }
 
-    @Override
-    public float getGlobalZ() {
-        return this.getZ() + parent.getGlobalZ();
-    }
-
     public float getZ() {
         return x;
     }
@@ -85,11 +85,6 @@ public abstract class WorldObject<S extends Scene, P extends Parentable> impleme
         setZ(getZ() + z);
     }
 
-    @Override
-    public float getGlobalX() {
-        return this.getX() + parent.getGlobalX();
-    }
-
     public float getX() {
         return x;
     }
@@ -101,11 +96,6 @@ public abstract class WorldObject<S extends Scene, P extends Parentable> impleme
 
     public void moveX(float x) {
         setX(getX() + x);
-    }
-
-    @Override
-    public float getGlobalY() {
-        return this.getY() + parent.getGlobalY();
     }
 
     public float getY() {
@@ -201,7 +191,7 @@ public abstract class WorldObject<S extends Scene, P extends Parentable> impleme
         Shader.setModelMatrix(getModelMatrix());
         model.getModelReference().draw();
 
-        for (WorldObject child : children) {
+        for (C child : children) {
             child.draw4(getModelMatrix());
         }
     }
@@ -222,6 +212,10 @@ public abstract class WorldObject<S extends Scene, P extends Parentable> impleme
         model.getModelReference().draw();
     }
 
+    public void setParent(P parent) {
+        this.parent = parent;
+    }
+
     public P getParent() {
         return parent;
     }
@@ -237,7 +231,8 @@ public abstract class WorldObject<S extends Scene, P extends Parentable> impleme
         return list;
     }
 
-    public void addChild(WorldObject child) {
+    @Override
+    public void addChild(C child) {
         child.parentIsWorldObject = true;
         child.parent = this;
 

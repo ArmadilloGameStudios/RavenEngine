@@ -19,7 +19,7 @@ public class ModelData {
         vertexList.add(vertexData);
     }
 
-    void setModelReference(ModelReference modelReference) {
+    public void setModelReference(ModelReference modelReference) {
         this.modelReference = modelReference;
 
         // delete the list

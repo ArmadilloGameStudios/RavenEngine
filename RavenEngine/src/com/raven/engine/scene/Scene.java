@@ -7,6 +7,7 @@ import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.shader.*;
 import com.raven.engine.scene.light.Light;
+import com.raven.engine.worldobject.HUDObject;
 import com.raven.engine.worldobject.WorldObject;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -15,9 +16,10 @@ import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL30.*;
 
 public abstract class Scene {
-    private Layer layerTerrain = new Layer(Layer.Destination.Terrain);
-    private Layer layerWater = new Layer(Layer.Destination.Water);
-    private Layer layerDetails = new Layer(Layer.Destination.Details);
+    private Layer<WorldObject> layerTerrain = new Layer(Layer.Destination.Terrain);
+    private Layer<WorldObject> layerWater = new Layer(Layer.Destination.Water);
+    private Layer<WorldObject> layerDetails = new Layer(Layer.Destination.Details);
+    private Layer<HUDObject> layerHUD = new Layer(Layer.Destination.HUD);
 
     private boolean renderWater = false;
 
@@ -41,12 +43,12 @@ public abstract class Scene {
         WorldMSShader worldMSShader = window.getWorldMSShader();
         worldMSShader.useProgram();
 
-        for (WorldObject o : layerTerrain.getGameObjectList()) {
+        for (WorldObject o : layerTerrain.getObjectList()) {
             Shader.setModelMatrix(o.getModelMatrix());
             o.draw4ms();
         }
 
-        for (WorldObject o : layerDetails.getGameObjectList()) {
+        for (WorldObject o : layerDetails.getObjectList()) {
             Shader.setModelMatrix(o.getModelMatrix());
             o.draw4ms();
         }
@@ -56,7 +58,7 @@ public abstract class Scene {
 //
 //        worldWaterShader.useProgram();
 //
-//        for (WorldObject o : layerWater.getGameObjectList()) {
+//        for (WorldObject o : layerWater.getObjectList()) {
 //            Shader.setModelMatrix(o.getModelMatrix());
 //            o.draw4ms();
 //        }
@@ -115,13 +117,13 @@ public abstract class Scene {
         WorldShader worldShader = window.getWorldShader();
         worldShader.useProgram();
 
-        for (WorldObject o : layerDetails.getGameObjectList()) {
+        for (WorldObject o : layerDetails.getObjectList()) {
             worldShader.setHighlight(o.getHighlight());
 
             o.draw4();
         }
 
-        for (WorldObject o : layerTerrain.getGameObjectList()) {
+        for (WorldObject o : layerTerrain.getObjectList()) {
             worldShader.setHighlight(o.getHighlight());
 
             o.draw4();
@@ -143,11 +145,11 @@ public abstract class Scene {
                     ShadowShader shadowShader = light.getShadowShader();
                     shadowShader.useProgram();
 
-                    for (WorldObject o : layerDetails.getGameObjectList()) {
+                    for (WorldObject o : layerDetails.getObjectList()) {
                         o.draw4();
                     }
 
-                    for (WorldObject o : layerTerrain.getGameObjectList()) {
+                    for (WorldObject o : layerTerrain.getObjectList()) {
                         o.draw4();
                     }
 
@@ -163,7 +165,7 @@ public abstract class Scene {
             WaterShader waterShader = window.getWaterShader();
             waterShader.useProgram();
 
-            for (WorldObject o : layerWater.getGameObjectList()) {
+            for (WorldObject o : layerWater.getObjectList()) {
                 o.draw4();
             }
 
@@ -174,11 +176,17 @@ public abstract class Scene {
             // Highlight
         } else {
             // Highlight
-            window.getHighlightShader().useProgram(false);
+            window.getHighlightShader().useProgram();
             window.drawQuad();
         }
 
-
+        // HUD
+        HUDShader hudShader = window.getHUDShader();
+        hudShader.useProgram();
+        for (HUDObject o : layerHUD.getObjectList()) {
+            hudShader.setProperties(o);
+            window.drawQuad();
+        }
 
         // FXAA
         window.getFXAAShader().useProgram(renderWater);
@@ -203,18 +211,18 @@ public abstract class Scene {
 
         basicShader.useProgram();
 
-        for (WorldObject o : layerTerrain.getGameObjectList()) {
+        for (WorldObject o : layerTerrain.getObjectList()) {
             basicShader.setUnifromModelMatrix(o.getModelMatrix());
             o.draw2();
             window.printErrors("Draw Error: ");
         }
 
-        for (WorldObject o : layerDetails.getGameObjectList()) {
+        for (WorldObject o : layerDetails.getObjectList()) {
             basicShader.setUnifromModelMatrix(o.getModelMatrix());
             o.draw2();
         }
 
-        for (WorldObject o : layerWater.getGameObjectList()) {
+        for (WorldObject o : layerWater.getObjectList()) {
             basicShader.setUnifromModelMatrix(o.getModelMatrix());
             o.draw2();
         }
@@ -230,16 +238,20 @@ public abstract class Scene {
         layerDetails.update(deltaTime);
     }
 
-    final public Layer getLayerTerrain() {
+    final public Layer<WorldObject> getLayerTerrain() {
         return layerTerrain;
     }
 
-    final public Layer getLayerWater() {
+    final public Layer<WorldObject> getLayerWater() {
         return layerWater;
     }
 
-    final public Layer getLayerDetails() {
+    final public Layer<WorldObject> getLayerDetails() {
         return layerDetails;
+    }
+
+    final public Layer<HUDObject> getLayerHUD() {
+        return layerHUD;
     }
 
     public Layer getLayer(Layer.Destination destination) {
@@ -277,4 +289,5 @@ public abstract class Scene {
     public boolean getRenderWater() {
         return renderWater;
     }
+
 }

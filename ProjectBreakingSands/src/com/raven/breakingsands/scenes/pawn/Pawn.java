@@ -15,7 +15,7 @@ import com.raven.engine.worldobject.WorldObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pawn extends WorldObject<TestScene, Terrain> {
+public class Pawn extends WorldObject<TestScene, Terrain, WorldObject> {
     private static GameDataList dataList = GameDatabase.all("pawn");
 
     public static GameDataList getDataList() {

@@ -9,15 +9,19 @@ import com.raven.engine.database.GameDataList;
 import com.raven.engine.database.GameDataQuery;
 import com.raven.engine.database.GameDatabase;
 import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.scene.Layer;
 import com.raven.engine.util.pathfinding.PathAdjacentNode;
 import com.raven.engine.util.pathfinding.PathNode;
+import com.raven.engine.worldobject.Childable;
 import com.raven.engine.worldobject.MouseHandler;
+import com.raven.engine.worldobject.Parentable;
 import com.raven.engine.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Terrain extends WorldObject<TestScene, WorldObject> implements MouseHandler, PathNode<Terrain> {
+public class Terrain extends WorldObject<TestScene, Layer<WorldObject>, WorldObject>
+        implements MouseHandler, PathNode<Terrain> {
     private static GameDataList dataList = GameDatabase.all("terrain");
 
     public enum State {

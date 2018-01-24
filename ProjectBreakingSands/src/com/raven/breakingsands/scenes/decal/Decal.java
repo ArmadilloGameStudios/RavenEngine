@@ -14,7 +14,7 @@ import com.raven.engine.worldobject.WorldObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Decal extends WorldObject<TestScene, Terrain> {
+public class Decal extends WorldObject<TestScene, Terrain, WorldObject> {
     private static GameDataList dataList = GameDatabase.all("decal");
 
     public static GameDataList getDataList() {
