@@ -1,22 +1,19 @@
 package com.raven.breakingsands.scenes.decal;
 
 import com.raven.breakingsands.Factory;
-import com.raven.breakingsands.scenes.TestScene;
-import com.raven.breakingsands.scenes.pawn.Pawn;
+import com.raven.breakingsands.scenes.BattleScene;
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataList;
 import com.raven.engine.database.GameDataQuery;
-import com.raven.engine.scene.Scene;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class DecalFactory extends Factory<Decal> {
     private List<String> types = new ArrayList<>();
-    private TestScene scene;
+    private BattleScene scene;
 
-    public DecalFactory(TestScene scene) {
+    public DecalFactory(BattleScene scene) {
         this.scene = scene;
     }
 

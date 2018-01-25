@@ -27,7 +27,8 @@ public class Layer<C extends Childable>
         this.window = GameEngine.getEngine().getWindow();
     }
 
-    public List<C> getObjectList() {
+    @Override
+    public List<C> getChildren() {
         return gameObjectList;
     }
 

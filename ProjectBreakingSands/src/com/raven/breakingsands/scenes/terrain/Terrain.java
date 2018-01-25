@@ -1,6 +1,6 @@
 package com.raven.breakingsands.scenes.terrain;
 
-import com.raven.breakingsands.scenes.TestScene;
+import com.raven.breakingsands.scenes.BattleScene;
 import com.raven.breakingsands.scenes.decal.Decal;
 import com.raven.breakingsands.scenes.pawn.Pawn;
 import com.raven.engine.GameEngine;
@@ -12,15 +12,13 @@ import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.scene.Layer;
 import com.raven.engine.util.pathfinding.PathAdjacentNode;
 import com.raven.engine.util.pathfinding.PathNode;
-import com.raven.engine.worldobject.Childable;
 import com.raven.engine.worldobject.MouseHandler;
-import com.raven.engine.worldobject.Parentable;
 import com.raven.engine.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Terrain extends WorldObject<TestScene, Layer<WorldObject>, WorldObject>
+public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldObject>
         implements MouseHandler, PathNode<Terrain> {
     private static GameDataList dataList = GameDatabase.all("terrain");
 
@@ -39,7 +37,7 @@ public class Terrain extends WorldObject<TestScene, Layer<WorldObject>, WorldObj
     private Decal decal;
     private Pawn pawn;
 
-    public Terrain(TestScene scene, String name, int x, int y) {
+    public Terrain(BattleScene scene, String name, int x, int y) {
         super(scene, dataList.queryRandom(new GameDataQuery() {
             @Override
             public boolean matches(GameData row) {
@@ -60,21 +58,21 @@ public class Terrain extends WorldObject<TestScene, Layer<WorldObject>, WorldObj
         switch (state) {
             case SELECTED:
                 getScene().clearAllPaths();
-                getScene().setState(TestScene.State.MOVING);
+                getScene().setState(BattleScene.State.MOVING);
                 break;
         }
     }
 
     @Override
     public void handleMouseEnter() {
-        if (getScene().getState() == TestScene.State.MOVE) {
+        if (getScene().getState() == BattleScene.State.MOVE) {
             getScene().selectPath(this);
         }
     }
 
     @Override
     public void handleMouseLeave() {
-        if (getScene().getState() == TestScene.State.MOVE) {
+        if (getScene().getState() == BattleScene.State.MOVE) {
             getScene().clearPath();
         }
     }
@@ -88,7 +86,7 @@ public class Terrain extends WorldObject<TestScene, Layer<WorldObject>, WorldObj
     public List<PathAdjacentNode<Terrain>> getAdjacentNodes() {
         List<PathAdjacentNode<Terrain>> neighbors = new ArrayList<>();
 
-        TestScene scene = this.getScene();
+        BattleScene scene = this.getScene();
         Terrain[][] map = scene.getTerrainMap();
         int size = scene.getTerrainMapSize();
 
@@ -224,34 +222,34 @@ public class Terrain extends WorldObject<TestScene, Layer<WorldObject>, WorldObj
     private void selectHighlight() {
         switch (state) {
             case UNSELECTABLE:
-                if (getScene().getState() == TestScene.State.MOVING) {
-                    setHighlight(TestScene.OFF);
+                if (getScene().getState() == BattleScene.State.MOVING) {
+                    setHighlight(BattleScene.OFF);
                 } else {
                     if (pawn == getScene().getActivePawn()) {
-                        setHighlight(TestScene.GREEN);
+                        setHighlight(BattleScene.GREEN);
                     } else {
-                        setHighlight(TestScene.OFF);
+                        setHighlight(BattleScene.OFF);
                     }
                 }
                 break;
             case SELECTABLE:
                 if (pawn != null) {
-                    setHighlight(TestScene.GREEN_CHANGING);
+                    setHighlight(BattleScene.GREEN_CHANGING);
                 } else {
                     if (passable) {
-                        setHighlight(TestScene.BLUE_CHANGING);
+                        setHighlight(BattleScene.BLUE_CHANGING);
                     } else
-                        setHighlight(TestScene.YELLOW_CHANGING);
+                        setHighlight(BattleScene.YELLOW_CHANGING);
                 }
                 break;
             case SELECTED:
                 if (pawn != null) {
-                    setHighlight(TestScene.GREEN);
+                    setHighlight(BattleScene.GREEN);
                 } else {
                     if (passable) {
-                        setHighlight(TestScene.BLUE);
+                        setHighlight(BattleScene.BLUE);
                     } else
-                        setHighlight(TestScene.YELLOW);
+                        setHighlight(BattleScene.YELLOW);
                 }
                 break;
         }

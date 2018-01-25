@@ -7,6 +7,7 @@ import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.shader.*;
 import com.raven.engine.scene.light.Light;
+import com.raven.engine.worldobject.HUDContainer;
 import com.raven.engine.worldobject.HUDObject;
 import com.raven.engine.worldobject.WorldObject;
 
@@ -19,7 +20,7 @@ public abstract class Scene {
     private Layer<WorldObject> layerTerrain = new Layer(Layer.Destination.Terrain);
     private Layer<WorldObject> layerWater = new Layer(Layer.Destination.Water);
     private Layer<WorldObject> layerDetails = new Layer(Layer.Destination.Details);
-    private Layer<HUDObject> layerHUD = new Layer(Layer.Destination.HUD);
+    private Layer<HUDContainer> layerHUD = new Layer(Layer.Destination.HUD);
 
     private boolean renderWater = false;
 
@@ -43,12 +44,12 @@ public abstract class Scene {
         WorldMSShader worldMSShader = window.getWorldMSShader();
         worldMSShader.useProgram();
 
-        for (WorldObject o : layerTerrain.getObjectList()) {
+        for (WorldObject o : layerTerrain.getChildren()) {
             Shader.setModelMatrix(o.getModelMatrix());
             o.draw4ms();
         }
 
-        for (WorldObject o : layerDetails.getObjectList()) {
+        for (WorldObject o : layerDetails.getChildren()) {
             Shader.setModelMatrix(o.getModelMatrix());
             o.draw4ms();
         }
@@ -117,13 +118,13 @@ public abstract class Scene {
         WorldShader worldShader = window.getWorldShader();
         worldShader.useProgram();
 
-        for (WorldObject o : layerDetails.getObjectList()) {
+        for (WorldObject o : layerDetails.getChildren()) {
             worldShader.setHighlight(o.getHighlight());
 
             o.draw4();
         }
 
-        for (WorldObject o : layerTerrain.getObjectList()) {
+        for (WorldObject o : layerTerrain.getChildren()) {
             worldShader.setHighlight(o.getHighlight());
 
             o.draw4();
@@ -145,11 +146,11 @@ public abstract class Scene {
                     ShadowShader shadowShader = light.getShadowShader();
                     shadowShader.useProgram();
 
-                    for (WorldObject o : layerDetails.getObjectList()) {
+                    for (WorldObject o : layerDetails.getChildren()) {
                         o.draw4();
                     }
 
-                    for (WorldObject o : layerTerrain.getObjectList()) {
+                    for (WorldObject o : layerTerrain.getChildren()) {
                         o.draw4();
                     }
 
@@ -165,7 +166,7 @@ public abstract class Scene {
             WaterShader waterShader = window.getWaterShader();
             waterShader.useProgram();
 
-            for (WorldObject o : layerWater.getObjectList()) {
+            for (WorldObject o : layerWater.getChildren()) {
                 o.draw4();
             }
 
@@ -183,9 +184,8 @@ public abstract class Scene {
         // HUD
         HUDShader hudShader = window.getHUDShader();
         hudShader.useProgram();
-        for (HUDObject o : layerHUD.getObjectList()) {
-            hudShader.setProperties(o);
-            window.drawQuad();
+        for (HUDContainer o : layerHUD.getChildren()) {
+            o.draw(window, hudShader);
         }
 
         // FXAA
@@ -211,18 +211,18 @@ public abstract class Scene {
 
         basicShader.useProgram();
 
-        for (WorldObject o : layerTerrain.getObjectList()) {
+        for (WorldObject o : layerTerrain.getChildren()) {
             basicShader.setUnifromModelMatrix(o.getModelMatrix());
             o.draw2();
             window.printErrors("Draw Error: ");
         }
 
-        for (WorldObject o : layerDetails.getObjectList()) {
+        for (WorldObject o : layerDetails.getChildren()) {
             basicShader.setUnifromModelMatrix(o.getModelMatrix());
             o.draw2();
         }
 
-        for (WorldObject o : layerWater.getObjectList()) {
+        for (WorldObject o : layerWater.getChildren()) {
             basicShader.setUnifromModelMatrix(o.getModelMatrix());
             o.draw2();
         }
@@ -250,7 +250,7 @@ public abstract class Scene {
         return layerDetails;
     }
 
-    final public Layer<HUDObject> getLayerHUD() {
+    final public Layer<HUDContainer> getLayerHUD() {
         return layerHUD;
     }
 

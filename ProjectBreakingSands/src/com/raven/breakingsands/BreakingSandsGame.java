@@ -1,6 +1,6 @@
 package com.raven.breakingsands;
 
-import com.raven.breakingsands.scenes.TestScene;
+import com.raven.breakingsands.scenes.BattleScene;
 import com.raven.engine.Game;
 import com.raven.engine.launcher.GameLauncher;
 import com.raven.engine.scene.Scene;
@@ -24,7 +24,7 @@ public class BreakingSandsGame extends Game {
 
     @Override
     public Scene loadInitialScene() {
-        return new TestScene();
+        return new BattleScene();
     }
 
     @Override

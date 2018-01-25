@@ -13,6 +13,7 @@ import com.raven.engine.util.Vector3f;
 import com.raven.engine.util.pathfinding.Path;
 import com.raven.engine.util.pathfinding.PathAdjacentNode;
 import com.raven.engine.util.pathfinding.PathFinder;
+import com.raven.engine.worldobject.HUDContainer;
 import com.raven.engine.worldobject.HUDObject;
 import com.raven.engine.worldobject.Highlight;
 
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class TestScene extends Scene {
+public class BattleScene extends Scene {
     public static Highlight
             OFF = new Highlight(),
             BLUE = new Highlight(.2f, .6f, 1f, .75f),
@@ -52,7 +53,7 @@ public class TestScene extends Scene {
 
     private int size = 32;
 
-    public TestScene() {
+    public BattleScene() {
         super();
 
         sunLight = new GlobalDirectionalLight();
@@ -442,8 +443,8 @@ public class TestScene extends Scene {
         setActivePawn(p);
         setState(State.MOVE);
 
-        HUDObject obj = new HUDObject(this, 50f, 50f);
-        getLayerHUD().addChild(obj);
+        HUDBottomContainer bottomContainer = new HUDBottomContainer(this);
+        getLayerHUD().addChild(bottomContainer);
     }
 
     @Override

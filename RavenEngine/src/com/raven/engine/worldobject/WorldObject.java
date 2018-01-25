@@ -232,6 +232,11 @@ public abstract class WorldObject<
     }
 
     @Override
+    public List<C> getChildren() {
+        return children;
+    }
+
+    @Override
     public void addChild(C child) {
         child.parentIsWorldObject = true;
         child.parent = this;

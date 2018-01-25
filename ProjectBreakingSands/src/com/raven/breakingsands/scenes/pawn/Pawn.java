@@ -1,21 +1,18 @@
 package com.raven.breakingsands.scenes.pawn;
 
-import com.raven.breakingsands.scenes.TestScene;
+import com.raven.breakingsands.scenes.BattleScene;
 import com.raven.breakingsands.scenes.terrain.Terrain;
-import com.raven.engine.Game;
 import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataList;
-import com.raven.engine.database.GameDataQuery;
 import com.raven.engine.database.GameDatabase;
 import com.raven.engine.graphics3d.ModelData;
-import com.raven.engine.scene.Scene;
 import com.raven.engine.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pawn extends WorldObject<TestScene, Terrain, WorldObject> {
+public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     private static GameDataList dataList = GameDatabase.all("pawn");
 
     public static GameDataList getDataList() {
@@ -36,7 +33,7 @@ public class Pawn extends WorldObject<TestScene, Terrain, WorldObject> {
     private GameData gameData;
     private String name = "";
 
-    public Pawn(TestScene scene, int team, GameData gameData) {
+    public Pawn(BattleScene scene, int team, GameData gameData) {
         super(scene, gameData.getString("model"));
 
         this.gameData = gameData;
