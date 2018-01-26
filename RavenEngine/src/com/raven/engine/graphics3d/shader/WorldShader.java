@@ -3,6 +3,7 @@ package com.raven.engine.graphics3d.shader;
 import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
 import com.raven.engine.input.Mouse;
+import com.raven.engine.util.Vector3f;
 import com.raven.engine.util.Vector4f;
 import com.raven.engine.worldobject.Highlight;
 import org.lwjgl.BufferUtils;
@@ -158,8 +159,7 @@ public class WorldShader extends Shader {
         }
     }
 
-    @Override
-    public void useProgram() {
+    public void useProgram(Vector3f backgroundColor) {
         super.useProgram();
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
@@ -168,7 +168,7 @@ public class WorldShader extends Shader {
                 GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight());
 
-        glClearColor(0.6f, 0.7f, 1f, 0.0f);
+        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // make sure the highlight buffer isn't colored

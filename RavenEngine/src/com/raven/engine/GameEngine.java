@@ -13,6 +13,7 @@ import com.raven.engine.graphics3d.ModelReference;
 import com.raven.engine.graphics3d.PlyModelData;
 import com.raven.engine.input.Keyboard;
 import com.raven.engine.input.Mouse;
+import com.raven.engine.scene.Camera;
 import com.raven.engine.worldobject.WorldObject;
 import org.lwjgl.glfw.GLFW;
 
@@ -100,6 +101,7 @@ public class GameEngine implements Runnable {
 
         System.out.println("Starting OpenGL");
         window.create();
+        window.printErrors("Create Error: ");
 
         System.out.println("Loading Assets");
         loadDatabase();
@@ -283,11 +285,14 @@ public class GameEngine implements Runnable {
     }
 
     public void inputMouseMove(double xpos, double ypos) {
-        if (mouse.isMiddleButtonDown())
-            this.getGame().getCurrentScene().getCamera().rotate(xpos - mouse.getX(), ypos - mouse.getY());
+        Camera camera = this.getGame().getCurrentScene().getCamera();
 
-        if (mouse.isRightButtonDown()) {
-            this.getGame().getCurrentScene().getCamera().move(xpos - mouse.getX(), ypos - mouse.getY());
+        if (mouse.isMiddleButtonDown() && camera.isInteractable()) {
+            camera.rotate(xpos - mouse.getX(), ypos - mouse.getY());
+        }
+
+        if (mouse.isRightButtonDown() && camera.isInteractable()) {
+            camera.move(xpos - mouse.getX(), ypos - mouse.getY());
         }
 
         mouse.setPos(xpos, ypos);
@@ -300,7 +305,9 @@ public class GameEngine implements Runnable {
     }
 
     public void inputScroll(double xoffset, double yoffset) {
-        this.getGame().getCurrentScene().getCamera().zoom(yoffset);
+        Camera camera = this.getGame().getCurrentScene().getCamera();
 
+        if (camera.isInteractable())
+            camera.zoom(yoffset);
     }
 }

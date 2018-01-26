@@ -26,26 +26,26 @@ public class Tree extends WorldObject {
     public Tree(Scene scene) {
         super(scene, dataList.getRandom().getString("model"));
 
-        scene.getLayerDetails().addWorldObject(this);
+        scene.getLayerDetails().addChild(this);
 
         Tree tree = this;
         this.addMouseHandler(new MouseHandler() {
             @Override
-            public void onMouseClick() {
+            public void handleMouseClick() {
                 doRote = !doRote;
             }
 
             @Override
-            public void onMouseEnter() {
+            public void handleMouseEnter() {
                 rote *= -1f;
             }
 
             @Override
-            public void onMouseLeave() {
+            public void handleMouseLeave() {
             }
 
             @Override
-            public void onMouseHover(float delta) {
+            public void handleMouseHover(float delta) {
             }
         });
     }

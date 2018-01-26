@@ -5,6 +5,8 @@ import com.raven.engine.util.Vector4f;
 import com.sun.prism.impl.BufferUtil;
 
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.nio.IntBuffer;
@@ -70,8 +72,19 @@ public class TextObject {
 
         String[] lines = this.text.split("\n");
 
+        FontMetrics fm = g.getFontMetrics();
+
+        float textHeight = fm.getHeight();
+        float centerHeight = this.height / 2f;
+        float centerWidth = this.width / 2f;
+
+
         for (int i = 0; i < lines.length; i++) {
-            g.drawString(lines[i], 4f, 16f * (i + 1));
+            float len = fm.stringWidth(lines[i]);
+
+            g.drawString(lines[i],
+                    centerWidth - len / 2f,
+                     centerHeight + textHeight * .25f + textHeight * i - (lines.length - 1) * textHeight * .5f);
         }
 
         // To Byte Array

@@ -7,6 +7,7 @@ import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.shader.*;
 import com.raven.engine.scene.light.Light;
+import com.raven.engine.util.Vector3f;
 import com.raven.engine.worldobject.HUDContainer;
 import com.raven.engine.worldobject.HUDObject;
 import com.raven.engine.worldobject.WorldObject;
@@ -21,6 +22,8 @@ public abstract class Scene {
     private Layer<WorldObject> layerWater = new Layer(Layer.Destination.Water);
     private Layer<WorldObject> layerDetails = new Layer(Layer.Destination.Details);
     private Layer<HUDContainer> layerHUD = new Layer(Layer.Destination.HUD);
+
+    private Vector3f backgroundColor;
 
     private boolean renderWater = false;
 
@@ -116,7 +119,7 @@ public abstract class Scene {
 
         // Draw the world
         WorldShader worldShader = window.getWorldShader();
-        worldShader.useProgram();
+        worldShader.useProgram(backgroundColor);
 
         for (WorldObject o : layerDetails.getChildren()) {
             worldShader.setHighlight(o.getHighlight());
@@ -181,16 +184,16 @@ public abstract class Scene {
             window.drawQuad();
         }
 
-        // FXAA
-        window.getFXAAShader().useProgram(renderWater);
-        window.drawQuad();
-
         // HUD
         HUDShader hudShader = window.getHUDShader();
         hudShader.useProgram();
         for (HUDContainer o : layerHUD.getChildren()) {
             o.draw(window, hudShader);
         }
+
+        // FXAA
+        window.getFXAAShader().useProgram(renderWater);
+        window.drawQuad();
     }
 
     final public void draw2(GameWindow window) {
@@ -290,4 +293,7 @@ public abstract class Scene {
         return renderWater;
     }
 
+    public void setBackgroundColor(Vector3f color) {
+        backgroundColor = color;
+    }
 }

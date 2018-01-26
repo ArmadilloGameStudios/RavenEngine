@@ -1,4 +1,4 @@
-package com.raven.breakingsands.scenes.battlescene.hud;
+package com.raven.breakingsands.scenes.hud;
 
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.engine.util.Vector4f;

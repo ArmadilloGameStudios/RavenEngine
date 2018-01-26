@@ -21,7 +21,18 @@ import java.util.List;
 
 public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldObject>
         implements MouseHandler, PathNode<Terrain> {
+
     private static GameDataList dataList = GameDatabase.all("terrain");
+
+    public static List<ModelData> getModelData() {
+        List<ModelData> data = new ArrayList<>();
+
+        for (GameData gameData : dataList) {
+            data.add(GameEngine.getEngine().getModelData(gameData.getString("model")));
+        }
+
+        return data;
+    }
 
     public enum State {
         SELECTABLE,
@@ -172,16 +183,6 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
         return neighbors;
     }
 
-    public static List<ModelData> getModelData() {
-        List<ModelData> data = new ArrayList<>();
-
-        for (GameData gameData : dataList) {
-            data.add(GameEngine.getEngine().getModelData(gameData.getString("model")));
-        }
-
-        return data;
-    }
-
     public void setDecal(Decal decal) {
         if (this.decal != null) {
             removeChild(this.decal);
@@ -284,7 +285,5 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
         }
 
         details.setText(text);
-
-        System.out.println(text);
     }
 }

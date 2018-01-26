@@ -2,8 +2,8 @@ package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.scenes.battlescene.decal.Decal;
 import com.raven.breakingsands.scenes.battlescene.decal.DecalFactory;
-import com.raven.breakingsands.scenes.battlescene.hud.HUDBottomContainer;
-import com.raven.breakingsands.scenes.battlescene.hud.HUDDetailText;
+import com.raven.breakingsands.scenes.hud.HUDBottomContainer;
+import com.raven.breakingsands.scenes.hud.HUDDetailText;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.breakingsands.scenes.battlescene.terrain.Terrain;
@@ -76,10 +76,15 @@ public class BattleScene extends Scene {
 
     @Override
     public void enterScene() {
+        setBackgroundColor(new Vector3f(0.6f, 0.7f, 1f));
+
+        // Light
         sunLight.origin = new Vector3f(0, 2, 0);
         sunLight.color = new Vector3f(1, 1, 1);
         sunLight.intensity = 1f;
         sunLight.shadowTransparency = .2f;
+        sunLight.size = 46f;
+        sunLight.height = 4f;
 
         Vector3f dir = new Vector3f(1, 5, 2);
         sunLight.setDirection(dir.normalize());

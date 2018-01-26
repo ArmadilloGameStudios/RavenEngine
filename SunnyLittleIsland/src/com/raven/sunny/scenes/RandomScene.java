@@ -29,7 +29,7 @@ public class RandomScene extends Scene {
         setRenderWater(true);
 
         t = TerrainMap.genTerrain(this, 60, 45);
-        getLayerTerrain().addWorldObject(t);
+        getLayerTerrain().addChild(t);
 
         sunLight = new GlobalDirectionalLight();
         sunLight.origin.y = 2f;
@@ -104,7 +104,7 @@ public class RandomScene extends Scene {
 
         mds.add(water);
 
-        getLayerWater().addWorldObject(new WorldObject(this, water) {
+        getLayerWater().addChild(new WorldObject(this, water) {
 
         });
 

@@ -23,25 +23,25 @@ public class Bush extends WorldObject {
     public Bush(Scene scene) {
         super(scene, dataList.getRandom().getString("model"));
 
-        scene.getLayerDetails().addWorldObject(this);
+        scene.getLayerDetails().addChild(this);
 
         Bush bush = this;
         this.addMouseHandler(new MouseHandler() {
             @Override
-            public void onMouseClick() {
+            public void handleMouseClick() {
                 bush.setY(-10f);
             }
 
             @Override
-            public void onMouseEnter() {
+            public void handleMouseEnter() {
             }
 
             @Override
-            public void onMouseLeave() {
+            public void handleMouseLeave() {
             }
 
             @Override
-            public void onMouseHover(float delta) {
+            public void handleMouseHover(float delta) {
             }
         });
     }

@@ -1,14 +1,14 @@
-package com.raven.breakingsands.scenes.battlescene.hud;
+package com.raven.breakingsands.scenes.hud;
 
-import com.raven.breakingsands.scenes.battlescene.BattleScene;
+import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Vector4f;
 import com.raven.engine.worldobject.HUDContainer;
 
-public class HUDBottomContainer extends HUDContainer<BattleScene> {
+public class HUDBottomContainer extends HUDContainer {
 
-    private Vector4f color = new Vector4f(0,0,0,.5f);
+    private Vector4f color = new Vector4f(.25f,.25f,.25f,.5f);
 
-    public HUDBottomContainer(BattleScene scene) {
+    public HUDBottomContainer(Scene scene) {
         super(scene);
     }
 

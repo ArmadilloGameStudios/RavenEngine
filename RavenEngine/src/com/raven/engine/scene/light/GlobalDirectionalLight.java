@@ -12,6 +12,7 @@ import java.nio.FloatBuffer;
  */
 public class GlobalDirectionalLight extends Light {
     public Vector3f origin = new Vector3f();
+    public float size = 20f, height = 4f;
 
     private Matrix4f shadowViewMatrix;
     private Matrix4f shadowProjectionMatrix;
@@ -30,6 +31,7 @@ public class GlobalDirectionalLight extends Light {
         this.color = color;
         this.intensity = intensity;
         this.direction = direction;
+        this.size = size;
 
 //        shadowProjectionMatrix = Matrix4f.orthographic(-size, size, -size, size, 1f, 60f);
         shadowProjectionMatrix = new Matrix4f();
@@ -74,9 +76,9 @@ public class GlobalDirectionalLight extends Light {
         shadowViewMatrix.shadowSkew(
                 this.direction,
                 origin,
-                46f, 4f);
+                size, height);
 
-        length = Matrix4f.shadowSkewLength(this.direction, 46f, 4f);
+        length = Matrix4f.shadowSkewLength(this.direction, size, height);
     }
 }
 
