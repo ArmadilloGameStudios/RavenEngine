@@ -181,16 +181,16 @@ public abstract class Scene {
             window.drawQuad();
         }
 
+        // FXAA
+        window.getFXAAShader().useProgram(renderWater);
+        window.drawQuad();
+
         // HUD
         HUDShader hudShader = window.getHUDShader();
         hudShader.useProgram();
         for (HUDContainer o : layerHUD.getChildren()) {
             o.draw(window, hudShader);
         }
-
-        // FXAA
-        window.getFXAAShader().useProgram(renderWater);
-        window.drawQuad();
     }
 
     final public void draw2(GameWindow window) {

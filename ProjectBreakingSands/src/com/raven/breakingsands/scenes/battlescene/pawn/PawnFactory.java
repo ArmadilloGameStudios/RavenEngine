@@ -1,7 +1,7 @@
-package com.raven.breakingsands.scenes.pawn;
+package com.raven.breakingsands.scenes.battlescene.pawn;
 
 import com.raven.breakingsands.Factory;
-import com.raven.breakingsands.scenes.BattleScene;
+import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataQuery;
 

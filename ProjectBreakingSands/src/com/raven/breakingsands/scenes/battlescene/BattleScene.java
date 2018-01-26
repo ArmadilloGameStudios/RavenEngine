@@ -1,10 +1,12 @@
-package com.raven.breakingsands.scenes;
+package com.raven.breakingsands.scenes.battlescene;
 
-import com.raven.breakingsands.scenes.decal.Decal;
-import com.raven.breakingsands.scenes.decal.DecalFactory;
-import com.raven.breakingsands.scenes.pawn.Pawn;
-import com.raven.breakingsands.scenes.pawn.PawnFactory;
-import com.raven.breakingsands.scenes.terrain.Terrain;
+import com.raven.breakingsands.scenes.battlescene.decal.Decal;
+import com.raven.breakingsands.scenes.battlescene.decal.DecalFactory;
+import com.raven.breakingsands.scenes.battlescene.hud.HUDBottomContainer;
+import com.raven.breakingsands.scenes.battlescene.hud.HUDDetailText;
+import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
+import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
+import com.raven.breakingsands.scenes.battlescene.terrain.Terrain;
 import com.raven.engine.GameEngine;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.scene.Scene;
@@ -13,9 +15,8 @@ import com.raven.engine.util.Vector3f;
 import com.raven.engine.util.pathfinding.Path;
 import com.raven.engine.util.pathfinding.PathAdjacentNode;
 import com.raven.engine.util.pathfinding.PathFinder;
-import com.raven.engine.worldobject.HUDContainer;
-import com.raven.engine.worldobject.HUDObject;
 import com.raven.engine.worldobject.Highlight;
+import com.raven.engine.worldobject.TextObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +49,8 @@ public class BattleScene extends Scene {
 
     private List<Pawn> pawns = new ArrayList<>();
     private Pawn activePawn;
+
+    private HUDDetailText hudDetailText;
 
     private State state;
 
@@ -445,6 +448,10 @@ public class BattleScene extends Scene {
 
         HUDBottomContainer bottomContainer = new HUDBottomContainer(this);
         getLayerHUD().addChild(bottomContainer);
+
+        hudDetailText = new HUDDetailText(this);
+
+        bottomContainer.addChild(hudDetailText);
     }
 
     @Override
@@ -597,5 +604,9 @@ public class BattleScene extends Scene {
         }
 
         pathMap.clear();
+    }
+
+    public void setDetailText(TextObject textObject) {
+        hudDetailText.setTexture(textObject);
     }
 }

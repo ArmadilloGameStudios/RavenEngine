@@ -1,6 +1,6 @@
 package com.raven.breakingsands;
 
-import com.raven.breakingsands.scenes.BattleScene;
+import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.engine.Game;
 import com.raven.engine.launcher.GameLauncher;
 import com.raven.engine.scene.Scene;

@@ -1,38 +1,102 @@
 package com.raven.engine.worldobject;
 
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import com.raven.engine.graphics3d.shader.HUDShader;
+import com.raven.engine.util.Vector4f;
+import com.sun.prism.impl.BufferUtil;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.nio.IntBuffer;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.GL_BGR;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 
 public class TextObject {
 	private String text;
-	private int x = 0, y = 0;
 
-	public TextObject() {
-		this("");
-	}
-	
-	public TextObject(String text) {
-		this.text = text;
-	}
-	
-	public void draw(Graphics g, int gx, int gy) {
-		FontMetrics m = g.getFontMetrics();
+	private int width, height, texture;
 
-		int h = m.getHeight();
-		int w = m.stringWidth(text);
+	private BufferedImage img;
 
-		g.drawString(text, gx + x, gy + y + h / 2);
+	private Font font = new Font( "SansSerif", Font.PLAIN, 12 );
+	private Vector4f fontColor, backgroundColor;
+
+	public TextObject(int width, int height) {
+	    this.width = width;
+	    this.height = height;
+
+        img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        // Default Texture
+        glActiveTexture(GL_TEXTURE0 + HUDShader.TEXTURE);
+        texture = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8,
+                width, height,
+                0, GL_BGR, GL_UNSIGNED_BYTE, 0);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+        glActiveTexture(GL_TEXTURE0);
 	}
+
+	public void setFont(Font font) {
+	    this.font = font;
+    }
 
 	public void setText(String text) {
 		this.text = text;
+
+		// Draw Text
+        Graphics2D g = img.createGraphics();
+
+        g.setColor(
+                new Color(
+                        (int)(255 * .25),
+                        (int)(255 * .25),
+                        (int)(255 * .25)));
+        g.fillRect(0,0,width, height);
+
+        g.setColor(Color.WHITE);
+        g.setRenderingHint(
+                RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g.setFont(font);
+
+        String[] lines = this.text.split("\n");
+
+        for (int i = 0; i < lines.length; i++) {
+            g.drawString(lines[i], 4f, 16f * (i + 1));
+        }
+
+        // To Byte Array
+        DataBufferInt dbb = (DataBufferInt)img.getRaster().getDataBuffer();
+        int[] data = dbb.getData();
+        IntBuffer pixels = BufferUtil.newIntBuffer(data.length);
+        pixels.put(data);
+        pixels.flip();
+
+        // Set Texture
+        glActiveTexture(GL_TEXTURE0 + HUDShader.TEXTURE);
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                width, height,
+                0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+        glActiveTexture(GL_TEXTURE0);
 	}
 
-	public void setX(int x) {
-		this.x = x;
-	}
-	
-	public void setY(int y) {
-		this.y = y;
-	}
+	public void draw() {
+	    glActiveTexture(GL_TEXTURE0 + HUDShader.TEXTURE);
+        glBindTexture(GL_TEXTURE_2D, texture);
+    }
 }

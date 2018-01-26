@@ -1,8 +1,8 @@
-package com.raven.breakingsands.scenes.terrain;
+package com.raven.breakingsands.scenes.battlescene.terrain;
 
-import com.raven.breakingsands.scenes.BattleScene;
-import com.raven.breakingsands.scenes.decal.Decal;
-import com.raven.breakingsands.scenes.pawn.Pawn;
+import com.raven.breakingsands.scenes.battlescene.BattleScene;
+import com.raven.breakingsands.scenes.battlescene.decal.Decal;
+import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataList;
@@ -13,6 +13,7 @@ import com.raven.engine.scene.Layer;
 import com.raven.engine.util.pathfinding.PathAdjacentNode;
 import com.raven.engine.util.pathfinding.PathNode;
 import com.raven.engine.worldobject.MouseHandler;
+import com.raven.engine.worldobject.TextObject;
 import com.raven.engine.worldobject.WorldObject;
 
 import java.util.ArrayList;
@@ -37,6 +38,8 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
     private Decal decal;
     private Pawn pawn;
 
+    private TextObject details;
+
     public Terrain(BattleScene scene, String name, int x, int y) {
         super(scene, dataList.queryRandom(new GameDataQuery() {
             @Override
@@ -51,6 +54,10 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
         this.addMouseHandler(this);
 
         this.setState(State.UNSELECTABLE);
+
+        details = new TextObject(85, 85);
+
+        updateText();
     }
 
     @Override
@@ -68,6 +75,8 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
         if (getScene().getState() == BattleScene.State.MOVE) {
             getScene().selectPath(this);
         }
+
+        getScene().setDetailText(details);
     }
 
     @Override
@@ -183,6 +192,8 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
         this.passable = decal.isPassable();
 
         this.addChild(decal);
+
+        updateText();
     }
 
     public void setPawn(Pawn pawn) {
@@ -196,11 +207,15 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
         this.pawn = pawn;
 
         this.addChild(pawn);
+
+        updateText();
     }
 
     public void removePawn() {
         this.removeChild(this.pawn);
         this.pawn = null;
+
+        updateText();
     }
 
     public void setState(State state) {
@@ -253,5 +268,23 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
                 }
                 break;
         }
+    }
+
+    private void updateText() {
+        String text = "";
+
+        if (decal != null) {
+            text += "Terrain:\n" + decal.getDescription();
+        } else {
+            text += "Terrain:\nSand";
+        }
+
+        if (pawn != null) {
+            text += "\n" + pawn.getName();
+        }
+
+        details.setText(text);
+
+        System.out.println(text);
     }
 }
