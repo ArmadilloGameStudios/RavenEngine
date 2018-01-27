@@ -6,24 +6,18 @@ import com.raven.engine.graphics3d.shader.Shader;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Matrix4f;
 import com.raven.engine.util.Vector3f;
-import com.raven.engine.util.Vector4f;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public abstract class WorldObject<
             S extends Scene,
             P extends Parentable<WorldObject>,
             C extends WorldObject>
-        implements Parentable<C>, Childable<P> {
+        extends GameObject<WorldObject, P, C> {
 
-    private static int last_id = 0;
-    private static HashMap<Integer, WorldObject> worldObjectIDMap = new HashMap<>();
-
-    private List<WorldObject> list = new ArrayList();
+    private List<WorldObject> parentList = new ArrayList();
     private S scene;
-    private int id;
 
     private float x, y, z, scale = 1f, rotation = 0f;
     private Matrix4f matrix = new Matrix4f();
@@ -34,8 +28,6 @@ public abstract class WorldObject<
 
     private List<C> children = new ArrayList<>();
     private ModelData model;
-    private boolean mousehovering = false;
-    private List<MouseHandler> clickHandlers = new ArrayList<MouseHandler>();
     private long timeOffset = 0;
     private List<TextObject> textObjects = new ArrayList<TextObject>();
 
@@ -51,10 +43,6 @@ public abstract class WorldObject<
         this.scene = scene;
         this.model = model;
 
-        // click id
-        id = ++last_id;
-        worldObjectIDMap.put(id, this);
-
         // pos
         this.x = x;
         this.y = y;
@@ -62,16 +50,6 @@ public abstract class WorldObject<
 
         resolveMatrix();
     }
-
-    public static void resetObjectIDs() {
-        worldObjectIDMap.clear();
-        last_id = 0;
-    }
-
-    public static WorldObject getWorldObjectFromID(int id) {
-        return worldObjectIDMap.get(id);
-    }
-
     public float getZ() {
         return x;
     }
@@ -171,22 +149,14 @@ public abstract class WorldObject<
         this.visible = visible;
     }
 
-    public void addText(TextObject text) {
-        this.textObjects.add(text);
-    }
-
-    public void removeText(TextObject text) {
-        this.textObjects.remove(text);
-    }
-
     public void draw4ms() {
-        GameEngine.getEngine().getWindow().getWorldMSShader().setWorldObjectID(id);
+        GameEngine.getEngine().getWindow().getWorldMSShader().setWorldObjectID(getID());
 
         model.getModelReference().draw();
     }
 
     public void draw4() {
-        GameEngine.getEngine().getWindow().getWorldShader().setWorldObjectID(id);
+        GameEngine.getEngine().getWindow().getWorldShader().setWorldObjectID(getID());
 
         Shader.setModelMatrix(getModelMatrix());
         model.getModelReference().draw();
@@ -198,7 +168,7 @@ public abstract class WorldObject<
 
     // TODO fix memory
     public void draw4(Matrix4f parentMatrix) {
-        GameEngine.getEngine().getWindow().getWorldShader().setWorldObjectID(id);
+        GameEngine.getEngine().getWindow().getWorldShader().setWorldObjectID(getID());
 
         Shader.setModelMatrix(parentMatrix.multiply(getModelMatrix()));
         model.getModelReference().draw();
@@ -220,15 +190,16 @@ public abstract class WorldObject<
         return parent;
     }
 
-    public List<WorldObject> getParentWorldObjectList() {
-        list.clear();
+    @Override
+    public List<WorldObject> getParentGameObjectList() {
+        parentList.clear();
 
         if (parentIsWorldObject) {
-            list.addAll(((WorldObject) parent).getParentWorldObjectList());
-            list.add((WorldObject) parent);
+            parentList.addAll(((WorldObject) parent).getParentGameObjectList());
+            parentList.add((WorldObject) parent);
         }
 
-        return list;
+        return parentList;
     }
 
     @Override
@@ -250,44 +221,6 @@ public abstract class WorldObject<
 
     public void removeChild(WorldObject child) {
         children.remove(child);
-    }
-
-    public void addMouseHandler(MouseHandler c) {
-        this.clickHandlers.add(c);
-    }
-
-    public boolean isMouseHovering() {
-        return mousehovering;
-    }
-
-    final public void checkMouseMovement(boolean hovering, float delta) {
-        if (!isMouseHovering() && hovering) {
-            mousehovering = hovering;
-            onMouseEnter();
-        } else if (isMouseHovering() && !hovering) {
-            mousehovering = hovering;
-            onMouseLeave();
-        } else if (hovering) {
-            onMouseHover(delta);
-        }
-
-        mousehovering = hovering;
-    }
-
-    final public void onMouseEnter() {
-        for (MouseHandler c : clickHandlers) c.handleMouseEnter();
-    }
-
-    final public void onMouseHover(float delta) {
-        for (MouseHandler c : clickHandlers) c.handleMouseHover(delta);
-    }
-
-    final public void onMouseLeave() {
-        for (MouseHandler c : clickHandlers) c.handleMouseLeave();
-    }
-
-    final public void onMouseClick() {
-        for (MouseHandler c : clickHandlers) c.handleMouseClick();
     }
 
     final public void update(float deltaTime) {

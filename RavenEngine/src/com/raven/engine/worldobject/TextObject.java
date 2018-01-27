@@ -24,7 +24,9 @@ public class TextObject {
 	private BufferedImage img;
 
 	private Font font = new Font( "SansSerif", Font.PLAIN, 12 );
-	private Vector4f fontColor, backgroundColor;
+	private Vector4f
+            fontColor = new Vector4f(1f, 1f, 1f, 1f),
+            backgroundColor = new Vector4f(.25f, .25f, .25f, 1f);
 
 	public TextObject(int width, int height) {
 	    this.width = width;
@@ -39,7 +41,7 @@ public class TextObject {
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8,
                 width, height,
-                0, GL_BGR, GL_UNSIGNED_BYTE, 0);
+                0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -59,12 +61,16 @@ public class TextObject {
 
         g.setColor(
                 new Color(
-                        (int)(255 * .25),
-                        (int)(255 * .25),
-                        (int)(255 * .25)));
+                        (int)(255 * backgroundColor.z),
+                        (int)(255 * backgroundColor.y),
+                        (int)(255 * backgroundColor.x)));
         g.fillRect(0,0,width, height);
 
-        g.setColor(Color.WHITE);
+        g.setColor(
+                new Color(
+                        (int)(255 * fontColor.z),
+                        (int)(255 * fontColor.y),
+                        (int)(255 * fontColor.x)));
         g.setRenderingHint(
                 RenderingHints.KEY_TEXT_ANTIALIASING,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -111,5 +117,9 @@ public class TextObject {
 	public void draw() {
 	    glActiveTexture(GL_TEXTURE0 + HUDShader.TEXTURE);
         glBindTexture(GL_TEXTURE_2D, texture);
+    }
+
+    public void setBackgroundColor(Vector4f backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 }

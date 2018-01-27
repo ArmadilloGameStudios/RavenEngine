@@ -1,6 +1,11 @@
 package com.raven.engine.graphics3d.shader;
 
+import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
+import com.raven.engine.worldobject.WorldObject;
+import org.lwjgl.BufferUtils;
+
+import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -22,10 +27,24 @@ public abstract class LightShader extends Shader {
 
     private static int light_texture;
 
+    private IntBuffer buffers;
+
     public LightShader(String fragment_shader) {
         super("vertex2.glsl", fragment_shader);
 
         if (framebuffer_handel == 0) {
+
+            int bfs[] = {
+                    GL_COLOR_ATTACHMENT0, // Color
+                    GL_COLOR_ATTACHMENT1, // ID
+            };
+
+            buffers = BufferUtils.createIntBuffer(bfs.length);
+            for (int i = 0; i < bfs.length; i++)
+                buffers.put(bfs[i]);
+            buffers.flip();
+
+            // FBO
             framebuffer_handel = glGenFramebuffers();
             glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
 
@@ -46,6 +65,11 @@ public abstract class LightShader extends Shader {
             glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, light_texture, 0);
             glActiveTexture(GL_TEXTURE0);
 
+            // ID
+            glActiveTexture(GL_TEXTURE0 + WorldShader.ID);
+            glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GameEngine.getEngine().getWindow().getWorldShader().getIDTexture(), 0);
+            glActiveTexture(GL_TEXTURE0);
+
             // Draw Buffers
             glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
@@ -63,6 +87,7 @@ public abstract class LightShader extends Shader {
         super.useProgram();
 
         glUseProgram(getProgramHandel());
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
 

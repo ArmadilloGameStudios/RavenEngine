@@ -1,5 +1,6 @@
 package com.raven.engine.worldobject;
 
+import com.raven.engine.Game;
 import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.graphics3d.shader.HUDShader;
 import com.raven.engine.scene.Layer;
@@ -10,12 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class HUDObject<S extends Scene, P extends Parentable<HUDObject>>
-        implements Childable<P>, Parentable<HUDObject> {
+        extends GameObject<HUDObject, P, HUDObject> {
 
     private List<HUDObject> children = new ArrayList<>();
 
     private S scene;
     private P parent;
+    private boolean parentIsHUDObject = false;
 
     public HUDObject(S scene) {
         this.scene = scene;
@@ -38,6 +40,8 @@ public abstract class HUDObject<S extends Scene, P extends Parentable<HUDObject>
 
     @Override
     public void addChild(HUDObject obj) {
+        obj.parentIsHUDObject = true;
+
         obj.setParent(this);
         children.add(obj);
     }
@@ -45,6 +49,19 @@ public abstract class HUDObject<S extends Scene, P extends Parentable<HUDObject>
     @Override
     public List<HUDObject> getChildren() {
         return children;
+    }
+
+    private List<HUDObject> parentList = new ArrayList();
+    @Override
+    public List<HUDObject> getParentGameObjectList() {
+        parentList.clear();
+
+        if (parentIsHUDObject) {
+            parentList.addAll(((HUDObject) parent).getParentGameObjectList());
+            parentList.add((HUDObject) parent);
+        }
+
+        return parentList;
     }
 
     public S getScene() {

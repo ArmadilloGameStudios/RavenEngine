@@ -14,7 +14,7 @@ import com.raven.engine.graphics3d.PlyModelData;
 import com.raven.engine.input.Keyboard;
 import com.raven.engine.input.Mouse;
 import com.raven.engine.scene.Camera;
-import com.raven.engine.worldobject.WorldObject;
+import com.raven.engine.worldobject.GameObject;
 import org.lwjgl.glfw.GLFW;
 
 public class GameEngine implements Runnable {
@@ -40,7 +40,7 @@ public class GameEngine implements Runnable {
     private Game game;
     private Thread thread;
     private GameWindow window;
-    private List<WorldObject> oldMouseList = new ArrayList<>();
+    private List<GameObject> oldMouseList = new ArrayList<>();
     private GameDatabase gdb;
     private Map<String, ModelData> modelDataMap = new HashMap<>();
     private float deltaTime;
@@ -198,7 +198,7 @@ public class GameEngine implements Runnable {
         // render world as input
     }
 
-    private List<WorldObject> newList = new ArrayList();
+    private List<GameObject> newList = new ArrayList();
     private void input(float delta) {
         glfwPollEvents();
 
@@ -211,15 +211,15 @@ public class GameEngine implements Runnable {
         }
 
         if (id != 0) {
-            WorldObject hover = WorldObject.getWorldObjectFromID(id);
+            GameObject hover = GameObject.getGameObjectFromID(id);
 
             newList.clear();
-            newList.addAll(hover.getParentWorldObjectList());
+            newList.addAll(hover.getParentGameObjectList());
             newList.add(hover);
 
             // clicks - might cause a problem with the order of enter and leave
             if (mouse.isLeftButtonClick()) {
-                for (WorldObject o : oldMouseList) {
+                for (GameObject o : oldMouseList) {
                     if (newList.contains(o))
                         o.onMouseClick();
                 }
@@ -228,7 +228,7 @@ public class GameEngine implements Runnable {
             }
 
             // hover
-            for (WorldObject o : oldMouseList) {
+            for (GameObject o : oldMouseList) {
                 if (newList.contains(o))
                     o.checkMouseMovement(true, delta);
                 else {
@@ -236,7 +236,7 @@ public class GameEngine implements Runnable {
                 }
             }
 
-            for (WorldObject o : newList) {
+            for (GameObject o : newList) {
                 if (!oldMouseList.contains(o)) {
                     o.checkMouseMovement(true, delta);
                 }
@@ -245,7 +245,7 @@ public class GameEngine implements Runnable {
             oldMouseList.clear();
             oldMouseList.addAll(newList);
         } else {
-            for (WorldObject o : oldMouseList) {
+            for (GameObject o : oldMouseList) {
                 o.checkMouseMovement(false, delta);
             }
 

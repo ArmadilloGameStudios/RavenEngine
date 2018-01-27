@@ -236,7 +236,12 @@ public class WorldShader extends Shader {
         return depth_texture;
     }
 
+    public int getIDTexture() {
+        return id_texture;
+    }
+
     public int getFramebufferHandel() {
         return framebuffer_handel;
     }
+
 }
