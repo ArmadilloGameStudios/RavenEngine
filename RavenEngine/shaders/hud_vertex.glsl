@@ -12,7 +12,7 @@ out vec2 texture_coords;
 
 void main(void) {
     texture_coords = vec2(vertex_pos.xy + 1) * vec2(1, -1) / 2;
-    texture_coords += .5 / scale * vec2(1, -1); // not sure why this is needed...
+//    texture_coords += .5 / scale * vec2(1, -1); // not sure why this is needed...
 
     switch (style) {
     case 1: // bottom

@@ -1,43 +1,47 @@
-package com.raven.breakingsands.scenes.hud;
+package com.raven.breakingsands.scenes.mainmenuscene;
 
-import com.raven.breakingsands.scenes.battlescene.BattleScene;
-import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
-import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Vector4f;
-import com.raven.engine.worldobject.Childable;
 import com.raven.engine.worldobject.HUDContainer;
+import com.raven.engine.worldobject.HUDText;
+import com.raven.engine.worldobject.TextObject;
 
-public class HUDCenterContainer extends HUDContainer {
+import java.awt.*;
+
+public class ExitButton extends HUDText<MainMenuScene, HUDContainer<MainMenuScene>> {
 
     private float x, y;
 
-    public HUDCenterContainer(Scene scene) {
-        super(scene);
-    }
+    private TextObject text;
 
-    @Override
-    public float getBorder() {
-        return 15f;
+
+    public ExitButton(MainMenuScene scene) {
+        super(scene);
+
+        text = new TextObject((int)getWidth(), (int)getHeight());
+        text.setFont(new Font( "SansSerif", Font.PLAIN, 20));
+        text.setText("Exit");
+
+        this.setTexture(text);
     }
 
     @Override
     public int getStyle() {
-        return 0;
+        return getParent().getStyle();
     }
 
     @Override
     public float getHeight() {
-        return 100f;
+        return 75f;
     }
 
     @Override
     public float getWidth() {
-        return 100f;
+        return 200f;
     }
 
     @Override
     public float getYOffset() {
-        return 500f;
+        return getParent().getYOffset() + y;
     }
 
     @Override
@@ -47,7 +51,7 @@ public class HUDCenterContainer extends HUDContainer {
 
     @Override
     public float getXOffset() {
-        return 0;
+        return getParent().getXOffset() + x;
     }
 
     @Override

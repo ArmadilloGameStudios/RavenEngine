@@ -9,6 +9,8 @@ import java.awt.*;
 
 public class NewGameButton extends HUDText<MainMenuScene, HUDContainer<MainMenuScene>> {
 
+    private float x, y;
+
     private TextObject text;
 
     public NewGameButton(MainMenuScene scene) {
@@ -38,12 +40,22 @@ public class NewGameButton extends HUDText<MainMenuScene, HUDContainer<MainMenuS
 
     @Override
     public float getYOffset() {
-        return getParent().getYOffset();
+        return getParent().getYOffset() + y;
+    }
+
+    @Override
+    public void setYOffset(float y) {
+        this.y = y;
     }
 
     @Override
     public float getXOffset() {
-        return getParent().getXOffset();
+        return getParent().getXOffset() + x;
+    }
+
+    @Override
+    public void setXOffset(float x) {
+        this.x = x;
     }
 
     @Override

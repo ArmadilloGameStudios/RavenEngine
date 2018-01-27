@@ -2,9 +2,15 @@ package com.raven.breakingsands.scenes.hud;
 
 import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Vector4f;
+import com.raven.engine.worldobject.Childable;
 import com.raven.engine.worldobject.HUDContainer;
+import com.raven.engine.worldobject.HUDObject;
+
+import java.util.List;
 
 public class HUDBottomContainer extends HUDContainer {
+
+    private float x, y;
 
     private Vector4f color = new Vector4f(.25f,.25f,.25f,.5f);
 
@@ -13,23 +19,28 @@ public class HUDBottomContainer extends HUDContainer {
     }
 
     @Override
-    public float getHeight() {
-        return 100f;
-    }
-
-    @Override
-    public float getWidth() {
-        return 100f;
+    public float getBorder() {
+        return 5f;
     }
 
     @Override
     public float getXOffset() {
-        return 0f;
+        return x;
+    }
+
+    @Override
+    public void setXOffset(float x) {
+        this.x = x;
     }
 
     @Override
     public float getYOffset() {
-        return getHeight();
+        return getHeight() + y;
+    }
+
+    @Override
+    public void setYOffset(float y) {
+        this.y = y;
     }
 
     @Override

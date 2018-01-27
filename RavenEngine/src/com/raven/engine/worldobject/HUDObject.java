@@ -68,7 +68,11 @@ public abstract class HUDObject<S extends Scene, P extends Parentable<HUDObject>
 
     public abstract float getYOffset();
 
+    public abstract void setYOffset(float y);
+
     public abstract float getXOffset();
+
+    public abstract void setXOffset(float x);
 
     public abstract Vector4f getColor();
 

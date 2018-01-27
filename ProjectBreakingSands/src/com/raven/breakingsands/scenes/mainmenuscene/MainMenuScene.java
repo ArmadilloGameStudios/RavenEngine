@@ -8,6 +8,8 @@ import com.raven.engine.scene.Camera;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.scene.light.GlobalDirectionalLight;
 import com.raven.engine.util.Vector3f;
+import com.raven.engine.worldobject.Childable;
+import com.raven.engine.worldobject.Parentable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,14 +21,14 @@ public class MainMenuScene extends Scene {
     private Terrain[][] terrain;
     private GlobalDirectionalLight sunLight;
 
-    private Pawn pawn;
+    private DisplayPawn pawn;
 
     @Override
     public List<ModelData> getSceneModels() {
         List<ModelData> modelDataList = new ArrayList<>();
 
         modelDataList.addAll(Terrain.getModelData());
-        modelDataList.addAll(Pawn.getModelData());
+        modelDataList.addAll(DisplayPawn.getModelData());
 
         return modelDataList;
     }
@@ -59,7 +61,7 @@ public class MainMenuScene extends Scene {
         addLight(sunLight);
 
         // Pawn
-        pawn = new Pawn(this);
+        pawn = new DisplayPawn(this);
         getLayerDetails().addChild(pawn);
 
         // Background
@@ -71,6 +73,9 @@ public class MainMenuScene extends Scene {
 
         NewGameButton newGameBtn = new NewGameButton(this);
         container.addChild(newGameBtn);
+
+        ExitButton exitBtn = new ExitButton(this);
+        container.addChild(exitBtn);
     }
 
     @Override

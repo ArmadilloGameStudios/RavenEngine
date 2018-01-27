@@ -11,7 +11,7 @@ import com.raven.engine.worldobject.WorldObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pawn extends WorldObject<MainMenuScene, Terrain, WorldObject> {
+public class DisplayPawn extends WorldObject<MainMenuScene, Terrain, WorldObject> {
     private static GameDataList dataList = GameDatabase.all("pawn");
 
     public static List<ModelData> getModelData() {
@@ -24,7 +24,7 @@ public class Pawn extends WorldObject<MainMenuScene, Terrain, WorldObject> {
         return data;
     }
 
-    public Pawn(MainMenuScene scene) {
+    public DisplayPawn(MainMenuScene scene) {
         super(scene, dataList.queryRandom(new GameDataQuery() {
             @Override
             public boolean matches(GameData row) {

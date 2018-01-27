@@ -7,6 +7,8 @@ import com.raven.engine.worldobject.HUDText;
 
 public class HUDDetailText extends HUDText<BattleScene, HUDContainer<BattleScene>> {
 
+    private float x, y;
+
     private Vector4f color = new Vector4f();
 
     public HUDDetailText(BattleScene scene) {
@@ -30,12 +32,22 @@ public class HUDDetailText extends HUDText<BattleScene, HUDContainer<BattleScene
 
     @Override
     public float getYOffset() {
-        return getParent().getYOffset();
+        return getParent().getYOffset() + y;
+    }
+
+    @Override
+    public void setYOffset(float y) {
+        this.y = y;
     }
 
     @Override
     public float getXOffset() {
-        return getParent().getXOffset();
+        return getParent().getXOffset() + x;
+    }
+
+    @Override
+    public void setXOffset(float x) {
+        this.x = x;
     }
 
     @Override
