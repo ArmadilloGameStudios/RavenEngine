@@ -53,6 +53,11 @@ public class Camera {
                 -zoom * .001f;
     }
 
+    public void setPosition(float x, float y) {
+        this.x = -x;
+        this.y = -y;
+    }
+
     public void setHeight(float height) {
         this.height = height;
     }

@@ -24,7 +24,6 @@ public class ModelData {
 
         // delete the list
         vertexList.clear();
-        vertexList = null;
     }
 
     public ModelReference getModelReference() {

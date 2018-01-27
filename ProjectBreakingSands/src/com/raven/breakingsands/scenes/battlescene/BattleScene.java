@@ -9,6 +9,7 @@ import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.breakingsands.scenes.battlescene.terrain.Terrain;
 import com.raven.engine.GameEngine;
 import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.scene.Camera;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.scene.light.GlobalDirectionalLight;
 import com.raven.engine.util.Vector3f;
@@ -539,6 +540,9 @@ public class BattleScene extends Scene {
 
     public void setActivePawn(Pawn pawn) {
         this.activePawn = pawn;
+
+        Camera camera = getCamera();
+        camera.setPosition(pawn.getParent().getX(), pawn.getParent().getZ());
     }
 
     public Pawn getActivePawn() {

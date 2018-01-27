@@ -51,7 +51,7 @@ public abstract class WorldObject<
         resolveMatrix();
     }
     public float getZ() {
-        return x;
+        return z;
     }
 
     public void setZ(float z) {
