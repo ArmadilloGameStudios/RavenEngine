@@ -324,4 +324,6 @@ public abstract class Scene<G extends Game> {
     public boolean isPaused() {
         return paused;
     }
+
+    public abstract void inputKey(int key, int action, int mods);
 }

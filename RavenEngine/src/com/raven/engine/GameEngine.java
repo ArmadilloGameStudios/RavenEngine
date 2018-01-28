@@ -299,9 +299,7 @@ public class GameEngine<G extends Game> implements Runnable {
     }
 
     public void inputKey(int key, int action, int mods) {
-        if (GLFW.GLFW_KEY_ESCAPE == key && GLFW.GLFW_PRESS == action) {
-            this.breakThread();
-        }
+        game.getCurrentScene().inputKey(key, action, mods);
     }
 
     public void inputScroll(double xoffset, double yoffset) {

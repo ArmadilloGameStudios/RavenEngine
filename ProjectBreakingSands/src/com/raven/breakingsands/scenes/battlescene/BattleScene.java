@@ -22,6 +22,7 @@ import com.raven.engine.util.pathfinding.PathAdjacentNode;
 import com.raven.engine.util.pathfinding.PathFinder;
 import com.raven.engine.worldobject.Highlight;
 import com.raven.engine.worldobject.TextObject;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             YELLOW_CHANGING = new Highlight(1f, .8f, .2f, .5f),
             GREEN = new Highlight(.3f, 1f, .2f, .75f),
             GREEN_CHANGING = new Highlight(.3f, 1f, .2f, .5f);
+    private Menu menu;
 
     public enum State {
         MOVING, MOVE
@@ -77,6 +79,19 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         models.addAll(Pawn.getModelData());
 
         return models;
+    }
+
+    @Override
+    public void inputKey(int key, int action, int mods) {
+        if (GLFW.GLFW_KEY_ESCAPE == key && GLFW.GLFW_PRESS == action) {
+            if (isPaused()) {
+                menu.setVisibility(false);
+                setPaused(false);
+            } else {
+                menu.setVisibility(true);
+                setPaused(true);
+            }
+        }
     }
 
     @Override
@@ -468,10 +483,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         setDetailText(activePawn.getParent().getDetailText());
 
         // Menu
-        Menu menu = new Menu(this);
+        menu = new Menu(this);
         getLayerHUD().addChild(menu);
-
-        setPaused(true);
+        menu.setVisibility(false);
     }
 
     @Override

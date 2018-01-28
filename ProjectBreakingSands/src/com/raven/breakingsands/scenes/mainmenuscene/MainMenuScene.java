@@ -7,6 +7,7 @@ import com.raven.engine.scene.Camera;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.scene.light.GlobalDirectionalLight;
 import com.raven.engine.util.Vector3f;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,5 +86,12 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
     @Override
     public void onUpdate(float deltaTime) {
         pawn.setRotation(pawn.getRotation() + deltaTime * .01f);
+    }
+
+    @Override
+    public void inputKey(int key, int action, int mods) {
+        if (GLFW.GLFW_KEY_ESCAPE == key && GLFW.GLFW_PRESS == action) {
+            getGame().exit();
+        }
     }
 }
