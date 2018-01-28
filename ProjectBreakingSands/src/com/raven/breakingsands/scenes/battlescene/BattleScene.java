@@ -58,7 +58,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private HUDDetailText hudDetailText;
 
     private State state;
-    private boolean paused;
 
     private int size = 32;
 
@@ -162,36 +161,36 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         terrain[8][12].setDecal(decal);
 
         decal = f.getInstance();
-        terrain[7][8+8].setDecal(decal);
+        terrain[7][8 + 8].setDecal(decal);
 
         decal = f.getInstance();
-        terrain[7][9+8].setDecal(decal);
+        terrain[7][9 + 8].setDecal(decal);
 
         decal = f.getInstance();
-        terrain[7][10+8].setDecal(decal);
+        terrain[7][10 + 8].setDecal(decal);
 
         decal = f.getInstance();
-        terrain[7][11+8].setDecal(decal);
-
-        decal = f.getInstance();
-        decal.setRotation(180);
-        terrain[9][8+8].setDecal(decal);
+        terrain[7][11 + 8].setDecal(decal);
 
         decal = f.getInstance();
         decal.setRotation(180);
-        terrain[9][9+8].setDecal(decal);
+        terrain[9][8 + 8].setDecal(decal);
 
         decal = f.getInstance();
         decal.setRotation(180);
-        terrain[9][10+8].setDecal(decal);
+        terrain[9][9 + 8].setDecal(decal);
 
         decal = f.getInstance();
         decal.setRotation(180);
-        terrain[9][11+8].setDecal(decal);
+        terrain[9][10 + 8].setDecal(decal);
+
+        decal = f.getInstance();
+        decal.setRotation(180);
+        terrain[9][11 + 8].setDecal(decal);
 
         decal = f.getInstance();
         decal.setRotation(270);
-        terrain[8][7+8].setDecal(decal);
+        terrain[8][7 + 8].setDecal(decal);
 
         decal = f.getInstance();
         decal.setRotation(180);
@@ -203,7 +202,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         decal = f.getInstance();
         decal.setRotation(90);
-        terrain[8][12+8].setDecal(decal);
+        terrain[8][12 + 8].setDecal(decal);
 
         f.clear();
 
@@ -228,19 +227,19 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         terrain[9][12].setDecal(decal);
 
         decal = f.getInstance();
-        terrain[7][7+8].setDecal(decal);
+        terrain[7][7 + 8].setDecal(decal);
 
         decal = f.getInstance();
         decal.setRotation(270);
-        terrain[9][7+8].setDecal(decal);
+        terrain[9][7 + 8].setDecal(decal);
 
         decal = f.getInstance();
         decal.setRotation(90);
-        terrain[7][12+8].setDecal(decal);
+        terrain[7][12 + 8].setDecal(decal);
 
         decal = f.getInstance();
         decal.setRotation(180);
-        terrain[9][12+8].setDecal(decal);
+        terrain[9][12 + 8].setDecal(decal);
 
         decal = f.getInstance();
         terrain[19][18].setDecal(decal);
@@ -291,16 +290,16 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         terrain[8][11].setDecal(decal);
 
         decal = f.getInstance();
-        terrain[8][8+8].setDecal(decal);
+        terrain[8][8 + 8].setDecal(decal);
 
         decal = f.getInstance();
-        terrain[8][9+8].setDecal(decal);
+        terrain[8][9 + 8].setDecal(decal);
 
         decal = f.getInstance();
-        terrain[8][10+8].setDecal(decal);
+        terrain[8][10 + 8].setDecal(decal);
 
         decal = f.getInstance();
-        terrain[8][11+8].setDecal(decal);
+        terrain[8][11 + 8].setDecal(decal);
 
         decal = f.getInstance();
         terrain[20][8].setDecal(decal);
@@ -466,9 +465,13 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         bottomContainer.addChild(hudDetailText);
 
+        setDetailText(activePawn.getParent().getDetailText());
+
         // Menu
         Menu menu = new Menu(this);
         getLayerHUD().addChild(menu);
+
+        setPaused(true);
     }
 
     @Override
@@ -478,7 +481,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     @Override
     public void onUpdate(float deltaTime) {
-        float a = (float)(Math.cos(GameEngine.getEngine().getSystemTime() * .004) * .075 + .3);
+        float a = (float) (Math.cos(GameEngine.getEngine().getSystemTime() * .004) * .075 + .3);
 
         BLUE_CHANGING.a = RED_CHANGING.a = GREEN_CHANGING.a = YELLOW_CHANGING.a = a;
 
@@ -594,14 +597,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public State getState() {
         return state;
-    }
-
-    public void setPaused(boolean paused) {
-        this.paused = paused;
-    }
-
-    public boolean getPaused() {
-        return paused;
     }
 
     public void selectPath(Terrain t) {

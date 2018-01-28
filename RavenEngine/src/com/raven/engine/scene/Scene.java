@@ -10,7 +10,6 @@ import com.raven.engine.graphics3d.shader.*;
 import com.raven.engine.scene.light.Light;
 import com.raven.engine.util.Vector3f;
 import com.raven.engine.worldobject.HUDContainer;
-import com.raven.engine.worldobject.HUDObject;
 import com.raven.engine.worldobject.WorldObject;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -19,14 +18,14 @@ import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL30.*;
 
 public abstract class Scene<G extends Game> {
-    private Layer<WorldObject> layerTerrain = new Layer(Layer.Destination.Terrain);
-    private Layer<WorldObject> layerWater = new Layer(Layer.Destination.Water);
-    private Layer<WorldObject> layerDetails = new Layer(Layer.Destination.Details);
-    private Layer<HUDContainer> layerHUD = new Layer(Layer.Destination.HUD);
+    private Layer<WorldObject> layerTerrain = new Layer<>(Layer.Destination.Terrain);
+    private Layer<WorldObject> layerWater = new Layer<>(Layer.Destination.Water);
+    private Layer<WorldObject> layerDetails = new Layer<>(Layer.Destination.Details);
+    private Layer<HUDContainer> layerHUD = new Layer<>(Layer.Destination.HUD);
 
     private Vector3f backgroundColor;
 
-    private boolean renderWater = false;
+    private boolean renderWater = false, paused = false;
 
     private G game;
 
@@ -245,11 +244,15 @@ public abstract class Scene<G extends Game> {
     final public void update(float deltaTime) {
         camera.update(deltaTime);
 
-        onUpdate(deltaTime);
+        if (!isPaused()) {
+            onUpdate(deltaTime);
 
-        layerTerrain.update(deltaTime);
-        layerWater.update(deltaTime);
-        layerDetails.update(deltaTime);
+            layerTerrain.update(deltaTime);
+            layerWater.update(deltaTime);
+            layerDetails.update(deltaTime);
+        }
+
+        layerHUD.update(deltaTime);
     }
 
     final public Layer<WorldObject> getLayerTerrain() {
@@ -310,5 +313,15 @@ public abstract class Scene<G extends Game> {
 
     public G getGame() {
         return game;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+
+        camera.setInteractable(!paused);
+    }
+
+    public boolean isPaused() {
+        return paused;
     }
 }

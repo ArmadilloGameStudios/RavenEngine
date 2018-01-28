@@ -83,11 +83,13 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
 
     @Override
     public void handleMouseEnter() {
-        if (getScene().getState() == BattleScene.State.MOVE) {
-            getScene().selectPath(this);
-        }
+        if (!getScene().isPaused()) {
+            if (getScene().getState() == BattleScene.State.MOVE) {
+                getScene().selectPath(this);
+            }
 
-        getScene().setDetailText(details);
+            getScene().setDetailText(details);
+        }
     }
 
     @Override
@@ -233,6 +235,10 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
         }
 
         selectHighlight();
+    }
+
+    public TextObject getDetailText() {
+        return details;
     }
 
     private void selectHighlight() {
