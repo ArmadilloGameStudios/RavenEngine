@@ -73,7 +73,8 @@ public abstract class HUDObject<S extends Scene, P extends Parentable<HUDObject>
         window.drawQuad();
 
         for (HUDObject o : this.getChildren()) {
-            o.draw(window, shader);
+            if (o.getVisibility())
+                o.draw(window, shader);
         }
     }
 

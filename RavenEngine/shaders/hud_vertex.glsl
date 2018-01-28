@@ -12,7 +12,6 @@ out vec2 texture_coords;
 
 void main(void) {
     texture_coords = vec2(vertex_pos.xy + 1) * vec2(1, -1) / 2;
-//    texture_coords += .5 / scale * vec2(1, -1); // not sure why this is needed...
 
     switch (style) {
     case 1: // bottom
@@ -20,7 +19,8 @@ void main(void) {
         break;
     case 0: // center
     default:
-        gl_Position = vec4(vertex_pos.xy * scale / size, z, 1.0);
+        texture_coords += .5 / scale * vec2(1, -1); // not sure why this is needed...
+        gl_Position = vec4(vertex_pos.xy * scale / size + offset / size, z, 1.0);
         break;
     }
 }

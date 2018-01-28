@@ -8,6 +8,8 @@ import java.util.List;
 public abstract class HUDContainer<S extends Scene>
         extends HUDObject<S, Layer<HUDObject>> {
 
+    public static final int CENTER = 0, BOTTOM = 1;
+
     private float width, height;
 
     @Override
@@ -30,25 +32,52 @@ public abstract class HUDContainer<S extends Scene>
     public void addChild(HUDObject child) {
         super.addChild(child);
 
-        width = getBorder();
-        height = 0f;
+        switch (getStyle()) {
+            case BOTTOM: // bottom
+                width = getBorder();
+                height = 0f;
 
-        List<HUDObject> children = this.getChildren();
+                List<HUDObject> children = this.getChildren();
 
-        for (HUDObject obj : children) {
-            height = Math.max(obj.getHeight() + getBorder() * 2f, height);
-            width += getBorder() + obj.getWidth();
-        }
+                for (HUDObject obj : children) {
+                    height = Math.max(obj.getHeight() + getBorder() * 2f, height);
+                    width += getBorder() + obj.getWidth();
+                }
 
-        // Get Offset
-        float offset = 0f;
+                // Get Offset
+                float offset = 0f;
 
-        for (int i = 0; i < children.size(); i++) {
-            HUDObject obj = children.get(i);
+                for (int i = 0; i < children.size(); i++) {
+                    HUDObject obj = children.get(i);
 
-            obj.setXOffset(getBorder() * 2f + getBorder() * i * 2f - width + obj.getWidth() + offset);
+                    obj.setXOffset(getBorder() * 2f + getBorder() * i * 2f - width + obj.getWidth() + offset);
 
-            offset += obj.getWidth() * 2f;
+                    offset += obj.getWidth() * 2f;
+                }
+                break;
+            case CENTER: // center
+            default:
+                width = 0f;
+                height = getBorder();
+
+                children = this.getChildren();
+
+                for (HUDObject obj : children) {
+                    width = Math.max(obj.getWidth() + getBorder() * 2f, width);
+                    height += getBorder() + obj.getHeight();
+                }
+
+                // Get Offset
+                offset = 0f;
+
+                for (int i = 0; i < children.size(); i++) {
+                    HUDObject obj = children.get(i);
+
+                    obj.setYOffset(-(getBorder() * 2f + getBorder() * i * 2f - height + obj.getHeight() + offset));
+
+                    offset += obj.getHeight() * 2f;
+                }
+                break;
         }
     }
 }

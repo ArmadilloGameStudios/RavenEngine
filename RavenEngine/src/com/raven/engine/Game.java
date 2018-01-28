@@ -5,21 +5,25 @@ import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.ModelReference;
 import com.raven.engine.scene.Scene;
 
-public abstract class Game {
-	private GameEngine engine;
-	private Scene currentScene;
-	private Scene readyTransitionScene;
-	private boolean isrunning = false;
+import java.util.List;
+
+public abstract class Game<G extends Game> {
+	private GameEngine<G> engine;
+
+	private Scene<G> currentScene;
+	private Scene<G> readyTransitionScene;
+
+	private boolean isRunning = false;
 
 	public Game() {
-		isrunning = true;
+		isRunning = true;
 	}
 
-	public GameEngine getEngine() {
+	public GameEngine<G> getEngine() {
 		return engine;
 	}
 
-	public void setEngine(GameEngine engine) {
+	public void setEngine(GameEngine<G> engine) {
 		this.engine = engine;
 	}
 
@@ -54,7 +58,8 @@ public abstract class Game {
 
 		ModelReference.clearBuffers();
 		ModelReference.loadBlankModel();
-		for (ModelData md : scene.getSceneModels()) {
+		List<ModelData> sceneModels = scene.getSceneModels();
+		for (ModelData md : sceneModels) {
 			ModelReference.load(md);
 		}
 		ModelReference.compileBuffer();
@@ -69,12 +74,18 @@ public abstract class Game {
 	}
 
 	final public boolean isRunning() {
-		return isrunning;
+		return isRunning;
 	}
 
 	final protected void setRunning(boolean running) {
-		this.isrunning = running;
+		this.isRunning = running;
 	}
+
+	final public void exit() {
+	    currentScene.exitScene();
+	    isRunning = false;
+	    breakdown();
+    }
 
 	abstract public void setup();
 

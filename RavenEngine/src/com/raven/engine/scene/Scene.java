@@ -3,6 +3,7 @@ package com.raven.engine.scene;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.raven.engine.Game;
 import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.shader.*;
@@ -17,7 +18,7 @@ import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL30.*;
 
-public abstract class Scene {
+public abstract class Scene<G extends Game> {
     private Layer<WorldObject> layerTerrain = new Layer(Layer.Destination.Terrain);
     private Layer<WorldObject> layerWater = new Layer(Layer.Destination.Water);
     private Layer<WorldObject> layerDetails = new Layer(Layer.Destination.Details);
@@ -27,11 +28,15 @@ public abstract class Scene {
 
     private boolean renderWater = false;
 
+    private G game;
+
     private Camera camera;
 
     private List<Light> lights = new ArrayList<>();
 
-    public Scene() {
+    public Scene(G game) {
+        this.game = game;
+
         camera = new Camera();
     }
 
@@ -122,15 +127,17 @@ public abstract class Scene {
         worldShader.useProgram(backgroundColor);
 
         for (WorldObject o : layerDetails.getChildren()) {
-            worldShader.setHighlight(o.getHighlight());
-
-            o.draw4();
+            if (o.getVisibility()) {
+                worldShader.setHighlight(o.getHighlight());
+                o.draw4();
+            }
         }
 
         for (WorldObject o : layerTerrain.getChildren()) {
-            worldShader.setHighlight(o.getHighlight());
-
-            o.draw4();
+            if (o.getVisibility()) {
+                worldShader.setHighlight(o.getHighlight());
+                o.draw4();
+            }
         }
 
         // Lights
@@ -150,11 +157,13 @@ public abstract class Scene {
                     shadowShader.useProgram();
 
                     for (WorldObject o : layerDetails.getChildren()) {
-                        o.draw4();
+                        if (o.getVisibility())
+                            o.draw4();
                     }
 
                     for (WorldObject o : layerTerrain.getChildren()) {
-                        o.draw4();
+                        if (o.getVisibility())
+                            o.draw4();
                     }
 
                     // Draw the light
@@ -170,7 +179,8 @@ public abstract class Scene {
             waterShader.useProgram();
 
             for (WorldObject o : layerWater.getChildren()) {
-                o.draw4();
+                if (o.getVisibility())
+                    o.draw4();
             }
 
             // Combine
@@ -188,7 +198,8 @@ public abstract class Scene {
         HUDShader hudShader = window.getHUDShader();
         hudShader.useProgram();
         for (HUDContainer o : layerHUD.getChildren()) {
-            o.draw(window, hudShader);
+            if (o.getVisibility())
+                o.draw(window, hudShader);
         }
 
         // FXAA
@@ -295,5 +306,9 @@ public abstract class Scene {
 
     public void setBackgroundColor(Vector3f color) {
         backgroundColor = color;
+    }
+
+    public G getGame() {
+        return game;
     }
 }

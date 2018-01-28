@@ -17,11 +17,11 @@ import com.raven.engine.scene.Camera;
 import com.raven.engine.worldobject.GameObject;
 import org.lwjgl.glfw.GLFW;
 
-public class GameEngine implements Runnable {
+public class GameEngine<G extends Game> implements Runnable {
     private static GameEngine engine;
 
-    public static GameEngine Launch(Game game) {
-        GameEngine engine = new GameEngine(game);
+    public static <G extends Game> GameEngine Launch(G game) {
+        GameEngine<G> engine = new GameEngine<>(game);
 
         GameEngine.engine = engine;
 
@@ -37,7 +37,7 @@ public class GameEngine implements Runnable {
         return engine;
     }
 
-    private Game game;
+    private G game;
     private Thread thread;
     private GameWindow window;
     private List<GameObject> oldMouseList = new ArrayList<>();
@@ -53,11 +53,11 @@ public class GameEngine implements Runnable {
         return thread;
     }
 
-    public Game getGame() {
+    public G getGame() {
         return game;
     }
 
-    private GameEngine(Game game) {
+    private GameEngine(G game) {
         this.game = game;
 
         game.setEngine(this);

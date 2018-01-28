@@ -1,27 +1,26 @@
 package com.raven.breakingsands.scenes.mainmenuscene;
 
-import com.raven.breakingsands.scenes.battlescene.decal.Decal;
+import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.scenes.hud.HUDBottomContainer;
-import com.raven.breakingsands.scenes.mainmenuscene.Terrain;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.scene.Camera;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.scene.light.GlobalDirectionalLight;
 import com.raven.engine.util.Vector3f;
-import com.raven.engine.worldobject.Childable;
-import com.raven.engine.worldobject.Parentable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainMenuScene extends Scene {
+public class MainMenuScene extends Scene<BreakingSandsGame> {
 
     private float zoom = -4f;
-    private int size = 9;
-    private Terrain[][] terrain;
     private GlobalDirectionalLight sunLight;
 
     private DisplayPawn pawn;
+
+    public MainMenuScene(BreakingSandsGame game) {
+        super(game);
+    }
 
     @Override
     public List<ModelData> getSceneModels() {

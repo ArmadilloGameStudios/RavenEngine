@@ -3,19 +3,20 @@ package com.raven.breakingsands;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
 import com.raven.engine.Game;
+import com.raven.engine.GameEngine;
 import com.raven.engine.launcher.GameLauncher;
 import com.raven.engine.scene.Scene;
 
-public class BreakingSandsGame extends Game {
+public class BreakingSandsGame extends Game<BreakingSandsGame> {
 
     public static void main(String[] args) {
         GameLauncher.Open(new BreakingSandsGame());
         System.out.println("Lunched");
+
     }
 
     @Override
     public void setup() {
-
     }
 
     @Override
@@ -25,7 +26,7 @@ public class BreakingSandsGame extends Game {
 
     @Override
     public Scene loadInitialScene() {
-        return new MainMenuScene();
+        return new MainMenuScene(this);
     }
 
     @Override

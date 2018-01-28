@@ -141,14 +141,6 @@ public abstract class WorldObject<
         return highlight;
     }
 
-    public boolean getVisibility() {
-        return this.visible;
-    }
-
-    public void setVisibility(boolean visible) {
-        this.visible = visible;
-    }
-
     public void draw4ms() {
         GameEngine.getEngine().getWindow().getWorldMSShader().setWorldObjectID(getID());
 

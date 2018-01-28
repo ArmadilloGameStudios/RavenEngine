@@ -28,7 +28,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  */
 public class GameLauncher {
 
-    public static void Open(Game game) {
+    public static <G extends Game> void Open(G game) {
 
         if (isOpenGL4Supported()) {
             OpenAdvanced(game);
@@ -38,13 +38,13 @@ public class GameLauncher {
     }
 
     // OpenGL 2.0
-    private static void OpenBasic(Game game) {
+    private static <G extends Game> void OpenBasic(G game) {
         GameProperties.setSupportsOpenGL4(false);
         GameEngine.Launch(game);
     }
 
     // OpenGL 4.0
-    private static void OpenAdvanced(Game game) {
+    private static <G extends Game> void OpenAdvanced(G game) {
         // Doesn't work on linux and nvidia
         GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] devices = g.getScreenDevices();

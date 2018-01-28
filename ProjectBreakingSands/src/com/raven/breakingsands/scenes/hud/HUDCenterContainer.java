@@ -7,17 +7,17 @@ import com.raven.engine.util.Vector4f;
 import com.raven.engine.worldobject.Childable;
 import com.raven.engine.worldobject.HUDContainer;
 
-public class HUDCenterContainer extends HUDContainer {
+public abstract class HUDCenterContainer<S extends Scene> extends HUDContainer<S> {
 
     private float x, y;
 
-    public HUDCenterContainer(Scene scene) {
+    public HUDCenterContainer(S scene) {
         super(scene);
     }
 
     @Override
     public float getBorder() {
-        return 15f;
+        return 5f;
     }
 
     @Override
@@ -26,18 +26,8 @@ public class HUDCenterContainer extends HUDContainer {
     }
 
     @Override
-    public float getHeight() {
-        return 100f;
-    }
-
-    @Override
-    public float getWidth() {
-        return 100f;
-    }
-
-    @Override
     public float getYOffset() {
-        return 500f;
+        return y;
     }
 
     @Override
@@ -47,7 +37,7 @@ public class HUDCenterContainer extends HUDContainer {
 
     @Override
     public float getXOffset() {
-        return 0;
+        return x;
     }
 
     @Override
@@ -56,12 +46,7 @@ public class HUDCenterContainer extends HUDContainer {
     }
 
     @Override
-    public Vector4f getColor() {
-        return null;
-    }
-
-    @Override
     public boolean doBlend() {
-        return false;
+        return true;
     }
 }

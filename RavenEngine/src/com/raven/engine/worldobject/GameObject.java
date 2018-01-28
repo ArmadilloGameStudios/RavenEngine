@@ -9,6 +9,7 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
 
     private static int last_id = 0;
     private static HashMap<Integer, GameObject> gameObjectIDMap = new HashMap<>();
+    private boolean visibility = true;
 
     public static void resetObjectIDs() {
         gameObjectIDMap.clear();
@@ -72,4 +73,12 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
     }
 
     public abstract List<GO> getParentGameObjectList();
+
+    public boolean getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(boolean visibility) {
+        this.visibility = visibility;
+    }
 }

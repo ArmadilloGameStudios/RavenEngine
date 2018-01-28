@@ -83,7 +83,7 @@ public class ExitButton extends HUDText<MainMenuScene, HUDContainer<MainMenuScen
 
     @Override
     public void handleMouseClick() {
-        GameEngine.getEngine().breakThread();
+        getScene().getGame().exit();
     }
 
     @Override

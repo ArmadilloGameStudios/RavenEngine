@@ -1,8 +1,12 @@
 package com.raven.breakingsands.scenes.battlescene;
 
+import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.scenes.battlescene.decal.Decal;
 import com.raven.breakingsands.scenes.battlescene.decal.DecalFactory;
+import com.raven.breakingsands.scenes.battlescene.menu.Menu;
+import com.raven.breakingsands.scenes.battlescene.menu.MenuButton;
 import com.raven.breakingsands.scenes.hud.HUDBottomContainer;
+import com.raven.breakingsands.scenes.hud.HUDCenterContainer;
 import com.raven.breakingsands.scenes.hud.HUDDetailText;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
@@ -23,7 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class BattleScene extends Scene {
+public class BattleScene extends Scene<BreakingSandsGame> {
     public static Highlight
             OFF = new Highlight(),
             BLUE = new Highlight(.2f, .6f, 1f, .75f),
@@ -54,11 +58,12 @@ public class BattleScene extends Scene {
     private HUDDetailText hudDetailText;
 
     private State state;
+    private boolean paused;
 
     private int size = 32;
 
-    public BattleScene() {
-        super();
+    public BattleScene(BreakingSandsGame game) {
+        super(game);
 
         sunLight = new GlobalDirectionalLight();
     }
@@ -444,6 +449,7 @@ public class BattleScene extends Scene {
 
         terrain[29][27].setPawn(p);
 
+        // Pawn
         p = pf.getInstance();
         pawns.add(p);
 
@@ -452,12 +458,17 @@ public class BattleScene extends Scene {
         setActivePawn(p);
         setState(State.MOVE);
 
+        // Bottom HUD
         HUDBottomContainer bottomContainer = new HUDBottomContainer(this);
         getLayerHUD().addChild(bottomContainer);
 
         hudDetailText = new HUDDetailText(this);
 
         bottomContainer.addChild(hudDetailText);
+
+        // Menu
+        Menu menu = new Menu(this);
+        getLayerHUD().addChild(menu);
     }
 
     @Override
@@ -583,6 +594,14 @@ public class BattleScene extends Scene {
 
     public State getState() {
         return state;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    public boolean getPaused() {
+        return paused;
     }
 
     public void selectPath(Terrain t) {
