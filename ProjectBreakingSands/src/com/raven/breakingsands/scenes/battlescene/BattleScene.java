@@ -27,6 +27,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class BattleScene extends Scene<BreakingSandsGame> {
     public static Highlight
@@ -42,10 +43,13 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private Menu menu;
 
     public enum State {
-        MOVING, MOVE
+        MOVING, MOVE_AI, MOVE
     }
 
+    private Random random = new Random();
+
     private GlobalDirectionalLight sunLight;
+    private int size = 32;
     private Terrain[][] terrain;
 
     private HashMap<Terrain, Path<Terrain>> pathMap;
@@ -60,8 +64,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private HUDDetailText hudDetailText;
 
     private State state;
-
-    private int size = 32;
 
     public BattleScene(BreakingSandsGame game) {
         super(game);
@@ -435,8 +437,29 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         decal.setRotation(90);
         terrain[20][11].setDecal(decal);
 
-        // pawn
+        // Pawns
+        addPawns();
+
+        // Bottom HUD
+        HUDBottomContainer bottomContainer = new HUDBottomContainer(this);
+        getLayerHUD().addChild(bottomContainer);
+
+        hudDetailText = new HUDDetailText(this);
+
+        bottomContainer.addChild(hudDetailText);
+
+        setDetailText(activePawn.getParent().getDetailText());
+
+        // Menu
+        menu = new Menu(this);
+        getLayerHUD().addChild(menu);
+        menu.setVisibility(false);
+    }
+
+    private void addPawns() {
         PawnFactory pf = new PawnFactory(this);
+        pf.setName("Player");
+        pf.setTeam(0);
         Pawn p = pf.getInstance();
         pawns.add(p);
 
@@ -462,7 +485,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         terrain[29][27].setPawn(p);
 
-        // Pawn
         p = pf.getInstance();
         pawns.add(p);
 
@@ -471,20 +493,33 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         setActivePawn(p);
         setState(State.MOVE);
 
-        // Bottom HUD
-        HUDBottomContainer bottomContainer = new HUDBottomContainer(this);
-        getLayerHUD().addChild(bottomContainer);
+        // enemy
+        pf.setName("Enemy");
+        pf.setTeam(1);
 
-        hudDetailText = new HUDDetailText(this);
+        p = pf.getInstance();
+        pawns.add(p);
+        terrain[7][6].setPawn(p);
 
-        bottomContainer.addChild(hudDetailText);
+        p = pf.getInstance();
+        pawns.add(p);
+        terrain[7][5].setPawn(p);
 
-        setDetailText(activePawn.getParent().getDetailText());
+        p = pf.getInstance();
+        pawns.add(p);
+        terrain[7][4].setPawn(p);
 
-        // Menu
-        menu = new Menu(this);
-        getLayerHUD().addChild(menu);
-        menu.setVisibility(false);
+        p = pf.getInstance();
+        pawns.add(p);
+        terrain[6][6].setPawn(p);
+
+        p = pf.getInstance();
+        pawns.add(p);
+        terrain[6][5].setPawn(p);
+
+        p = pf.getInstance();
+        pawns.add(p);
+        terrain[6][4].setPawn(p);
     }
 
     @Override
@@ -540,8 +575,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             current.setPawn(activePawn);
 
             setActivePawn(getNextPawn());
-
-            setState(State.MOVE);
         }
 
         return delta;
@@ -570,6 +603,17 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         Camera camera = getCamera();
         camera.setPosition(pawn.getParent().getX(), pawn.getParent().getZ());
+
+        if (state != null)
+            switch (state) {
+                case MOVING:
+                    if (pawn.getTeam() == 0) {
+                        setState(State.MOVE);
+                    } else {
+                        setState(State.MOVE_AI);
+                    }
+                    break;
+            }
     }
 
     public Pawn getActivePawn() {
@@ -578,6 +622,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public void setState(State state) {
         this.state = state;
+        System.out.println("State: " + state);
 
         switch (state) {
             case MOVE:
@@ -597,13 +642,25 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                 }
 
                 break;
+            case MOVE_AI:
+                currentPath = null;
+
+                pf = new PathFinder<>();
+
+                pathMap = pf.findDistance(activePawn.getParent(), 10);
+                if (pathMap.size() > 0) {
+                    int rand = random.nextInt(pathMap.size());
+
+                    currentPath = pathMap.get(pathMap.keySet().toArray()[rand]);
+                    setState(State.MOVING);
+                }
+                break;
             case MOVING:
                 for (Terrain[] row : terrain) {
                     for (Terrain t : row) {
                         t.setState(Terrain.State.UNSELECTABLE);
                     }
                 }
-
                 break;
         }
     }

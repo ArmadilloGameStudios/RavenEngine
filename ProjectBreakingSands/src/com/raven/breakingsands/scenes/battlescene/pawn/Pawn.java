@@ -32,6 +32,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     // instance
     private GameData gameData;
     private String name = "";
+    private int team;
 
     public Pawn(BattleScene scene, int team, GameData gameData) {
         super(scene, gameData.getString("model"));
@@ -39,9 +40,14 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         this.gameData = gameData;
 
         name = gameData.getString("name");
+        this.team = team;
     }
 
     public String getName() {
         return name;
+    }
+
+    public int getTeam() {
+        return team;
     }
 }

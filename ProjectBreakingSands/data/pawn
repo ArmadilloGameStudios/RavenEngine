@@ -1,4 +1,8 @@
 {
     name: "Player",
     model: "models/player.ply"
+},
+{
+    name: "Enemy",
+    model: "models/enemy.ply"
 }
