@@ -90,6 +90,13 @@ public class IDShader extends Shader {
         glDisableVertexAttribArray(0);
     }
 
+    @Override
+    public void release() {
+        glDeleteFramebuffers(framebuffer_handel);
+        glDeleteTextures(id_texture);
+        releaseProgram();
+    }
+
     private IntBuffer pixelReadBuffer = BufferUtils.createIntBuffer(1);
     public int getWorldObjectID() {
 //        glFlush();

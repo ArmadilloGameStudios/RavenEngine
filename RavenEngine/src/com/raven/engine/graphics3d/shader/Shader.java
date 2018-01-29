@@ -29,7 +29,6 @@ import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
  * Created by cookedbird on 5/29/17.
  */
 public abstract class Shader {
-    int vertex_handel, fragment_handel, program_handel;
 
     public final static int LIGHT = 1, MATRICES = 2;
 
@@ -82,6 +81,8 @@ public abstract class Shader {
         glBufferSubData(GL_UNIFORM_BUFFER, 0, slBuffer);
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
+
+    int vertex_handel, fragment_handel, program_handel;
 
     public Shader(String vertex_shader, String fragment_shader) {
         try {
@@ -190,11 +191,25 @@ public abstract class Shader {
         return program_handel;
     }
 
+    protected final void releaseProgram() {
+        GameEngine.getEngine().getWindow().printErrors("Cat: 1");
+        glDeleteProgram(program_handel);
+        GameEngine.getEngine().getWindow().printErrors("Cat: 2");
+        glDeleteShader(fragment_handel);
+        GameEngine.getEngine().getWindow().printErrors("Cat: 3");
+        glDeleteShader(vertex_handel);
+        GameEngine.getEngine().getWindow().printErrors("Cat: 4");
+    }
+
     private final Map<String, String> getGLSLVariableMap() {
         Map<String, String> map = new HashMap<>();
 
         map.put("NUM_SAMPLES", Integer.toString(GameProperties.getMultisampleCount()));
 
         return map;
+    }
+
+    public void release() {
+        releaseProgram();
     }
 }

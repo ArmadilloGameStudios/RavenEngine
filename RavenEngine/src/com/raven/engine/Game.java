@@ -56,8 +56,11 @@ public abstract class Game<G extends Game> {
 			currentScene.exitScene();
 		}
 
+        ModelReference.getBlankModel().release();
 		ModelReference.clearBuffers();
-		ModelReference.loadBlankModel();
+
+        ModelReference.loadBlankModel();
+
 		List<ModelData> sceneModels = scene.getSceneModels();
 		for (ModelData md : sceneModels) {
 			ModelReference.load(md);
@@ -82,7 +85,7 @@ public abstract class Game<G extends Game> {
 	}
 
 	final public void exit() {
-	    currentScene.exitScene();
+	    currentScene.onExitScene();
 	    isRunning = false;
 	    breakdown();
     }

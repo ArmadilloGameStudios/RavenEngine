@@ -34,7 +34,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
     }
 
     @Override
-    public void enterScene() {
+    public void onEnterScene() {
         // Camera
         Camera camera = getCamera();
         camera.setInteractable(false);
@@ -79,7 +79,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
     }
 
     @Override
-    public void exitScene() {
+    public void onExitScene() {
 
     }
 

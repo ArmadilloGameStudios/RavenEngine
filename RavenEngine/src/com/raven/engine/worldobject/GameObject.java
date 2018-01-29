@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class GameObject<GO extends GameObject, P extends Parentable, C extends Childable>
+public abstract class GameObject<GO extends GameObject, P extends Parentable, C extends GameObject>
         implements Childable<P>, Parentable<C> {
 
     private static int last_id = 0;
@@ -72,8 +72,6 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
         for (MouseHandler c : clickHandlers) c.handleMouseClick();
     }
 
-    public abstract List<GO> getParentGameObjectList();
-
     public boolean getVisibility() {
         return visibility;
     }
@@ -81,4 +79,12 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
     public void setVisibility(boolean visibility) {
         this.visibility = visibility;
     }
+
+    public void release() {
+        for (C child : getChildren()) {
+            child.release();
+        }
+    }
+
+    public abstract List<GO> getParentGameObjectList();
 }

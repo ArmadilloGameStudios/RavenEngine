@@ -37,6 +37,14 @@ public class ExitButton extends HUDText<MainMenuScene, HUDContainer<MainMenuScen
     }
 
     @Override
+    public void release() {
+        super.release();
+
+        text.release();
+        hoverText.release();
+    }
+
+    @Override
     public int getStyle() {
         return getParent().getStyle();
     }

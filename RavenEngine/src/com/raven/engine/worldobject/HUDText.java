@@ -32,4 +32,11 @@ public abstract class HUDText<S extends Scene, C extends HUDContainer<S>> extend
             o.draw(window, shader);
         }
     }
+
+    @Override
+    public void release() {
+        super.release();
+
+        text.release();
+    }
 }

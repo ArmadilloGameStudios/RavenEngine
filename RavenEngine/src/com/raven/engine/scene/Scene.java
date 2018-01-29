@@ -9,6 +9,7 @@ import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.shader.*;
 import com.raven.engine.scene.light.Light;
 import com.raven.engine.util.Vector3f;
+import com.raven.engine.worldobject.GameObject;
 import com.raven.engine.worldobject.HUDContainer;
 import com.raven.engine.worldobject.WorldObject;
 
@@ -285,9 +286,41 @@ public abstract class Scene<G extends Game> {
 
     abstract public List<ModelData> getSceneModels();
 
-    abstract public void enterScene();
+    public final void enterScene() {
+        onEnterScene();
+    }
 
-    abstract public void exitScene();
+    abstract public void onEnterScene();
+
+    public final void exitScene() {
+        onExitScene();
+
+        for (GameObject obj : layerTerrain.getChildren()) {
+            obj.release();
+        }
+
+        for (GameObject obj : layerWater.getChildren()) {
+            obj.release();
+        }
+
+        for (GameObject obj : layerDetails.getChildren()) {
+            obj.release();
+        }
+
+        for (GameObject obj : layerHUD.getChildren()) {
+            obj.release();
+        }
+
+        for (ModelData modelData : getSceneModels()) {
+             modelData.release();
+        }
+
+        for (Light light : lights) {
+            light.release();
+        }
+    }
+
+    abstract public void onExitScene();
 
     abstract public void onUpdate(float deltaTime);
 
@@ -297,6 +330,7 @@ public abstract class Scene<G extends Game> {
 
     public void removeLight(Light light) {
         lights.remove(light);
+        light.release();
     }
 
     public void setRenderWater(boolean renderWater) {

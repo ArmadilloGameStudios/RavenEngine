@@ -119,6 +119,10 @@ public class TextObject {
         glBindTexture(GL_TEXTURE_2D, texture);
     }
 
+    public void release() {
+        glDeleteTextures(texture);
+    }
+
     public void setBackgroundColor(Vector4f backgroundColor) {
         this.backgroundColor = backgroundColor;
     }

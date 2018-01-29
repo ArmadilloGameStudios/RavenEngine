@@ -1,5 +1,7 @@
 package com.raven.engine.graphics3d.shader;
 
+import com.raven.engine.GameEngine;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
@@ -7,6 +9,7 @@ import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
 import static org.lwjgl.opengl.GL14.GL_TEXTURE_COMPARE_FUNC;
 import static org.lwjgl.opengl.GL14.GL_TEXTURE_COMPARE_MODE;
 import static org.lwjgl.opengl.GL20.glBindAttribLocation;
+import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
@@ -99,5 +102,12 @@ public class ShadowShader extends Shader {
 
 //        glCullFace(GL_BACK);
         glDisable(GL_POLYGON_OFFSET_FILL);
+    }
+
+    @Override
+    public void release() {
+        glDeleteFramebuffers(framebuffer_handel);
+        glDeleteTextures(depth_texture);
+        releaseProgram();
     }
 }

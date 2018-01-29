@@ -20,4 +20,8 @@ public abstract class Light {
     public ShadowShader getShadowShader() {
         return shadowShader;
     }
+
+    public void release() {
+        shadowShader.release();
+    }
 }

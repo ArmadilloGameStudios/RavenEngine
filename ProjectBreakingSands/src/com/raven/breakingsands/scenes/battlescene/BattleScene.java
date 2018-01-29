@@ -65,8 +65,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public BattleScene(BreakingSandsGame game) {
         super(game);
-
-        sunLight = new GlobalDirectionalLight();
     }
 
     @Override
@@ -95,10 +93,11 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     @Override
-    public void enterScene() {
+    public void onEnterScene() {
         setBackgroundColor(new Vector3f(0.6f, 0.7f, 1f));
 
         // Light
+        sunLight = new GlobalDirectionalLight();
         sunLight.origin = new Vector3f(0, 2, 0);
         sunLight.color = new Vector3f(1, 1, 1);
         sunLight.intensity = 1f;
@@ -489,7 +488,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     @Override
-    public void exitScene() {
+    public void onExitScene() {
 
     }
 

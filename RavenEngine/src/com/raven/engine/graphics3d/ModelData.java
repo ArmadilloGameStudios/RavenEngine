@@ -23,7 +23,7 @@ public class ModelData {
         this.modelReference = modelReference;
 
         // delete the list
-        vertexList.clear();
+//        vertexList.clear();
     }
 
     public ModelReference getModelReference() {
@@ -32,7 +32,11 @@ public class ModelData {
         return modelReference;
     }
 
-    void load() {
+    public void load() {
 
+    }
+
+    public void release() {
+        modelReference.release();
     }
 }

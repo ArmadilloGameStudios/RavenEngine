@@ -78,8 +78,6 @@ public abstract class LightShader extends Shader {
                 System.out.println("Light Shader Failed: 0x"
                         + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
             }
-
-            System.out.println("Lighted " + framebuffer_handel);
         }
     }
 

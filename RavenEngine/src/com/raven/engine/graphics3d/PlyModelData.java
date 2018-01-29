@@ -7,12 +7,17 @@ import java.io.File;
  */
 public class PlyModelData extends ModelData {
     private String src;
+    private boolean loaded = false;
 
     public PlyModelData(String src) {
         this.src = src;
     }
 
-    void load() {
-        PlyImporter.Import(new File(src), this);
+    public void load() {
+        if (!loaded) {
+            PlyImporter.Import(new File(src), this);
+
+            loaded = true;
+        }
     }
 }

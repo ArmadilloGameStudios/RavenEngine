@@ -39,6 +39,14 @@ public abstract class MenuButton extends HUDText<BattleScene, HUDContainer<Battl
     }
 
     @Override
+    public void release() {
+        super.release();
+
+        defaultText.release();
+        hoverText.release();
+    }
+
+    @Override
     public int getStyle() {
         return getParent().getStyle();
     }

@@ -111,6 +111,10 @@ public class ModelReference {
     }
 
     public static void clearBuffers() {
+        glDeleteBuffers(vbo_vertex_handle);
+        glDeleteBuffers(vbo_normal_handle);
+        glDeleteBuffers(vbo_colors_handle);
+
         vbo_colors_handle = 0;
         vbo_normal_handle = 0;
         vbo_vertex_handle = 0;
@@ -184,5 +188,9 @@ public class ModelReference {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_index_handle);
 
         glDrawElements(draw_mode, vertices, GL_UNSIGNED_SHORT, 0);
+    }
+
+    public void release() {
+        glDeleteBuffers(vbo_index_handle);
     }
 }

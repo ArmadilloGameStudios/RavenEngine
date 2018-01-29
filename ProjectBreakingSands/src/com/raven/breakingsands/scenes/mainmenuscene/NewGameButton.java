@@ -35,6 +35,14 @@ public class NewGameButton extends HUDText<MainMenuScene, HUDContainer<MainMenuS
     }
 
     @Override
+    public void release() {
+        super.release();
+
+        text.release();
+        hoverText.release();
+    }
+
+    @Override
     public int getStyle() {
         return getParent().getStyle();
     }
