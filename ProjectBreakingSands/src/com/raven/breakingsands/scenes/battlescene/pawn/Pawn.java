@@ -1,5 +1,6 @@
 package com.raven.breakingsands.scenes.battlescene.pawn;
 
+import com.raven.breakingsands.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.terrain.Terrain;
 import com.raven.engine.GameEngine;
@@ -31,16 +32,22 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     // instance
     private GameData gameData;
+    private Weapon weapon;
     private String name = "";
-    private int team;
+    private int team, hitPoints, movement, resistance;
 
-    public Pawn(BattleScene scene, int team, GameData gameData) {
+    public Pawn(BattleScene scene, GameData gameData) {
         super(scene, gameData.getString("model"));
 
         this.gameData = gameData;
 
         name = gameData.getString("name");
-        this.team = team;
+        team = gameData.getInteger("team");
+        hitPoints = gameData.getInteger("hp");
+        movement = gameData.getInteger("movement");
+        resistance = gameData.getInteger("resistance");
+
+        weapon = new Weapon(GameDatabase.all("weapon").getRandom());
     }
 
     public String getName() {
@@ -49,5 +56,13 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public int getTeam() {
         return team;
+    }
+
+    public int getMovement() {
+        return movement;
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
     }
 }

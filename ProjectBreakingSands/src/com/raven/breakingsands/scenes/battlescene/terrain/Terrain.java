@@ -119,7 +119,7 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
 
             if (n.passable && n.pawn == null) {
                 a1 = n;
-                neighbors.add(new PathAdjacentNode<>(n, 2));
+                neighbors.add(new PathAdjacentNode<>(n, 1));
             }
         }
 
@@ -128,7 +128,7 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
 
             if (n.passable && n.pawn == null) {
                 b1 = n;
-                neighbors.add(new PathAdjacentNode<>(n, 2));
+                neighbors.add(new PathAdjacentNode<>(n, 1));
             }
         }
 
@@ -137,7 +137,7 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
 
             if (n.passable && n.pawn == null) {
                 b2 = n;
-                neighbors.add(new PathAdjacentNode<>(n, 2));
+                neighbors.add(new PathAdjacentNode<>(n, 1));
             }
         }
 
@@ -146,7 +146,7 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
 
             if (n.passable && n.pawn == null) {
                 a2 = n;
-                neighbors.add(new PathAdjacentNode<>(n, 2));
+                neighbors.add(new PathAdjacentNode<>(n, 1));
             }
         }
 
@@ -288,6 +288,7 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
 
         if (pawn != null) {
             text += "\n" + pawn.getName();
+            text += "\n" + pawn.getWeapon().getName();
         }
 
         details.setText(text);

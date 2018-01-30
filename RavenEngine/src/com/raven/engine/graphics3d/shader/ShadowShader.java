@@ -21,7 +21,7 @@ import static org.lwjgl.opengl.GL32.glFramebufferTexture;
  */
 public class ShadowShader extends Shader {
 
-    private static final int size = 128;
+    private static final int size = 64;
 
     public static final int
             DEPTH = getNextTexture();

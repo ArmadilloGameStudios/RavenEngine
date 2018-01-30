@@ -4,9 +4,7 @@ import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.scenes.battlescene.decal.Decal;
 import com.raven.breakingsands.scenes.battlescene.decal.DecalFactory;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
-import com.raven.breakingsands.scenes.battlescene.menu.MenuButton;
 import com.raven.breakingsands.scenes.hud.HUDBottomContainer;
-import com.raven.breakingsands.scenes.hud.HUDCenterContainer;
 import com.raven.breakingsands.scenes.hud.HUDDetailText;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
@@ -459,11 +457,12 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private void addPawns() {
         PawnFactory pf = new PawnFactory(this);
         pf.setName("Player");
-        pf.setTeam(0);
         Pawn p = pf.getInstance();
         pawns.add(p);
 
         terrain[28][28].setPawn(p);
+
+        setActivePawn(p);
 
         p = pf.getInstance();
         pawns.add(p);
@@ -490,13 +489,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         terrain[29][26].setPawn(p);
 
-        setActivePawn(p);
-        setState(State.MOVE);
-
         // enemy
         pf.setName("Enemy");
-        pf.setTeam(1);
-
         p = pf.getInstance();
         pawns.add(p);
         terrain[7][6].setPawn(p);
@@ -520,6 +514,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         p = pf.getInstance();
         pawns.add(p);
         terrain[6][4].setPawn(p);
+
+        setState(State.MOVE);
     }
 
     @Override
@@ -574,7 +570,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             activePawn.setPosition(new Vector3f());
             current.setPawn(activePawn);
 
-            setActivePawn(getNextPawn());
+            selectNextPawn();
         }
 
         return delta;
@@ -596,6 +592,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public int getTerrainMapSize() {
         return size;
+    }
+
+    public void selectNextPawn() {
+        setActivePawn(getNextPawn());
     }
 
     public void setActivePawn(Pawn pawn) {
@@ -635,10 +635,14 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
                 PathFinder<Terrain> pf = new PathFinder<>();
 
-                pathMap = pf.findDistance(activePawn.getParent(), 10);
+                pathMap = pf.findDistance(activePawn.getParent(), activePawn.getMovement());
 
-                for (Terrain t : pathMap.keySet()) {
-                    t.setState(Terrain.State.SELECTABLE);
+                if (pathMap.size() > 0) {
+                    for (Terrain t : pathMap.keySet()) {
+                        t.setState(Terrain.State.SELECTABLE);
+                    }
+                } else {
+                    selectNextPawn();
                 }
 
                 break;
@@ -647,13 +651,16 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
                 pf = new PathFinder<>();
 
-                pathMap = pf.findDistance(activePawn.getParent(), 10);
+                pathMap = pf.findDistance(activePawn.getParent(), activePawn.getMovement());
                 if (pathMap.size() > 0) {
                     int rand = random.nextInt(pathMap.size());
 
-                    currentPath = pathMap.get(pathMap.keySet().toArray()[rand]);
+                    currentPath = pathMap.get(pathMap.keySet().<Terrain>toArray()[rand]);
                     setState(State.MOVING);
+                } else {
+                    selectNextPawn();
                 }
+
                 break;
             case MOVING:
                 for (Terrain[] row : terrain) {

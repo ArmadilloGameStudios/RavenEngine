@@ -5,9 +5,11 @@ import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataQuery;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PawnFactory extends Factory<Pawn> {
     private BattleScene scene;
-    private int team = 0;
     private String name = null;
 
     public PawnFactory(BattleScene scene) {
@@ -16,10 +18,6 @@ public class PawnFactory extends Factory<Pawn> {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setTeam(int team) {
-        this.team = team;
     }
 
     public Pawn getInstance() {
@@ -37,10 +35,10 @@ public class PawnFactory extends Factory<Pawn> {
             }
         });
 
-        return new Pawn(scene, team, gameData);
+        return new Pawn(scene, gameData);
     }
 
     public void clear() {
-        team = 0;
+        name = null;
     }
 }

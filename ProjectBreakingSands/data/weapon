@@ -1,0 +1,8 @@
+{
+    name: "Standard Pistol",
+    damage: 3,
+},
+{
+    name: "Plasma Sword",
+    damage: 4,
+}
