@@ -1,5 +1,6 @@
 package com.raven.breakingsands.scenes.battlescene.pawn;
 
+import com.raven.breakingsands.Armor;
 import com.raven.breakingsands.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.terrain.Terrain;
@@ -33,8 +34,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     // instance
     private GameData gameData;
     private Weapon weapon;
+    private Armor armor;
     private String name = "";
-    private int team, hitPoints, movement, resistance;
+    private int team, hitPoints, movement;
 
     public Pawn(BattleScene scene, GameData gameData) {
         super(scene, gameData.getString("model"));
@@ -45,9 +47,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         team = gameData.getInteger("team");
         hitPoints = gameData.getInteger("hp");
         movement = gameData.getInteger("movement");
-        resistance = gameData.getInteger("resistance");
 
         weapon = new Weapon(GameDatabase.all("weapon").getRandom());
+        armor = new Armor(GameDatabase.all("armor").getRandom());
     }
 
     public String getName() {
@@ -58,11 +60,36 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         return team;
     }
 
+    public int getHitPoints() {
+        return hitPoints;
+    }
+
     public int getMovement() {
         return movement;
     }
 
     public Weapon getWeapon() {
         return weapon;
+    }
+
+    public Armor getArmor() {
+        return armor;
+    }
+
+    public void attack(Pawn pawn) {
+        int remainingResistance = Math.max(pawn.armor.getResistance() - weapon.getPiercing(), 0);
+        int dealtDamage = Math.max(weapon.getDamage() - remainingResistance, 0);
+        pawn.hitPoints = Math.max(pawn.hitPoints - dealtDamage, 0);
+
+        if (pawn.hitPoints == 0) {
+            pawn.die();
+        }
+
+        pawn.getParent().updateText();
+    }
+
+    public void die() {
+        getParent().removePawn();
+        getScene().removePawn(this);
     }
 }

@@ -4,16 +4,24 @@ import com.raven.engine.database.GameData;
 
 public class Weapon {
     private GameData gameData;
-    private int damage = 3;
+    private int damage, piercing = 0;
     private String name;
 
     public Weapon(GameData gameData) {
         damage = gameData.getInteger("damage");
+        if (gameData.has("piercing")) {
+            piercing = gameData.getInteger("piercing");
+        }
         name = gameData.getString("name");
+        this.gameData = gameData;
     }
 
     public int getDamage() {
         return damage;
+    }
+
+    public int getPiercing() {
+        return piercing;
     }
 
     public String getName() {

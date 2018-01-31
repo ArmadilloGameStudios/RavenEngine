@@ -3,6 +3,7 @@
     damage: 3,
 },
 {
-    name: "Plasma Sword",
-    damage: 4,
+    name: "Plasma Blade",
+    damage: 3,
+    piercing: 2
 }

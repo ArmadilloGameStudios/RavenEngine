@@ -34,6 +34,10 @@ public class GameData {
 	}
 
 	// Get
+	public boolean has(String prop) {
+	    return  vals.containsKey(prop);
+    }
+
 	public Map<String, GameData> getValues() {
 		return vals;
 	}
