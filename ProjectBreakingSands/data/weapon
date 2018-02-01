@@ -1,9 +1,13 @@
 {
     name: "Standard Pistol",
     damage: 3,
+    range: 4,
+    accuracy: 5,
 },
 {
     name: "Plasma Blade",
     damage: 3,
-    piercing: 2
+    piercing: 2,
+    range: 1,
+    accuracy: 10,
 }

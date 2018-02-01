@@ -3,12 +3,14 @@
     model: "models/player.ply"
     team: 0,
     hp: 10,
-    movement: 80
+    movement: 80,
+    evasion: 2,
 },
 {
     name: "Enemy",
     model: "models/enemy.ply",
     team: 1,
     hp: 16,
-    movement: 10
+    movement: 10,
+    evasion: 3,
 }

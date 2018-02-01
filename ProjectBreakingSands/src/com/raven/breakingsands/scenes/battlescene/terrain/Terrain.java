@@ -46,6 +46,7 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
 
     private State state;
 
+    public float cover = 0f;
     private int x, y;
 
     private boolean passable = true;
@@ -73,6 +74,14 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
         details = new TextObject(85, 85);
 
         updateText();
+    }
+
+    public int getMapX() {
+        return x;
+    }
+
+    public int getMapY() {
+        return y;
     }
 
     @Override
@@ -344,7 +353,7 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
     }
 
     public void updateText() {
-        String text = "";
+        String text = "" + x + ", " + y + "\n" + cover + "\n";
 
         if (decal != null) {
             text += "Terrain:\n" + decal.getDescription();
@@ -353,12 +362,16 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
         }
 
         if (pawn != null) {
-            text += "\n" + pawn.getName();
-            text += "\n" + pawn.getHitPoints();
-            text += "\n" + pawn.getWeapon().getName();
+//            text += "\n" + pawn.getName();
+//            text += "\n" + pawn.getHitPoints();
+//            text += "\n" + pawn.getWeapon().getName();
             text += "\n" + pawn.getArmor().getName();
         }
 
         details.setText(text);
+    }
+
+    public boolean isPassable() {
+        return passable;
     }
 }

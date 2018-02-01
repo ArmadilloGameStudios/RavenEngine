@@ -36,7 +36,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     private Weapon weapon;
     private Armor armor;
     private String name = "";
-    private int team, hitPoints, movement;
+    private int team, hitPoints, movement, evasion;
 
     public Pawn(BattleScene scene, GameData gameData) {
         super(scene, gameData.getString("model"));
@@ -47,6 +47,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         team = gameData.getInteger("team");
         hitPoints = gameData.getInteger("hp");
         movement = gameData.getInteger("movement");
+        evasion = gameData.getInteger("evasion");
 
         weapon = new Weapon(GameDatabase.all("weapon").getRandom());
         armor = new Armor(GameDatabase.all("armor").getRandom());
@@ -77,15 +78,24 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     }
 
     public void attack(Pawn pawn) {
-        int remainingResistance = Math.max(pawn.armor.getResistance() - weapon.getPiercing(), 0);
-        int dealtDamage = Math.max(weapon.getDamage() - remainingResistance, 0);
-        pawn.hitPoints = Math.max(pawn.hitPoints - dealtDamage, 0);
+        // Check if hit
+        int target = pawn.getWeapon().getAccuracy();
+        int totalRange = this.evasion + target;
+        int rolled = getScene().getRandom().nextInt(totalRange);
 
-        if (pawn.hitPoints == 0) {
-            pawn.die();
+        if (rolled < target) {
+            int remainingResistance = Math.max(pawn.armor.getResistance() - weapon.getPiercing(), 0);
+            int dealtDamage = Math.max(weapon.getDamage() - remainingResistance, 0);
+            pawn.hitPoints = Math.max(pawn.hitPoints - dealtDamage, 0);
+
+            if (pawn.hitPoints == 0) {
+                pawn.die();
+            }
+
+            pawn.getParent().updateText();
+        } else {
+            System.out.println("MISS");
         }
-
-        pawn.getParent().updateText();
     }
 
     public void die() {

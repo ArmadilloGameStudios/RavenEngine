@@ -14,6 +14,7 @@ import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.scene.Camera;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.scene.light.GlobalDirectionalLight;
+import com.raven.engine.util.Range;
 import com.raven.engine.util.Vector3f;
 import com.raven.engine.util.pathfinding.Path;
 import com.raven.engine.util.pathfinding.PathAdjacentNode;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_MOVE;
@@ -54,6 +56,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private Terrain[][] terrain;
 
     private HashMap<Terrain, Path<Terrain>> pathMap;
+    private HashMap<Terrain, Float> rangeMap;
     private Path<Terrain> currentPath;
     private int pathIndex = 0;
     private float pathSpeed = 100f;
@@ -692,18 +695,27 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             case SELECT_ATTACK:
                 Terrain parentTerrain = activePawn.getParent();
 
-                List<PathAdjacentNode<Terrain>> adjacentNodes = parentTerrain.getAdjacentNodes();
+                List<Terrain> inRange = selectRange(activePawn.getWeapon().getRange(), parentTerrain);
+                rangeMap = filterRange(parentTerrain, inRange);
 
-                if (adjacentNodes.size() > 0) {
-                    for (PathAdjacentNode<Terrain> node : adjacentNodes) {
-                        Terrain n = node.getNode();
+                boolean none = true;
 
+                if (rangeMap.size() > 0) {
+                    for (Terrain n : rangeMap.keySet()) {
                         if (n.getPawn() != null && n.getPawn().getTeam() != activePawn.getTeam()) {
+
+                            n.cover = rangeMap.get(n);
                             n.setState(Terrain.State.SELECTABLE);
+                            n.updateText();
+
+                            none = false;
                         }
                     }
+                }  else {
+                    none = true;
                 }
-                else {
+
+                if (none) {
                     selectNextPawn();
                 }
                 break;
@@ -742,6 +754,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         return state;
     }
 
+    public Random getRandom() {
+        return random;
+    }
+
     public void selectPath(Terrain t) {
         currentPath = pathMap.get(t);
 
@@ -770,6 +786,78 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         }
 
         pathMap.clear();
+    }
+
+    public List<Terrain> selectRange(int range, Terrain start) {
+        int x = start.getMapX();
+        int y = start.getMapY();
+
+        List<Terrain> withinRange = new ArrayList<>();
+
+        for (int i = Math.max(-range + x, 0) - x;
+             i <= Math.min(range + x, size - 1) - x;
+             i++) {
+
+            int heightRange = range - Math.abs(i);
+
+            for (int j = Math.max(-heightRange + y, 0) - y;
+                 j <= Math.min(heightRange + y, size - 1) - y;
+                 j++) {
+
+                withinRange.add(terrain[x + i][y + j]);
+            }
+        }
+
+        return withinRange;
+    }
+
+    private HashMap<Terrain, Float> filterRange(Terrain start, List<Terrain> inRange) {
+        HashMap<Terrain, Float> map = new HashMap<>();
+
+        int startX = start.getMapX();
+        int startY = start.getMapY();
+
+        for (Terrain end : inRange) {
+            int endX = end.getMapX();
+            int endY = end.getMapY();
+
+            float a = -(endY - startY);
+            float b = endX - startX;
+            float c = -(a * startX + b * startY);
+
+            float leftCoverage = 0f, rightCoverage = 0f;
+
+            for (int x : new Range(endX, startX)) {
+                for (int y : new Range(endY, startY)) {
+
+                    if (!terrain[x][y].isPassable()) {
+
+                        float cover = linePointDist(a, b, c, x, y);
+
+                        if (cover >= 0f) {
+                            cover = Math.max(1f - cover, 0f);
+                            leftCoverage = Math.max(leftCoverage, Math.min(cover, 1f));
+                        } else if (cover < 0f) {
+                            cover = -cover;
+                            cover = Math.max(1f - cover, 0f);
+                            rightCoverage = Math.max(rightCoverage, Math.min(cover, 1f));
+                        }
+                    }
+                }
+            }
+
+            float coverage = Math.min(leftCoverage + rightCoverage, 1f);
+
+            if (coverage <= .75f) {
+                map.put(terrain[endX][endY], coverage);
+            }
+        }
+
+        return map;
+    }
+
+    private float linePointDist(float a, float b, float c, float x, float y) {
+        return ((a * x + b * y + c) / (Math.abs(a) + Math.abs(b)));
     }
 
     public void setDetailText(TextObject textObject) {
