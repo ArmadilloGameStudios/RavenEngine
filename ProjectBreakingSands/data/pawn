@@ -3,7 +3,7 @@
     model: "models/player.ply"
     team: 0,
     hp: 10,
-    movement: 80,
+    movement: 8,
     evasion: 2,
 },
 {

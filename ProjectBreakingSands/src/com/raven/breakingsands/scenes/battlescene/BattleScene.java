@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_MOVE;
 
@@ -46,7 +44,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private Menu menu;
 
     public enum State {
-        MOVING, SELECT_MOVE_AI, SELECT_MOVE, ATTACKING, SELECT_ATTACK, SELECT_ATTACK_AI
+        MOVING, ATTACKING, SELECT_MOVE_AI, SELECT_MOVE,
     }
 
     private Random random = new Random();
@@ -576,12 +574,14 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             activePawn.setPosition(new Vector3f());
             current.setPawn(activePawn);
 
-            setState(State.SELECT_ATTACK);
+            if (activePawn.getRemainingMovement() > 0 || activePawn.getRemainingAttacks() > 0)
+                setState(State.SELECT_MOVE);
+            else
+                selectNextPawn();
         }
 
         return delta;
     }
-
 
     public void removePawn(Pawn pawn) {
         pawns.remove(pawn);
@@ -612,54 +612,41 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     public void setActivePawn(Pawn pawn) {
         this.activePawn = pawn;
 
+        activePawn.ready();
+
         Camera camera = getCamera();
         camera.setPosition(pawn.getParent().getX(), pawn.getParent().getZ());
 
-        if (state != null)
-            switch (state) {
-                case MOVING:
-                    if (activePawn.getTeam() == 0) {
-                        setState(State.SELECT_ATTACK);
-                    } else {
-                        setState(State.SELECT_ATTACK_AI);
-                    }
-                    break;
-                case SELECT_MOVE:
-                    if (activePawn.getTeam() == 0) {
-                        setState(SELECT_MOVE);
-                    } else {
-                        setState(State.SELECT_MOVE_AI);
-                    }
-                    break;
-                case SELECT_MOVE_AI:
-                    if (activePawn.getTeam() == 0) {
-                        setState(SELECT_MOVE);
-                    } else {
-                        setState(State.SELECT_MOVE_AI);
-                    }
-                    break;
-                case ATTACKING:
-                    if (activePawn.getTeam() == 0) {
-                        setState(SELECT_MOVE);
-                    } else {
-                        setState(State.SELECT_MOVE_AI);
-                    }
-                    break;
-                case SELECT_ATTACK:
-                    if (activePawn.getTeam() == 0) {
-                        setState(SELECT_MOVE);
-                    } else {
-                        setState(State.SELECT_MOVE_AI);
-                    }
-                    break;
-                case SELECT_ATTACK_AI:
-                    if (activePawn.getTeam() == 0) {
-                        setState(SELECT_MOVE);
-                    } else {
-                        setState(State.SELECT_MOVE_AI);
-                    }
-                    break;
-            }
+        switch (state) {
+            case MOVING:
+                if (activePawn.getTeam() == 0) {
+                    setState(State.SELECT_MOVE);
+                } else {
+                    setState(State.SELECT_MOVE_AI);
+                }
+                break;
+            case SELECT_MOVE:
+                if (activePawn.getTeam() == 0) {
+                    setState(SELECT_MOVE);
+                } else {
+                    setState(State.SELECT_MOVE_AI);
+                }
+                break;
+            case SELECT_MOVE_AI:
+                if (activePawn.getTeam() == 0) {
+                    setState(SELECT_MOVE);
+                } else {
+                    setState(State.SELECT_MOVE_AI);
+                }
+                break;
+            case ATTACKING:
+                if (activePawn.getTeam() == 0) {
+                    setState(SELECT_MOVE);
+                } else {
+                    setState(State.SELECT_MOVE_AI);
+                }
+                break;
+        }
     }
 
     public Pawn getActivePawn() {
@@ -672,59 +659,14 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         switch (state) {
             case SELECT_MOVE:
-                for (Terrain[] row : terrain) {
-                    for (Terrain t : row) {
-                        t.setState(Terrain.State.UNSELECTABLE);
-                    }
-                }
-                currentPath = null;
-
-                PathFinder<Terrain> pf = new PathFinder<>();
-
-                pathMap = pf.findDistance(activePawn.getParent(), activePawn.getMovement());
-
-                if (pathMap.size() > 0) {
-                    for (Terrain t : pathMap.keySet()) {
-                        t.setState(Terrain.State.SELECTABLE);
-                    }
-                } else {
-                    selectNextPawn();
-                }
-
-                break;
-            case SELECT_ATTACK:
-                Terrain parentTerrain = activePawn.getParent();
-
-                List<Terrain> inRange = selectRange(activePawn.getWeapon().getRange(), parentTerrain);
-                rangeMap = filterRange(parentTerrain, inRange);
-
-                boolean none = true;
-
-                if (rangeMap.size() > 0) {
-                    for (Terrain n : rangeMap.keySet()) {
-                        if (n.getPawn() != null && n.getPawn().getTeam() != activePawn.getTeam()) {
-
-                            n.cover = rangeMap.get(n);
-                            n.setState(Terrain.State.SELECTABLE);
-                            n.updateText();
-
-                            none = false;
-                        }
-                    }
-                }  else {
-                    none = true;
-                }
-
-                if (none) {
-                    selectNextPawn();
-                }
+                setStateSelectMove();
                 break;
             case SELECT_MOVE_AI:
                 currentPath = null;
 
-                pf = new PathFinder<>();
+                PathFinder<Terrain> pf = new PathFinder<>();
 
-                pathMap = pf.findDistance(activePawn.getParent(), activePawn.getMovement());
+                pathMap = pf.findDistance(activePawn.getParent(), activePawn.getRemainingMovement());
                 if (pathMap.size() > 0) {
                     int rand = random.nextInt(pathMap.size());
 
@@ -735,10 +677,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                     selectNextPawn();
                 }
                 break;
-            case SELECT_ATTACK_AI:
-                selectNextPawn();
-                break;
             case MOVING:
+                activePawn.move(currentPath.getCost());
+
                 for (Terrain[] row : terrain) {
                     for (Terrain t : row) {
                         t.setState(Terrain.State.UNSELECTABLE);
@@ -747,6 +688,57 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                 break;
             case ATTACKING:
                 break;
+        }
+    }
+
+    private void setStateSelectMove() {
+
+        // clear
+        for (Terrain[] row : terrain) {
+            for (Terrain t : row) {
+                t.setState(Terrain.State.UNSELECTABLE);
+            }
+        }
+        currentPath = null;
+
+        boolean noOptions = false;
+
+        // find movement
+        Terrain parentTerrain = activePawn.getParent();
+
+        PathFinder<Terrain> pf = new PathFinder<>();
+
+        pathMap = pf.findDistance(parentTerrain, activePawn.getRemainingMovement());
+
+        if (pathMap.size() > 0) {
+            for (Terrain t : pathMap.keySet()) {
+                t.setState(Terrain.State.MOVEABLE);
+            }
+        } else {
+            noOptions = true;
+//            selectNextPawn();
+        }
+
+        // find attack
+        List<Terrain> inRange = selectRange(activePawn.getWeapon().getRange(), parentTerrain);
+
+        rangeMap = filterRange(parentTerrain, inRange);
+
+        if (rangeMap.size() > 0) {
+            for (Terrain n : rangeMap.keySet()) {
+                if (n.getPawn() != null && n.getPawn().getTeam() != activePawn.getTeam()) {
+
+                    n.cover = rangeMap.get(n);
+                    n.setState(Terrain.State.ATTACKABLE);
+                    n.updateText();
+
+                    noOptions = false;
+                }
+            }
+        }
+
+        if (noOptions) {
+            selectNextPawn();
         }
     }
 
@@ -765,7 +757,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             for (PathAdjacentNode<Terrain> p : currentPath) {
                 Terrain node = p.getNode();
 
-                node.setState(Terrain.State.SELECTED);
+                node.setState(Terrain.State.MOVE);
             }
         }
     }
@@ -775,7 +767,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             for (PathAdjacentNode<Terrain> p : currentPath) {
                 Terrain node = p.getNode();
 
-                node.setState(Terrain.State.SELECTABLE);
+                node.setState(Terrain.State.MOVEABLE);
             }
         }
     }

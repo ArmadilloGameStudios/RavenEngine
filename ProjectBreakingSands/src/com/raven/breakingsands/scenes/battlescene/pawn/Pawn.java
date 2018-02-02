@@ -36,7 +36,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     private Weapon weapon;
     private Armor armor;
     private String name = "";
-    private int team, hitPoints, movement, evasion;
+    private int team, hitPoints, totalMovement, remainingMovement, evasion, totalAttacks = 1, remainingAttacks;
 
     public Pawn(BattleScene scene, GameData gameData) {
         super(scene, gameData.getString("model"));
@@ -46,7 +46,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         name = gameData.getString("name");
         team = gameData.getInteger("team");
         hitPoints = gameData.getInteger("hp");
-        movement = gameData.getInteger("movement");
+        totalMovement = gameData.getInteger("movement");
         evasion = gameData.getInteger("evasion");
 
         weapon = new Weapon(GameDatabase.all("weapon").getRandom());
@@ -65,8 +65,16 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         return hitPoints;
     }
 
-    public int getMovement() {
-        return movement;
+    public int getTotalMovement() {
+        return totalMovement;
+    }
+
+    public int getRemainingMovement() {
+        return remainingMovement;
+    }
+
+    public int getRemainingAttacks() {
+        return remainingAttacks;
     }
 
     public Weapon getWeapon() {
@@ -77,7 +85,18 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         return armor;
     }
 
+    public void ready() {
+        remainingMovement = totalMovement;
+        remainingAttacks = totalAttacks;
+    }
+
+    public void move(int amount) {
+        remainingMovement = Math.max(remainingMovement - amount, 0);
+    }
+
     public void attack(Pawn pawn) {
+        remainingAttacks = Math.max(totalAttacks - 1, 0);
+
         // Check if hit
         int target = pawn.getWeapon().getAccuracy();
         int totalRange = this.evasion + target;
