@@ -574,7 +574,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             activePawn.setPosition(new Vector3f());
             current.setPawn(activePawn);
 
-            if (activePawn.getRemainingMovement() > 0 || activePawn.getRemainingAttacks() > 0)
+            if (activePawn.getTeam() == 0 &&
+                    (activePawn.getRemainingMovement() > 0 ||
+                            activePawn.getRemainingAttacks() > 0))
                 setState(State.SELECT_MOVE);
             else
                 selectNextPawn();
