@@ -10,7 +10,7 @@ import com.raven.engine.worldobject.TextObject;
 
 import java.awt.*;
 
-public abstract class MenuButton extends HUDText<BattleScene, HUDContainer<BattleScene>>
+public abstract class MenuButton extends HUDText<BattleScene, Menu>
         implements MouseHandler {
 
     private float x, y;

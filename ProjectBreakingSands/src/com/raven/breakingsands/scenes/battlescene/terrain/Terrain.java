@@ -39,10 +39,11 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
     }
 
     public enum State {
-        MOVEABLE,
         UNSELECTABLE,
+        MOVEABLE,
+        MOVE,
         ATTACKABLE,
-        MOVE, ATTACK
+        ATTACK
     }
 
     private State state;

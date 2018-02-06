@@ -1,36 +1,37 @@
-package com.raven.breakingsands.scenes.mainmenuscene;
+package com.raven.breakingsands.scenes.missionselectscene;
 
+import com.raven.breakingsands.BreakingSandsGame;
+import com.raven.breakingsands.mission.Mission;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
-import com.raven.breakingsands.scenes.missionselectscene.MissionSelectScene;
-import com.raven.engine.GameEngine;
 import com.raven.engine.util.Vector4f;
-import com.raven.engine.worldobject.HUDContainer;
-import com.raven.engine.worldobject.HUDText;
-import com.raven.engine.worldobject.MouseHandler;
-import com.raven.engine.worldobject.TextObject;
+import com.raven.engine.worldobject.*;
 
 import java.awt.*;
 
-public class NewGameButton extends HUDText<MainMenuScene, HUDContainer<MainMenuScene>>
+public class HUDMission extends HUDText<MissionSelectScene, HUDMissionSelect>
         implements MouseHandler {
 
     private float x, y;
 
-    private TextObject text, hoverText;
+    private TextObject defaultText, hoverText;
 
-    public NewGameButton(MainMenuScene scene) {
+    private String text;
+
+    public HUDMission(MissionSelectScene scene, Mission mission) {
         super(scene);
 
-        text = new TextObject((int)getWidth(), (int)getHeight());
-        text.setFont(new Font( "SansSerif", Font.PLAIN, 20));
-        text.setText("New Game");
+        this.text = mission.getName();
 
-        this.setTexture(text);
+        defaultText = new TextObject((int)getWidth(), (int)getHeight());
+        defaultText.setFont(new Font( "SansSerif", Font.PLAIN, 14));
+        defaultText.setText(text);
+
+        this.setTexture(defaultText);
 
         hoverText = new TextObject((int)getWidth(), (int)getHeight());
-        hoverText.setFont(new Font( "SansSerif", Font.PLAIN, 20));
+        hoverText.setFont(new Font( "SansSerif", Font.PLAIN, 14));
         hoverText.setBackgroundColor(new Vector4f(.1f, .6f, .9f, 1f));
-        hoverText.setText("New Game");
+        hoverText.setText(text);
 
         this.addMouseHandler(this);
     }
@@ -39,7 +40,7 @@ public class NewGameButton extends HUDText<MainMenuScene, HUDContainer<MainMenuS
     public void release() {
         super.release();
 
-        text.release();
+        defaultText.release();
         hoverText.release();
     }
 
@@ -90,7 +91,9 @@ public class NewGameButton extends HUDText<MainMenuScene, HUDContainer<MainMenuS
 
     @Override
     public void handleMouseClick() {
-        getScene().getGame().prepTransitionScene(new MissionSelectScene(getScene().getGame()));
+        BreakingSandsGame game = getScene().getGame();
+
+        game.prepTransitionScene(new BattleScene(game));
     }
 
     @Override
@@ -100,7 +103,7 @@ public class NewGameButton extends HUDText<MainMenuScene, HUDContainer<MainMenuS
 
     @Override
     public void handleMouseLeave() {
-        this.setTexture(text);
+        this.setTexture(defaultText);
     }
 
     @Override

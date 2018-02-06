@@ -27,7 +27,6 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
     public List<ModelData> getSceneModels() {
         List<ModelData> modelDataList = new ArrayList<>();
 
-        modelDataList.addAll(Terrain.getModelData());
         modelDataList.addAll(DisplayPawn.getModelData());
 
         return modelDataList;
