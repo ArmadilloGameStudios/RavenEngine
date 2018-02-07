@@ -1,6 +1,7 @@
 package com.raven.engine.database;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -8,6 +9,18 @@ import java.util.Random;
  */
 public class GameDataList extends ArrayList<GameData> {
     static Random rand = new Random();
+
+    public GameDataList() {
+        super();
+    }
+
+    public <G extends GameDatable> GameDataList(List<G> list) {
+        super();
+
+        for (GameDatable datable : list) {
+            this.add(datable.toGameData());
+        }
+    }
 
     public GameData queryFirst(GameDataQuery query) {
         for (GameData row : this) {

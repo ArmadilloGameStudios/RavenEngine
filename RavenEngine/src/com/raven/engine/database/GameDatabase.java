@@ -26,7 +26,7 @@ public class GameDatabase {
 
 	public boolean load() {
 		try {
-			System.out.println("Connecting to database.");
+			System.out.println("Loading to database.");
 
 			File dataDirectory = new File(GameProperties.getMainDirectory() + File.separator + "data");
 
@@ -51,10 +51,7 @@ public class GameDatabase {
 	//<editor-fold> private methods
 	private void populateTable(GameDataTable table, File file) {
 		try {
-			char[] contents = new String(Files.readAllBytes(Paths.get(file
-					.getPath()))).toCharArray();
-
-			for (GameData data : GameDataReader.readFile(contents)) {
+			for (GameData data : GameDataReader.readFile(Paths.get(file.getPath()))) {
 				table.add(data);
 			}
 		} catch (IOException e) {

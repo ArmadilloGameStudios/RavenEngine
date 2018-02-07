@@ -2,7 +2,6 @@ package com.raven.engine.database;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class GameDataTable extends GameDataList {
 	private String name;
@@ -11,7 +10,26 @@ public class GameDataTable extends GameDataList {
 		this.name = name;
 	}
 
+	public <G extends GameDatable> GameDataTable(String name, List<G> list) {
+        super(list);
+        this.name = name;
+    }
+
 	public String getName() {
 		return name;
 	}
+
+	@Override
+	public String toString() {
+	    List<String> lines = new ArrayList<>();
+
+
+	    for (GameData gameData : this) {
+            lines.add(gameData.toString());
+        }
+
+        String f = String.join(",\n", lines);
+
+        return f;
+    }
 }

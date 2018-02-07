@@ -1,5 +1,8 @@
 package com.raven.engine.database;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +18,10 @@ public class GameDataReader {
 	}
 
 	private static int i = 0;
+
+	public static List<GameData> readFile(Path path) throws IOException {
+	    return readFile(new String(Files.readAllBytes(path)).toCharArray());
+    }
 
 	public static List<GameData> readFile(char[] chars) {
 		i = 0;

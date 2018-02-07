@@ -1,8 +1,9 @@
 package com.raven.breakingsands;
 
 import com.raven.engine.database.GameData;
+import com.raven.engine.database.GameDatable;
 
-public class Armor {
+public class Armor implements GameDatable {
 
     private GameData gameData;
     private int resistance;
@@ -20,5 +21,10 @@ public class Armor {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public GameData toGameData() {
+        return gameData;
     }
 }

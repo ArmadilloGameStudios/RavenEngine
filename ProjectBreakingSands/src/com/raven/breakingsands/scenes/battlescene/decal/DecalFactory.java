@@ -1,6 +1,6 @@
 package com.raven.breakingsands.scenes.battlescene.decal;
 
-import com.raven.breakingsands.Factory;
+import com.raven.engine.util.Factory;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataList;

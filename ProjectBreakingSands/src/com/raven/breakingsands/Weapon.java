@@ -1,8 +1,9 @@
 package com.raven.breakingsands;
 
 import com.raven.engine.database.GameData;
+import com.raven.engine.database.GameDatable;
 
-public class Weapon {
+public class Weapon implements GameDatable {
     private GameData gameData;
     private int damage, piercing = 0, range, accuracy;
     private String name;
@@ -36,5 +37,10 @@ public class Weapon {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public GameData toGameData() {
+        return gameData;
     }
 }

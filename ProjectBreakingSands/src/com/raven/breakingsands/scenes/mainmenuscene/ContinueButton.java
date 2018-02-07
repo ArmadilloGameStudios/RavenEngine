@@ -1,8 +1,5 @@
 package com.raven.breakingsands.scenes.mainmenuscene;
 
-import com.raven.engine.Game;
-import com.raven.engine.GameEngine;
-import com.raven.engine.util.Vector3f;
 import com.raven.engine.util.Vector4f;
 import com.raven.engine.worldobject.HUDContainer;
 import com.raven.engine.worldobject.HUDText;
@@ -11,7 +8,7 @@ import com.raven.engine.worldobject.TextObject;
 
 import java.awt.*;
 
-public class ExitButton extends HUDText<MainMenuScene, HUDContainer<MainMenuScene>>
+public class ContinueButton extends HUDText<MainMenuScene, HUDContainer<MainMenuScene>>
         implements MouseHandler {
 
     private float x, y;
@@ -19,19 +16,19 @@ public class ExitButton extends HUDText<MainMenuScene, HUDContainer<MainMenuScen
     private TextObject text, hoverText;
 
 
-    public ExitButton(MainMenuScene scene) {
+    public ContinueButton(MainMenuScene scene) {
         super(scene);
 
         text = new TextObject((int) getWidth(), (int) getHeight());
         text.setFont(new Font("SansSerif", Font.PLAIN, 20));
-        text.setText("Exit");
+        text.setText("Continue");
 
         this.setTexture(text);
 
         hoverText = new TextObject((int) getWidth(), (int) getHeight());
         hoverText.setFont(new Font("SansSerif", Font.PLAIN, 20));
         hoverText.setBackgroundColor(new Vector4f(.1f, .6f, .9f, 1f));
-        hoverText.setText("Exit");
+        hoverText.setText("Continue");
 
         this.addMouseHandler(this);
     }
@@ -91,7 +88,7 @@ public class ExitButton extends HUDText<MainMenuScene, HUDContainer<MainMenuScen
 
     @Override
     public void handleMouseClick() {
-        getScene().getGame().exit();
+        getScene().getGame().loadGame();
     }
 
     @Override

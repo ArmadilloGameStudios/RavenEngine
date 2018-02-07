@@ -9,6 +9,8 @@ import com.raven.engine.scene.light.GlobalDirectionalLight;
 import com.raven.engine.util.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +72,13 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         HUDBottomContainer container = new HUDBottomContainer(this);
         getLayerHUD().addChild(container);
 
+        Path charPath = Paths.get(getGame().getMainDirectory(), "save");
+
+        if (charPath.toFile().list().length > 0) {
+            ContinueButton continueBtn = new ContinueButton(this);
+            container.addChild(continueBtn);
+        }
+
         NewGameButton newGameBtn = new NewGameButton(this);
         container.addChild(newGameBtn);
 
@@ -79,7 +88,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
 
     @Override
     public void onExitScene() {
-
+        getGame().saveGame();
     }
 
     @Override

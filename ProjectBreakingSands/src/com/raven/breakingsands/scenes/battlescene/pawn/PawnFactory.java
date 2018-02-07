@@ -1,12 +1,9 @@
 package com.raven.breakingsands.scenes.battlescene.pawn;
 
-import com.raven.breakingsands.Factory;
+import com.raven.engine.util.Factory;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataQuery;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PawnFactory extends Factory<Pawn> {
     private BattleScene scene;

@@ -13,7 +13,7 @@ public abstract class Game<G extends Game> {
 	private Scene<G> currentScene;
 	private Scene<G> readyTransitionScene;
 
-	private boolean isRunning = false;
+	private boolean isRunning;
 
 	public Game() {
 		isRunning = true;
@@ -99,4 +99,8 @@ public abstract class Game<G extends Game> {
 	abstract public String getTitle();
 
 	abstract public String getMainDirectory();
+
+	abstract public boolean saveGame();
+
+	abstract public boolean loadGame();
 }
