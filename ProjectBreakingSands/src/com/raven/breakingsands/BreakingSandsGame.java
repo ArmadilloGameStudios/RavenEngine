@@ -1,5 +1,6 @@
 package com.raven.breakingsands;
 
+import com.raven.breakingsands.mission.Mission;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
 import com.raven.engine.Game;
@@ -26,6 +27,8 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
     }
 
     private List<Character> characters = new ArrayList<>();
+    private List<Mission> missions = new ArrayList<>();
+
 
     @Override
     public void setup() {
@@ -55,20 +58,24 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
     public boolean saveGame() {
         boolean success = true;
 
-        GameDataTable charGDL = new GameDataTable("characters", characters);
+        List<GameDataTable> gdtToSave = new ArrayList<>();
 
-        Path charPath = Paths.get(getMainDirectory(), "save", charGDL.getName());
-
-        File f = charPath.toFile();
+        gdtToSave.add(new GameDataTable("characters", characters));
+        gdtToSave.add(new GameDataTable("missions", missions));
 
         try {
-            if (f.getParentFile().exists())
-                f.getParentFile().mkdirs();
+            for (GameDataTable table : gdtToSave) {
+                Path p = Paths.get(getMainDirectory(), "save", table.getName());
+                File f = p.toFile();
 
-            if (!f.exists())
-                f.createNewFile();
+                if (f.getParentFile().exists())
+                    f.getParentFile().mkdirs();
 
-            Files.write(charPath, charGDL.toString().getBytes(), StandardOpenOption.CREATE);
+                if (!f.exists())
+                    f.createNewFile();
+
+                Files.write(p, table.toString().getBytes(), StandardOpenOption.CREATE);
+            }
         } catch (IOException e) {
             e.printStackTrace();
             success = false;
@@ -83,21 +90,63 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
 
         Path savePath = Paths.get(getMainDirectory(), "save");
 
-        GameDataTable charGDL = new GameDataTable("characters");
-
         try {
             for (GameData data : GameDataReader.readFile(savePath.resolve("characters"))) {
-                charGDL.add(data);
+                characters.add(new Character(data));
+            }
+
+            for (GameData data : GameDataReader.readFile(savePath.resolve("missions"))) {
+                missions.add(new Mission(data));
             }
         } catch (IOException e) {
             e.printStackTrace();
             success = false;
         }
 
-        for (GameData gameData : charGDL) {
-            characters.add(new Character(gameData));
-        }
-
         return success;
+    }
+
+    public void newGame() {
+        characters.clear();
+        missions.clear();
+
+        // starting characters
+        Character character = new Character();
+        character.setName("Jotlin");
+        character.setTitle("Captain");
+        character.setExp(6);
+        character.setLevel(3);
+        character.setHitPoints(12);
+        character.setMovement(4);
+        character.setEvasion(3);
+        characters.add(character);
+
+        character = new Character();
+        character.setName("Admus");
+        character.setTitle("Recruit");
+        character.setExp(0);
+        character.setLevel(0);
+        character.setHitPoints(10);
+        character.setMovement(5);
+        character.setEvasion(3);
+        characters.add(character);
+
+        character = new Character();
+        character.setName("Ellet");
+        character.setTitle("Recruit");
+        character.setExp(0);
+        character.setLevel(0);
+        character.setHitPoints(6);
+        character.setMovement(6);
+        character.setEvasion(4);
+        characters.add(character);
+    }
+
+    public List<Character> getCharacters() {
+        return characters;
+    }
+
+    public List<Mission> getMissions() {
+        return missions;
     }
 }

@@ -1,11 +1,11 @@
 package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.BreakingSandsGame;
+import com.raven.breakingsands.Character;
 import com.raven.breakingsands.scenes.battlescene.decal.Decal;
 import com.raven.breakingsands.scenes.battlescene.decal.DecalFactory;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
 import com.raven.breakingsands.scenes.hud.HUDBottomContainer;
-import com.raven.breakingsands.scenes.hud.HUDDetailText;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.breakingsands.scenes.battlescene.terrain.Terrain;
@@ -459,43 +459,21 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     private void addPawns() {
-        PawnFactory pf = new PawnFactory(this);
-        pf.setName("Player");
-        Pawn p = pf.getInstance();
-        pawns.add(p);
+        // characters
+        int offset = 0;
+        for (Character character : getGame().getCharacters()) {
 
-        terrain[28][28].setPawn(p);
+            Pawn p = new Pawn(this, character);
+            pawns.add(p);
+            terrain[29][29 - offset].setPawn(p);
 
-        setActivePawn(p);
-
-        p = pf.getInstance();
-        pawns.add(p);
-
-        terrain[28][27].setPawn(p);
-
-        p = pf.getInstance();
-        pawns.add(p);
-
-        terrain[28][26].setPawn(p);
-
-        p = pf.getInstance();
-        pawns.add(p);
-
-        terrain[29][28].setPawn(p);
-
-        p = pf.getInstance();
-        pawns.add(p);
-
-        terrain[29][27].setPawn(p);
-
-        p = pf.getInstance();
-        pawns.add(p);
-
-        terrain[29][26].setPawn(p);
+            offset++;
+        }
 
         // enemy
+        PawnFactory pf = new PawnFactory(this);
         pf.setName("Enemy");
-        p = pf.getInstance();
+        Pawn p = pf.getInstance();
         pawns.add(p);
         terrain[7][6].setPawn(p);
 
@@ -518,6 +496,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         p = pf.getInstance();
         pawns.add(p);
         terrain[6][4].setPawn(p);
+
+        activePawn = pawns.get(pawns.size() - 1);
 
         setState(SELECT_MOVE);
     }

@@ -8,13 +8,13 @@ import com.raven.engine.worldobject.HUDObject;
 
 import java.util.List;
 
-public class HUDBottomContainer extends HUDContainer {
+public class HUDBottomContainer<S extends Scene> extends HUDContainer<S> {
 
     private float x, y;
 
     private Vector4f color = new Vector4f(.25f,.25f,.25f,.5f);
 
-    public HUDBottomContainer(Scene scene) {
+    public HUDBottomContainer(S scene) {
         super(scene);
     }
 

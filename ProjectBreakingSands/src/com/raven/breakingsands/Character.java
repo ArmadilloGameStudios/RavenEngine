@@ -8,8 +8,11 @@ import java.util.HashMap;
 public class Character implements GameDatable {
 
     private String name = "Cat", title = "Lord Commander";
-    private int exp = 12, level = 2,
-            hitPoints = 10, movement = 3, evasion = 7;
+    private int exp = 12;
+    private int level = 2;
+    private int hitPoints = 10;
+    private int movement = 3;
+    private int evasion = 7;
     private Weapon weapon;
     private Armor armor;
 
@@ -24,6 +27,62 @@ public class Character implements GameDatable {
         level = gameData.getInteger("level");
         movement = gameData.getInteger("movement");
         evasion = gameData.getInteger("evasion");
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setExp(int exp) {
+        this.exp = exp;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setHitPoints(int hitPoints) {
+        this.hitPoints = hitPoints;
+    }
+
+    public void setMovement(int movement) {
+        this.movement = movement;
+    }
+
+    public void setEvasion(int evasion) {
+        this.evasion = evasion;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public int getExp() {
+        return exp;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getHitPoints() {
+        return hitPoints;
+    }
+
+    public int getMovement() {
+        return movement;
+    }
+
+    public int getEvasion() {
+        return evasion;
     }
 
     @Override

@@ -73,7 +73,7 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
 
         this.setState(State.UNSELECTABLE);
 
-        details = new TextObject(85, 85);
+        details = new TextObject(250, 250);
 
         updateText();
     }
@@ -308,10 +308,19 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
         }
 
         if (pawn != null) {
-//            text += "\n" + pawn.getName();
-//            text += "\n" + pawn.getHitPoints();
-//            text += "\n" + pawn.getWeapon().getName();
-            text += "\n" + pawn.getArmor().getName();
+            text += "\n" + pawn.getName();
+            text += "\nHP: " + pawn.getHitPoints();
+            text += "\nMovement: " + pawn.getTotalMovement();
+
+            text += "\nWeapon:";
+            text += "\nName: " + pawn.getWeapon().getName() +
+                    "\nDamage: " + pawn.getWeapon().getDamage() +
+                    ", Range: " + pawn.getWeapon().getRange() +
+                    "\nPiercing: " + pawn.getWeapon().getPiercing() +
+                    ", Accuracy: " + pawn.getWeapon().getAccuracy();
+
+            text += "\nArmor:";
+            text += "\n" + pawn.getArmor().getName() + ", " + pawn.getArmor().getResistance();
         }
 
         details.setText(text);

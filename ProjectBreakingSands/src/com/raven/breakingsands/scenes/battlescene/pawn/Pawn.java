@@ -1,12 +1,14 @@
 package com.raven.breakingsands.scenes.battlescene.pawn;
 
 import com.raven.breakingsands.Armor;
+import com.raven.breakingsands.Character;
 import com.raven.breakingsands.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.terrain.Terrain;
 import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataList;
+import com.raven.engine.database.GameDataQuery;
 import com.raven.engine.database.GameDatabase;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.worldobject.WorldObject;
@@ -32,7 +34,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     }
 
     // instance
-    private GameData gameData;
     private Weapon weapon;
     private Armor armor;
     private String name = "";
@@ -41,13 +42,29 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     public Pawn(BattleScene scene, GameData gameData) {
         super(scene, gameData.getString("model"));
 
-        this.gameData = gameData;
-
         name = gameData.getString("name");
         team = gameData.getInteger("team");
         hitPoints = gameData.getInteger("hp");
         totalMovement = gameData.getInteger("movement");
         evasion = gameData.getInteger("evasion");
+
+        weapon = new Weapon(GameDatabase.all("weapon").getRandom());
+        armor = new Armor(GameDatabase.all("armor").getRandom());
+    }
+
+    public Pawn(BattleScene scene, Character character) {
+        super(scene, dataList.queryRandom(new GameDataQuery() {
+            @Override
+            public boolean matches(GameData row) {
+                return row.getString("name").equals("Player");
+            }
+        }).getString("model"));
+
+        name = character.getTitle() + " " + character.getName();
+        team = 0;
+        hitPoints = character.getHitPoints();
+        totalMovement = character.getMovement();
+        evasion = character.getEvasion();
 
         weapon = new Weapon(GameDatabase.all("weapon").getRandom());
         armor = new Armor(GameDatabase.all("armor").getRandom());

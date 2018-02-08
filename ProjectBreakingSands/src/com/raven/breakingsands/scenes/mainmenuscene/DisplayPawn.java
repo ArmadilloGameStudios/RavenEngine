@@ -6,12 +6,13 @@ import com.raven.engine.database.GameDataList;
 import com.raven.engine.database.GameDataQuery;
 import com.raven.engine.database.GameDatabase;
 import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.scene.Scene;
 import com.raven.engine.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DisplayPawn extends WorldObject<MainMenuScene, Terrain, WorldObject> {
+public class DisplayPawn extends WorldObject<Scene, Terrain, WorldObject> {
     private static GameDataList dataList = GameDatabase.all("pawn");
 
     public static List<ModelData> getModelData() {
@@ -24,7 +25,7 @@ public class DisplayPawn extends WorldObject<MainMenuScene, Terrain, WorldObject
         return data;
     }
 
-    public DisplayPawn(MainMenuScene scene) {
+    public DisplayPawn(Scene scene) {
         super(scene, dataList.queryRandom(new GameDataQuery() {
             @Override
             public boolean matches(GameData row) {

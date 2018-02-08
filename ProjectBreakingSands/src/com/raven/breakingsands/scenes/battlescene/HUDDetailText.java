@@ -1,4 +1,4 @@
-package com.raven.breakingsands.scenes.hud;
+package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.engine.util.Vector4f;
@@ -22,12 +22,12 @@ public class HUDDetailText extends HUDText<BattleScene, HUDContainer<BattleScene
 
     @Override
     public float getHeight() {
-        return 85;
+        return 250;
     }
 
     @Override
     public float getWidth() {
-        return 85;
+        return 250;
     }
 
     @Override
