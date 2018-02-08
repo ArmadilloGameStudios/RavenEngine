@@ -17,6 +17,10 @@ void main(void) {
     case 1: // bottom
         gl_Position = vec4(vertex_pos.xy * scale / size - vec2(0, 1) + offset / size, z, 1.0);
         break;
+    case 2: // left
+        texture_coords += .5 / scale * vec2(1, -1); // not sure why this is needed...
+        gl_Position = vec4(vertex_pos.xy * scale / size - vec2(1, 0) + offset / size, z, 1.0);
+        break;
     case 0: // center
     default:
         texture_coords += .5 / scale * vec2(1, -1); // not sure why this is needed...
