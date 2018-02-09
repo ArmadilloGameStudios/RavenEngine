@@ -34,6 +34,7 @@ public class Menu extends HUDCenterContainer<BattleScene> {
         MenuButton exitButton = new MenuButton(getScene(), "Exit") {
             @Override
             public void handleMouseClick() {
+                getScene().getGame().saveGame();
                 getScene().getGame().exit();
             }
         };

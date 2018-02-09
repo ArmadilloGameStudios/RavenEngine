@@ -5,6 +5,7 @@ import com.raven.breakingsands.Character;
 import com.raven.breakingsands.scenes.battlescene.decal.Decal;
 import com.raven.breakingsands.scenes.battlescene.decal.DecalFactory;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
+import com.raven.breakingsands.scenes.battlescene.victory.VictoryDisplay;
 import com.raven.breakingsands.scenes.hud.HUDBottomContainer;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
@@ -41,7 +42,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             YELLOW_CHANGING = new Highlight(1f, .8f, .2f, .5f),
             GREEN = new Highlight(.3f, 1f, .2f, .75f),
             GREEN_CHANGING = new Highlight(.3f, 1f, .2f, .5f);
+
     private Menu menu;
+    private VictoryDisplay victoryDisplay;
+    private HUDDetailText hudDetailText;
 
     public enum State {
         MOVING, ATTACKING, SELECT_MOVE_AI, SELECT_MOVE,
@@ -54,16 +58,16 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private Terrain[][] terrain;
 
     private HashMap<Terrain, Path<Terrain>> pathMap;
-    private HashMap<Terrain, Float> rangeMap;
     private Path<Terrain> currentPath;
     private int pathIndex = 0;
     private float pathSpeed = 100f;
     private float pathMoveTime = 0f;
 
+    private HashMap<Terrain, Float> rangeMap;
+
     private List<Pawn> pawns = new ArrayList<>();
     private Pawn activePawn;
 
-    private HUDDetailText hudDetailText;
 
     private State state = SELECT_MOVE;
 
@@ -86,13 +90,14 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     @Override
     public void inputKey(int key, int action, int mods) {
         if (GLFW.GLFW_KEY_ESCAPE == key && GLFW.GLFW_PRESS == action) {
-            if (isPaused()) {
-                menu.setVisibility(false);
-                setPaused(false);
-            } else {
-                menu.setVisibility(true);
-                setPaused(true);
-            }
+            if (!victoryDisplay.getVisibility())
+                if (isPaused()) {
+                    menu.setVisibility(false);
+                    setPaused(false);
+                } else {
+                    menu.setVisibility(true);
+                    setPaused(true);
+                }
         }
     }
 
@@ -456,6 +461,11 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         menu = new Menu(this);
         getLayerHUD().addChild(menu);
         menu.setVisibility(false);
+
+        // Victory
+        victoryDisplay = new VictoryDisplay(this);
+        getLayerHUD().addChild(victoryDisplay);
+        victoryDisplay.setVisibility(false);
     }
 
     private void addPawns() {
@@ -477,25 +487,25 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         pawns.add(p);
         terrain[7][6].setPawn(p);
 
-        p = pf.getInstance();
-        pawns.add(p);
-        terrain[7][5].setPawn(p);
-
-        p = pf.getInstance();
-        pawns.add(p);
-        terrain[7][4].setPawn(p);
-
-        p = pf.getInstance();
-        pawns.add(p);
-        terrain[6][6].setPawn(p);
-
-        p = pf.getInstance();
-        pawns.add(p);
-        terrain[6][5].setPawn(p);
-
-        p = pf.getInstance();
-        pawns.add(p);
-        terrain[6][4].setPawn(p);
+//        p = pf.getInstance();
+//        pawns.add(p);
+//        terrain[7][5].setPawn(p);
+//
+//        p = pf.getInstance();
+//        pawns.add(p);
+//        terrain[7][4].setPawn(p);
+//
+//        p = pf.getInstance();
+//        pawns.add(p);
+//        terrain[6][6].setPawn(p);
+//
+//        p = pf.getInstance();
+//        pawns.add(p);
+//        terrain[6][5].setPawn(p);
+//
+//        p = pf.getInstance();
+//        pawns.add(p);
+//        terrain[6][4].setPawn(p);
 
         activePawn = pawns.get(pawns.size() - 1);
 
@@ -832,6 +842,20 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     private float linePointDist(float a, float b, float c, float x, float y) {
         return ((a * x + b * y + c) / (Math.abs(a) + Math.abs(b)));
+    }
+
+    public void checkVictory() {
+        for (Pawn pawn : pawns) {
+            if (pawn.getTeam() != 0)
+                return;
+        }
+
+        victory();
+    }
+
+    public void victory() {
+        victoryDisplay.setVisibility(true);
+        setPaused(true);
     }
 
     public void setDetailText(TextObject textObject) {

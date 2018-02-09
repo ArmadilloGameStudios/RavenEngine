@@ -3,6 +3,7 @@ package com.raven.breakingsands;
 import com.raven.breakingsands.mission.Mission;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
+import com.raven.breakingsands.scenes.missionselectscene.MissionSelectScene;
 import com.raven.engine.Game;
 import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
@@ -28,7 +29,7 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
 
     private List<Character> characters = new ArrayList<>();
     private List<Mission> missions = new ArrayList<>();
-
+    private Mission activeMission = null;
 
     @Override
     public void setup() {
@@ -88,6 +89,9 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
     public boolean loadGame() {
         boolean success = true;
 
+        characters.clear();
+        missions.clear();
+
         Path savePath = Paths.get(getMainDirectory(), "save");
 
         try {
@@ -103,6 +107,8 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
             success = false;
         }
 
+        prepTransitionScene(new MissionSelectScene(this));
+
         return success;
     }
 
@@ -117,7 +123,7 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
         character.setExp(6);
         character.setLevel(3);
         character.setHitPoints(12);
-        character.setMovement(4);
+        character.setMovement(80);
         character.setEvasion(3);
         characters.add(character);
 
@@ -127,7 +133,7 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
         character.setExp(0);
         character.setLevel(0);
         character.setHitPoints(10);
-        character.setMovement(5);
+        character.setMovement(80);
         character.setEvasion(3);
         characters.add(character);
 
@@ -137,7 +143,7 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
         character.setExp(0);
         character.setLevel(0);
         character.setHitPoints(6);
-        character.setMovement(6);
+        character.setMovement(80);
         character.setEvasion(4);
         characters.add(character);
     }
@@ -148,5 +154,13 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
 
     public List<Mission> getMissions() {
         return missions;
+    }
+
+    public void setActiveMission(Mission activeMission) {
+        this.activeMission = activeMission;
+    }
+
+    public void resolveActiveMission(boolean success) {
+        missions.remove(activeMission);
     }
 }

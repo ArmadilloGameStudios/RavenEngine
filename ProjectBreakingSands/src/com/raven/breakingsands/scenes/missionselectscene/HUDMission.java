@@ -15,23 +15,23 @@ public class HUDMission extends HUDText<MissionSelectScene, HUDMissionSelect>
 
     private TextObject defaultText, hoverText;
 
-    private String text;
+    private Mission mission;
 
     public HUDMission(MissionSelectScene scene, Mission mission) {
         super(scene);
 
-        this.text = mission.getName();
+        this.mission = mission;
 
         defaultText = new TextObject((int)getWidth(), (int)getHeight());
         defaultText.setFont(new Font( "SansSerif", Font.PLAIN, 14));
-        defaultText.setText(text);
+        defaultText.setText(mission.getName());
 
         this.setTexture(defaultText);
 
         hoverText = new TextObject((int)getWidth(), (int)getHeight());
         hoverText.setFont(new Font( "SansSerif", Font.PLAIN, 14));
         hoverText.setBackgroundColor(new Vector4f(.1f, .6f, .9f, 1f));
-        hoverText.setText(text);
+        hoverText.setText(mission.getName());
 
         this.addMouseHandler(this);
     }
@@ -93,6 +93,7 @@ public class HUDMission extends HUDText<MissionSelectScene, HUDMissionSelect>
     public void handleMouseClick() {
         BreakingSandsGame game = getScene().getGame();
 
+        game.setActiveMission(mission);
         game.prepTransitionScene(new BattleScene(game));
     }
 
