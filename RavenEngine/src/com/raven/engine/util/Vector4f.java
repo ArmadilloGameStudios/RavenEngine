@@ -33,6 +33,9 @@ import java.nio.FloatBuffer;
  */
 public class Vector4f {
 
+    private static Vector4f tempVec = new Vector4f();
+    private static Vector4f tempVec2 = new Vector4f();
+
     public float x;
     public float y;
     public float z;
@@ -86,9 +89,9 @@ public class Vector4f {
      *
      * @return Normalized vector
      */
-    public Vector4f normalize() {
+    public Vector4f normalize(Vector4f out) {
         float length = length();
-        return divide(length);
+        return divide(length, out);
     }
 
     /**
@@ -98,12 +101,12 @@ public class Vector4f {
      *
      * @return Sum of this + other
      */
-    public Vector4f add(Vector4f other) {
-        float x = this.x + other.x;
-        float y = this.y + other.y;
-        float z = this.z + other.z;
-        float w = this.w + other.w;
-        return new Vector4f(x, y, z, w);
+    public Vector4f add(Vector4f other, Vector4f out) {
+        out.x = this.x + other.x;
+        out.y = this.y + other.y;
+        out.z = this.z + other.z;
+        out.w = this.w + other.w;
+        return out;
     }
 
     /**
@@ -111,8 +114,8 @@ public class Vector4f {
      *
      * @return Negated vector
      */
-    public Vector4f negate() {
-        return scale(-1f);
+    public Vector4f negate(Vector4f out) {
+        return scale(-1f, out);
     }
 
     /**
@@ -122,8 +125,8 @@ public class Vector4f {
      *
      * @return Difference of this - other
      */
-    public Vector4f subtract(Vector4f other) {
-        return this.add(other.negate());
+    public Vector4f subtract(Vector4f other, Vector4f out) {
+        return this.add(other.negate(tempVec), out);
     }
 
     /**
@@ -133,12 +136,12 @@ public class Vector4f {
      *
      * @return Scalar product of this * scalar
      */
-    public Vector4f scale(float scalar) {
-        float x = this.x * scalar;
-        float y = this.y * scalar;
-        float z = this.z * scalar;
-        float w = this.w * scalar;
-        return new Vector4f(x, y, z, w);
+    public Vector4f scale(float scalar, Vector4f out) {
+        out.x = this.x * scalar;
+        out.y = this.y * scalar;
+        out.z = this.z * scalar;
+        out.w = this.w * scalar;
+        return out;
     }
 
     /**
@@ -148,8 +151,8 @@ public class Vector4f {
      *
      * @return Scalar quotient of this / scalar
      */
-    public Vector4f divide(float scalar) {
-        return scale(1f / scalar);
+    public Vector4f divide(float scalar, Vector4f out) {
+        return scale(1f / scalar, out);
     }
 
     /**
@@ -172,8 +175,11 @@ public class Vector4f {
      *
      * @return Linear interpolated vector
      */
-    public Vector4f lerp(Vector4f other, float alpha) {
-        return this.scale(1f - alpha).add(other.scale(alpha));
+    public Vector4f lerp(Vector4f other, float alpha, Vector4f out) {
+        this.scale(1f - alpha, tempVec);
+        other.scale(alpha, tempVec2);
+        tempVec.add(tempVec2, out);
+        return out;
     }
 
     /**

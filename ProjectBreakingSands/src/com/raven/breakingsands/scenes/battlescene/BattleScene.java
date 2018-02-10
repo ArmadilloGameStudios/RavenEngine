@@ -101,6 +101,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         }
     }
 
+    private Vector3f tempVec = new Vector3f();
     @Override
     public void onEnterScene() {
         setBackgroundColor(new Vector3f(0.6f, 0.7f, 1f));
@@ -115,7 +116,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         sunLight.height = 4f;
 
         Vector3f dir = new Vector3f(1, 5, 2);
-        sunLight.setDirection(dir.normalize());
+        sunLight.setDirection(dir.normalize(tempVec));
 
         addLight(sunLight);
 
@@ -517,6 +518,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     }
 
+    private Vector3f tempVec2 = new Vector3f();
     @Override
     public void onUpdate(float deltaTime) {
         float a = (float) (Math.cos(GameEngine.getEngine().getSystemTime() * .004) * .075 + .4);
@@ -549,9 +551,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                 pathMoveTime = 0f;
             }
 
-            Vector3f movement = next.getNode().getPosition().subtract(current.getPosition());
+            Vector3f movement = next.getNode().getPosition().subtract(current.getPosition(), tempVec);
 
-            activePawn.move(movement.scale(delta / (pathSpeed * cost)));
+            activePawn.move(movement.scale(delta / (pathSpeed * cost), tempVec2));
 
             if (overflow > 0f) {
                 pathIndex += 1;

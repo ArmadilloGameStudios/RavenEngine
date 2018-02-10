@@ -23,6 +23,9 @@ public class GlobalDirectionalLight extends Light {
     private Vector3f ambient = new Vector3f(.1f, .1f, .1f);
     public float shadowTransparency = 1.0f;
 
+
+    private Vector3f tempVec = new Vector3f();
+
     public GlobalDirectionalLight() {
         this(new Vector3f(1, 1, 0), .5f, new Vector3f(0, -1, 0), 25f);
     }
@@ -39,7 +42,8 @@ public class GlobalDirectionalLight extends Light {
 //        shadowViewMatrix = new Matrix4f().translate(0, 0, -30);
         shadowViewMatrix = new Matrix4f();
 
-        Matrix4f.direction(direction, null);
+//        Matrix4f.direction(direction, null); // What is this trying to solve?
+        setDirection(direction);
 
         shadowShader = new ShadowShader();
     }
@@ -71,12 +75,12 @@ public class GlobalDirectionalLight extends Light {
 
     // has 'memory leak'
     public void setDirection(Vector3f direction) {
-        this.direction = direction.normalize();
+        direction.normalize(this.direction);
 
-        shadowViewMatrix.shadowSkew(
+        Matrix4f.shadowSkew(
                 this.direction,
                 origin,
-                size, height);
+                size, height, shadowViewMatrix);
 
         length = Matrix4f.shadowSkewLength(this.direction, size, height);
     }

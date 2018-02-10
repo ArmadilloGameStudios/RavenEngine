@@ -19,7 +19,8 @@ public abstract class WorldObject<
     private List<WorldObject> parentList = new ArrayList();
     private S scene;
 
-    private float x, y, z, scale = 1f, rotation = 0f;
+    private float scale = 1f, rotation = 0f;
+    private Vector3f position = new Vector3f();
     private Matrix4f matrix = new Matrix4f();
 
     private Highlight highlight = new Highlight();
@@ -43,19 +44,14 @@ public abstract class WorldObject<
         this.scene = scene;
         this.model = model;
 
-        // pos
-        this.x = x;
-        this.y = y;
-        this.z = 0;
-
         resolveMatrix();
     }
     public float getZ() {
-        return z;
+        return position.z;
     }
 
     public void setZ(float z) {
-        this.z = z;
+        position.z = z;
         resolveMatrix();
     }
 
@@ -64,11 +60,11 @@ public abstract class WorldObject<
     }
 
     public float getX() {
-        return x;
+        return position.x;
     }
 
     public void setX(float x) {
-        this.x = x;
+        position.x = x;
         resolveMatrix();
     }
 
@@ -77,11 +73,11 @@ public abstract class WorldObject<
     }
 
     public float getY() {
-        return y;
+        return position.y;
     }
 
     public void setY(float y) {
-        this.y = y;
+        position.y = y;
         resolveMatrix();
     }
 
@@ -89,19 +85,20 @@ public abstract class WorldObject<
         setY(getY() + y);
     }
 
+    // TODO
     public Vector3f getPosition() {
-        return new Vector3f(x, y, z);
+        return position;
     }
 
     public void setPosition(Vector3f position) {
-        this.x = position.x;
-        this.y = position.y;
-        this.z = position.z;
+        this.position.x = position.x;
+        this.position.y = position.y;
+        this.position.z = position.z;
         resolveMatrix();
     }
 
     public void move(Vector3f amount) {
-        setPosition(getPosition().add(amount));
+        setPosition(getPosition().add(amount, getPosition()));
     }
 
     public S getScene() {
@@ -122,11 +119,14 @@ public abstract class WorldObject<
         resolveMatrix();
     }
 
+    private Matrix4f tempMat = new Matrix4f();
     private void resolveMatrix() {
-        matrix = matrix.identity()
-                .translate(x, y, z)
-                .rotate(rotation, 0f, 1f, 0f)
-                .scale(scale, scale, scale);
+        matrix.identity();
+        tempMat.identity();
+
+        tempMat.translate(position, matrix);
+        matrix.rotate(rotation, 0f, 1f, 0f, tempMat);
+        tempMat.scale(scale, scale, scale, matrix);
     }
 
     public Matrix4f getModelMatrix() {
@@ -158,15 +158,16 @@ public abstract class WorldObject<
         }
     }
 
-    // TODO fix memory
+    private Matrix4f drawMat = new Matrix4f();
     public void draw4(Matrix4f parentMatrix) {
         GameEngine.getEngine().getWindow().getWorldShader().setWorldObjectID(getID());
 
-        Shader.setModelMatrix(parentMatrix.multiply(getModelMatrix()));
+        Shader.setModelMatrix(parentMatrix.multiply(getModelMatrix(), drawMat));
         model.getModelReference().draw();
 
-        for (WorldObject child : children) {
-            child.draw4();
+        for (C child : children) {
+//            child.draw4(); ??
+            child.draw4(drawMat);
         }
     }
 

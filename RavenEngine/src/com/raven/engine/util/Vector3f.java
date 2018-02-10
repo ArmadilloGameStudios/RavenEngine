@@ -35,6 +35,9 @@ import java.nio.FloatBuffer;
  */
 public class Vector3f {
 
+    private static Vector3f tempVec = new Vector3f();
+    private static Vector3f tempVec2 = new Vector3f();
+
     public float x;
     public float y;
     public float z;
@@ -86,9 +89,9 @@ public class Vector3f {
      *
      * @return Normalized vector
      */
-    public Vector3f normalize() {
+    public Vector3f normalize(Vector3f out) {
         float length = length();
-        return divide(length);
+        return divide(length, out);
     }
 
     /**
@@ -98,11 +101,11 @@ public class Vector3f {
      *
      * @return Sum of this + other
      */
-    public Vector3f add(Vector3f other) {
-        float x = this.x + other.x;
-        float y = this.y + other.y;
-        float z = this.z + other.z;
-        return new Vector3f(x, y, z);
+    public Vector3f add(Vector3f other, Vector3f out) {
+        out.x = this.x + other.x;
+        out.y = this.y + other.y;
+        out.z = this.z + other.z;
+        return out;
     }
 
     /**
@@ -110,8 +113,8 @@ public class Vector3f {
      *
      * @return Negated vector
      */
-    public Vector3f negate() {
-        return scale(-1f);
+    public Vector3f negate(Vector3f out) {
+        return scale(-1f, out);
     }
 
     /**
@@ -121,8 +124,8 @@ public class Vector3f {
      *
      * @return Difference of this - other
      */
-    public Vector3f subtract(Vector3f other) {
-        return this.add(other.negate());
+    public Vector3f subtract(Vector3f other, Vector3f out) {
+        return this.add(other.negate(tempVec), out);
     }
 
     /**
@@ -132,11 +135,11 @@ public class Vector3f {
      *
      * @return Scalar product of this * scalar
      */
-    public Vector3f scale(float scalar) {
-        float x = this.x * scalar;
-        float y = this.y * scalar;
-        float z = this.z * scalar;
-        return new Vector3f(x, y, z);
+    public Vector3f scale(float scalar, Vector3f out) {
+        out.x = this.x * scalar;
+        out.y = this.y * scalar;
+        out.z = this.z * scalar;
+        return out;
     }
 
     /**
@@ -146,8 +149,8 @@ public class Vector3f {
      *
      * @return Scalar quotient of this / scalar
      */
-    public Vector3f divide(float scalar) {
-        return scale(1f / scalar);
+    public Vector3f divide(float scalar, Vector3f out) {
+        return scale(1f / scalar, out);
     }
 
     /**
@@ -168,11 +171,11 @@ public class Vector3f {
      *
      * @return Cross product of this x other
      */
-    public Vector3f cross(Vector3f other) {
-        float x = this.y * other.z - this.z * other.y;
-        float y = this.z * other.x - this.x * other.z;
-        float z = this.x * other.y - this.y * other.x;
-        return new Vector3f(x, y, z);
+    public Vector3f cross(Vector3f other, Vector3f out) {
+        out.x = this.y * other.z - this.z * other.y;
+        out.y = this.z * other.x - this.x * other.z;
+        out.z = this.x * other.y - this.y * other.x;
+        return out;
     }
 
     /**
@@ -184,8 +187,13 @@ public class Vector3f {
      *
      * @return Linear interpolated vector
      */
-    public Vector3f lerp(Vector3f other, float alpha) {
-        return this.scale(1f - alpha).add(other.scale(alpha));
+    public Vector3f lerp(Vector3f other, float alpha, Vector3f out) {
+        this.scale(1f - alpha, tempVec);
+
+        tempVec.add(other.scale(alpha, tempVec2), out);
+
+
+        return out;
     }
 
     /**

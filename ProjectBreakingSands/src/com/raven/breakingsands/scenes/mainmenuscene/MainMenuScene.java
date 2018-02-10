@@ -34,6 +34,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         return modelDataList;
     }
 
+    private Vector3f tempVec = new Vector3f();
     @Override
     public void onEnterScene() {
         // Camera
@@ -57,7 +58,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         sunLight.height = 2f;
 
         Vector3f dir = new Vector3f(1, 5, 2);
-        sunLight.setDirection(dir.normalize());
+        sunLight.setDirection(dir.normalize(tempVec));
 
         addLight(sunLight);
 

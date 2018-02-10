@@ -13,7 +13,7 @@ public class Camera {
     private boolean interactable = true;
 
     private Matrix4f viewMatrix = new Matrix4f();
-    private Matrix4f projectionMatrix;
+    private Matrix4f projectionMatrix = new Matrix4f();
     private Matrix4f inverseProjectionViewMatrix = new Matrix4f();
 
     public Camera() {
@@ -63,25 +63,30 @@ public class Camera {
     }
 
     // has 'memory leak'
+    private Matrix4f tempMat = new Matrix4f();
     private void updateViewMatrix() {
         // view
         viewMatrix.identity();
+        tempMat.identity();
 
-        viewMatrix.translate(0, 0, zooms);
-        viewMatrix.rotate(yrs, 1f, 0f, 0f);
+        viewMatrix.translate(0, 0, zooms, tempMat);
+        tempMat.rotate(yrs, 1f, 0f, 0f, viewMatrix);
 
-        viewMatrix.rotate(xrs, 0f, 1f, 0f);
-        viewMatrix.translate(xs, height, ys);
+        viewMatrix.rotate(xrs, 0f, 1f, 0f, tempMat);
+        tempMat.translate(xs, height, ys, viewMatrix);
 
         // IPV
         inverseProjectionViewMatrix.identity();
-        inverseProjectionViewMatrix = inverseProjectionViewMatrix.multiply(projectionMatrix).multiply(viewMatrix);
-        inverseProjectionViewMatrix.invert();
+        tempMat.identity();
+
+        tempMat.multiply(projectionMatrix, inverseProjectionViewMatrix);
+        inverseProjectionViewMatrix.multiply(viewMatrix, tempMat);
+        tempMat.invert(inverseProjectionViewMatrix);
     }
 
     private void updateProjectionMatrix() {
-        projectionMatrix = Matrix4f.perspective(70f, ((float) GameProperties.getScreenWidth())
-                / ((float) GameProperties.getScreenHeight()), near, far);
+        Matrix4f.perspective(70f, ((float) GameProperties.getScreenWidth())
+                / ((float) GameProperties.getScreenHeight()), near, far, projectionMatrix);
     }
 
     public void update(float deltaTime) {

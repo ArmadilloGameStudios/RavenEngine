@@ -43,14 +43,19 @@ public abstract class Shader {
     private static Plane plane = new Plane(0,1,0,0);
 
     // has 'memory leak'
+    private static Matrix4f tempMat = new Matrix4f();
+    private static Matrix4f tempMat2 = new Matrix4f();
     public static void setProjectionViewMatrices(Camera camera) {
-        GameEngine.getEngine().getWindow().printErrors("Cat: ");
-        camera.getViewMatrix().toBuffer(pvBuffer);
-        camera.getViewMatrix().multiply(Matrix4f.reflection(plane)).toBuffer(pvBuffer);
-        camera.getViewMatrix().inverse().toBuffer(pvBuffer);
+        GameEngine.getEngine().getWindow().printErrors("pre setProjectionViewMatrices: ");
+
+        Matrix4f cameraViewMatrix = camera.getViewMatrix();
+
+        cameraViewMatrix.toBuffer(pvBuffer);
+        cameraViewMatrix.multiply(Matrix4f.reflection(plane, tempMat), tempMat2).toBuffer(pvBuffer);
+        tempMat2.inverse(tempMat).toBuffer(pvBuffer);
 
         camera.getProjectionMatrix().toBuffer(pvBuffer);
-        camera.getProjectionMatrix().inverse().toBuffer(pvBuffer);
+        camera.getProjectionMatrix().inverse(tempMat).toBuffer(pvBuffer);
 
         camera.getInverseProjectionViewMatrix().toBuffer(pvBuffer);
 
@@ -59,7 +64,8 @@ public abstract class Shader {
         glBindBuffer(GL_UNIFORM_BUFFER, GameEngine.getEngine().getWindow().getMatricesHandel());
         glBufferSubData(GL_UNIFORM_BUFFER, 16 * 4, pvBuffer);
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
-        GameEngine.getEngine().getWindow().printErrors("Dog: ");
+
+        GameEngine.getEngine().getWindow().printErrors("during setProjectionViewMatrices: ");
     }
 
     private static FloatBuffer mBuffer = BufferUtils.createFloatBuffer(16);
