@@ -6,6 +6,8 @@ import com.raven.engine.scene.Layer;
 import com.raven.engine.scene.Scene;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.awt.*;
+
 public abstract class HUDText<S extends Scene, P extends HUDContainer<S>>
         extends HUDObject<S, P> {
 
@@ -46,5 +48,13 @@ public abstract class HUDText<S extends Scene, P extends HUDContainer<S>>
 
     public void setText(String text) {
         throw new NotImplementedException();
+    }
+
+    public void setFont(Font font) {
+        throw new NotImplementedException();
+    }
+
+    public void updateTexture() {
+        text.updateTexture();
     }
 }

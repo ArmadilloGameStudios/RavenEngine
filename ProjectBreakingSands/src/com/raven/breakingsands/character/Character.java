@@ -1,4 +1,4 @@
-package com.raven.breakingsands;
+package com.raven.breakingsands.character;
 
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDatable;

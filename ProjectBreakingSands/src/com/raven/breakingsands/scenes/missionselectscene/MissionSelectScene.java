@@ -1,9 +1,8 @@
 package com.raven.breakingsands.scenes.missionselectscene;
 
 import com.raven.breakingsands.BreakingSandsGame;
-import com.raven.breakingsands.Character;
+import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.mission.Mission;
-import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.mainmenuscene.DisplayPawn;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.scene.Camera;

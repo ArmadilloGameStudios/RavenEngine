@@ -1,6 +1,6 @@
 {
     name: "Standard Pistol",
-    damage: 3,
+    damage: 4,
     range: 4,
     accuracy: 5,
 },

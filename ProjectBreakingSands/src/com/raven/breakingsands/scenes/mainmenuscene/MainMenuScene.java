@@ -78,13 +78,16 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         if (charPath.toFile().list().length > 0) {
             ContinueButton continueBtn = new ContinueButton(this);
             container.addChild(continueBtn);
+            continueBtn.updateTexture();
         }
 
         NewGameButton newGameBtn = new NewGameButton(this);
         container.addChild(newGameBtn);
+        newGameBtn.updateTexture();
 
         ExitButton exitBtn = new ExitButton(this);
         container.addChild(exitBtn);
+        exitBtn.updateTexture();
 
         container.pack();
     }

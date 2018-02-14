@@ -10,7 +10,7 @@ public abstract class HUDContainer<S extends Scene>
 
     public static final int CENTER = 0, BOTTOM = 1;
 
-    private float width, height;
+    protected float width, height;
 
     @Override
     public float getHeight() {

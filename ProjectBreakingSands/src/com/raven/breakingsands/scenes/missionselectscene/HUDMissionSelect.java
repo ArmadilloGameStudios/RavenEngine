@@ -21,7 +21,9 @@ public class HUDMissionSelect extends HUDLeftContainer<MissionSelectScene> {
         this.missions.addAll(missions);
 
         for (Mission mission : missions) {
-            addChild(new HUDMission(getScene(), mission));
+            HUDMission hm = new HUDMission(getScene(), mission);
+            addChild(hm);
+            hm.updateTexture();
         }
     }
 

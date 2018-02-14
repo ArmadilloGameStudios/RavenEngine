@@ -1,7 +1,7 @@
 package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.BreakingSandsGame;
-import com.raven.breakingsands.Character;
+import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.scenes.battlescene.decal.Decal;
 import com.raven.breakingsands.scenes.battlescene.decal.DecalFactory;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
@@ -451,7 +451,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         addPawns();
 
         // Bottom HUD
-        HUDBottomContainer bottomContainer = new HUDBottomContainer(this);
+        HUDBottomContainer<BattleScene> bottomContainer = new HUDBottomContainer<>(this);
         getLayerHUD().addChild(bottomContainer);
 
         hudDetailText = new HUDDetailText(this);
@@ -463,15 +463,17 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         // Menu
         menu = new Menu(this);
-        menu.pack();
+//        menu.pack();
         getLayerHUD().addChild(menu);
         menu.setVisibility(false);
 
         // Victory
         victoryDisplay = new VictoryDisplay(this);
-        menu.pack();
+        victoryDisplay.pack();
         getLayerHUD().addChild(victoryDisplay);
         victoryDisplay.setVisibility(false);
+
+        victory();
     }
 
     private void addPawns() {
@@ -874,7 +876,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         victoryDisplay.setVisibility(true);
         setPaused(true);
     }
-
 
     public List<Character> getCharacterToLevel() {
         return canLevelUp;

@@ -324,6 +324,7 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
         }
 
         details.setText(text);
+        details.updateTexture();
     }
 
     public boolean isPassable() {

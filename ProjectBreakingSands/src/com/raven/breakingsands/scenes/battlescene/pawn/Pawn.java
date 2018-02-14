@@ -1,8 +1,8 @@
 package com.raven.breakingsands.scenes.battlescene.pawn;
 
-import com.raven.breakingsands.Armor;
-import com.raven.breakingsands.Character;
-import com.raven.breakingsands.Weapon;
+import com.raven.breakingsands.character.Armor;
+import com.raven.breakingsands.character.Character;
+import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.terrain.Terrain;
 import com.raven.engine.GameEngine;
@@ -116,8 +116,13 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
         // Check if hit
         int target = pawn.getWeapon().getAccuracy();
-        int totalRange = this.evasion + target;
+        int totalRange = pawn.evasion + target;
         int rolled = getScene().getRandom().nextInt(totalRange);
+
+        System.out.println("Accuracy: " + target);
+        System.out.println("Evasion: " + pawn.evasion);
+        System.out.println("Total Range: " + totalRange);
+        System.out.println("Rolled: " + rolled);
 
         if (rolled < target) {
             int remainingResistance = Math.max(pawn.armor.getResistance() - weapon.getPiercing(), 0);

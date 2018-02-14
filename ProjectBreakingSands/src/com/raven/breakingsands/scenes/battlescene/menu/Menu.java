@@ -22,6 +22,7 @@ public class Menu extends HUDCenterContainer<BattleScene> {
             }
         };
         addChild(resumeButton);
+        resumeButton.updateTexture();
 
         MenuButton mainMenuButton = new MenuButton(getScene(), "Main Menu") {
             @Override
@@ -30,6 +31,7 @@ public class Menu extends HUDCenterContainer<BattleScene> {
             }
         };
         addChild(mainMenuButton);
+        mainMenuButton.updateTexture();
 
         MenuButton exitButton = new MenuButton(getScene(), "Exit") {
             @Override
@@ -38,6 +40,7 @@ public class Menu extends HUDCenterContainer<BattleScene> {
                 getScene().getGame().exit();
             }
         };
+        exitButton.updateTexture();
         addChild(exitButton);
     }
 

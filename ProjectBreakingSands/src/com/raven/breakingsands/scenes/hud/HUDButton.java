@@ -46,10 +46,21 @@ public abstract class HUDButton<S extends Scene, C extends HUDContainer<S>>
         hoverText.release();
     }
 
+    public void updateTexture() {
+        defaultText.updateTexture();
+        hoverText.updateTexture();
+    }
+
     @Override
     public void setText(String text) {
         defaultText.setText(text);
         hoverText.setText(text);
+    }
+
+    @Override
+    public void setFont(Font font) {
+        defaultText.setFont(font);
+        hoverText.setFont(font);
     }
 
     @Override

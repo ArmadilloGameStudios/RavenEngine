@@ -7,7 +7,7 @@ import com.raven.engine.worldobject.HUDObject;
 
 public class HUDCharacterSelect extends HUDBottomContainer<MissionSelectScene> {
 
-    private HUDObject leftButton, rightButton;
+    private HUDButton leftButton, rightButton;
     private HUDCharacterDisplay display;
 
     public HUDCharacterSelect(MissionSelectScene scene) {
@@ -52,6 +52,10 @@ public class HUDCharacterSelect extends HUDBottomContainer<MissionSelectScene> {
         addChild(leftButton);
         addChild(display);
         addChild(rightButton);
+
+        leftButton.updateTexture();
+        display.updateTexture();
+        rightButton.updateTexture();
     }
 
     private void leftButtonClicked() {
@@ -64,5 +68,6 @@ public class HUDCharacterSelect extends HUDBottomContainer<MissionSelectScene> {
 
     public void setText(String text) {
         display.setText(text);
+        display.updateTexture();
     }
 }

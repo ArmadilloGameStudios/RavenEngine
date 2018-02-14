@@ -49,14 +49,8 @@ public class TextObject {
         glActiveTexture(GL_TEXTURE0);
 	}
 
-	public void setFont(Font font) {
-	    this.font = font;
-    }
-
-	public void setText(String text) {
-		this.text = text;
-
-		// Draw Text
+	public void updateTexture() {
+        // Draw Text
         Graphics2D g = img.createGraphics();
 
         g.setColor(
@@ -112,6 +106,14 @@ public class TextObject {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
         glActiveTexture(GL_TEXTURE0);
+    }
+
+	public void setFont(Font font) {
+	    this.font = font;
+    }
+
+	public void setText(String text) {
+		this.text = text;
 	}
 
 	public void draw() {

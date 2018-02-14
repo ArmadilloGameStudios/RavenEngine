@@ -3,50 +3,22 @@ package com.raven.breakingsands.scenes.missionselectscene;
 import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.mission.Mission;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
+import com.raven.breakingsands.scenes.hud.HUDButton;
 import com.raven.engine.util.Vector4f;
 import com.raven.engine.worldobject.*;
 
 import java.awt.*;
 
-public class HUDMission extends HUDText<MissionSelectScene, HUDMissionSelect>
-        implements MouseHandler {
-
-    private float x, y;
-
-    private TextObject defaultText, hoverText;
+public class HUDMission extends HUDButton<MissionSelectScene, HUDMissionSelect> {
 
     private Mission mission;
 
     public HUDMission(MissionSelectScene scene, Mission mission) {
-        super(scene);
+        super(scene, mission.getName());
 
         this.mission = mission;
 
-        defaultText = new TextObject((int)getWidth(), (int)getHeight());
-        defaultText.setFont(new Font( "SansSerif", Font.PLAIN, 14));
-        defaultText.setText(mission.getName());
-
-        this.setTexture(defaultText);
-
-        hoverText = new TextObject((int)getWidth(), (int)getHeight());
-        hoverText.setFont(new Font( "SansSerif", Font.PLAIN, 14));
-        hoverText.setBackgroundColor(new Vector4f(.1f, .6f, .9f, 1f));
-        hoverText.setText(mission.getName());
-
-        this.addMouseHandler(this);
-    }
-
-    @Override
-    public void release() {
-        super.release();
-
-        defaultText.release();
-        hoverText.release();
-    }
-
-    @Override
-    public int getStyle() {
-        return getParent().getStyle();
+        setFont(new Font( "SansSerif", Font.PLAIN, 14));
     }
 
     @Override
@@ -60,55 +32,10 @@ public class HUDMission extends HUDText<MissionSelectScene, HUDMissionSelect>
     }
 
     @Override
-    public float getYOffset() {
-        return getParent().getYOffset() + y;
-    }
-
-    @Override
-    public void setYOffset(float y) {
-        this.y = y;
-    }
-
-    @Override
-    public float getXOffset() {
-        return getParent().getXOffset() + x;
-    }
-
-    @Override
-    public void setXOffset(float x) {
-        this.x = x;
-    }
-
-    @Override
-    public Vector4f getColor() {
-        return null;
-    }
-
-    @Override
-    public boolean doBlend() {
-        return false;
-    }
-
-    @Override
     public void handleMouseClick() {
         BreakingSandsGame game = getScene().getGame();
 
         game.setActiveMission(mission);
         game.prepTransitionScene(new BattleScene(game));
-    }
-
-    @Override
-    public void handleMouseEnter() {
-        this.setTexture(hoverText);
-    }
-
-    @Override
-    public void handleMouseLeave() {
-        this.setTexture(defaultText);
-    }
-
-    @Override
-    public void handleMouseHover(float delta) {
-
     }
 }

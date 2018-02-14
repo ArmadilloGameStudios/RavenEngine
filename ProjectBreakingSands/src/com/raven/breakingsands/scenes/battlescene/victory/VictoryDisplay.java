@@ -1,7 +1,8 @@
 package com.raven.breakingsands.scenes.battlescene.victory;
 
 import com.raven.breakingsands.BreakingSandsGame;
-import com.raven.breakingsands.Character;
+import com.raven.breakingsands.character.Augmentation;
+import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.hud.HUDButton;
 import com.raven.breakingsands.scenes.hud.HUDCenterContainer;
@@ -9,67 +10,52 @@ import com.raven.breakingsands.scenes.missionselectscene.MissionSelectScene;
 import com.raven.engine.util.Vector4f;
 import com.raven.engine.worldobject.*;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class VictoryDisplay extends HUDCenterContainer<BattleScene> {
 
-    private Vector4f color = new Vector4f(0, 0, 0, 0);
-    private HUDButton<BattleScene, VictoryDisplay> victoryBtn;
+    private Vector4f color = new Vector4f(.25f, .25f, .25f, .5f);
+
+    private HUDLabel<BattleScene, VictoryDisplay> nameLabel, levelLabel, detailsLabel;
+    private List<HUDAugmentation> augs = new ArrayList<>();
 
     public VictoryDisplay(BattleScene scene) {
         super(scene);
 
-        victoryBtn = new HUDButton<BattleScene, VictoryDisplay>(scene, "Victory!") {
-            @Override
-            public float getHeight() {
-                return 75;
-            }
 
-            @Override
-            public float getWidth() {
-                return 200;
-            }
-
-            @Override
-            public void handleMouseClick() {
-                victoryClicked();
-            }
-        };
-//        addChild(victoryBtn);
-
-
-        HUDLabel<BattleScene, VictoryDisplay> nameLabel =
+        nameLabel =
                 new HUDLabel<>(getScene(), "Name", 200, 70);
+        nameLabel.setFont(new Font( "SansSerif", Font.PLAIN, 20 ));
+        nameLabel.updateTexture();
         addChild(nameLabel);
 
-        HUDLabel<BattleScene, VictoryDisplay> levelLabel =
+        levelLabel =
                 new HUDLabel<>(getScene(), "Level", 200, 70);
-
+        levelLabel.setFont(new Font( "SansSerif", Font.PLAIN, 20 ));
+        levelLabel.updateTexture();
         addChild(levelLabel);
 
-        HUDLabel<BattleScene, VictoryDisplay> detailsLabel =
+        detailsLabel =
                 new HUDLabel<>(getScene(), "Details", 200, 146);
+        detailsLabel.setFont(new Font( "SansSerif", Font.PLAIN, 14 ));
+        detailsLabel.updateTexture();
         addChild(detailsLabel);
 
-        nameLabel.setYOffset(0);
-        levelLabel.setYOffset(0);
-        detailsLabel.setYOffset(0);
+        for (int i = 0; i < 3; i++) {
+            HUDAugmentation hudAug = new HUDAugmentation(getScene(), new Augmentation());
+            augs.add(hudAug);
+            addChild(hudAug);
+            hudAug.updateTexture();
+        }
 
-        nameLabel.setYOffset(76f);
-        nameLabel.setXOffset(-103f);
+    }
 
-        levelLabel.setXOffset(-103f);
-
-        detailsLabel.setYOffset(76f / 2f);
-        detailsLabel.setXOffset(103f);
-
+    @Override
+    public float getBorder() {
+        return 6f;
     }
 
     @Override
@@ -80,10 +66,6 @@ public class VictoryDisplay extends HUDCenterContainer<BattleScene> {
     @Override
     protected void onSetVisibility(boolean visibility) {
 
-        List<String> names = getScene().getCharacterToLevel().stream().map(Character::getName).collect(Collectors.toList());
-        String text = String.join(", ", names);
-
-        victoryBtn.setText(text);
     }
 
     private void victoryClicked() {
@@ -96,5 +78,35 @@ public class VictoryDisplay extends HUDCenterContainer<BattleScene> {
     @Override
     public Vector4f getColor() {
         return color;
+    }
+
+    @Override
+    public void pack() {
+        nameLabel.setYOffset(76f);
+        nameLabel.setXOffset(-103f);
+
+        levelLabel.setXOffset(-103f);
+
+        detailsLabel.setYOffset(76f / 2f);
+        detailsLabel.setXOffset(103f);
+
+        for (int i = 0; i < augs.size(); i++) {
+            HUDAugmentation hudAug = augs.get(i);
+
+            hudAug.setYOffset(-76f);
+            hudAug.setXOffset((hudAug.getWidth() + getBorder()) * i - hudAug.getWidth() - getBorder());
+        }
+
+        for (HUDObject child : getChildren()) {
+            width = Math.max(width, child.getWidth() + Math.abs(child.getXOffset()) * 2f);
+            height = Math.max(height, child.getHeight() + Math.abs(child.getYOffset()) * 2f);
+        }
+
+        width += getBorder() * 2f;
+        height += getBorder() * 2f;
+    }
+
+    public void selectAugmentation(Augmentation augmentation) {
+
     }
 }
