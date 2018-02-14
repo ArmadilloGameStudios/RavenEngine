@@ -12,5 +12,5 @@
     team: 1,
     hp: 1,
     movement: 10,
-    evasion: 3,
+    evasion: 0,
 }

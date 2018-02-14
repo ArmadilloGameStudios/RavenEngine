@@ -90,7 +90,7 @@ public class TextObject {
 
             g.drawString(lines[i],
                     centerWidth - len / 2f,
-                     centerHeight + textHeight * .25f + textHeight * i - (lines.length - 1) * textHeight * .5f);
+                    centerHeight + textHeight * .25f + textHeight * i - (lines.length - 1) * textHeight * .5f);
         }
 
         // To Byte Array

@@ -1,22 +1,27 @@
-package com.raven.breakingsands.scenes.battlescene;
+package com.raven.engine.worldobject;
 
-import com.raven.breakingsands.scenes.battlescene.BattleScene;
-import com.raven.engine.scene.Layer;
+import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Vector4f;
-import com.raven.engine.worldobject.HUDContainer;
-import com.raven.engine.worldobject.HUDObject;
-import com.raven.engine.worldobject.HUDText;
-import com.raven.engine.worldobject.Parentable;
 
-public class HUDDetailText
-        extends HUDText<BattleScene, HUDContainer<BattleScene>> {
+import java.awt.*;
 
+public class HUDLabel<S extends Scene, P extends HUDContainer<S>>
+        extends HUDText<S, P> {
+
+    private int width, height;
     private float x, y;
 
-    private Vector4f color = new Vector4f();
+    private TextObject textObject;
 
-    public HUDDetailText(BattleScene scene) {
+    public HUDLabel(S scene, String text, int width, int height) {
         super(scene);
+
+        this.width = width;
+        this.height = height;
+
+        textObject = new TextObject(width, height);
+        textObject.setText(text);
+        this.setTexture(textObject);
     }
 
     @Override
@@ -26,12 +31,12 @@ public class HUDDetailText
 
     @Override
     public float getHeight() {
-        return 250;
+        return height;
     }
 
     @Override
     public float getWidth() {
-        return 250;
+        return width;
     }
 
     @Override
@@ -56,7 +61,16 @@ public class HUDDetailText
 
     @Override
     public Vector4f getColor() {
-        return color;
+        return null;
+    }
+
+    @Override
+    public void setText(String text) {
+        getTexture().setText(text);
+    }
+
+    public void setFont(Font font) {
+        getTexture().setFont(font);
     }
 
     @Override

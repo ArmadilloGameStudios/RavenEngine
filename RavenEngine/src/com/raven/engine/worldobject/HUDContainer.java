@@ -31,7 +31,9 @@ public abstract class HUDContainer<S extends Scene>
     @Override
     public void addChild(HUDObject child) {
         super.addChild(child);
+    }
 
+    public void pack() {
         switch (getStyle()) {
             case BOTTOM: // bottom
                 width = getBorder();
@@ -73,9 +75,12 @@ public abstract class HUDContainer<S extends Scene>
                 for (int i = 0; i < children.size(); i++) {
                     HUDObject obj = children.get(i);
 
-                    obj.setYOffset(-(getBorder() * 2f + getBorder() * i * 2f - height + obj.getHeight() + offset));
+                    offset += obj.getHeight() * .5f + getBorder();
 
-                    offset += obj.getHeight() * 2f;
+                    obj.setYOffset(height * .5f - offset);
+
+                    offset += obj.getHeight() * .5f;
+
                 }
                 break;
         }

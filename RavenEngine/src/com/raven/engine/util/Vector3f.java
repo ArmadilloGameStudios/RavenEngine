@@ -211,6 +211,7 @@ public class Vector3f {
         return buffer;
     }
 
+    @Deprecated
     public Float[] toArray() {
         return new Float[] { x, y, z };
     }

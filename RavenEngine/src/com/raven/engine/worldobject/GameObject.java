@@ -78,6 +78,12 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
 
     public void setVisibility(boolean visibility) {
         this.visibility = visibility;
+
+        onSetVisibility(visibility);
+    }
+
+    protected void onSetVisibility(boolean visibility) {
+
     }
 
     public void release() {

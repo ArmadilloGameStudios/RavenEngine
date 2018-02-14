@@ -2,6 +2,7 @@ package com.raven.engine.graphics3d.shader;
 
 import com.raven.engine.GameEngine;
 import com.raven.engine.util.Vector4f;
+import com.raven.engine.worldobject.HUDImage;
 import com.raven.engine.worldobject.HUDObject;
 import com.raven.engine.worldobject.HUDText;
 
@@ -77,8 +78,34 @@ public class HUDShader extends Shader {
     public void setProperties(HUDText o) {
         glUniform2f(scale_location, o.getWidth(), o.getHeight());
         glUniform2f(offset_location, o.getXOffset(), o.getYOffset());
-
         glUniform1i(style_location, o.getStyle());
+
+        glUniform1i(useText_location, 1);
+
+        if (o.doBlend()) {
+            glEnable(GL_BLEND);
+        } else {
+            glDisable(GL_BLEND);
+        }
+
+        // id
+        int id = o.getID();
+
+        if (GameEngine.getEngine().getWindow().getActiveShader() == this)
+            if (id != 0) {
+                int r = (id & 0x000000FF) >> 0;
+                int g = (id & 0x0000FF00) >> 8;
+                int b = (id & 0x00FF0000) >> 16;
+
+                glUniform3f(id_location, r / 255.0f, g / 255.0f, b / 255.0f);
+            }
+    }
+
+    public void setProperties(HUDImage o) {
+        glUniform2f(scale_location, o.getWidth(), o.getHeight());
+        glUniform2f(offset_location, o.getXOffset(), o.getYOffset());
+        glUniform1i(style_location, o.getStyle());
+
         glUniform1i(useText_location, 1);
 
         if (o.doBlend()) {

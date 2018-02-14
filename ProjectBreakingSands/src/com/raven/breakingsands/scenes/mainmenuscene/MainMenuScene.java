@@ -85,6 +85,8 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
 
         ExitButton exitBtn = new ExitButton(this);
         container.addChild(exitBtn);
+
+        container.pack();
     }
 
     @Override

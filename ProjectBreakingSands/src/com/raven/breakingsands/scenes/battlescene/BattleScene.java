@@ -68,6 +68,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private List<Pawn> pawns = new ArrayList<>();
     private Pawn activePawn;
 
+    private List<Character> canLevelUp = new ArrayList<>();
 
     private State state = SELECT_MOVE;
 
@@ -102,6 +103,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     private Vector3f tempVec = new Vector3f();
+
     @Override
     public void onEnterScene() {
         setBackgroundColor(new Vector3f(0.6f, 0.7f, 1f));
@@ -455,16 +457,19 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         hudDetailText = new HUDDetailText(this);
 
         bottomContainer.addChild(hudDetailText);
+        bottomContainer.pack();
 
         setDetailText(activePawn.getParent().getDetailText());
 
         // Menu
         menu = new Menu(this);
+        menu.pack();
         getLayerHUD().addChild(menu);
         menu.setVisibility(false);
 
         // Victory
         victoryDisplay = new VictoryDisplay(this);
+        menu.pack();
         getLayerHUD().addChild(victoryDisplay);
         victoryDisplay.setVisibility(false);
     }
@@ -515,10 +520,11 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     @Override
     public void onExitScene() {
-
+        getGame().saveGame();
     }
 
     private Vector3f tempVec2 = new Vector3f();
+
     @Override
     public void onUpdate(float deltaTime) {
         float a = (float) (Math.cos(GameEngine.getEngine().getSystemTime() * .004) * .075 + .4);
@@ -563,7 +569,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             pathIndex = 0;
             pathMoveTime = 0f;
 
-            activePawn.setPosition(new Vector3f());
+            activePawn.setPosition(0, 0, 0);
             current.setPawn(activePawn);
 
             if (activePawn.getTeam() == 0 &&
@@ -856,8 +862,22 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     public void victory() {
+        BreakingSandsGame game = getGame();
+        for (Character c : game.getCharacters()) {
+            c.addExperience(1);
+
+            if (true || c.canLevelUp()) {
+                canLevelUp.add(c);
+            }
+        }
+
         victoryDisplay.setVisibility(true);
         setPaused(true);
+    }
+
+
+    public List<Character> getCharacterToLevel() {
+        return canLevelUp;
     }
 
     public void setDetailText(TextObject textObject) {

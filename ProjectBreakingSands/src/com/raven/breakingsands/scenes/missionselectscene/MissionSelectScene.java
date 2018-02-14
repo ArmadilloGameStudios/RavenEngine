@@ -87,11 +87,13 @@ public class MissionSelectScene extends Scene<BreakingSandsGame> {
         missions.add(new Mission("The Head of the Snake"));
 
         hudMissionSelect.addMissions(missions);
+        hudMissionSelect.pack();
 
         this.getLayerHUD().addChild(hudMissionSelect);
 
         // HUD Bottom - character
         characterSelect = new HUDCharacterSelect(this);
+        characterSelect.pack();
         this.getLayerHUD().addChild(characterSelect);
 
         //

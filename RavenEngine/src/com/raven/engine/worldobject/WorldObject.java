@@ -16,7 +16,7 @@ public abstract class WorldObject<
             C extends WorldObject>
         extends GameObject<WorldObject, P, C> {
 
-    private List<WorldObject> parentList = new ArrayList();
+    private List<WorldObject> parentList = new ArrayList<>();
     private S scene;
 
     private float scale = 1f, rotation = 0f;
@@ -30,7 +30,6 @@ public abstract class WorldObject<
     private List<C> children = new ArrayList<>();
     private ModelData model;
     private long timeOffset = 0;
-    private List<TextObject> textObjects = new ArrayList<TextObject>();
 
     P parent;
     boolean parentIsWorldObject;
@@ -88,6 +87,13 @@ public abstract class WorldObject<
     // TODO
     public Vector3f getPosition() {
         return position;
+    }
+
+    public void setPosition(float x, float y, float z) {
+        this.position.x = x;
+        this.position.y = y;
+        this.position.z = z;
+        resolveMatrix();
     }
 
     public void setPosition(Vector3f position) {

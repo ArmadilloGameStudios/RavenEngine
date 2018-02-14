@@ -69,6 +69,10 @@ public class Character implements GameDatable {
         return exp;
     }
 
+    public void addExperience(int exp) {
+        this.exp += exp;
+    }
+
     public int getLevel() {
         return level;
     }
@@ -83,6 +87,10 @@ public class Character implements GameDatable {
 
     public int getEvasion() {
         return evasion;
+    }
+
+    public boolean canLevelUp() {
+        return exp > 5;
     }
 
     @Override

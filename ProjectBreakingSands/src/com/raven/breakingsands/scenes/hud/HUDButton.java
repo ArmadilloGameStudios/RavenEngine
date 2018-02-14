@@ -2,16 +2,15 @@ package com.raven.breakingsands.scenes.hud;
 
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
+import com.raven.engine.scene.Layer;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Vector4f;
-import com.raven.engine.worldobject.HUDContainer;
-import com.raven.engine.worldobject.HUDText;
-import com.raven.engine.worldobject.MouseHandler;
-import com.raven.engine.worldobject.TextObject;
+import com.raven.engine.worldobject.*;
 
 import java.awt.*;
 
-public abstract class HUDButton<S extends Scene, C extends HUDContainer<S>> extends HUDText<S, C>
+public abstract class HUDButton<S extends Scene, C extends HUDContainer<S>>
+        extends HUDText<S, C>
         implements MouseHandler {
 
     private float x, y;
@@ -45,6 +44,12 @@ public abstract class HUDButton<S extends Scene, C extends HUDContainer<S>> exte
 
         defaultText.release();
         hoverText.release();
+    }
+
+    @Override
+    public void setText(String text) {
+        defaultText.setText(text);
+        hoverText.setText(text);
     }
 
     @Override

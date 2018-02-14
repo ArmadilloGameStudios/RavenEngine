@@ -1,14 +1,13 @@
 package com.raven.breakingsands.scenes.mainmenuscene;
 
+import com.raven.engine.scene.Layer;
 import com.raven.engine.util.Vector4f;
-import com.raven.engine.worldobject.HUDContainer;
-import com.raven.engine.worldobject.HUDText;
-import com.raven.engine.worldobject.MouseHandler;
-import com.raven.engine.worldobject.TextObject;
+import com.raven.engine.worldobject.*;
 
 import java.awt.*;
 
-public class ContinueButton extends HUDText<MainMenuScene, HUDContainer<MainMenuScene>>
+public class ContinueButton
+        extends HUDText<MainMenuScene, HUDContainer<MainMenuScene>>
         implements MouseHandler {
 
     private float x, y;

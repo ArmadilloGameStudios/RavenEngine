@@ -14,8 +14,8 @@ public class GlobalDirectionalLight extends Light {
     public Vector3f origin = new Vector3f();
     public float size = 20f, height = 4f;
 
-    private Matrix4f shadowViewMatrix;
-    private Matrix4f shadowProjectionMatrix;
+    private Matrix4f shadowViewMatrix = new Matrix4f();
+    private Matrix4f shadowProjectionMatrix = new Matrix4f();
     public Vector3f color = new Vector3f();
     public float intensity = 1f;
     private Vector3f direction = new Vector3f();
@@ -36,13 +36,6 @@ public class GlobalDirectionalLight extends Light {
         this.direction = direction;
         this.size = size;
 
-//        shadowProjectionMatrix = Matrix4f.orthographic(-size, size, -size, size, 1f, 60f);
-        shadowProjectionMatrix = new Matrix4f();
-
-//        shadowViewMatrix = new Matrix4f().translate(0, 0, -30);
-        shadowViewMatrix = new Matrix4f();
-
-//        Matrix4f.direction(direction, null); // What is this trying to solve?
         setDirection(direction);
 
         shadowShader = new ShadowShader();

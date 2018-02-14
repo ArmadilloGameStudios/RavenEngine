@@ -2,10 +2,12 @@ package com.raven.engine.worldobject;
 
 import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.graphics3d.shader.HUDShader;
+import com.raven.engine.scene.Layer;
 import com.raven.engine.scene.Scene;
-import com.raven.engine.util.Vector4f;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-public abstract class HUDText<S extends Scene, C extends HUDContainer<S>> extends HUDObject<S, C> {
+public abstract class HUDText<S extends Scene, P extends HUDContainer<S>>
+        extends HUDObject<S, P> {
 
     private TextObject text;
 
@@ -21,6 +23,7 @@ public abstract class HUDText<S extends Scene, C extends HUDContainer<S>> extend
         return text;
     }
 
+    @Override
     public void draw(GameWindow window, HUDShader shader) {
         shader.setProperties(this);
         if (text != null)
@@ -29,7 +32,8 @@ public abstract class HUDText<S extends Scene, C extends HUDContainer<S>> extend
         window.drawQuad();
 
         for (HUDObject o : this.getChildren()) {
-            o.draw(window, shader);
+            if (o.getVisibility())
+                o.draw(window, shader);
         }
     }
 
@@ -38,5 +42,9 @@ public abstract class HUDText<S extends Scene, C extends HUDContainer<S>> extend
         super.release();
 
         text.release();
+    }
+
+    public void setText(String text) {
+        throw new NotImplementedException();
     }
 }
