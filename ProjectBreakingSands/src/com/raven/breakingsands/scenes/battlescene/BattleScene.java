@@ -473,7 +473,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         getLayerHUD().addChild(victoryDisplay);
         victoryDisplay.setVisibility(false);
 
-        victory();
+//        victory();
     }
 
     private void addPawns() {
@@ -865,10 +865,13 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public void victory() {
         BreakingSandsGame game = getGame();
+        canLevelUp.clear();
+
         for (Character c : game.getCharacters()) {
             c.addExperience(1);
 
-            if (true || c.canLevelUp()) {
+            if (c.canLevelUp()) {
+                c.increaseLevel();
                 canLevelUp.add(c);
             }
         }

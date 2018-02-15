@@ -22,6 +22,9 @@ public class VictoryDisplay extends HUDCenterContainer<BattleScene> {
     private HUDLabel<BattleScene, VictoryDisplay> nameLabel, levelLabel, detailsLabel;
     private List<HUDAugmentation> augs = new ArrayList<>();
 
+    private List<Character> canLevel;
+    private Character currentCharacter;
+
     public VictoryDisplay(BattleScene scene) {
         super(scene);
 
@@ -65,7 +68,31 @@ public class VictoryDisplay extends HUDCenterContainer<BattleScene> {
 
     @Override
     protected void onSetVisibility(boolean visibility) {
+        if (visibility) {
 
+            canLevel = getScene().getCharacterToLevel();
+
+            nextCharacter();
+        }
+    }
+
+    private void nextCharacter() {
+        if (canLevel.size() > 0) {
+            currentCharacter = canLevel.get(0);
+            displayCharacter(currentCharacter);
+        } else {
+            getScene().getGame().prepTransitionScene(
+                    new MissionSelectScene(getScene().getGame()));
+        }
+    }
+
+    private void displayCharacter(Character character) {
+        nameLabel.setText(character.getTitle() + " " + character.getName());
+        nameLabel.updateTexture();
+        levelLabel.setText("Level: " + character.getLevel());
+        levelLabel.updateTexture();
+        detailsLabel.setText(character.getTitle());
+        detailsLabel.updateTexture();
     }
 
     private void victoryClicked() {
@@ -107,6 +134,9 @@ public class VictoryDisplay extends HUDCenterContainer<BattleScene> {
     }
 
     public void selectAugmentation(Augmentation augmentation) {
+        currentCharacter.addAugmentation(augmentation);
+        canLevel.remove(currentCharacter);
 
+        nextCharacter();
     }
 }

@@ -3,7 +3,9 @@ package com.raven.breakingsands.character;
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDatable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Character implements GameDatable {
 
@@ -15,6 +17,7 @@ public class Character implements GameDatable {
     private int evasion = 7;
     private Weapon weapon;
     private Armor armor;
+    private List<Augmentation> augmentations = new ArrayList<>();
 
     public Character() {
 
@@ -108,5 +111,14 @@ public class Character implements GameDatable {
 //        data.put("armor", armor.toGameData());
 
         return new GameData(data);
+    }
+
+    public void increaseLevel() {
+        exp = 0;
+        level++;
+    }
+
+    public void addAugmentation(Augmentation augmentation) {
+        augmentations.add(augmentation);
     }
 }
