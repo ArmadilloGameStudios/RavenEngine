@@ -91,7 +91,7 @@ public class GameDataReader {
 					state = ReadDataState.ReadValue;
 					type = ValueType.String;
 					value = "";
-				} else if (Character.isDigit(chars[i])) {
+				} else if (Character.isDigit(chars[i]) || chars[i] == '-') {
 					state = ReadDataState.ReadValue;
 					type = ValueType.Integer;
 					value = String.valueOf(chars[i]);

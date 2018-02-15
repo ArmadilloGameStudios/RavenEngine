@@ -118,31 +118,16 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
         Character character = new Character();
         character.setName("Jotlin");
         character.setTitle("Captain");
-        character.setExp(6);
-        character.setLevel(3);
-        character.setHitPoints(12);
-        character.setMovement(80);
-        character.setEvasion(3);
         characters.add(character);
 
         character = new Character();
         character.setName("Admus");
         character.setTitle("Recruit");
-        character.setExp(0);
-        character.setLevel(0);
-        character.setHitPoints(10);
-        character.setMovement(80);
-        character.setEvasion(3);
         characters.add(character);
 
         character = new Character();
         character.setName("Ellet");
         character.setTitle("Recruit");
-        character.setExp(0);
-        character.setLevel(0);
-        character.setHitPoints(6);
-        character.setMovement(80);
-        character.setEvasion(4);
         characters.add(character);
     }
 

@@ -53,7 +53,6 @@ public class VictoryDisplay extends HUDCenterContainer<BattleScene> {
             addChild(hudAug);
             hudAug.updateTexture();
         }
-
     }
 
     @Override
@@ -77,6 +76,13 @@ public class VictoryDisplay extends HUDCenterContainer<BattleScene> {
     }
 
     private void nextCharacter() {
+        for (int i = 0; i < 3; i++) {
+            HUDAugmentation hudAug = new HUDAugmentation(getScene(), new Augmentation());
+            augs.add(hudAug);
+            addChild(hudAug);
+            hudAug.updateTexture();
+        }
+
         if (canLevel.size() > 0) {
             currentCharacter = canLevel.get(0);
             displayCharacter(currentCharacter);
@@ -93,13 +99,6 @@ public class VictoryDisplay extends HUDCenterContainer<BattleScene> {
         levelLabel.updateTexture();
         detailsLabel.setText(character.getTitle());
         detailsLabel.updateTexture();
-    }
-
-    private void victoryClicked() {
-        BreakingSandsGame game = getScene().getGame();
-
-        game.resolveActiveMission(true);
-        game.prepTransitionScene(new MissionSelectScene(game));
     }
 
     @Override

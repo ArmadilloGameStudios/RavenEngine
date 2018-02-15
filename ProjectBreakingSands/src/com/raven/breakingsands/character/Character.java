@@ -10,11 +10,11 @@ import java.util.List;
 public class Character implements GameDatable {
 
     private String name = "Cat", title = "Lord Commander";
-    private int exp = 12;
-    private int level = 2;
+    private int exp = 0;
+    private int level = 0;
     private int hitPoints = 10;
-    private int movement = 3;
-    private int evasion = 7;
+    private int movement = 4;
+    private int evasion = 3;
     private Weapon weapon;
     private Armor armor;
     private List<Augmentation> augmentations = new ArrayList<>();
@@ -81,19 +81,19 @@ public class Character implements GameDatable {
     }
 
     public int getHitPoints() {
-        return hitPoints;
+        return hitPoints + augmentations.stream().mapToInt(Augmentation::getHP).sum();
     }
 
     public int getMovement() {
-        return movement;
+        return movement + augmentations.stream().mapToInt(Augmentation::getMovement).sum();
     }
 
     public int getEvasion() {
-        return evasion;
+        return evasion + augmentations.stream().mapToInt(Augmentation::getEvasion).sum();
     }
 
     public boolean canLevelUp() {
-        return exp > 5;
+        return exp >= 1;
     }
 
     @Override
