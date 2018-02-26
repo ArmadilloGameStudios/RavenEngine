@@ -31,8 +31,8 @@ public abstract class Game<G extends Game> {
 		return currentScene;
 	}
 
-	final public void renderWorld4ms(GameWindow window) {
-		currentScene.draw4ms(window);
+	final public void renderWorld4fw(GameWindow window) {
+		currentScene.draw4fw(window);
 	}
 
     final public void renderWorld4(GameWindow window) {

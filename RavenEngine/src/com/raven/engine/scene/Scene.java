@@ -7,6 +7,7 @@ import com.raven.engine.Game;
 import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.shader.*;
+import com.raven.engine.scene.light.GlobalDirectionalLight;
 import com.raven.engine.scene.light.Light;
 import com.raven.engine.util.Vector3f;
 import com.raven.engine.worldobject.GameObject;
@@ -32,7 +33,7 @@ public abstract class Scene<G extends Game> {
 
     private Camera camera;
 
-    private List<Light> lights = new ArrayList<>();
+    private GlobalDirectionalLight globalDirectionalLight;
 
     public Scene(G game) {
         this.game = game;
@@ -44,78 +45,57 @@ public abstract class Scene<G extends Game> {
         return camera;
     }
 
-    final public void draw4ms(GameWindow window) {
+    final public void draw4fw(GameWindow window) {
+
+        // Update the light/shadow block
+        Shader.setLight(globalDirectionalLight);
+
+        // Gen Shadow
+        ShadowShader shadowShader = globalDirectionalLight.getShadowShader();
+        shadowShader.useProgram();
+
+        for (WorldObject o : layerDetails.getChildren()) {
+            if (o.getVisibility())
+                o.draw4ms();
+        }
+
+        for (WorldObject o : layerTerrain.getChildren()) {
+            if (o.getVisibility())
+                o.draw4ms();
+        }
+
         // update the matrix block
         Shader.setProjectionViewMatrices(camera);
 
+
         // 3 Draw world above water
         WorldMSShader worldMSShader = window.getWorldMSShader();
-        worldMSShader.useProgram();
+        worldMSShader.useProgram(backgroundColor);
 
         for (WorldObject o : layerTerrain.getChildren()) {
+            worldMSShader.setHighlight(o.getHighlight());
             Shader.setModelMatrix(o.getModelMatrix());
             o.draw4ms();
         }
 
         for (WorldObject o : layerDetails.getChildren()) {
+            worldMSShader.setHighlight(o.getHighlight());
             Shader.setModelMatrix(o.getModelMatrix());
             o.draw4ms();
         }
 
-        // 4 Draw water
-//        WorldWaterShader worldWaterShader = window.getWorldWaterShader();
-//
-//        worldWaterShader.useProgram();
-//
-//        for (WorldObject o : layerWater.getObjectList()) {
-//            Shader.setModelMatrix(o.getModelMatrix());
-//            o.draw4ms();
-//        }
+        // HUD
+        HUDMSShader hudShader = window.getHUDMSShader();
+        hudShader.useProgram();
+
+        for (HUDContainer o : layerHUD.getChildren()) {
+            if (o.getVisibility())
+                o.draw(window, hudShader);
+
+        }
 
         // Blit World
         worldMSShader.blitComplexValue();
-
-        // Draw Complex Sample Stencil
-        window.getComplexSampleStencilShader().useProgram();
-        window.drawQuad();
-
-        // Clear the Set the blend type
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE);
-        glBlendEquation(GL_FUNC_ADD);
-
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glDisable(GL_DEPTH_TEST);
-
-        // Accum lights
-        for (Light light : lights) {
-            switch (light.getLightType()) {
-                case Light.AMBIANT:
-                    break;
-                case Light.GLOBAL_DIRECTIONAL:
-                    // update the light block
-                    Shader.setLight(light);
-
-                    // Combine Simple
-                    window.getSimpleDirLightShader().useProgram();
-                    window.drawQuad();
-
-                    // Combine Complex
-                    window.getComplexDirectionalLightShader().useProgram();
-                    window.drawQuad();
-                    break;
-            }
-        }
-
-        glEnable(GL_DEPTH_TEST);
-        glDisable(GL_BLEND);
-
-        //
     }
 
     final public void draw4(GameWindow window) {
@@ -144,34 +124,28 @@ public abstract class Scene<G extends Game> {
         LightShader.clear();
 
         // Accum lights
-        for (Light light : lights) {
-            switch (light.getLightType()) {
-                case Light.AMBIANT:
-                    break;
-                case Light.GLOBAL_DIRECTIONAL:
-                    // Update the light/shadow block
-                    Shader.setLight(light);
 
-                    // Gen Shadow
-                    ShadowShader shadowShader = light.getShadowShader();
-                    shadowShader.useProgram();
+        // Update the light/shadow block
+        Shader.setLight(globalDirectionalLight);
 
-                    for (WorldObject o : layerDetails.getChildren()) {
-                        if (o.getVisibility())
-                            o.draw4();
-                    }
+        // Gen Shadow
+        ShadowShader shadowShader = globalDirectionalLight.getShadowShader();
+        shadowShader.useProgram();
 
-                    for (WorldObject o : layerTerrain.getChildren()) {
-                        if (o.getVisibility())
-                            o.draw4();
-                    }
-
-                    // Draw the light
-                    window.getDirLightShader().useProgram();
-                    window.drawQuad();
-                    break;
-            }
+        for (WorldObject o : layerDetails.getChildren()) {
+            if (o.getVisibility())
+                o.draw4();
         }
+
+        for (WorldObject o : layerTerrain.getChildren()) {
+            if (o.getVisibility())
+                o.draw4();
+        }
+
+        // Draw the light
+        window.getDirLightShader().useProgram();
+        window.drawQuad();
+
 
         // Water
         if (renderWater) {
@@ -312,25 +286,23 @@ public abstract class Scene<G extends Game> {
         }
 
         for (ModelData modelData : getSceneModels()) {
-             modelData.release();
+            modelData.release();
         }
 
-        for (Light light : lights) {
-            light.release();
-        }
+        globalDirectionalLight.release();
     }
 
     abstract public void onExitScene();
 
     abstract public void onUpdate(float deltaTime);
 
-    public void addLight(Light light) {
-        lights.add(light);
+    public void setGlobalDirectionalLight(GlobalDirectionalLight light) {
+        globalDirectionalLight = light;
     }
 
-    public void removeLight(Light light) {
-        lights.remove(light);
-        light.release();
+    public void removeGlobalDirectionalLight() {
+        if (globalDirectionalLight != null)
+            globalDirectionalLight.release();
     }
 
     public void setRenderWater(boolean renderWater) {

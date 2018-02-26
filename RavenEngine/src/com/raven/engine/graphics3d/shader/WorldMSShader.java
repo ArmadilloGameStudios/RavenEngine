@@ -2,6 +2,8 @@ package com.raven.engine.graphics3d.shader;
 
 import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
+import com.raven.engine.util.Vector3f;
+import com.raven.engine.worldobject.Highlight;
 import org.lwjgl.BufferUtils;
 
 import java.nio.IntBuffer;
@@ -29,22 +31,16 @@ public class WorldMSShader extends Shader {
 
     public static final int
             COLOR = getNextTexture(),
-            NORMAL = getNextTexture(),
             ID = getNextTexture(),
-            COMPLEX = getNextTexture(),
-            NONMS_COMPLEX = getNextTexture(),
             DEPTH = getNextTexture();
 
-    private int id_location;
+    private int id_location, highlight_location,
+            textrue_shadow_location;
 
     private int ms_framebuffer_handel,
             ms_color_texture,
-            ms_normal_texture,
             ms_id_texture,
-            ms_complex_texture,
             ms_depth_texture;
-
-    private int framebuffer_handel, complex_texture;
 
     private IntBuffer buffers;
 
@@ -56,6 +52,8 @@ public class WorldMSShader extends Shader {
         glBindAttribLocation(getProgramHandel(), 2, "vertex_normal");
 
         id_location = glGetUniformLocation(getProgramHandel(), "id");
+        highlight_location = glGetUniformLocation(getProgramHandel(), "highlight");
+        textrue_shadow_location = glGetUniformLocation(getProgramHandel(), "shadowTexture");
 
         int blockIndex = glGetUniformBlockIndex(getProgramHandel(), "DirectionalLight");
         glUniformBlockBinding(getProgramHandel(), blockIndex, LIGHT);
@@ -65,9 +63,7 @@ public class WorldMSShader extends Shader {
 
         int bfs[] = {
                 GL_COLOR_ATTACHMENT0, // Color
-                GL_COLOR_ATTACHMENT1, // Normal
-                GL_COLOR_ATTACHMENT2, // ID
-                GL_COLOR_ATTACHMENT3, // Complex
+                GL_COLOR_ATTACHMENT1, // ID
         };
 
         buffers = BufferUtils.createIntBuffer(bfs.length);
@@ -95,20 +91,6 @@ public class WorldMSShader extends Shader {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, ms_color_texture, 0);
         glActiveTexture(GL_TEXTURE0);
 
-        // Normal
-        ms_normal_texture = glGenTextures();
-        glActiveTexture(GL_TEXTURE0 + NORMAL);
-        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_normal_texture);
-
-        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
-                ms_count, GL_RGBA8,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight(),
-                true);
-
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE, ms_normal_texture, 0);
-        glActiveTexture(GL_TEXTURE0);
-
         // ID
         ms_id_texture = glGenTextures();
         glActiveTexture(GL_TEXTURE0 + ID);
@@ -120,21 +102,7 @@ public class WorldMSShader extends Shader {
                 GameProperties.getScreenHeight(),
                 true);
 
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D_MULTISAMPLE, ms_id_texture, 0);
-        glActiveTexture(GL_TEXTURE0);
-
-        // Complex
-        ms_complex_texture = glGenTextures();
-        glActiveTexture(GL_TEXTURE0 + COMPLEX);
-        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_complex_texture);
-
-        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
-                ms_count, GL_RED,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight(),
-                true);
-
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D_MULTISAMPLE, ms_complex_texture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE, ms_id_texture, 0);
         glActiveTexture(GL_TEXTURE0);
 
         // Depth Texture
@@ -160,40 +128,9 @@ public class WorldMSShader extends Shader {
             System.out.println("FBO_MS Failed: 0x"
                     + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
         }
-
-        // resolve ms
-        framebuffer_handel = glGenFramebuffers();
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
-
-        // FBO Textures
-        // Color
-        complex_texture = glGenTextures();
-        glActiveTexture(GL_TEXTURE0 + NONMS_COMPLEX);
-        glBindTexture(GL_TEXTURE_2D, complex_texture);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight(),
-                0, GL_RED, GL_UNSIGNED_BYTE, 0);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, complex_texture, 0);
-        glActiveTexture(GL_TEXTURE0);
-
-        // Draw buffers
-        glDrawBuffer(GL_COLOR_ATTACHMENT0);
-
-        // Errors
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            System.out.println("World Shader Failed: 0x"
-                    + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
-        }
     }
 
-    @Override
-    public void useProgram() {
+    public void useProgram(Vector3f backgroundColor) {
         super.useProgram();
 
         glUseProgram(getProgramHandel());
@@ -204,13 +141,14 @@ public class WorldMSShader extends Shader {
                 GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight());
 
-        glClearColor(0.6f, 0.7f, 1f, 0.0f);
+        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // make sure the id buffer isn't colored
-        glClearBufferfv(GL_COLOR, 2,
+        glClearBufferfv(GL_COLOR, 1,
                 new float[]{ 0f, 0f, 0f, 0f });
 
+        glUniform1i(textrue_shadow_location, ShadowShader.DEPTH);
 
         // Enable the custom mode attribute
         glEnableVertexAttribArray(0);
@@ -239,6 +177,7 @@ public class WorldMSShader extends Shader {
                 int b = (id & 0x00FF0000) >> 16;
 
                 glUniform3f(id_location, r / 255.0f, g / 255.0f, b / 255.0f);
+                glUniform3f(id_location, r / 255.0f, g / 255.0f, b / 255.0f);
             }
     }
 
@@ -247,11 +186,11 @@ public class WorldMSShader extends Shader {
     }
 
     public void blitComplexValue() {
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer_handel);
-        glDrawBuffer(GL_COLOR_ATTACHMENT0);
-
         glBindFramebuffer(GL_READ_FRAMEBUFFER, ms_framebuffer_handel);
-        glReadBuffer(GL_COLOR_ATTACHMENT3);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glDrawBuffer(GL_BACK);
 
         glBlitFramebuffer(
                 0, 0,
@@ -261,5 +200,9 @@ public class WorldMSShader extends Shader {
                 GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight(),
                 GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    }
+
+    public void setHighlight(Highlight highlight) {
+        glUniform4f(highlight_location, highlight.r, highlight.g, highlight.b, highlight.a);
     }
 }

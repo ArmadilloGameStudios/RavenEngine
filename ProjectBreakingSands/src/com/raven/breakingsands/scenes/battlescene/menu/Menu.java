@@ -42,6 +42,8 @@ public class Menu extends HUDCenterContainer<BattleScene> {
         };
         exitButton.updateTexture();
         addChild(exitButton);
+
+        pack();
     }
 
     @Override

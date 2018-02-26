@@ -147,10 +147,28 @@ public abstract class WorldObject<
         return highlight;
     }
 
+    private Matrix4f drawMat = new Matrix4f();
     public void draw4ms() {
         GameEngine.getEngine().getWindow().getWorldMSShader().setWorldObjectID(getID());
 
+        Shader.setModelMatrix(getModelMatrix());
         model.getModelReference().draw();
+
+        for (C child : children) {
+            child.draw4ms(getModelMatrix());
+        }
+    }
+
+    public void draw4ms(Matrix4f parentMatrix) {
+        GameEngine.getEngine().getWindow().getWorldMSShader().setWorldObjectID(getID());
+
+        Shader.setModelMatrix(parentMatrix.multiply(getModelMatrix(), drawMat));
+        model.getModelReference().draw();
+
+        for (C child : children) {
+//            child.draw4(); ??
+            child.draw4(drawMat);
+        }
     }
 
     public void draw4() {
@@ -164,7 +182,6 @@ public abstract class WorldObject<
         }
     }
 
-    private Matrix4f drawMat = new Matrix4f();
     public void draw4(Matrix4f parentMatrix) {
         GameEngine.getEngine().getWindow().getWorldShader().setWorldObjectID(getID());
 

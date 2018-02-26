@@ -62,6 +62,7 @@ public class IDShader extends Shader {
     public void useProgram() {
         super.useProgram();
 
+
         glUseProgram(getProgramHandel());
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);

@@ -85,7 +85,7 @@ public class Camera {
     }
 
     private void updateProjectionMatrix() {
-        Matrix4f.perspective(70f, ((float) GameProperties.getScreenWidth())
+        Matrix4f.perspective(60f, ((float) GameProperties.getScreenWidth())
                 / ((float) GameProperties.getScreenHeight()), near, far, projectionMatrix);
     }
 

@@ -1,6 +1,7 @@
 package com.raven.engine.worldobject;
 
 import com.raven.engine.graphics3d.GameWindow;
+import com.raven.engine.graphics3d.shader.HUDMSShader;
 import com.raven.engine.graphics3d.shader.HUDShader;
 import com.raven.engine.scene.Layer;
 import com.raven.engine.scene.Scene;
@@ -27,6 +28,20 @@ public abstract class HUDText<S extends Scene, P extends HUDContainer<S>>
 
     @Override
     public void draw(GameWindow window, HUDShader shader) {
+        shader.setProperties(this);
+        if (text != null)
+            text.draw();
+
+        window.drawQuad();
+
+        for (HUDObject o : this.getChildren()) {
+            if (o.getVisibility())
+                o.draw(window, shader);
+        }
+    }
+
+    @Override
+    public void draw(GameWindow window, HUDMSShader shader) {
         shader.setProperties(this);
         if (text != null)
             text.draw();

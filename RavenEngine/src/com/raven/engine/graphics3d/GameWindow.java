@@ -36,14 +36,12 @@ public class GameWindow {
     private int ms_count = 4;
 
     private WorldMSShader worldMSShader;
+    private HUDMSShader hudmsShader;
     private WaterRefractionShader waterRefractionShader;
     private WaterReflectionShader waterReflectionShader;
     private WorldWaterShader worldWaterShader;
     private BloomShader bloomShader;
     private IDShader idShader;
-    private SimpleDirectionalLightShader simpleDirLightShader;
-    private ComplexDirectionalLightShader complexDirLightShader;
-    private ComplexSampleStencilShader complexSampleStencilShader;
 
     private WorldShader worldShader;
     private DirectionalLightShader dirLightShader;
@@ -145,14 +143,12 @@ public class GameWindow {
             if (ms_count != 0) {
                 // Shaders
                 worldMSShader = new WorldMSShader();
+                hudmsShader = new HUDMSShader();
 //                waterRefractionShader = new WaterRefractionShader();
 //                waterReflectionShader = new WaterReflectionShader();
 //                worldWaterShader = new WorldWaterShader(worldMSShader);
 //                bloomShader = new BloomShader();
                 idShader = new IDShader();
-                complexSampleStencilShader = new ComplexSampleStencilShader();
-                simpleDirLightShader = new SimpleDirectionalLightShader(complexSampleStencilShader);
-                complexDirLightShader = new ComplexDirectionalLightShader(complexSampleStencilShader);
 
                 // Enable multisample
                 glEnable(GL_MULTISAMPLE);
@@ -199,6 +195,10 @@ public class GameWindow {
         return worldMSShader;
     }
 
+    public HUDMSShader getHUDMSShader() {
+        return hudmsShader;
+    }
+
     public BloomShader getBloomShader() {
         return bloomShader;
     }
@@ -217,18 +217,6 @@ public class GameWindow {
 
     public WaterReflectionShader getWaterReflectionShader() {
         return waterReflectionShader;
-    }
-
-    public ComplexSampleStencilShader getComplexSampleStencilShader() {
-        return complexSampleStencilShader;
-    }
-
-    public ComplexDirectionalLightShader getComplexDirectionalLightShader() {
-        return complexDirLightShader;
-    }
-
-    public SimpleDirectionalLightShader getSimpleDirLightShader() {
-        return simpleDirLightShader;
     }
 
     public WorldShader getWorldShader() {
@@ -296,31 +284,31 @@ public class GameWindow {
         while ((err = glGetError()) != GL_NO_ERROR) {
             switch (err) {
                 case GL_INVALID_ENUM:
-                    System.out.println(tag + "GL_INVALID_ENUM 0x" + Integer.toHexString(err));
+                    System.out.println(tag + " GL_INVALID_ENUM 0x" + Integer.toHexString(err));
                     break;
                 case GL_INVALID_VALUE:
-                    System.out.println(tag + "GL_INVALID_VALUE 0x" + Integer.toHexString(err));
+                    System.out.println(tag + " GL_INVALID_VALUE 0x" + Integer.toHexString(err));
                     break;
                 case GL_INVALID_OPERATION:
-                    System.out.println(tag + "GL_INVALID_OPERATION 0x" + Integer.toHexString(err));
+                    System.out.println(tag + " GL_INVALID_OPERATION 0x" + Integer.toHexString(err));
                     break;
                 case GL_STACK_OVERFLOW:
-                    System.out.println(tag + "GL_STACK_OVERFLOW 0x" + Integer.toHexString(err));
+                    System.out.println(tag + " GL_STACK_OVERFLOW 0x" + Integer.toHexString(err));
                     break;
                 case GL_OUT_OF_MEMORY:
-                    System.out.println(tag + "GL_OUT_OF_MEMORY 0x" + Integer.toHexString(err));
+                    System.out.println(tag + " GL_OUT_OF_MEMORY 0x" + Integer.toHexString(err));
                     break;
                 case GL_INVALID_FRAMEBUFFER_OPERATION:
-                    System.out.println(tag + "GL_INVALID_FRAMEBUFFER_OPERATION 0x" + Integer.toHexString(err));
+                    System.out.println(tag + " GL_INVALID_FRAMEBUFFER_OPERATION 0x" + Integer.toHexString(err));
                     break;
                 case GL_CONTEXT_LOST:
-                    System.out.println(tag + "GL_CONTEXT_LOST 0x" + Integer.toHexString(err));
+                    System.out.println(tag + " GL_CONTEXT_LOST 0x" + Integer.toHexString(err));
                     break;
                 case GL_TABLE_TOO_LARGE:
-                    System.out.println(tag + "GL_TABLE_TOO_LARGE 0x" + Integer.toHexString(err));
+                    System.out.println(tag + " GL_TABLE_TOO_LARGE 0x" + Integer.toHexString(err));
                     break;
                 default:
-                    System.out.println(tag + "0x" + Integer.toHexString(err));
+                    System.out.println(tag + " 0x" + Integer.toHexString(err));
                     break;
             }
         }

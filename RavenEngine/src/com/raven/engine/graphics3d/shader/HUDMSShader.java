@@ -1,5 +1,6 @@
 package com.raven.engine.graphics3d.shader;
 
+import com.raven.engine.Game;
 import com.raven.engine.GameEngine;
 import com.raven.engine.util.Vector4f;
 import com.raven.engine.worldobject.HUDImage;
@@ -12,8 +13,9 @@ import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT1;
+import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT2;
 
-public class HUDShader extends Shader {
+public class HUDMSShader extends Shader {
 
     public static final int TEXTURE = getNextTexture();
 
@@ -22,7 +24,7 @@ public class HUDShader extends Shader {
             text_location, useText_location,
             id_location;
 
-    public HUDShader() {
+    public HUDMSShader() {
         super("hud_vertex.glsl", "hud_fragment.glsl");
 
         glBindAttribLocation(getProgramHandel(), 0, "vertex_pos");
@@ -45,6 +47,11 @@ public class HUDShader extends Shader {
         glUniform1i(text_location, HUDShader.TEXTURE);
 
         glDisable(GL_DEPTH_TEST);
+
+        // Blend
+        glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
     public void setProperties(HUDObject o) {
@@ -131,7 +138,6 @@ public class HUDShader extends Shader {
 
     @Override
     public void endProgram() {
-        glDrawBuffer(GL_COLOR_ATTACHMENT0);
         glDisable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
     }

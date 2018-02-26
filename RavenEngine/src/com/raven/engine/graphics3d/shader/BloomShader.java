@@ -87,7 +87,7 @@ public class BloomShader extends Shader {
 
         // Bind the glow
         // set the texture
-        glUniform1i(texture_glow_location, WorldMSShader.NORMAL);
+        glUniform1i(texture_glow_location, WorldMSShader.COLOR);
 
         glUniform2f(bloom_step_location,
                 1f / GameProperties.getScreenWidth(), 0f);

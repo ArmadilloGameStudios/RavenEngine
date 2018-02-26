@@ -15,7 +15,6 @@ import com.raven.engine.input.Keyboard;
 import com.raven.engine.input.Mouse;
 import com.raven.engine.scene.Camera;
 import com.raven.engine.worldobject.GameObject;
-import org.lwjgl.glfw.GLFW;
 
 public class GameEngine<G extends Game> implements Runnable {
     private static GameEngine engine;
@@ -124,7 +123,7 @@ public class GameEngine<G extends Game> implements Runnable {
                 window.printErrors("Input MS Error: ");
 
                 if (GameProperties.getMultisampleCount() != 0) {
-                    draw4ms();
+                    draw4fw();
                     window.printErrors("Draw MSAA Error: ");
                 } else {
                     draw4();
@@ -169,20 +168,11 @@ public class GameEngine<G extends Game> implements Runnable {
         System.exit(0);
     }
 
-    private void draw4ms() {
-        game.renderWorld4ms(window);
+    private void draw4fw() {
+        game.renderWorld4fw(window);
 
         window.getIDShader().useProgram();
         window.drawQuad();
-
-//        if (true) {
-//
-//        } else if (true) {
-//            window.getComplexDirectionalLightShader().useProgram();
-//            window.drawQuad();
-//        } else {
-//            // window.getWorldMSShader().blitComplexValue();
-//        }
     }
 
     private void draw4() {

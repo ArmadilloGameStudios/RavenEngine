@@ -120,7 +120,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         Vector3f dir = new Vector3f(1, 5, 2);
         sunLight.setDirection(dir.normalize(tempVec));
 
-        addLight(sunLight);
+        setGlobalDirectionalLight(sunLight);
 
         // Terrain
         terrain = new Terrain[size][size];

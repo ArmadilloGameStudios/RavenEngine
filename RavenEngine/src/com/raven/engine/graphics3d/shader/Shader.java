@@ -179,7 +179,6 @@ public abstract class Shader {
             GameEngine.getEngine().getWindow().endActiveShader();
             GameEngine.getEngine().getWindow().setActiveShader(this);
         }
-
         glUseProgram(getProgramHandel());
     }
 
