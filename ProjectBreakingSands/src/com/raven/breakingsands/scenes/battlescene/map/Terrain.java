@@ -2,6 +2,7 @@ package com.raven.breakingsands.scenes.battlescene.map;
 
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.decal.Decal;
+import com.raven.breakingsands.scenes.battlescene.decal.DecalFactory;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
@@ -59,21 +60,21 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     private TextObject details;
 
-    public Terrain(BattleScene scene, Structure structure, String name, int x, int y) {
+    public Terrain(BattleScene scene, Structure structure, GameData gameData) {
         super(scene, dataList.queryRandom(new GameDataQuery() {
             @Override
             public boolean matches(GameData row) {
-                return row.getString("name").matches(name);
+                return row.getString("name").matches(gameData.getString("type"));
             }
         }).getString("model"));
 
-        this.x = x + structure.getMapX();
-        this.y = y + structure.getMapY();
+        this.x = gameData.getInteger("x") + structure.getMapX();
+        this.y = gameData.getInteger("y") + structure.getMapY();
 
         System.out.println("X: " + this.x + ", Y: " + this.y);
 
-        setX(x * 2);
-        setZ(y * 2);
+        setX(gameData.getInteger("x") * 2);
+        setZ(gameData.getInteger("y") * 2);
 
         this.addMouseHandler(this);
 
@@ -82,6 +83,25 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         details = new TextObject(250, 250);
 
         updateText();
+
+        if (gameData.has("decal")) {
+            GameData gdd = gameData.getData("decal");
+
+            DecalFactory f = new DecalFactory(scene);
+
+            for (GameData restriction : gdd.getList("restriction")) {
+                f.addTypeRestriction(restriction.asString());
+            }
+
+            Decal decal = f.getInstance();
+            if (gdd.has("rotation")) {
+                float r = gdd.getInteger("rotation");
+
+                decal.setRotation(r);
+            }
+
+            setDecal(decal);
+        }
     }
 
     public int getMapX() {

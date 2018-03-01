@@ -20,7 +20,7 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         terrain.addAll(s.getTerrainList());
         addChild(s);
 
-        s = new Structure(scene, 0, 3);
+        s = new Structure(scene, 0, s.getHeight());
         terrain.addAll(s.getTerrainList());
         addChild(s);
 

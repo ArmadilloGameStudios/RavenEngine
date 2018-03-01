@@ -1,0 +1,65 @@
+{
+    width: 4,
+    height: 5,
+    terrain: [
+        { type: "sand", x: 0, y: 2 },
+        { type: "sand", x: 1, y: 2 },
+        { type: "sand", x: 2, y: 2 },
+        { type: "sand", x: 3, y: 2 },
+        { type: "sand", x: 1, y: 0 },
+        { type: "sand", x: 1, y: 1 },
+        { type: "sand", x: 1, y: 3 },
+        { type: "sand", x: 1, y: 4 },
+        { type: "sand", x: 2, y: 0 },
+        { type: "sand", x: 2, y: 1 },
+        { type: "sand", x: 2, y: 3 },
+        { type: "sand", x: 2, y: 4 },
+
+        { type: "sand", x: 0, y: 0,
+            decal: {
+                restriction: [ "tall", "wall", "straight" ],
+                rotation: 180
+            }
+        },
+        { type: "sand", x: 3, y: 0,
+            decal: {
+                restriction: [ "tall", "wall", "straight" ],
+            }
+        },
+        { type: "sand", x: 0, y: 1,
+            decal: {
+                restriction: [ "tall", "wall", "corner" ],
+                rotation: 180
+            }
+        },
+        { type: "sand", x: 3, y: 1,
+            decal: {
+                restriction: [ "tall", "wall", "corner" ],
+                rotation: 90
+            }
+        },
+
+        { type: "sand", x: 0, y: 3,
+            decal: {
+                restriction: [ "tall", "wall", "corner" ],
+                rotation: 270
+            }
+        },
+        { type: "sand", x: 3, y: 3,
+            decal: {
+                restriction: [ "tall", "wall", "corner" ],
+            }
+        },
+        { type: "sand", x: 0, y: 4,
+            decal: {
+                restriction: [ "tall", "wall", "straight" ],
+                rotation: 180
+            }
+        },
+        { type: "sand", x: 3, y: 4,
+            decal: {
+                restriction: [ "tall", "wall", "straight" ],
+            }
+        },
+    ]
+}
