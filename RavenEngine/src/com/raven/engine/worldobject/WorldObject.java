@@ -3,6 +3,7 @@ package com.raven.engine.worldobject;
 import com.raven.engine.GameEngine;
 import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.graphics3d.shader.Shader;
+import com.raven.engine.graphics3d.shader.WorldMSShader;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.util.Matrix4f;
 import com.raven.engine.util.Vector3f;
@@ -11,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class WorldObject<
-            S extends Scene,
-            P extends Parentable<WorldObject>,
-            C extends WorldObject>
+        S extends Scene,
+        P extends Parentable<WorldObject>,
+        C extends WorldObject>
         extends GameObject<WorldObject, P, C> {
 
     private List<WorldObject> parentList = new ArrayList<>();
@@ -34,6 +35,10 @@ public abstract class WorldObject<
     P parent;
     boolean parentIsWorldObject;
 
+    public WorldObject(S scene) {
+        this(scene, (ModelData) null);
+    }
+
     public WorldObject(S scene, String modelsrc) {
         this(scene, GameEngine.getEngine().getModelData(modelsrc));
     }
@@ -45,6 +50,7 @@ public abstract class WorldObject<
 
         resolveMatrix();
     }
+
     public float getZ() {
         return position.z;
     }
@@ -89,6 +95,14 @@ public abstract class WorldObject<
         return position;
     }
 
+    private Vector3f worldPos = new Vector3f();
+    public Vector3f getWorldPosition() {
+        if (this.parentIsWorldObject) {
+            return position.add(((WorldObject)getParent()).getWorldPosition(), worldPos);
+        }
+        return position;
+    }
+
     public void setPosition(float x, float y, float z) {
         this.position.x = x;
         this.position.y = y;
@@ -126,6 +140,7 @@ public abstract class WorldObject<
     }
 
     private Matrix4f tempMat = new Matrix4f();
+
     private void resolveMatrix() {
         matrix.identity();
         tempMat.identity();
@@ -141,6 +156,10 @@ public abstract class WorldObject<
 
     public void setHighlight(Highlight h) {
         highlight = h;
+
+        for (C child : children) {
+            child.setHighlight(h);
+        }
     }
 
     public Highlight getHighlight() {
@@ -148,26 +167,53 @@ public abstract class WorldObject<
     }
 
     private Matrix4f drawMat = new Matrix4f();
-    public void draw4ms() {
-        GameEngine.getEngine().getWindow().getWorldMSShader().setWorldObjectID(getID());
+
+    public void setWorldMSProperties(WorldMSShader shader) {
+        shader.setWorldObjectID(getID());
+        shader.setHighlight(highlight);
+    }
+
+    public void draw4ms(WorldMSShader shader) {
+        setWorldMSProperties(shader);
 
         Shader.setModelMatrix(getModelMatrix());
-        model.getModelReference().draw();
+        if (model != null)
+            model.getModelReference().draw();
 
         for (C child : children) {
-            child.draw4ms(getModelMatrix());
+            child.draw4ms(getModelMatrix(), shader);
         }
     }
 
-    public void draw4ms(Matrix4f parentMatrix) {
-        GameEngine.getEngine().getWindow().getWorldMSShader().setWorldObjectID(getID());
+    public void draw4ms(Matrix4f parentMatrix, WorldMSShader shader) {
+        setWorldMSProperties(shader);
 
         Shader.setModelMatrix(parentMatrix.multiply(getModelMatrix(), drawMat));
-        model.getModelReference().draw();
+        if (model != null)
+            model.getModelReference().draw();
 
         for (C child : children) {
-//            child.draw4(); ??
-            child.draw4(drawMat);
+            child.draw4ms(drawMat, shader);
+        }
+    }
+
+    public void drawShadow() {
+        Shader.setModelMatrix(getModelMatrix());
+        if (model != null)
+            model.getModelReference().draw();
+
+        for (C child : children) {
+            child.drawShadow(getModelMatrix());
+        }
+    }
+
+    public void drawShadow(Matrix4f parentMatrix) {
+        Shader.setModelMatrix(parentMatrix.multiply(getModelMatrix(), drawMat));
+        if (model != null)
+            model.getModelReference().draw();
+
+        for (C child : children) {
+            child.drawShadow(drawMat);
         }
     }
 
@@ -226,7 +272,7 @@ public abstract class WorldObject<
     @Override
     public void addChild(C child) {
         child.parentIsWorldObject = true;
-        child.parent = this;
+        child.setParent(this);
 
         children.add(child);
     }

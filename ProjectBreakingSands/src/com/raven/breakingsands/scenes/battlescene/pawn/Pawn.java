@@ -4,7 +4,7 @@ import com.raven.breakingsands.character.Armor;
 import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
-import com.raven.breakingsands.scenes.battlescene.terrain.Terrain;
+import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataList;

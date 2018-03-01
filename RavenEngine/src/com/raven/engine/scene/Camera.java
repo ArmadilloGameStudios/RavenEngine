@@ -62,7 +62,6 @@ public class Camera {
         this.height = height;
     }
 
-    // has 'memory leak'
     private Matrix4f tempMat = new Matrix4f();
     private void updateViewMatrix() {
         // view

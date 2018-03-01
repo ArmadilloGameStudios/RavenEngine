@@ -77,7 +77,7 @@ public class Mouse {
                     leftButtonDown = false;
                 }
                 break;
-            case (GLFW.GLFW_MOUSE_BUTTON_MIDDLE):
+            case (GLFW.GLFW_MOUSE_BUTTON_RIGHT):
                 if (action == GLFW.GLFW_PRESS) {
                     middleButtonDown = true;
                     middleButtonClick = true;
@@ -85,7 +85,7 @@ public class Mouse {
                     middleButtonDown = false;
                 }
                 break;
-            case (GLFW.GLFW_MOUSE_BUTTON_RIGHT):
+            case (GLFW.GLFW_MOUSE_BUTTON_MIDDLE):
                 if (action == GLFW.GLFW_PRESS) {
                     rightButtonDown = true;
                     rightButtonClick = true;

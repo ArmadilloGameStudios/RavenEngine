@@ -56,12 +56,12 @@ public abstract class Scene<G extends Game> {
 
         for (WorldObject o : layerDetails.getChildren()) {
             if (o.getVisibility())
-                o.draw4ms();
+                o.drawShadow();
         }
 
         for (WorldObject o : layerTerrain.getChildren()) {
             if (o.getVisibility())
-                o.draw4ms();
+                o.drawShadow();
         }
 
         // update the matrix block
@@ -75,13 +75,13 @@ public abstract class Scene<G extends Game> {
         for (WorldObject o : layerTerrain.getChildren()) {
             worldMSShader.setHighlight(o.getHighlight());
             Shader.setModelMatrix(o.getModelMatrix());
-            o.draw4ms();
+            o.draw4ms(worldMSShader);
         }
 
         for (WorldObject o : layerDetails.getChildren()) {
             worldMSShader.setHighlight(o.getHighlight());
             Shader.setModelMatrix(o.getModelMatrix());
-            o.draw4ms();
+            o.draw4ms(worldMSShader);
         }
 
         // HUD

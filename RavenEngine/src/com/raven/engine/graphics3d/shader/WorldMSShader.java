@@ -203,6 +203,14 @@ public class WorldMSShader extends Shader {
     }
 
     public void setHighlight(Highlight highlight) {
+//        GameEngine.getEngine().getWindow().printErrors("Cat");
         glUniform4f(highlight_location, highlight.r, highlight.g, highlight.b, highlight.a);
+//        GameEngine.getEngine().getWindow().printErrors("Dog");
+//        System.out.println(highlight_location);
+//        System.out.println(highlight.r);
+//        System.out.println(highlight.g);
+//        System.out.println(highlight.b);
+//        System.out.println(highlight.a);
+
     }
 }

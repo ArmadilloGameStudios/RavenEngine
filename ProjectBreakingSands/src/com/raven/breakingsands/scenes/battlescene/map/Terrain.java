@@ -1,4 +1,4 @@
-package com.raven.breakingsands.scenes.battlescene.terrain;
+package com.raven.breakingsands.scenes.battlescene.map;
 
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.decal.Decal;
@@ -18,8 +18,9 @@ import com.raven.engine.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldObject>
+public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         implements MouseHandler, PathNode<Terrain> {
 
     private static GameDataList dataList = GameDatabase.all("terrain");
@@ -58,7 +59,7 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
 
     private TextObject details;
 
-    public Terrain(BattleScene scene, String name, int x, int y) {
+    public Terrain(BattleScene scene, Structure structure, String name, int x, int y) {
         super(scene, dataList.queryRandom(new GameDataQuery() {
             @Override
             public boolean matches(GameData row) {
@@ -66,8 +67,13 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
             }
         }).getString("model"));
 
-        this.x = x;
-        this.y = y;
+        this.x = x + structure.getMapX();
+        this.y = y + structure.getMapY();
+
+        System.out.println("X: " + this.x + ", Y: " + this.y);
+
+        setX(x * 2);
+        setZ(y * 2);
 
         this.addMouseHandler(this);
 
@@ -159,35 +165,38 @@ public class Terrain extends WorldObject<BattleScene, Layer<WorldObject>, WorldO
     private List<PathAdjacentNode<Terrain>> getMovementNodes() {
         List<PathAdjacentNode<Terrain>> neighbors = new ArrayList<>();
 
-        Terrain[][] map = getScene().getTerrainMap();
-        int size = getScene().getTerrainMapSize();
+        Map map = getScene().getTerrainMap();
 
-        if (x + 1 < size) {
-            Terrain n = map[x + 1][y];
-
-            if (n.passable && n.pawn == null) {
-                neighbors.add(new PathAdjacentNode<>(n, 1));
-            }
-        }
-
-        if (y + 1 < size) {
-            Terrain n = map[x][y + 1];
+        Optional<Terrain> o = map.get(x + 1, y);
+        if (o.isPresent()) {
+            Terrain n = o.get();
 
             if (n.passable && n.pawn == null) {
                 neighbors.add(new PathAdjacentNode<>(n, 1));
             }
         }
 
-        if (y - 1 >= 0) {
-            Terrain n = map[x][y - 1];
+        o = map.get(x, y + 1);
+        if (o.isPresent()) {
+            Terrain n = o.get();
 
             if (n.passable && n.pawn == null) {
                 neighbors.add(new PathAdjacentNode<>(n, 1));
             }
         }
 
-        if (x - 1 >= 0) {
-            Terrain n = map[x - 1][y];
+        o = map.get(x, y - 1);
+        if (o.isPresent()) {
+            Terrain n = o.get();
+
+            if (n.passable && n.pawn == null) {
+                neighbors.add(new PathAdjacentNode<>(n, 1));
+            }
+        }
+
+        o = map.get(x - 1, y);
+        if (o.isPresent()) {
+            Terrain n = o.get();
 
             if (n.passable && n.pawn == null) {
                 neighbors.add(new PathAdjacentNode<>(n, 1));
