@@ -52,7 +52,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private Random random = new Random();
 
     private GlobalDirectionalLight sunLight;
-    private int size = 6;
     private Map map;
 
     private HashMap<Terrain, Path<Terrain>> pathMap;
@@ -124,318 +123,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         map = new Map(this);
         getLayerTerrain().addChild(map);
 
-        DecalFactory f = new DecalFactory(this);
-        f.addTypeRestriction("tall");
-        f.addTypeRestriction("wall");
-        f.addTypeRestriction("straight");
-
-//        // front left
-//        Decal decal = f.getInstance();
-//        map[7][8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[7][9].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[7][10].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[7][11].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[9][8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[9][9].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[9][10].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[9][11].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[21][19].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(90);
-//        map[20][20].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(270);
-//        map[8][7].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(90);
-//        map[8][12].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[7][8 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[7][9 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[7][10 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[7][11 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[9][8 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[9][9 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[9][10 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[9][11 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(270);
-//        map[8][7 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[21][8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(270);
-//        map[20][7].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(90);
-//        map[8][12 + 8].setDecal(decal);
-//
-//        f.clear();
-//
-//        // Tall Corners
-//        f.addTypeRestriction("tall");
-//        f.addTypeRestriction("wall");
-//        f.addTypeRestriction("corner");
-//
-//        decal = f.getInstance();
-//        map[7][7].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(270);
-//        map[9][7].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(90);
-//        map[7][12].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[9][12].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[7][7 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(270);
-//        map[9][7 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(90);
-//        map[7][12 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[9][12 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[19][18].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(270);
-//        map[21][18].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(90);
-//        map[19][20].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[21][20].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[19][7].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(270);
-//        map[21][7].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(90);
-//        map[19][9].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[21][9].setDecal(decal);
-//
-//        f.clear();
-//
-//        // Tall Ceiling
-//        f.addTypeRestriction("tall");
-//        f.addTypeRestriction("ceiling");
-//
-//        decal = f.getInstance();
-//        map[8][8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[8][9].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[8][10].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[8][11].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[8][8 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[8][9 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[8][10 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[8][11 + 8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[20][8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[20][19].setDecal(decal);
-//
-//        f.clear();
-//
-//        // Obelisks
-//        f.addTypeRestriction("obelisk");
-//
-//        decal = f.getInstance();
-//        map[5][12].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[5][15].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[3][12].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[3][15].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[1][12].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[1][15].setDecal(decal);
-//
-//        f.clear();
-//
-//        // short tall transition
-//        f.addTypeRestriction("short");
-//        f.addTypeRestriction("tall");
-//        f.addTypeRestriction("wall");
-//        f.addTypeRestriction("transition");
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[9][8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[19][8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(90);
-//        map[20][9].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(180);
-//        map[9][19].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[19][19].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(270);
-//        map[20][18].setDecal(decal);
-//
-//        f.clear();
-//
-//        // Short wall
-//        f.addTypeRestriction("short");
-//        f.addTypeRestriction("wall");
-//        f.addTypeRestriction("straight");
-//
-//        decal = f.getInstance();
-//        map[10][8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[12][8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[14][8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[16][8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[18][8].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[10][19].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[12][19].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[14][19].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[16][19].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        map[18][19].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(90);
-//        map[20][16].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(90);
-//        map[20][15].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(90);
-//        map[20][14].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(90);
-//        map[20][13].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(90);
-//        map[20][12].setDecal(decal);
-//
-//        decal = f.getInstance();
-//        decal.setRotation(90);
-//        map[20][11].setDecal(decal);
-
-        // Pawns
         addPawns();
 
         // Bottom HUD
@@ -533,7 +220,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         }
     }
 
-    public float movePawn(float delta) {
+    private void movePawn(float delta) {
 
         Terrain current = currentPath.get(pathIndex).getNode();
 
@@ -552,7 +239,29 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                 pathMoveTime = 0f;
             }
 
+
             Vector3f movement = next.getNode().getWorldPosition().subtract(current.getWorldPosition(), tempVec);
+
+            // fixes movement from terrain rotation
+            switch (activePawn.getParent().getParent().getMapRotation()) {
+                default:
+                case 0:
+                    break;
+                case 1:
+                    float x = movement.x;
+                    movement.x = -movement.z;
+                    movement.z = x;
+                    break;
+                case 2:
+                    movement.x = -movement.x;
+                    movement.z = -movement.z;
+                    break;
+                case 3:
+                    float z = movement.z;
+                    movement.z = -movement.x;
+                    movement.x = z;
+                    break;
+            }
 
             activePawn.move(movement.scale(delta / (pathSpeed * cost), tempVec2));
 
@@ -574,8 +283,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             else
                 selectNextPawn();
         }
-
-        return delta;
     }
 
     public void removePawn(Pawn pawn) {
@@ -594,10 +301,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public Map getTerrainMap() {
         return map;
-    }
-
-    public int getTerrainMapSize() {
-        return size;
     }
 
     public void selectNextPawn() {
@@ -734,6 +437,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         return state;
     }
 
+    int ddd = 0;
     public Random getRandom() {
         return random;
     }
@@ -768,33 +472,34 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         pathMap.clear();
     }
 
-    // TODO
     public List<Terrain> selectRange(int range, Terrain start) {
         int x = start.getMapX();
         int y = start.getMapY();
 
         List<Terrain> withinRange = new ArrayList<>();
 
-        for (int i = Math.max(-range + x, 0) - x;
-             i <= Math.min(range + x, size - 1) - x;
+        for (int i = -range;
+             i <= range;
              i++) {
 
             int heightRange = range - Math.abs(i);
 
-            for (int j = Math.max(-heightRange + y, 0) - y;
-                 j <= Math.min(heightRange + y, size - 1) - y;
+            for (int j = -heightRange;
+                 j <= heightRange;
                  j++) {
 
                 Optional<Terrain> o = map.get(x + i, y + j);
-                if (o.isPresent())
+                if (o.isPresent() &&
+                        o.get().getPawn() != null &&
+                        o.get().getPawn().getTeam() != activePawn.getTeam()) {
                     withinRange.add(o.get());
+                }
             }
         }
 
         return withinRange;
     }
 
-    // TODO
     private HashMap<Terrain, Float> filterRange(Terrain start, List<Terrain> inRange) {
         HashMap<Terrain, Float> map = new HashMap<>();
 

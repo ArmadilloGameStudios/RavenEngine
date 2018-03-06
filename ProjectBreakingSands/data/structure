@@ -1,8 +1,11 @@
 {
+    name: "large hall 1"
     width: 4,
     height: 5,
+    entrance: [{ side: 0, location: 1, length: 2 },
+               { side: 2, location: 1, length: 2 },
+               { side: 1, location: 2, length: 1 }],
     terrain: [
-        { type: "sand", x: 0, y: 2 },
         { type: "sand", x: 1, y: 2 },
         { type: "sand", x: 2, y: 2 },
         { type: "sand", x: 3, y: 2 },
@@ -21,15 +24,34 @@
                 rotation: 180
             }
         },
+        { type: "sand", x: 0, y: 1,
+            decal: {
+                restriction: [ "tall", "wall", "straight" ],
+                rotation: 180
+            }
+        },
+        { type: "sand", x: 0, y: 2,
+            decal: {
+                restriction: [ "tall", "wall", "straight" ],
+                rotation: 180
+            }
+        },
+        { type: "sand", x: 0, y: 3,
+            decal: {
+                restriction: [ "tall", "wall", "straight" ],
+                rotation: 180
+            }
+        },
+        { type: "sand", x: 0, y: 4,
+            decal: {
+                restriction: [ "tall", "wall", "straight" ],
+                rotation: 180
+            }
+        },
+
         { type: "sand", x: 3, y: 0,
             decal: {
                 restriction: [ "tall", "wall", "straight" ],
-            }
-        },
-        { type: "sand", x: 0, y: 1,
-            decal: {
-                restriction: [ "tall", "wall", "corner" ],
-                rotation: 180
             }
         },
         { type: "sand", x: 3, y: 1,
@@ -39,21 +61,9 @@
             }
         },
 
-        { type: "sand", x: 0, y: 3,
-            decal: {
-                restriction: [ "tall", "wall", "corner" ],
-                rotation: 270
-            }
-        },
         { type: "sand", x: 3, y: 3,
             decal: {
                 restriction: [ "tall", "wall", "corner" ],
-            }
-        },
-        { type: "sand", x: 0, y: 4,
-            decal: {
-                restriction: [ "tall", "wall", "straight" ],
-                rotation: 180
             }
         },
         { type: "sand", x: 3, y: 4,
@@ -61,5 +71,22 @@
                 restriction: [ "tall", "wall", "straight" ],
             }
         },
+    ]
+},
+{
+    name: "narrow hall 1",
+    width: 6,
+    height: 3,
+
+    entrance: [{ side: 1, location: 1, length: 1 },
+               { side: 3, location: 1, length: 1 }],
+
+    terrain: [
+        { type: "sand", x: 0, y: 1 },
+        { type: "sand", x: 1, y: 1 },
+        { type: "sand", x: 2, y: 1 },
+        { type: "sand", x: 3, y: 1 },
+        { type: "sand", x: 4, y: 1 },
+        { type: "sand", x: 5, y: 1 },
     ]
 }

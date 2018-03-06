@@ -109,6 +109,7 @@ public class GameLauncher {
 
         JComboBox cbMultisampleCount = new JComboBox(new String[]{"2", "4", "8", "16", "32"});
         conMultisample.add(cbMultisampleCount);
+        cbMultisampleCount.setSelectedIndex(1);
 
         chbMultisample.addActionListener(actionEvent ->
                 cbMultisampleCount.setEnabled(chbMultisample.isSelected()));

@@ -68,13 +68,33 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             }
         }).getString("model"));
 
-        this.x = gameData.getInteger("x") + structure.getMapX();
-        this.y = gameData.getInteger("y") + structure.getMapY();
+        switch (structure.getMapRotation()) {
+            default:
+            case 0:
+                this.x = gameData.getInteger("x") + structure.getMapX();
+                this.y = gameData.getInteger("y") + structure.getMapY();
+                break;
+            case 1:
+                this.x = gameData.getInteger("y") + structure.getMapX();
+                this.y = structure.getHeight() -
+                        (gameData.getInteger("x") + structure.getMapY());
+                break;
+            case 2:
+                this.x = (structure.getWidth() - gameData.getInteger("x"))
+                                + structure.getMapX() - 1;
+                this.y = (structure.getHeight() - gameData.getInteger("y"))
+                                + structure.getMapY() - 1;
+                break;
+            case 3:
+                this.y = gameData.getInteger("y") + structure.getMapX();
+                this.x = structure.getWidth() -
+                        (gameData.getInteger("x") + structure.getMapY());
+                break;
+        }
 
-        System.out.println("X: " + this.x + ", Y: " + this.y);
-
-        setX(gameData.getInteger("x") * 2);
-        setZ(gameData.getInteger("y") * 2);
+        setRotation(90 * structure.getMapRotation());
+        setX((this.x - structure.getMapX()) * 2);
+        setZ((this.y - structure.getMapY()) * 2);
 
         this.addMouseHandler(this);
 

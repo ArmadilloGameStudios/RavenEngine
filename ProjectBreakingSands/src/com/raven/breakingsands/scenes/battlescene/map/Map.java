@@ -16,15 +16,28 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
     public Map(BattleScene scene) {
         super(scene);
 
-        Structure s = new Structure(scene, 0, 0);
+        StructureFactory structureFactory = new StructureFactory(this);
+
+        Structure s = structureFactory.getInstance();
         terrain.addAll(s.getTerrainList());
         addChild(s);
+        System.out.println(s);
 
-        s = new Structure(scene, 0, s.getHeight());
+
+        structureFactory.connection(s, s.getEntrances()[scene.getRandom().nextInt(s.getEntrances().length)]);
+
+        s = structureFactory.getInstance();
         terrain.addAll(s.getTerrainList());
         addChild(s);
+        System.out.println(s);
 
 
+        structureFactory.connection(s, s.getEntrances()[scene.getRandom().nextInt(s.getEntrances().length)]);
+
+        s = structureFactory.getInstance();
+        terrain.addAll(s.getTerrainList());
+        addChild(s);
+        System.out.println(s);
     }
 
     public Optional<Terrain> get(int x, int y) {
