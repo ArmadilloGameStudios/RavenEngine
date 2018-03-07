@@ -6,8 +6,10 @@ import com.raven.engine.scene.Layer;
 import com.raven.engine.worldobject.WorldObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObject> {
 
@@ -23,21 +25,24 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         addChild(s);
         System.out.println(s);
 
-
-        structureFactory.connection(s, s.getEntrances()[scene.getRandom().nextInt(s.getEntrances().length)]);
-
-        s = structureFactory.getInstance();
-        terrain.addAll(s.getTerrainList());
-        addChild(s);
-        System.out.println(s);
-
-
-        structureFactory.connection(s, s.getEntrances()[scene.getRandom().nextInt(s.getEntrances().length)]);
+        List<StructureEntrance> es = Arrays.stream(s.getEntrances()).filter(e -> !e.isConnected()).collect(Collectors.toList());
+        structureFactory.connection(s, es.get(scene.getRandom().nextInt(es.size())));
 
         s = structureFactory.getInstance();
         terrain.addAll(s.getTerrainList());
         addChild(s);
         System.out.println(s);
+
+        es = Arrays.stream(s.getEntrances()).filter(e -> !e.isConnected()).collect(Collectors.toList());
+        if (es.size() > 0) {
+            structureFactory.connection(s, es.get(scene.getRandom().nextInt(es.size())));
+
+            s = structureFactory.getInstance();
+            terrain.addAll(s.getTerrainList());
+            addChild(s);
+            System.out.println(s);
+        }
+
     }
 
     public Optional<Terrain> get(int x, int y) {

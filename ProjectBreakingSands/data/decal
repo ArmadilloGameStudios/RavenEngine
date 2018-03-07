@@ -9,7 +9,7 @@
 },
 {
     description: "Wall, Tall",
-    model: "models/corner_tall.ply",
+    model: "models/wall_corner.ply",
     type: [
         "tall",
         "wall",
@@ -20,7 +20,7 @@
 },
 {
     description: "Wall, Tall",
-    model: "models/wall_tall.ply",
+    model: "models/wall.ply",
     type: [
         "tall",
         "wall",

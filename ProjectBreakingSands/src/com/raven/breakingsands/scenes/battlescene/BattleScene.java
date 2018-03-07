@@ -248,8 +248,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                 case 0:
                     break;
                 case 1:
-                    float x = movement.x;
-                    movement.x = -movement.z;
+                    float x = -movement.x;
+                    movement.x = movement.z;
                     movement.z = x;
                     break;
                 case 2:
@@ -257,8 +257,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                     movement.z = -movement.z;
                     break;
                 case 3:
-                    float z = movement.z;
-                    movement.z = -movement.x;
+                    float z = -movement.z;
+                    movement.z = movement.x;
                     movement.x = z;
                     break;
             }

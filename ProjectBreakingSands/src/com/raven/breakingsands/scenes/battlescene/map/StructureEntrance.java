@@ -7,6 +7,7 @@ import com.raven.engine.database.GameDataList;
 public class StructureEntrance {
 
     private int side, location, length;
+    private boolean connected;
 
     private StructureEntrance connection;
 
@@ -26,5 +27,13 @@ public class StructureEntrance {
 
     public int getLocation() {
         return location;
+    }
+
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+    }
+
+    public boolean isConnected() {
+        return connected;
     }
 }

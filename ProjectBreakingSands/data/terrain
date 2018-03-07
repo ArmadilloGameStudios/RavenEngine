@@ -1,4 +1,23 @@
 {
     name: "sand",
     model: "models/sand.ply"
+},
+{
+    name: "floor",
+    model: "models/floor.ply"
+},
+{
+    name: "wall",
+    model: "models/wall.ply"
+    passable: false
+},
+{
+    name: "corner",
+    model: "models/wall_corner.ply"
+    passable: false
+},
+{
+    name: "pillar",
+    model: "models/pillar.ply",
+    passable: false
 }
