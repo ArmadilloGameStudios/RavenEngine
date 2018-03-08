@@ -41,6 +41,16 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
             terrain.addAll(s.getTerrainList());
             addChild(s);
             System.out.println(s);
+
+            es = Arrays.stream(s.getEntrances()).filter(e -> !e.isConnected()).collect(Collectors.toList());
+            if (es.size() > 0) {
+                structureFactory.connection(s, es.get(scene.getRandom().nextInt(es.size())));
+
+                s = structureFactory.getInstance();
+                terrain.addAll(s.getTerrainList());
+                addChild(s);
+                System.out.println(s);
+            }
         }
 
     }

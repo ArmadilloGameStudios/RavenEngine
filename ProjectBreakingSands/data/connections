@@ -1,0 +1,15 @@
+{
+    name: "prison small",
+    a: [{ name: "corner 1", entrance: "c" },
+        { name: "corner 1", entrance: "d" },
+        { name: "corner 2", entrance: "c" },
+        { name: "corner 2", entrance: "d" }],
+    b: [{ name: "cell", entrance: "a" }]
+},
+{
+    name: "prison main",
+    a: [{ name: "corner 1", entrance: "a" },
+        { name: "corner 2", entrance: "a" }],
+    b: [{ name: "corner 1", entrance: "b" },
+        { name: "corner 2", entrance: "b" }],
+}

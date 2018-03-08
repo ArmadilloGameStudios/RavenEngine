@@ -86,6 +86,10 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
         return terrainList;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public int getMapX() {
         return x;
     }

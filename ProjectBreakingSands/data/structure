@@ -6,7 +6,7 @@
     width: 4,
     height: 4,
 
-    entrance: [{ side: 0, location: 1, length: 1 }],
+    entrance: [{ side: 0, location: 1, length: 1, name: "a" }],
 
     terrain: [
         { type: "wall", x: 0, y: 0, rotation: 180 },
@@ -38,10 +38,10 @@
     width: 5,
     height: 5,
 
-    entrance: [{ side: 0, location: 1, length: 4 },
-               { side: 1, location: 0, length: 4 },
-               { side: 3, location: 2, length: 1 },
-               { side: 2, location: 2, length: 1 }],
+    entrance: [{ side: 0, location: 1, length: 4, name: "a" },
+               { side: 1, location: 0, length: 4, name: "b" },
+               { side: 3, location: 2, length: 1, name: "c" },
+               { side: 2, location: 2, length: 1, name: "d" }],
 
     terrain: [
         { type: "wall", x: 0, y: 0, rotation: 180 },
@@ -83,10 +83,10 @@
     width: 5,
     height: 5,
 
-    entrance: [{ side: 0, location: 1, length: 4 },
-               { side: 1, location: 0, length: 4 },
-               { side: 3, location: 2, length: 1 },
-               { side: 2, location: 2, length: 1 }],
+    entrance: [{ side: 0, location: 1, length: 4, name: "a" },
+               { side: 1, location: 0, length: 4, name: "b" },
+               { side: 3, location: 2, length: 1, name: "c" },
+               { side: 2, location: 2, length: 1, name: "d" }],
 
     terrain: [
         { type: "wall", x: 0, y: 0, rotation: 180 },

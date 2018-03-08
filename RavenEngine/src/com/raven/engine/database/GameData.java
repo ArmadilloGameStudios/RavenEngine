@@ -3,7 +3,7 @@ package com.raven.engine.database;
 import java.util.List;
 import java.util.Map;
 
-public class GameData {
+public class GameData implements GameDatable {
 	private Map<String, GameData> vals;
 	private GameDataList list;
 	private Integer integer;
@@ -66,6 +66,10 @@ public class GameData {
         return getData(prop).asList();
     }
 
+    public void addList(String prop, GameDataList value) {
+        vals.put(prop, new GameData(value));
+    }
+
 	public boolean isString() {
 		return str != null;
 	}
@@ -117,5 +121,10 @@ public class GameData {
 		}
 				
 		return super.toString();
+	}
+
+	@Override
+	public GameData toGameData() {
+		return this;
 	}
 }

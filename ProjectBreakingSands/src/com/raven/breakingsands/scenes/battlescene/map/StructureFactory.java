@@ -2,12 +2,14 @@ package com.raven.breakingsands.scenes.battlescene.map;
 
 import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
+import com.raven.engine.database.GameDataList;
 import com.raven.engine.database.GameDataQuery;
+import com.raven.engine.database.GameDatabase;
 import com.raven.engine.util.Factory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,6 +20,8 @@ public class StructureFactory extends Factory<Structure> {
     private Structure connectedStructure;
     private StructureEntrance connectedEntrance;
 
+    private GameDataList connectionPossibleNames;
+
     public StructureFactory(Map map) {
         this.map = map;
     }
@@ -25,34 +29,58 @@ public class StructureFactory extends Factory<Structure> {
     public void connection(Structure s, StructureEntrance e) {
         connectedStructure = s;
         connectedEntrance = e;
+        connectionPossibleNames = new GameDataList();
+
+        for (GameData con : GameDatabase.all("connections")) {
+            if (con.getList("a").stream().anyMatch(gd ->
+                    gd.getString("name").equals(connectedStructure.getName()) &&
+                    gd.getString("entrance").equals(connectedEntrance.getName()))) {
+                connectionPossibleNames.addAll(con.getList("b"));
+            } else if (con.getList("b").stream().anyMatch(gd ->
+                    gd.getString("name").equals(connectedStructure.getName()) &&
+                    gd.getString("entrance").equals(connectedEntrance.getName()))) {
+                connectionPossibleNames.addAll(con.getList("a"));
+            }
+        }
+
+        System.out.println(connectionPossibleNames);
     }
 
     @Override
     public Structure getInstance() {
-        System.out.println("getInstance()");
 
         if (connectedStructure == null) {
             return new Structure(map.getScene(), 0, 0);
         } else {
-            GameData gdStructure = GameEngine.getEngine().getGameDatabase().getTable("structure").queryRandom(
-                    new GameDataQuery() {
-                        @Override
-                        public boolean matches(GameData row) {
-                            Optional<GameData> entrance = getEntrances(row).findAny();
+            GameDataList gdlPossibleStructure = new GameDataList();
 
-                            return entrance.isPresent();
-                        }
+            for (GameData row : GameEngine.getEngine().getGameDatabase().getTable("structure")) {
+
+                List<GameData> namedConnections = connectionPossibleNames.stream()
+                        .filter(con ->
+                                con.getString("name").equals(row.getString("name")))
+                        .collect(Collectors.toList());
+
+                if (namedConnections.size() > 0) {
+
+                    GameDataList entrances = new GameDataList(getEntrances(row)
+                            .filter(e -> namedConnections.stream().anyMatch(con ->
+                                    con.getString("entrance").equals(e.getString("name"))))
+                            .collect(Collectors.toList()));
+
+                    if (entrances.size() > 0) {
+                        gdlPossibleStructure.add(row);
+
+                        row.addList("valid entrances", entrances);
                     }
-            );
+                }
 
-            List<GameData> list = getEntrances(gdStructure).collect(Collectors.toList());
+            }
 
-            int i = map.getScene().getRandom().nextInt(list.size());
-            GameData gdEntrance = list.get(i);
+            GameData gdStructure = gdlPossibleStructure.getRandom();
+            GameData gdEntrance = gdStructure.getList("valid entrances").getRandom();
 
             int r = (connectedStructure.getMapRotation());
-
-            System.out.println("Struct Rot: " + r);
 
             int x = 0;
             int y = 0;
@@ -66,10 +94,7 @@ public class StructureFactory extends Factory<Structure> {
             switch ((r + connectedEntrance.getSide()) % 4) {
                 default:
                 case 0:
-                    System.out.println("Case 0");
                     x = connectedEntrance.getLocation();
-
-                    System.out.println("X: " + x + ", Y: " + y);
 
                     if (entranceSide % 2 == 0) {
                         y = -gdStructure.getInteger("height");
@@ -84,11 +109,8 @@ public class StructureFactory extends Factory<Structure> {
                     }
                     break;
                 case 1:
-                    System.out.println("Case 1");
                     x = connectedStructure.getWidth();
                     y = connectedEntrance.getLocation();
-
-                    System.out.println("X: " + x + ", Y: " + y);
 
                     if (entranceSide % 2 == 0) {
                         y -= gdStructure.getInteger("width") -
@@ -101,11 +123,8 @@ public class StructureFactory extends Factory<Structure> {
                     }
                     break;
                 case 2:
-                    System.out.println("Case 2");
                     y = connectedStructure.getHeight();
                     x = connectedStructure.getWidth() - connectedEntrance.getLocation() - connectedEntrance.getLength();
-
-                    System.out.println("X: " + x + ", Y: " + y);
 
                     if (entranceSide % 2 == 0) {
                         x -= gdEntrance.getInteger("location");
@@ -114,10 +133,7 @@ public class StructureFactory extends Factory<Structure> {
                     }
                     break;
                 case 3:
-                    System.out.println("Case 3");
                     y = connectedStructure.getHeight() - connectedEntrance.getLocation() - connectedEntrance.getLength();
-
-                    System.out.println("X: " + x + ", Y: " + y);
 
                     if (entranceSide % 2 == 0) {
                         x = -gdStructure.getInteger("height");
@@ -131,8 +147,6 @@ public class StructureFactory extends Factory<Structure> {
 
             x += connectedStructure.getMapX();
             y += connectedStructure.getMapY();
-
-            System.out.println("X: " + x + ", Y: " + y);
 
             r = (6 + connectedStructure.getMapRotation() +
                     connectedEntrance.getSide() -
