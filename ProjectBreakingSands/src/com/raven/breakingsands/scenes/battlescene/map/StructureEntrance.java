@@ -8,9 +8,7 @@ public class StructureEntrance {
 
     private int side, location, length;
     private String name;
-    private boolean connected;
-
-    private StructureEntrance connection;
+    private boolean connected = false;
 
     public StructureEntrance(Structure structure, GameData data) {
         side = data.getInteger("side");

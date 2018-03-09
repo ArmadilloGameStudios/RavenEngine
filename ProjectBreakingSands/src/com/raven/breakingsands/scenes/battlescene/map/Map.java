@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObject> {
 
+    private List<Structure> structures = new ArrayList<>();
     private List<Terrain> terrain = new ArrayList<>();
 
     public Map(BattleScene scene) {
@@ -21,38 +22,45 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         StructureFactory structureFactory = new StructureFactory(this);
 
         Structure s = structureFactory.getInstance();
+        structures.add(s);
         terrain.addAll(s.getTerrainList());
         addChild(s);
         System.out.println(s);
 
-        List<StructureEntrance> es = Arrays.stream(s.getEntrances()).filter(e -> !e.isConnected()).collect(Collectors.toList());
-        structureFactory.connection(s, es.get(scene.getRandom().nextInt(es.size())));
+        generate(structureFactory);
+    }
 
-        s = structureFactory.getInstance();
-        terrain.addAll(s.getTerrainList());
-        addChild(s);
-        System.out.println(s);
+    int i = 30;
+    private boolean generate(StructureFactory structureFactory) {
 
-        es = Arrays.stream(s.getEntrances()).filter(e -> !e.isConnected()).collect(Collectors.toList());
-        if (es.size() > 0) {
-            structureFactory.connection(s, es.get(scene.getRandom().nextInt(es.size())));
+        List<Structure> structures = this.structures.stream()
+                .filter(s ->
+                        Arrays.stream(s.getEntrances()).anyMatch(e -> !e.isConnected()))
+                .collect(Collectors.toList());
 
-            s = structureFactory.getInstance();
-            terrain.addAll(s.getTerrainList());
-            addChild(s);
-            System.out.println(s);
-
-            es = Arrays.stream(s.getEntrances()).filter(e -> !e.isConnected()).collect(Collectors.toList());
-            if (es.size() > 0) {
-                structureFactory.connection(s, es.get(scene.getRandom().nextInt(es.size())));
-
-                s = structureFactory.getInstance();
-                terrain.addAll(s.getTerrainList());
-                addChild(s);
-                System.out.println(s);
-            }
+        i--;
+        if (structures.size() == 0 || i == 0) {
+            return true;
         }
 
+        int randInt = getScene().getRandom().nextInt(structures.size());
+        Structure buildFrom = structures.get(randInt);
+
+        StructureEntrance se = Arrays.stream(buildFrom.getEntrances())
+                .filter(e -> !e.isConnected()).findAny().get();
+
+        structureFactory.connection(buildFrom, se);
+
+        Structure s = structureFactory.getInstance();
+
+        if (s == null)
+            return generate(structureFactory);
+
+        this.structures.add(s);
+        terrain.addAll(s.getTerrainList());
+        addChild(s);
+
+        return generate(structureFactory);
     }
 
     public Optional<Terrain> get(int x, int y) {
@@ -83,5 +91,9 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         for (Terrain t : terrain) {
             t.setState(state);
         }
+    }
+
+    public List<Structure> getStructures() {
+        return structures;
     }
 }
