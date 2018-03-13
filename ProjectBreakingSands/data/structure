@@ -119,4 +119,57 @@
         { type: "corner", x: 3, y: 4 },
         { type: "wall", x: 4, y: 4, rotation: 270 },
     ]
+},
+{
+    name: "hall 1",
+
+    tags: [ "prison", "hall" ],
+
+    width: 3,
+    height: 6,
+
+    entrance: [{ side: 0, location: 1, length: 1, name: "a" },
+               { side: 2, location: 1, length: 1, name: "b" }],
+
+    terrain: [
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 1, y: 2 },
+        { type: "floor", x: 1, y: 3 },
+        { type: "floor", x: 1, y: 4 },
+        { type: "floor", x: 1, y: 5 }
+    ]
+},
+{
+    name: "hall 2",
+
+    tags: [ "prison", "hall" ],
+
+    width: 3,
+    height: 3,
+
+    entrance: [{ side: 0, location: 1, length: 1, name: "a" },
+               { side: 2, location: 1, length: 1, name: "b" }],
+
+    terrain: [
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 1, y: 2 }
+    ]
+},
+{
+    name: "small door",
+
+    tags: [ "prison", "closed" ],
+
+    width: 3,
+    height: 1,
+
+    entrance: [{ side: 0, location: 1, length: 1, name: "a" }],
+
+    terrain: [
+        { type: "wall", x: 0, y: 0, rotation: 270 },
+        { type: "wall", x: 1, y: 0, rotation: 270 },
+        { type: "wall", x: 2, y: 0, rotation: 270 },
+    ]
 }

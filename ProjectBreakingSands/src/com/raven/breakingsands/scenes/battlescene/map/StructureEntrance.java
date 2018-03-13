@@ -8,9 +8,13 @@ public class StructureEntrance {
 
     private int side, location, length;
     private String name;
-    private boolean connected = false;
+
+    private StructureEntrance connection;
+    private Structure structure;
 
     public StructureEntrance(Structure structure, GameData data) {
+        this.structure = structure;
+
         side = data.getInteger("side");
         location = data.getInteger("location");
         length = data.getInteger("length");
@@ -29,15 +33,23 @@ public class StructureEntrance {
         return location;
     }
 
-    public void setConnected(boolean connected) {
-        this.connected = connected;
+    public void setConnected(StructureEntrance connection) {
+        this.connection = connection;
     }
 
     public boolean isConnected() {
-        return connected;
+        return connection != null;
     }
 
     public String getName() {
         return name;
+    }
+
+    public StructureEntrance getConnection() {
+        return connection;
+    }
+
+    public Structure getStructure() {
+        return structure;
     }
 }

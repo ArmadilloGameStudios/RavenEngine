@@ -21,27 +21,10 @@ public class StructureFactory extends Factory<Structure> {
     private StructureEntrance connectedEntrance;
 
     private GameDataList connectionPossibleNames;
+    private boolean closed;
 
     public StructureFactory(Map map) {
         this.map = map;
-    }
-
-    public void connection(Structure s, StructureEntrance e) {
-        connectedStructure = s;
-        connectedEntrance = e;
-        connectionPossibleNames = new GameDataList();
-
-        for (GameData con : GameDatabase.all("connections")) {
-            if (con.getList("a").stream().anyMatch(gd ->
-                    gd.getString("name").equals(connectedStructure.getName()) &&
-                            gd.getString("entrance").equals(connectedEntrance.getName()))) {
-                connectionPossibleNames.addAll(con.getList("b"));
-            } else if (con.getList("b").stream().anyMatch(gd ->
-                    gd.getString("name").equals(connectedStructure.getName()) &&
-                            gd.getString("entrance").equals(connectedEntrance.getName()))) {
-                connectionPossibleNames.addAll(con.getList("a"));
-            }
-        }
     }
 
     @Override
@@ -173,11 +156,9 @@ public class StructureFactory extends Factory<Structure> {
                     }
 
                     if (!safe) {
-                        // TODO remove connection
                         System.out.println("Not Safe: " + s.getName());
                         continue;
                     }
-
 
                     // check if entrances match
                     for (Structure structure : structures) {
@@ -201,5 +182,28 @@ public class StructureFactory extends Factory<Structure> {
     public void clear() {
         connectedStructure = null;
         connectedEntrance = null;
+        closed = false;
+    }
+
+    public void setConnection(Structure s, StructureEntrance e) {
+        connectedStructure = s;
+        connectedEntrance = e;
+        connectionPossibleNames = new GameDataList();
+
+        for (GameData con : GameDatabase.all("connections").stream().filter(c -> c.getBoolean("closed") == closed).collect(Collectors.toList())) {
+            if (con.getList("a").stream().anyMatch(gd ->
+                    gd.getString("name").equals(connectedStructure.getName()) &&
+                            gd.getString("entrance").equals(connectedEntrance.getName()))) {
+                connectionPossibleNames.addAll(con.getList("b"));
+            } else if (con.getList("b").stream().anyMatch(gd ->
+                    gd.getString("name").equals(connectedStructure.getName()) &&
+                            gd.getString("entrance").equals(connectedEntrance.getName()))) {
+                connectionPossibleNames.addAll(con.getList("a"));
+            }
+        }
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
     }
 }

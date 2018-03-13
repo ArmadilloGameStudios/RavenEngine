@@ -160,7 +160,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             Pawn p = new Pawn(this, character);
             pawns.add(p);
 
-            Optional<Terrain> o = terrainList.stream().filter(t -> t.getPawn() == null).findAny();
+            Optional<Terrain> o = terrainList.stream().filter(t -> t.getPawn() == null && t.isPassable()).findAny();
 
             map.setPawn(o.get(), p);
         }
@@ -171,7 +171,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         Pawn p = pf.getInstance();
         pawns.add(p);
 
-        Optional<Terrain> o = terrainList.stream().filter(t -> t.getPawn() == null).findAny();
+        Optional<Terrain> o = terrainList.stream().filter(t -> t.getPawn() == null && t.isPassable()).findAny();
 
         map.setPawn(o.get(), p);
 

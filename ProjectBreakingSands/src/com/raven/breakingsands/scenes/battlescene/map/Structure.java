@@ -123,8 +123,6 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
                 other.y < y + height;
     }
 
-    boolean ccc;
-
     public void tryConnect(Structure other) {
         GameDataList connections = GameDatabase.all("connections");
 
@@ -177,13 +175,36 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
                         }
 
                         if (connected) {
-                            e.setConnected(true);
-                            o.setConnected(true);
+                            e.setConnected(o);
+                            o.setConnected(e);
                         }
                     }
                 }
 
             }
         }));
+    }
+
+    public List<Structure> getConnections() {
+        List<Structure> connections = new ArrayList<>();
+        return getConnections(connections);
+    }
+
+    public List<Structure> getConnections(List<Structure> connections) {
+
+        connections.add(this);
+
+        for (StructureEntrance entrance : entrances) {
+            if (entrance.getConnection() != null) {
+                Structure s = entrance.getConnection().getStructure();
+
+                if (s.getParent().getStructures().contains(s) &&
+                        !connections.contains(s)) {
+                    s.getConnections(connections);
+                }
+            }
+        }
+
+        return connections;
     }
 }

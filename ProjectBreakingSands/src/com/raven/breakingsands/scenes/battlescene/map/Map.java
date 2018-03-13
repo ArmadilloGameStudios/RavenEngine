@@ -16,22 +16,28 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
     private List<Structure> structures = new ArrayList<>();
     private List<Terrain> terrain = new ArrayList<>();
 
+    private Structure firstStructure;
+
     public Map(BattleScene scene) {
         super(scene);
 
         StructureFactory structureFactory = new StructureFactory(this);
 
-        Structure s = structureFactory.getInstance();
+        Structure s = firstStructure = structureFactory.getInstance();
         structures.add(s);
         terrain.addAll(s.getTerrainList());
         addChild(s);
         System.out.println(s);
 
-        generate(structureFactory);
+        while (generate(structureFactory))
+            continue;
     }
 
-    int i = 30;
+    int i = 100;
+
     private boolean generate(StructureFactory structureFactory) {
+
+        System.out.println(i);
 
         List<Structure> structures = this.structures.stream()
                 .filter(s ->
@@ -39,8 +45,9 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
                 .collect(Collectors.toList());
 
         i--;
-        if (structures.size() == 0 || i == 0) {
-            return true;
+        if (structures.size() == 0) {
+            System.out.println("None left");
+            return false;
         }
 
         int randInt = getScene().getRandom().nextInt(structures.size());
@@ -49,18 +56,65 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         StructureEntrance se = Arrays.stream(buildFrom.getEntrances())
                 .filter(e -> !e.isConnected()).findAny().get();
 
-        structureFactory.connection(buildFrom, se);
+        structureFactory.setClosed(i <= 0);
+
+        structureFactory.setConnection(buildFrom, se);
 
         Structure s = structureFactory.getInstance();
 
-        if (s == null)
-            return generate(structureFactory);
+        if (s == null) {
+            System.out.println("Remove");
+            int r = removeStructure(buildFrom);
+            System.out.println(r);
+            i += r;
+        } else {
+            System.out.println("Add");
+            addStructure(s);
+        }
 
-        this.structures.add(s);
+
+        return true;
+    }
+
+    private void addStructure(Structure s) {
+        structures.add(s);
         terrain.addAll(s.getTerrainList());
         addChild(s);
+    }
 
-        return generate(structureFactory);
+    private int removeStructure(Structure s) {
+        removeOnlyStructure(s);
+
+        // remove all not connected to the first
+        // get list of connected
+        List<Structure> connected = firstStructure.getConnections();
+
+        // remove the ones not there
+        List<Structure> toRemove = new ArrayList<>(structures);
+        toRemove.removeAll(connected);
+        int removedCount = toRemove.size();
+
+        for (Structure r : toRemove) {
+            removeOnlyStructure(r);
+        }
+
+        // redo connections
+        for (Structure toRedo : structures) {
+            for (StructureEntrance se : toRedo.getEntrances()) {
+                se.setConnected(null);
+            }
+        }
+
+        structures.forEach(st -> structures.forEach(st::tryConnect));
+
+        // return the count of removed structures
+        return removedCount + 1;
+    }
+
+    private void removeOnlyStructure(Structure s) {
+        this.structures.remove(s);
+        terrain.removeAll(s.getTerrainList());
+        removeChild(s);
     }
 
     public Optional<Terrain> get(int x, int y) {
