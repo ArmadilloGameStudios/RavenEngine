@@ -10,7 +10,7 @@
     name: "Enemy",
     model: "models/enemy.ply",
     team: 1,
-    hp: 1,
-    movement: 10,
-    evasion: 0,
+    hp: 10,
+    movement: 6,
+    evasion: 1,
 }

@@ -2,8 +2,8 @@ package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.character.Character;
+import com.raven.breakingsands.scenes.battlescene.ai.AI;
 import com.raven.breakingsands.scenes.battlescene.decal.Decal;
-import com.raven.breakingsands.scenes.battlescene.decal.DecalFactory;
 import com.raven.breakingsands.scenes.battlescene.map.Map;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
@@ -26,6 +26,7 @@ import com.raven.engine.worldobject.TextObject;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_MOVE;
 
@@ -68,6 +69,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private List<Character> canLevelUp = new ArrayList<>();
 
     private State state = SELECT_MOVE;
+
+    private ExecutorService aiExecutorService = Executors.newSingleThreadExecutor();
+    private AI ai = new AI(this);
+    private Future aiFuture;
 
     public BattleScene(BreakingSandsGame game) {
         super(game);
@@ -217,6 +222,11 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             case MOVING:
                 movePawn(deltaTime);
                 break;
+            case SELECT_MOVE_AI:
+                if (aiFuture.isDone()) {
+                    ai.resolve();
+                }
+                break;
         }
     }
 
@@ -362,19 +372,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                 break;
             case SELECT_MOVE_AI:
                 currentPath = null;
+                map.setState(Terrain.State.UNSELECTABLE);
 
-                PathFinder<Terrain> pf = new PathFinder<>();
-
-                pathMap = pf.findDistance(activePawn.getParent(), activePawn.getRemainingMovement());
-                if (pathMap.size() > 0) {
-                    int rand = random.nextInt(pathMap.size());
-
-                    currentPath = pathMap.get(pathMap.keySet().toArray()[rand]);
-
-                    setState(State.MOVING);
-                } else {
-                    selectNextPawn();
-                }
+                aiFuture = aiExecutorService.submit(ai);
                 break;
             case MOVING:
                 activePawn.move(currentPath.getCost());
@@ -437,7 +437,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         return state;
     }
 
-    int ddd = 0;
     public Random getRandom() {
         return random;
     }
@@ -470,6 +469,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         }
 
         pathMap.clear();
+    }
+
+    public void setCurrentPath(Path<Terrain> currentPath) {
+        this.currentPath = currentPath;
     }
 
     public List<Terrain> selectRange(int range, Terrain start) {

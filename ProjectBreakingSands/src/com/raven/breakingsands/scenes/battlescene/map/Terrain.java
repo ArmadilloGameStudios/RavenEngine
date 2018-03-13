@@ -349,6 +349,9 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                         break;
                 }
                 break;
+            case SELECT_MOVE_AI:
+                setHighlight(BattleScene.OFF);
+                break;
         }
     }
 
