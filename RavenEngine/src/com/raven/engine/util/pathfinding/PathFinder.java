@@ -3,9 +3,7 @@ package com.raven.engine.util.pathfinding;
 import com.raven.engine.Game;
 import com.raven.engine.GameEngine;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PathFinder<N extends PathNode<N>> {
@@ -69,9 +67,22 @@ public class PathFinder<N extends PathNode<N>> {
         }
     }
 
-    public List<N> findTarget(N start, N target) {
-        List<N> path = new ArrayList<>();
+    // TODO fix this shitty code
+    public Path<N> findTarget(N start, N target) {
+        HashMap<N, Path<N>> catMap = findDistance(start, 100);
 
-        return path;
+        Path<N> cat = catMap.get(target);
+
+        if (cat == null) {
+            Optional<Path<N>> maybeCat = target.getAdjacentNodes().stream()
+                    .map(an -> catMap.get(an.getNode()))
+                    .filter(Objects::nonNull)
+                    .min(Comparator.comparingInt(Path::getCost));
+
+            if (maybeCat.isPresent())
+                cat = maybeCat.get();
+        }
+
+        return cat;
     }
 }

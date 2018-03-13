@@ -205,6 +205,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         setState(SELECT_MOVE);
     }
 
+    public List<Pawn> getPawns() {
+        return pawns;
+    }
+
     @Override
     public void onExitScene() {
         getGame().saveGame();
