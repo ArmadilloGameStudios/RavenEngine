@@ -290,11 +290,13 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             activePawn.setPosition(0, 0, 0);
             current.setPawn(activePawn);
 
-            if (activePawn.getTeam() == 0 &&
-                    (activePawn.getRemainingMovement() > 0 ||
-                            activePawn.getRemainingAttacks() > 0))
-                setState(State.SELECT_MOVE);
-            else
+            if (activePawn.getRemainingMovement() > 0 ||
+                    activePawn.getRemainingAttacks() > 0) {
+                if (activePawn.getTeam() == 0)
+                    setState(State.SELECT_MOVE);
+                else
+                    setState(State.SELECT_MOVE_AI);
+            } else
                 selectNextPawn();
         }
     }
@@ -507,7 +509,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         return withinRange;
     }
 
-    private HashMap<Terrain, Float> filterRange(Terrain start, List<Terrain> inRange) {
+    public HashMap<Terrain, Float> filterRange(Terrain start, List<Terrain> inRange) {
         HashMap<Terrain, Float> map = new HashMap<>();
 
         int startX = start.getMapX();

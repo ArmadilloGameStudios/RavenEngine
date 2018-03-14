@@ -29,6 +29,7 @@ public class AI implements Runnable {
     private final BattleScene scene;
     private Path<Terrain> currentPath;
     private boolean moving = false;
+    private Terrain attack = null;
 
     public AI(BattleScene scene) {
         this.scene = scene;
@@ -39,6 +40,19 @@ public class AI implements Runnable {
         try {
             // create a clean slate, since this object is reused each time
             clean();
+
+            // check if can attack
+            List<Terrain> inRange = scene.selectRange(scene.getActivePawn().getWeapon().getRange(), scene.getActivePawn().getParent());
+            HashMap<Terrain, Float> rangeMap = scene.filterRange(scene.getActivePawn().getParent(), inRange);
+
+            if (inRange.size() > 0) {
+                Optional<Terrain> optionalTerrain = inRange.stream().max((a, b) -> (int) (rangeMap.get(a) - rangeMap.get(b) * 100));
+
+                if (optionalTerrain.isPresent()) {
+                    attack = optionalTerrain.get();
+                    return;
+                }
+            }
 
             // find the closest pawn
             PathFinder<Terrain> pf = new PathFinder<>();
@@ -88,9 +102,16 @@ public class AI implements Runnable {
         System.out.println("Clean");
         currentPath = null;
         moving = false;
+        attack = null;
     }
 
     public void resolve() {
+        if (attack != null) {
+            scene.getActivePawn().attack(attack.getPawn());
+            scene.selectNextPawn();
+            return;
+        }
+
         if (moving) {
             scene.setCurrentPath(currentPath);
             scene.setState(BattleScene.State.MOVING);
