@@ -7,10 +7,19 @@
     evasion: 2,
 },
 {
-    name: "Enemy",
+    name: "Service Drone",
     model: "models/enemy.ply",
     team: 1,
-    hp: 10,
-    movement: 6,
+    hp: 5,
+    movement: 3,
     evasion: 1,
+},
+{
+    name: "Guard Drone",
+    model: "models/enemy.ply",
+    team: 1,
+    hp: 15,
+    resistance: 1,
+    movement: 2,
+    evasion: 0,
 }

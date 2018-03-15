@@ -27,6 +27,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_MOVE;
 
@@ -170,43 +171,27 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             map.setPawn(o.get(), p);
         }
 
-        // enemy
-        PawnFactory pf = new PawnFactory(this);
-        pf.setName("Enemy");
-        Pawn p = pf.getInstance();
-        pawns.add(p);
-
-        Optional<Terrain> o = terrainList.stream().filter(t -> t.getPawn() == null && t.isPassable()).findAny();
-
-        map.setPawn(o.get(), p);
-
-//        p = pf.getInstance();
-//        pawns.add(p);
-//        map[7][5].setPawn(p);
-//
-//        p = pf.getInstance();
-//        pawns.add(p);
-//        map[7][4].setPawn(p);
-//
-//        p = pf.getInstance();
-//        pawns.add(p);
-//        map[6][6].setPawn(p);
-//
-//        p = pf.getInstance();
-//        pawns.add(p);
-//        map[6][5].setPawn(p);
-//
-//        p = pf.getInstance();
-//        pawns.add(p);
-//        map[6][4].setPawn(p);
-
-        activePawn = pawns.get(pawns.size() - 1);
+        activePawn = pawns.get(0);
 
         setState(SELECT_MOVE);
     }
 
     public List<Pawn> getPawns() {
         return pawns;
+    }
+
+    public void spawnPawn(String name) {
+        PawnFactory pf = new PawnFactory(this);
+        pf.setName(name);
+        Pawn p = pf.getInstance();
+        pawns.add(p);
+
+        List<Terrain> terrainList = map.getTerrainList();
+        List<Terrain> validTerrainList = terrainList.stream().filter(t -> t.getPawn() == null && t.isPassable()).collect(Collectors.toList());
+
+        int r = random.nextInt(validTerrainList.size());
+
+        map.setPawn(validTerrainList.get(r), p);
     }
 
     @Override
@@ -368,12 +353,23 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         return activePawn;
     }
 
+    private boolean doSpawn() {
+        int a = 10 - (int)pawns.stream().filter(p -> p.getTeam() != 0).count();
+        int b = random.nextInt(10);
+
+        return a > b;
+    }
+
     public void setState(State state) {
         this.state = state;
         System.out.println("State: " + state);
 
         switch (state) {
             case SELECT_MOVE:
+                if (doSpawn()) {
+                    spawnPawn("Service Drone");
+                }
+
                 setStateSelectMove();
                 break;
             case SELECT_MOVE_AI:

@@ -143,7 +143,5 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         System.out.println("DIE");
         getParent().removePawn();
         getScene().removePawn(this);
-
-        getScene().checkVictory();
     }
 }
