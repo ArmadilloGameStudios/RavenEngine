@@ -108,7 +108,13 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         structures.forEach(st -> structures.forEach(st::tryConnect));
 
         // return the count of removed structures
-        return removedCount + 1;
+        removedCount += 1;
+
+        if (removedCount == structures.size()) {
+            removedCount -= 1;
+        }
+
+        return removedCount;
     }
 
     private void removeOnlyStructure(Structure s) {

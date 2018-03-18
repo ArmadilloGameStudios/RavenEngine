@@ -92,7 +92,7 @@ public class ShadowShader extends Shader {
 //        glCullFace(GL_FRONT);
 
         glEnable(GL_POLYGON_OFFSET_FILL);
-        glPolygonOffset(4f, 1.1f);
+        glPolygonOffset(3f, 1.2f);
     }
 
 

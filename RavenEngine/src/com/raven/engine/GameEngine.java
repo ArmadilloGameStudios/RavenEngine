@@ -138,10 +138,10 @@ public class GameEngine<G extends Game> implements Runnable {
             game.update(deltaTime);
             window.printErrors("Update Error: ");
 
-            if (frame % 60 == 0) {
-                System.out.println("FPS: " + 1000f / (framesdt / 60f) + " MPF: " + framesdt / 60f);
-                framesdt = 0;
-            }
+//            if (frame % 60 == 0) {
+//                System.out.println("FPS: " + 1000f / (framesdt / 60f) + " MPF: " + framesdt / 60f);
+//                framesdt = 0;
+//            }
 
             glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
 

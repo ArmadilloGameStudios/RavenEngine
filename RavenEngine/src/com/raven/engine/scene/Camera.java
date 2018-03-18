@@ -8,7 +8,7 @@ import com.raven.engine.util.Vector3f;
  * Created by cookedbird on 11/15/17.
  */
 public class Camera {
-    float x, y, zoom = -30f, zoomMin = -25f, zoomMax = -50f, xr, yr = 40, yrMin = 25f, yrMax = 85;
+    float x, y, zoom = -30f, zoomMin = -2f, zoomMax = -50f, xr, yr = 40, yrMin = 25f, yrMax = 85;
     float xs = x, ys = y, zooms = zoom, xrs = xr, yrs = yr, near = 2f, far = 200f, height = 0f;
     private boolean interactable = true;
 

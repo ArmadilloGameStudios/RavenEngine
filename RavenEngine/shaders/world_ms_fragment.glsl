@@ -35,37 +35,33 @@ uniform sampler2DShadow shadowTexture;
 in vec3 color, normal;
 in vec4 world_pos;
 
-const int squared_samples = 8;
+const int root_samples = 8;
 
 void main(void) {
     // shadow
     float percentage = 0;
-    for (int i = 0; i < squared_samples; i++) {
-        for (int j = 0; j < squared_samples; j++) {
-            float io = i - (squared_samples / 2 + .5);
-            float jo = j - (squared_samples / 2 + .5);
-            float ko = 0;
+    for (int i = 0; i < root_samples; i++) {
+        for (int j = 0; j < root_samples; j++) {
+            float io = i - ((root_samples - 1) / 2);
+//            float io = 0;
+            float jo = j - ((root_samples - 1) / 2);
+//            float jo = 0;
 
-            // TODO adjust with the normal
-            vec3 sampleOffset = (vec3(
-                        io * normal.y - jo * normal.x - ko * normal.z,
-                        ko * normal.y - io * normal.x - jo * normal.z,
-                        jo * normal.y - ko * normal.x - io * normal.z)) *
-                .1 / squared_samples;
+            vec3 sampleOffset = vec3(io, 0, jo);
 
             // position in the shadow coords
             vec4 shadowCoords = (
                     light.projection *
                     light.view *
-                    (world_pos.xyzw + vec4(sampleOffset, 0))) *
+                    world_pos.xyzw) * // TODO find a way to adjust the samples based off of the normal
                 .5 + .5;
 
             // check if lit
-            percentage += texture(shadowTexture, shadowCoords.xyz);
+            percentage += texture(shadowTexture, shadowCoords.xyz + sampleOffset.xzy * .000125);
         }
     }
 
-    percentage /= squared_samples*squared_samples;
+    percentage /= root_samples * root_samples;
 
     // light
 	float NdotL = max(0.0,
