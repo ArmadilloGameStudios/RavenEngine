@@ -35,13 +35,37 @@ uniform sampler2DShadow shadowTexture;
 in vec3 color, normal;
 in vec4 world_pos;
 
+const int squared_samples = 8;
+
 void main(void) {
+    // shadow
+    float percentage = 0;
+    for (int i = 0; i < squared_samples; i++) {
+        for (int j = 0; j < squared_samples; j++) {
+            float io = i - (squared_samples / 2 + .5);
+            float jo = j - (squared_samples / 2 + .5);
+            float ko = 0;
 
-    // position in the shadow coords
-    vec4 shadowCoords = (light.projection * light.view * world_pos.xyzw) * .5 + .5;
+            // TODO adjust with the normal
+            vec3 sampleOffset = (vec3(
+                        io * normal.y - jo * normal.x - ko * normal.z,
+                        ko * normal.y - io * normal.x - jo * normal.z,
+                        jo * normal.y - ko * normal.x - io * normal.z)) *
+                .1 / squared_samples;
 
-    // check if lit
-    float percentage = texture(shadowTexture, shadowCoords.xyz);
+            // position in the shadow coords
+            vec4 shadowCoords = (
+                    light.projection *
+                    light.view *
+                    (world_pos.xyzw + vec4(sampleOffset, 0))) *
+                .5 + .5;
+
+            // check if lit
+            percentage += texture(shadowTexture, shadowCoords.xyz);
+        }
+    }
+
+    percentage /= squared_samples*squared_samples;
 
     // light
 	float NdotL = max(0.0,
