@@ -13,7 +13,8 @@ layout (std140) uniform Matrices
 
 layout(location = 0) in vec3 vertex_pos;
 layout(location = 1) in vec3 vertex_normal;
-layout(location = 2) in vec3 vertex_color;
+layout(location = 2) in vec2 vertex_texture;
+layout(location = 3) in vec3 vertex_color;
 
 out vec3 color, normal;
 out vec4 world_pos;

@@ -10,10 +10,6 @@ import java.util.stream.Stream;
  */
 public class PlyImporter {
 
-    static public ModelData Import(File file) {
-        return Import(file, null);
-    }
-
     static public ModelData Import(File file, ModelData model) {
         try {
             if (model == null) {

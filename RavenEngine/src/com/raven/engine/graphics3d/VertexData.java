@@ -8,6 +8,7 @@ public class VertexData {
         PLY, RAV
     }
 
+    // Don't forget about the shader when adding more
     public Float x, y, z, nx, ny, nz, s, t, red, green, blue;
 
     public VertexData(String[] data, Type type) {
@@ -31,6 +32,8 @@ public class VertexData {
         nx = Float.parseFloat(data[3]);
         ny = Float.parseFloat(data[4]);
         nz = Float.parseFloat(data[5]);
+        s = 0f;
+        t = 0f;
         red = Integer.parseInt(data[6]) / 255f;
         green = Integer.parseInt(data[7]) / 255f;
         blue = Integer.parseInt(data[8]) / 255f;
@@ -48,5 +51,7 @@ public class VertexData {
         red = Float.parseFloat(data[8]);
         green = Float.parseFloat(data[9]);
         blue = Float.parseFloat(data[10]);
+
+        // TODO bones and weight
     }
 }

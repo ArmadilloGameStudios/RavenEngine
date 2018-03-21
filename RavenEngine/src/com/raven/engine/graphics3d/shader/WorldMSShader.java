@@ -48,8 +48,9 @@ public class WorldMSShader extends Shader {
         super("world_vertex.glsl", "world_ms_fragment.glsl");
 
         glBindAttribLocation(getProgramHandel(), 0, "vertex_pos");
-        glBindAttribLocation(getProgramHandel(), 1, "vertex_color");
-        glBindAttribLocation(getProgramHandel(), 2, "vertex_normal");
+        glBindAttribLocation(getProgramHandel(), 1, "vertex_normal");
+        glBindAttribLocation(getProgramHandel(), 2, "vertex_texture");
+        glBindAttribLocation(getProgramHandel(), 3, "vertex_color");
 
         id_location = glGetUniformLocation(getProgramHandel(), "id");
         highlight_location = glGetUniformLocation(getProgramHandel(), "highlight");
@@ -154,6 +155,7 @@ public class WorldMSShader extends Shader {
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
+        glEnableVertexAttribArray(3);
 
 //        buffers.rewind();
 //        glDrawBuffers(buffers);
@@ -165,6 +167,7 @@ public class WorldMSShader extends Shader {
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
+        glDisableVertexAttribArray(3);
 
         glDisable(GL_CLIP_DISTANCE0);
     }

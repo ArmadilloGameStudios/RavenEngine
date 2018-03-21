@@ -2,10 +2,12 @@ package com.raven.engine.graphics3d;
 
 import org.lwjgl.BufferUtils;
 
+import java.lang.reflect.Array;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -18,14 +20,23 @@ public class ModelReference {
     private static ModelReference blank;
 
     private final static int vertex_size = 3;
+    private final static int normal_size = 3;
+    private final static int colors_size = 3;
+    private final static int texture_size = 2;
 
-    private static ArrayList<Float> vertex_list = new ArrayList<Float>();
-    private static ArrayList<Float> normal_list = new ArrayList<Float>();
-    private static ArrayList<Float> colors_list = new ArrayList<Float>();
+    private static List<Float> vertex_list = new LinkedList<>();
+    private static List<Float> normal_list = new LinkedList<>();
+    private static List<Float> colors_list = new LinkedList<>();
+    private static List<Float> texture_list = new LinkedList<>();
+    private static List<Integer> bone_list = new LinkedList<>();
+    private static List<Float> weight_list = new LinkedList<>();
 
-    private static int vbo_vertex_handle, vbo_normal_handle, vbo_colors_handle;
-
-    private static Float[][][][] mapColor;
+    // Don't forget about the shader when adding more
+    private static int
+            vbo_vertex_handle,
+            vbo_normal_handle,
+            vbo_texture_handle,
+            vbo_colors_handle;
 
     public static void load(ModelData modelData) {
         // make sure all the data is loaded into the modelData
@@ -35,7 +46,7 @@ public class ModelReference {
 
         int vertex_start = vertex_list.size();
 
-        modelData.getVertexData().stream()
+        modelData.getVertexData()
                 .forEach(ModelReference::vertexDataToLists);
 
         int vertex_count = modelr.vertices = vertex_list.size() - vertex_start;
@@ -61,51 +72,57 @@ public class ModelReference {
         normal_list.add(vertexData.nx);
         normal_list.add(vertexData.ny);
         normal_list.add(vertexData.nz);
+        texture_list.add(vertexData.s);
+        texture_list.add(vertexData.t);
         colors_list.add(vertexData.red);
         colors_list.add(vertexData.green);
         colors_list.add(vertexData.blue);
     }
 
     public static void compileBuffer() {
-        int vertices = vertex_list.size();
+        int size = vertex_list.size() / vertex_size;
 
         // put into buffers
-        FloatBuffer vertex_list_buffer = BufferUtils
-                .createFloatBuffer(vertices);
-        for (Float vertex : vertex_list) {
-            vertex_list_buffer.put(vertex);
-        }
+        FloatBuffer vertex_list_buffer =
+                BufferUtils.createFloatBuffer(size * vertex_size);
+        vertex_list.forEach(vertex_list_buffer::put);
         vertex_list_buffer.flip();
 
-        FloatBuffer normal_list_buffer = BufferUtils
-                .createFloatBuffer(vertices);
-        for (Float normal : normal_list) {
-            normal_list_buffer.put(normal);
-        }
+        FloatBuffer normal_list_buffer =
+                BufferUtils.createFloatBuffer(size * normal_size);
+        normal_list.forEach(normal_list_buffer::put);
         normal_list_buffer.flip();
 
-        FloatBuffer colors_list_buffer = BufferUtils
-                .createFloatBuffer(vertices);
-        for (Float colors : colors_list) {
-            colors_list_buffer.put(colors);
-        }
+        FloatBuffer texture_list_buffer =
+                BufferUtils.createFloatBuffer(size * texture_size);
+        texture_list.forEach(texture_list_buffer::put);
+        texture_list_buffer.flip();
+
+        FloatBuffer colors_list_buffer =
+                BufferUtils.createFloatBuffer(size * colors_size);
+        colors_list.forEach(colors_list_buffer::put);
         colors_list_buffer.flip();
 
         // create vbo
         vbo_vertex_handle = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_vertex_handle);
         glBufferData(GL_ARRAY_BUFFER, vertex_list_buffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0l);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0L);
 
         vbo_normal_handle = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_normal_handle);
         glBufferData(GL_ARRAY_BUFFER, normal_list_buffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0l);
+        glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0L);
+
+        vbo_texture_handle = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_texture_handle);
+        glBufferData(GL_ARRAY_BUFFER, texture_list_buffer, GL_STATIC_DRAW);
+        glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0L);
 
         vbo_colors_handle = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_colors_handle);
         glBufferData(GL_ARRAY_BUFFER, colors_list_buffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0l);
+        glVertexAttribPointer(3, 3, GL_FLOAT, false, 0, 0L);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
@@ -113,15 +130,18 @@ public class ModelReference {
     public static void clearBuffers() {
         glDeleteBuffers(vbo_vertex_handle);
         glDeleteBuffers(vbo_normal_handle);
+        glDeleteBuffers(vbo_texture_handle);
         glDeleteBuffers(vbo_colors_handle);
 
-        vbo_colors_handle = 0;
-        vbo_normal_handle = 0;
         vbo_vertex_handle = 0;
+        vbo_normal_handle = 0;
+        vbo_texture_handle = 0;
+        vbo_colors_handle = 0;
 
         vertex_list.clear();
-        colors_list.clear();
         normal_list.clear();
+        texture_list.clear();
+        colors_list.clear();
     }
 
     public static void loadBlankModel() {
@@ -130,34 +150,35 @@ public class ModelReference {
         blank = new ModelReference();
         blank.draw_mode = GL_QUADS;
 
-        vertex_list.addAll(Arrays.asList(new Float[]{
+        vertex_list.addAll(Arrays.asList(
                 -1.0f, -1.0f, 0.0f,
                 1.0f, -1.0f, 0.0f,
                 1.0f, 1.0f, 0.0f,
-                -1.0f, 1.0f, 0.0f,
-        }));
-
-        normal_list.addAll(Arrays.asList(new Float[]{
+                -1.0f, 1.0f, 0.0f));
+        normal_list.addAll(Arrays.asList(
                 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 0.0f
-        }));
-        colors_list.addAll(Arrays.asList(new Float[]{
+                0.0f, 0.0f, 0.0f));
+        texture_list.addAll(Arrays.asList(
+                0.0f, 0.0f,
+                0.0f, 0.0f,
+                0.0f, 0.0f,
+                0.0f, 0.0f));
+        colors_list.addAll(Arrays.asList(
                 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 0.0f
-        }));
-
+                0.0f, 0.0f, 0.0f));
 
         int vertex_count = vertex_list.size();
         blank.vertices = vertex_list.size() - vertex_start;
 
         ShortBuffer index_list_buffer = BufferUtils
                 .createShortBuffer(blank.vertices / vertex_size);
-        for (short i = (short) (vertex_start / vertex_size); i < vertex_count
-                / vertex_size; i++) {
+        for (short i = (short) (vertex_start / vertex_size);
+             i < vertex_count / vertex_size;
+             i++) {
             index_list_buffer.put(i);
         }
         index_list_buffer.flip();

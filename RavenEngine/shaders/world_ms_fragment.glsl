@@ -57,7 +57,7 @@ void main(void) {
                 .5 + .5;
 
             // check if lit
-            percentage += texture(shadowTexture, shadowCoords.xyz + sampleOffset.xzy * .000125);
+            percentage += texture(shadowTexture, shadowCoords.xyz + sampleOffset.xzy * .0002);
         }
     }
 
