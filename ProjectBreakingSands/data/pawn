@@ -1,6 +1,6 @@
 {
     name: "Player",
-    model: "models/player.ply"
+    model: "models/test_rani.rav"
     team: 0,
     hp: 10,
     movement: 80,

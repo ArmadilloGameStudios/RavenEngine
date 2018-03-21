@@ -1,14 +1,14 @@
 package com.raven.engine.graphics3d;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-/**
- * Created by cookedbird on 11/8/17.
- */
-public class PlyImporter {
+public class RavImporter {
 
     static public ModelData Import(File file) {
         return Import(file, null);
@@ -25,47 +25,21 @@ public class PlyImporter {
 
             // check that the first line is ply
             String line = br.readLine();
-            if (!line.equals("ply")) {
+            if (!line.equals("rav")) {
                 System.err.printf(String.format(
-                        "File %s doesn't contain magic ply%n",
+                        "File %s doesn't contain magic rav%n",
                         file.getName()));
                 return null;
-            }
-
-            // check the format (lol)
-            line = br.readLine();
-            if (!line.equals("format ascii 1.0")) {
-                System.err.printf(String.format(
-                        "File %s doesn't contain ascii 1.0 format%n",
-                        file.getName()));
-                return null;
-            }
-
-            // skip if comment
-            line = br.readLine();
-            String[] lineData = line.split(" ");
-            if (lineData[0].equals("comment")) {
-                line = br.readLine();
-                lineData = line.split(" ");
             }
 
             // verteces and faces
             int vertex_count = 0;
             int face_count = 0;
 
-            // loop for each element
-            while (!(line.equals("end_header") || line == null)) {
-                if (lineData[0].equals("element")) {
-                    if (lineData[1].equals("vertex")) {
-                        vertex_count = Integer.parseInt(lineData[2]);
-                    } else if (lineData[1].equals("face")) {
-                        face_count = Integer.parseInt(lineData[2]);
-                    }
-                }
-
-                line = br.readLine();
-                lineData = line.split(" ");
-            }
+            line = br.readLine();
+            String[] lineData = line.split(" ");
+            vertex_count = Integer.parseInt(lineData[0]);
+            face_count = Integer.parseInt(lineData[1]);
 
             // load the vertices data
             List<VertexData> vertices = new ArrayList<>();
@@ -73,7 +47,7 @@ public class PlyImporter {
                 line = br.readLine();
                 lineData = line.split(" ");
 
-                vertices.add(new VertexData(lineData, VertexData.Type.PLY));
+                vertices.add(new VertexData(lineData, VertexData.Type.RAV));
             }
 
             // load the faces
@@ -82,9 +56,9 @@ public class PlyImporter {
                 lineData = line.split(" ");
 
                 Stream.of(
+                        Integer.parseInt(lineData[0]),
                         Integer.parseInt(lineData[1]),
-                        Integer.parseInt(lineData[2]),
-                        Integer.parseInt(lineData[3])
+                        Integer.parseInt(lineData[2])
                 ).map(vertices::get)
                         .forEach(model::addVertex);
             }

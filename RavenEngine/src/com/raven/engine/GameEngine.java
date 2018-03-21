@@ -4,13 +4,12 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import com.raven.engine.database.GameDatabase;
-import com.raven.engine.graphics3d.GameWindow;
-import com.raven.engine.graphics3d.ModelData;
-import com.raven.engine.graphics3d.ModelReference;
-import com.raven.engine.graphics3d.PlyModelData;
+import com.raven.engine.graphics3d.*;
 import com.raven.engine.input.Keyboard;
 import com.raven.engine.input.Mouse;
 import com.raven.engine.scene.Camera;
@@ -258,7 +257,19 @@ public class GameEngine<G extends Game> implements Runnable {
         for (File f : base.listFiles()) {
             if (f.isFile()) {
                 System.out.println(f.getPath());
-                modelDataMap.put(f.getPath(), new PlyModelData(f.getPath()));
+
+                String[] parts = f.getPath().split("\\.");
+                String ext = parts[parts.length - 1];
+
+                switch (ext) {
+                    case "ply":
+                        modelDataMap.put(f.getPath(), new PlyModelData(f.getPath()));
+                        break;
+                    case "rav":
+                        modelDataMap.put(f.getPath(), new RavModelData(f.getPath()));
+                        break;
+                }
+
             } else if (f.isDirectory()) {
                 loadModels(f);
             }

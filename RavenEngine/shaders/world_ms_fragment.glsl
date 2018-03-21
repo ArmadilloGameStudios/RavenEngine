@@ -35,7 +35,7 @@ uniform sampler2DShadow shadowTexture;
 in vec3 color, normal;
 in vec4 world_pos;
 
-const int root_samples = 8;
+const int root_samples = 4;
 
 void main(void) {
     // shadow

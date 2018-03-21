@@ -284,7 +284,7 @@ class RavExport(bpy.types.Operator, ExportHelper):
         # write the count of vertices and faces
         fw(str(vert_count) + " " + str(len(ply_faces)) + "\n")
 
-        # x y z nx ny nz s t r g b ai1 ai2 w1 w2
+        # x y z nx ny nz s t r g b a
         for i, v in enumerate(ply_verts):
             # position
             fw("%.6f %.6f %.6f" % mesh_verts[v[0]].co[:])
