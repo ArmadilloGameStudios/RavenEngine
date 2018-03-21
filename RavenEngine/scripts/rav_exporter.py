@@ -72,7 +72,7 @@ class RaniExport(bpy.types.Operator, ExportHelper):
                         'location': [],
                         'rotation': [],
                         'scale': [],
-                        'tail': [],
+                        'tail': None,
                         'parent': None,
                         'name': boneName
                     }
@@ -85,6 +85,14 @@ class RaniExport(bpy.types.Operator, ExportHelper):
 
             frames.sort()
             frames = list(set(frames))
+
+            for name in bones:
+                bone = bones[name]
+                posebone = pose.bones[bone['name']]
+                bone['tail'] = posebone.tail
+
+            # get tail
+            scene.frame_set(0)
 
             for frame in frames:
 
@@ -99,7 +107,6 @@ class RaniExport(bpy.types.Operator, ExportHelper):
                     bone['location'].append(posebone.location)
                     bone['rotation'].append(posebone.rotation_quaternion)
                     bone['scale'].append(posebone.scale)
-                    bone['tail'].append(posebone.tail)
 
                     if posebone.parent is not None:
                         bone['parent'] = posebone.parent.name
@@ -111,6 +118,8 @@ class RaniExport(bpy.types.Operator, ExportHelper):
 
                 fw(str(bone['name']) + "\n")
                 fw(str(bone['parent']) + "\n")
+                fw("%.6f %.6f %.6f " % tuple(bone['tail']))
+                fw("\n")
 
                 for location in bone['location']:
                     fw("%.6f %.6f %.6f " % tuple(location))
@@ -124,9 +133,6 @@ class RaniExport(bpy.types.Operator, ExportHelper):
                     fw("%.6f %.6f %.6f " % tuple(scale))
                 fw("\n")
 
-                for tail in bone['tail']:
-                    fw("%.6f %.6f %.6f " % tuple(tail))
-                fw("\n")
 
             fw("\n")
 
@@ -170,6 +176,8 @@ class RavExport(bpy.types.Operator, ExportHelper):
 
         # base objects
         mesh = bpy.data.meshes[0]
+        obj = bpy.data.objects[mesh.name]
+        vertex_groups = obj.vertex_groups
 
         use_normals = True
         use_uv_coords = True
@@ -231,6 +239,7 @@ class RavExport(bpy.types.Operator, ExportHelper):
                 col = active_col_layer[i]
                 col = col.color1[:], col.color2[:], col.color3[:], col.color4[:]
 
+
             f_verts = f.vertices
 
             pf = ply_faces[i]
@@ -249,6 +258,11 @@ class RavExport(bpy.types.Operator, ExportHelper):
                     color = col[j]
                     color = rvec3d(color)
 
+                #groups
+                vgroup = []
+                for g in v.groups:
+                    vgroup.append([vertex_groups[g.group].name, g.weight])
+
                 key = normal_key, uvcoord_key, color
 
                 vdict_local = vdict[vidx]
@@ -256,7 +270,7 @@ class RavExport(bpy.types.Operator, ExportHelper):
 
                 if pf_vidx is None:  # same as vdict_local.has_key(key)
                     pf_vidx = vdict_local[key] = vert_count
-                    ply_verts.append((vidx, normal, uvcoord, color))
+                    ply_verts.append((vidx, normal, uvcoord, color, vgroup))
                     vert_count += 1
 
                 pf.append(pf_vidx)
@@ -290,14 +304,13 @@ class RavExport(bpy.types.Operator, ExportHelper):
             else:
                 fw(" 1 1 1")
 
-            # animation index
-            fw(" 0 0")
-
-            # weight
-            fw(" 1 0")
+            # animation
+            fw(" [")
+            for group in v[4]:
+                fw(" %s %.6f" % tuple(group))
 
             # done
-            fw("\n")
+            fw(" ]\n")
 
 
         # faces
