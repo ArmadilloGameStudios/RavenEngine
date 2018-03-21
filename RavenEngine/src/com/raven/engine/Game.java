@@ -1,8 +1,8 @@
 package com.raven.engine;
 
 import com.raven.engine.graphics3d.GameWindow;
-import com.raven.engine.graphics3d.ModelData;
-import com.raven.engine.graphics3d.ModelReference;
+import com.raven.engine.graphics3d.model.ModelData;
+import com.raven.engine.graphics3d.model.ModelReference;
 import com.raven.engine.scene.Scene;
 
 import java.util.List;

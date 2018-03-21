@@ -1,15 +1,12 @@
-package com.raven.engine.graphics3d;
+package com.raven.engine.graphics3d.model;
 
 import org.lwjgl.BufferUtils;
 
-import java.lang.reflect.Array;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;

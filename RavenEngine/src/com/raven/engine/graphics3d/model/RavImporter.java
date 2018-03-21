@@ -1,4 +1,4 @@
-package com.raven.engine.graphics3d;
+package com.raven.engine.graphics3d.model;
 
 import java.io.BufferedReader;
 import java.io.File;

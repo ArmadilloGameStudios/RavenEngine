@@ -1,4 +1,4 @@
-package com.raven.engine.graphics3d;
+package com.raven.engine.graphics3d.model;
 
 /**
  * Created by cookedbird on 11/8/17.

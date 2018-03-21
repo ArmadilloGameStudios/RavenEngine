@@ -12,7 +12,7 @@ import com.raven.breakingsands.scenes.hud.HUDBottomContainer;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.engine.GameEngine;
-import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.graphics3d.model.ModelData;
 import com.raven.engine.scene.Camera;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.scene.light.GlobalDirectionalLight;

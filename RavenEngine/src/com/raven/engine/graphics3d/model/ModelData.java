@@ -1,6 +1,5 @@
-package com.raven.engine.graphics3d;
+package com.raven.engine.graphics3d.model;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 

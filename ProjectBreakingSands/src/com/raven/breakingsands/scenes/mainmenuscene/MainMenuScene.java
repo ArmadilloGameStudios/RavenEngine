@@ -2,7 +2,7 @@ package com.raven.breakingsands.scenes.mainmenuscene;
 
 import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.scenes.hud.HUDBottomContainer;
-import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.graphics3d.model.ModelData;
 import com.raven.engine.scene.Camera;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.scene.light.GlobalDirectionalLight;

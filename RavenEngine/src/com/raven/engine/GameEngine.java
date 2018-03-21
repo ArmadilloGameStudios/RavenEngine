@@ -4,12 +4,14 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 import com.raven.engine.database.GameDatabase;
 import com.raven.engine.graphics3d.*;
+import com.raven.engine.graphics3d.model.ModelData;
+import com.raven.engine.graphics3d.model.ModelReference;
+import com.raven.engine.graphics3d.model.PlyModelData;
+import com.raven.engine.graphics3d.model.RavModelData;
 import com.raven.engine.input.Keyboard;
 import com.raven.engine.input.Mouse;
 import com.raven.engine.scene.Camera;

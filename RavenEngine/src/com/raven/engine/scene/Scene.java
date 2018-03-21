@@ -1,23 +1,16 @@
 package com.raven.engine.scene;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.raven.engine.Game;
 import com.raven.engine.graphics3d.GameWindow;
-import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.graphics3d.model.ModelData;
 import com.raven.engine.graphics3d.shader.*;
 import com.raven.engine.scene.light.GlobalDirectionalLight;
-import com.raven.engine.scene.light.Light;
 import com.raven.engine.util.Vector3f;
 import com.raven.engine.worldobject.GameObject;
 import com.raven.engine.worldobject.HUDContainer;
 import com.raven.engine.worldobject.WorldObject;
-
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
-import static org.lwjgl.opengl.GL14.glBlendEquation;
-import static org.lwjgl.opengl.GL30.*;
 
 public abstract class Scene<G extends Game> {
     private Layer<WorldObject> layerTerrain = new Layer<>(Layer.Destination.Terrain);

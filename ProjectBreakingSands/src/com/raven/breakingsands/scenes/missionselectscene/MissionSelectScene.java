@@ -4,7 +4,7 @@ import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.mission.Mission;
 import com.raven.breakingsands.scenes.mainmenuscene.DisplayPawn;
-import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.graphics3d.model.ModelData;
 import com.raven.engine.scene.Camera;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.scene.light.GlobalDirectionalLight;

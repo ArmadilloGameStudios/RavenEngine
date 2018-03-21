@@ -1,7 +1,7 @@
 package com.raven.engine.worldobject;
 
 import com.raven.engine.GameEngine;
-import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.graphics3d.model.ModelData;
 import com.raven.engine.graphics3d.shader.Shader;
 import com.raven.engine.graphics3d.shader.WorldMSShader;
 import com.raven.engine.scene.Scene;
