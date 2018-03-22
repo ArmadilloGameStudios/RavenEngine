@@ -168,8 +168,6 @@ public class WorldMSShader extends Shader {
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
         glDisableVertexAttribArray(3);
-
-        glDisable(GL_CLIP_DISTANCE0);
     }
 
     public void setWorldObjectID(int id) {

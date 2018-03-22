@@ -69,10 +69,12 @@ class RaniExport(bpy.types.Operator, ExportHelper):
                     bone = bones[boneName]
                 else:
                     bone = {
+                        'head': None,
+                        'tail': None,
                         'location': [],
                         'rotation': [],
                         'scale': [],
-                        'tail': None,
+                        'vector': [],
                         'parent': None,
                         'name': boneName
                     }
@@ -89,6 +91,7 @@ class RaniExport(bpy.types.Operator, ExportHelper):
             for name in bones:
                 bone = bones[name]
                 posebone = pose.bones[bone['name']]
+                bone['head'] = posebone.head
                 bone['tail'] = posebone.tail
 
             # get tail
@@ -107,6 +110,9 @@ class RaniExport(bpy.types.Operator, ExportHelper):
                     bone['location'].append(posebone.location)
                     bone['rotation'].append(posebone.rotation_quaternion)
                     bone['scale'].append(posebone.scale)
+                    bone['vector'].append(posebone.vector)
+                    print(posebone.head)
+                    print(posebone.tail)
 
                     if posebone.parent is not None:
                         bone['parent'] = posebone.parent.name
@@ -118,6 +124,8 @@ class RaniExport(bpy.types.Operator, ExportHelper):
 
                 fw(str(bone['name']) + "\n")
                 fw(str(bone['parent']) + "\n")
+                fw("%.6f %.6f %.6f " % tuple(bone['head']))
+                fw("\n")
                 fw("%.6f %.6f %.6f " % tuple(bone['tail']))
                 fw("\n")
 
@@ -133,6 +141,9 @@ class RaniExport(bpy.types.Operator, ExportHelper):
                     fw("%.6f %.6f %.6f " % tuple(scale))
                 fw("\n")
 
+                for vector in bone['vector']:
+                    fw("%.6f %.6f %.6f " % tuple(vector))
+                fw("\n")
 
             fw("\n")
 

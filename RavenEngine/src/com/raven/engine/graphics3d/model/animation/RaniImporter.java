@@ -1,0 +1,144 @@
+package com.raven.engine.graphics3d.model.animation;
+
+import com.raven.engine.graphics3d.model.animation.Animation;
+import com.raven.engine.util.Quaternion;
+import com.raven.engine.util.Vector3f;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class RaniImporter {
+
+    static public Animation Import(File file) {
+        try {
+            BufferedReader br;
+            br = new BufferedReader(new FileReader(file));
+
+            Animation animation = new Animation();
+
+            String line;
+
+            boolean hasAction = true;
+            while (hasAction) {
+                // action name
+                line = br.readLine();
+                AnimatedAction action = new AnimatedAction(line);
+
+                // keyframes
+                line = br.readLine();
+                String[] frames = line.split(" ");
+                int[] keyframes = new int[frames.length];
+
+                for (int i = 0; i < frames.length; i++) {
+                    keyframes[i] = Integer.parseInt(frames[i]);
+                }
+
+                // bones
+                line = br.readLine();
+                boolean hasBone = true;
+                while (hasBone) {
+                    // bone name
+                    Bone bone = new Bone(line);
+
+                    // parent
+                    line = br.readLine();
+                    if (line.equals("") || line.equals("None")) {
+                        line = null;
+                    }
+                    bone.setParentName(line);
+
+                    // head
+                    line = br.readLine();
+                    String[] vals = line.split(" ");
+                    Vector3f head = new Vector3f(
+                            Float.parseFloat(vals[0]),
+                            Float.parseFloat(vals[1]),
+                            Float.parseFloat(vals[2])
+                    );
+                    bone.setHead(head);
+
+                    // tail
+                    line = br.readLine();
+                    vals = line.split(" ");
+                    Vector3f tail = new Vector3f(
+                            Float.parseFloat(vals[0]),
+                            Float.parseFloat(vals[1]),
+                            Float.parseFloat(vals[2])
+                    );
+                    bone.setTail(tail);
+
+                    BoneAction boneAction = new BoneAction(bone);
+
+                    // location
+                    line = br.readLine();
+                    vals = line.split(" ");
+                    Vector3f[] location = new Vector3f[keyframes.length];
+                    for (int i = 0; i < keyframes.length; i++) {
+                        location[i] = new Vector3f(
+                                Float.parseFloat(vals[i * 3]),
+                                Float.parseFloat(vals[i * 3 + 1]),
+                                Float.parseFloat(vals[i * 3 + 2])
+                        );
+                    }
+                    boneAction.setLocation(location);
+
+                    // rotation
+                    line = br.readLine();
+                    vals = line.split(" ");
+                    Quaternion[] rotation = new Quaternion[keyframes.length];
+                    for (int i = 0; i < keyframes.length; i++) {
+                        rotation[i] = new Quaternion(
+                                Float.parseFloat(vals[i * 4]),
+                                Float.parseFloat(vals[i * 4 + 1]),
+                                Float.parseFloat(vals[i * 4 + 2]),
+                                Float.parseFloat(vals[i * 4 + 3])
+                        );
+                    }
+                    boneAction.setRotation(rotation);
+
+                    // scale
+                    line = br.readLine();
+                    vals = line.split(" ");
+                    Vector3f[] scale = new Vector3f[keyframes.length];
+                    for (int i = 0; i < keyframes.length; i++) {
+                        scale[i] = new Vector3f(
+                                Float.parseFloat(vals[i * 3]),
+                                Float.parseFloat(vals[i * 3 + 1]),
+                                Float.parseFloat(vals[i * 3 + 2])
+                        );
+                    }
+                    boneAction.setScale(scale);
+
+                    // vector
+                    line = br.readLine();
+                    vals = line.split(" ");
+                    Vector3f[] vector = new Vector3f[keyframes.length];
+                    for (int i = 0; i < keyframes.length; i++) {
+                        vector[i] = new Vector3f(
+                                Float.parseFloat(vals[i * 3]),
+                                Float.parseFloat(vals[i * 3 + 1]),
+                                Float.parseFloat(vals[i * 3 + 2])
+                        );
+                    }
+                    boneAction.setVector(vector);
+
+                    // bone or action?
+                    line = br.readLine();
+                    if (line == null) {
+                        hasBone = false;
+                        hasAction = false;
+                    } else if (line.trim().equals("")) {
+                        hasBone = false;
+                    }
+                }
+            }
+
+            return animation;
+        } catch (IOException e) {
+            System.err.println(e);
+            return null;
+        }
+    }
+}

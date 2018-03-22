@@ -9,6 +9,7 @@ import java.util.List;
 public class ModelData {
     private List<VertexData> vertexList = new ArrayList<>();
     private ModelReference modelReference;
+    private Animation animation;
 
     public List<VertexData> getVertexData() {
         return vertexList;
