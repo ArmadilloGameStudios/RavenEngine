@@ -1,5 +1,7 @@
 package com.raven.engine.graphics3d.model;
 
+import com.raven.engine.graphics3d.model.animation.Animation;
+
 import java.util.ArrayList;
 import java.util.List;
 

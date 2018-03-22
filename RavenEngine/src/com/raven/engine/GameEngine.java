@@ -12,6 +12,8 @@ import com.raven.engine.graphics3d.model.ModelData;
 import com.raven.engine.graphics3d.model.ModelReference;
 import com.raven.engine.graphics3d.model.PlyModelData;
 import com.raven.engine.graphics3d.model.RavModelData;
+import com.raven.engine.graphics3d.model.animation.Animation;
+import com.raven.engine.graphics3d.model.animation.RaniImporter;
 import com.raven.engine.input.Keyboard;
 import com.raven.engine.input.Mouse;
 import com.raven.engine.scene.Camera;
@@ -43,6 +45,7 @@ public class GameEngine<G extends Game> implements Runnable {
     private List<GameObject> oldMouseList = new ArrayList<>();
     private GameDatabase gdb;
     private Map<String, ModelData> modelDataMap = new HashMap<>();
+    private Map<String, Animation> animationMap = new HashMap<>();
     private float deltaTime;
     private long systemTime;
     private Mouse mouse = new Mouse();
@@ -190,6 +193,7 @@ public class GameEngine<G extends Game> implements Runnable {
     }
 
     private List<GameObject> newList = new ArrayList();
+
     private void input(float delta) {
         glfwPollEvents();
 
@@ -214,7 +218,7 @@ public class GameEngine<G extends Game> implements Runnable {
                     if (newList.contains(o))
                         o.onMouseClick();
                 }
-                
+
                 mouse.setLeftButtonClick(false);
             }
 
@@ -250,6 +254,9 @@ public class GameEngine<G extends Game> implements Runnable {
         File modelDirectory = new File(game.getMainDirectory() + File.separator + "models");
         loadModels(modelDirectory);
 
+        File animationDir = new File(game.getMainDirectory() + File.separator + "animations");
+        loadAnimations(animationDir);
+
         // load database
         gdb = new GameDatabase();
         gdb.load();
@@ -280,6 +287,23 @@ public class GameEngine<G extends Game> implements Runnable {
 
     public ModelData getModelData(String modelsrc) {
         return modelDataMap.get(game.getMainDirectory() + File.separator + modelsrc);
+    }
+
+    private void loadAnimations(File base) {
+        for (File f : base.listFiles()) {
+            if (f.isFile()) {
+                System.out.println("Animation: " + f.getPath());
+
+                animationMap.put(f.getPath(), RaniImporter.Import(f));
+
+            } else if (f.isDirectory()) {
+                loadAnimations(f);
+            }
+        }
+    }
+
+    public Animation getAnimation(String name) {
+        return animationMap.get(game.getMainDirectory() + File.separator + name);
     }
 
     // input

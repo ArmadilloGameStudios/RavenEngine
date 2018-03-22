@@ -16,7 +16,7 @@ public class RaniImporter {
             BufferedReader br;
             br = new BufferedReader(new FileReader(file));
 
-            Animation animation = new Animation();
+            Animation animation = new Animation(file.getPath());
 
             String line;
 
@@ -24,7 +24,7 @@ public class RaniImporter {
             while (hasAction) {
                 // action name
                 line = br.readLine();
-                AnimatedAction action = new AnimatedAction(line);
+                AnimatedAction action = new AnimatedAction(line.toLowerCase());
 
                 // keyframes
                 line = br.readLine();
@@ -34,6 +34,7 @@ public class RaniImporter {
                 for (int i = 0; i < frames.length; i++) {
                     keyframes[i] = Integer.parseInt(frames[i]);
                 }
+                action.setKeyframes(keyframes);
 
                 // bones
                 line = br.readLine();
@@ -69,8 +70,6 @@ public class RaniImporter {
                     );
                     bone.setTail(tail);
 
-                    BoneAction boneAction = new BoneAction(bone);
-
                     // location
                     line = br.readLine();
                     vals = line.split(" ");
@@ -82,7 +81,7 @@ public class RaniImporter {
                                 Float.parseFloat(vals[i * 3 + 2])
                         );
                     }
-                    boneAction.setLocation(location);
+                    bone.setLocation(location);
 
                     // rotation
                     line = br.readLine();
@@ -96,7 +95,7 @@ public class RaniImporter {
                                 Float.parseFloat(vals[i * 4 + 3])
                         );
                     }
-                    boneAction.setRotation(rotation);
+                    bone.setRotation(rotation);
 
                     // scale
                     line = br.readLine();
@@ -109,7 +108,7 @@ public class RaniImporter {
                                 Float.parseFloat(vals[i * 3 + 2])
                         );
                     }
-                    boneAction.setScale(scale);
+                    bone.setScale(scale);
 
                     // vector
                     line = br.readLine();
@@ -122,7 +121,7 @@ public class RaniImporter {
                                 Float.parseFloat(vals[i * 3 + 2])
                         );
                     }
-                    boneAction.setVector(vector);
+                    bone.setVector(vector);
 
                     // bone or action?
                     line = br.readLine();
@@ -132,7 +131,12 @@ public class RaniImporter {
                     } else if (line.trim().equals("")) {
                         hasBone = false;
                     }
+
+                    action.addBone(bone);
                 }
+
+                action.structureBones();
+                animation.addAction(action);
             }
 
             return animation;

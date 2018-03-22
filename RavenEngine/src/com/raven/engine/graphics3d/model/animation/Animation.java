@@ -1,12 +1,19 @@
 package com.raven.engine.graphics3d.model.animation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Animation {
 
-    private List<AnimatedAction> actions = new ArrayList<>();
-    private List<Bone> bones= new ArrayList<>();
-    private Bone root;
+    private HashMap<String, AnimatedAction> actions = new HashMap<>();
+    private String name;
 
+    public Animation(String name) {
+
+    }
+
+    public void addAction(AnimatedAction action) {
+        actions.put(action.getName(), action);
+    }
 }
