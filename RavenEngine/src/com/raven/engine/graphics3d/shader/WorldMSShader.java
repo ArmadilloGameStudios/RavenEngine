@@ -50,6 +50,8 @@ public class WorldMSShader extends Shader {
         glBindAttribLocation(getProgramHandel(), 1, "vertex_normal");
         glBindAttribLocation(getProgramHandel(), 2, "vertex_texture");
         glBindAttribLocation(getProgramHandel(), 3, "vertex_color");
+        glBindAttribLocation(getProgramHandel(), 4, "vertex_bones");
+        glBindAttribLocation(getProgramHandel(), 5, "vertex_weights");
 
         id_location = glGetUniformLocation(getProgramHandel(), "id");
         highlight_location = glGetUniformLocation(getProgramHandel(), "highlight");
@@ -149,7 +151,7 @@ public class WorldMSShader extends Shader {
 
         // make sure the id buffer isn't colored
         glClearBufferfv(GL_COLOR, 1,
-                new float[]{ 0f, 0f, 0f, 0f });
+                new float[]{0f, 0f, 0f, 0f});
 
         glUniform1i(textrue_shadow_location, ShadowShader.DEPTH);
 
@@ -158,6 +160,8 @@ public class WorldMSShader extends Shader {
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
         glEnableVertexAttribArray(3);
+        glEnableVertexAttribArray(4);
+        glEnableVertexAttribArray(5);
 
 //        buffers.rewind();
 //        glDrawBuffers(buffers);
@@ -170,6 +174,8 @@ public class WorldMSShader extends Shader {
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
         glDisableVertexAttribArray(3);
+        glDisableVertexAttribArray(4);
+        glDisableVertexAttribArray(5);
     }
 
     public void setWorldObjectID(int id) {

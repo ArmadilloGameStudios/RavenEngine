@@ -5,6 +5,7 @@ import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.scenes.battlescene.ai.AI;
 import com.raven.breakingsands.scenes.battlescene.decal.Decal;
 import com.raven.breakingsands.scenes.battlescene.map.Map;
+import com.raven.breakingsands.scenes.battlescene.map.Structure;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
 import com.raven.breakingsands.scenes.battlescene.victory.VictoryDisplay;

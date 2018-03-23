@@ -69,8 +69,13 @@ public class Bone {
         return name;
     }
 
+    float time = 0;
+
     public void toBuffer(FloatBuffer aBuffer) {
-        catMat.rotate(12, .2f, .3f, .3f, outMatrix);
+
+        time += .0001f;
+
+        catMat.rotate(rotation[0].b * 50000f * (float)Math.sin(time), .2f, .3f, .3f, outMatrix);
         outMatrix.toBuffer(aBuffer);
     }
 }

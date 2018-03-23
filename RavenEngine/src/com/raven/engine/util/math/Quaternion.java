@@ -2,7 +2,7 @@ package com.raven.engine.util.math;
 
 public class Quaternion {
 
-    float a, b, c, d;
+    public float a, b, c, d;
 
     public Quaternion(float a, float b, float c, float d) {
         this.a = a;

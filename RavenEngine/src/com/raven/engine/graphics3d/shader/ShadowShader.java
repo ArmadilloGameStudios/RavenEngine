@@ -8,9 +8,8 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
 import static org.lwjgl.opengl.GL14.GL_TEXTURE_COMPARE_FUNC;
 import static org.lwjgl.opengl.GL14.GL_TEXTURE_COMPARE_MODE;
-import static org.lwjgl.opengl.GL20.glBindAttribLocation;
-import static org.lwjgl.opengl.GL20.glDeleteProgram;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
@@ -33,6 +32,8 @@ public class ShadowShader extends Shader {
         super("shadow_vertex.glsl", "shadow_fragment.glsl");
 
         glBindAttribLocation(getProgramHandel(), 0, "vertex_pos");
+        glBindAttribLocation(getProgramHandel(), 4, "vertex_bones");
+        glBindAttribLocation(getProgramHandel(), 5, "vertex_weights");
 
         int blockIndex = glGetUniformBlockIndex(getProgramHandel(), "DirectionalLight");
         glUniformBlockBinding(getProgramHandel(), blockIndex, LIGHT);
@@ -91,6 +92,8 @@ public class ShadowShader extends Shader {
         glEnable(GL_DEPTH_TEST);
 
         glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(4);
+        glEnableVertexAttribArray(5);
 
 //        glCullFace(GL_FRONT);
 
@@ -102,8 +105,10 @@ public class ShadowShader extends Shader {
     @Override
     public void endProgram() {
         glActiveTexture(GL_TEXTURE0);
+        glDisableVertexAttribArray(4);
+        glDisableVertexAttribArray(5);
 
-//        glCullFace(GL_BACK);
+        //        glCullFace(GL_BACK);
         glDisable(GL_POLYGON_OFFSET_FILL);
     }
 

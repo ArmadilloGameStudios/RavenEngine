@@ -3,6 +3,7 @@ package com.raven.engine.graphics3d.model;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -20,6 +21,7 @@ public class ModelReference {
     private final static int normal_size = 3;
     private final static int colors_size = 3;
     private final static int texture_size = 2;
+    private final static int bone_size = 4;
 
     private static List<Float> vertex_list = new LinkedList<>();
     private static List<Float> normal_list = new LinkedList<>();
@@ -33,7 +35,9 @@ public class ModelReference {
             vbo_vertex_handle,
             vbo_normal_handle,
             vbo_texture_handle,
-            vbo_colors_handle;
+            vbo_colors_handle,
+            vbo_bone_handle,
+            vbo_weight_handle;
 
     public static void load(ModelData modelData) {
         // make sure all the data is loaded into the modelData
@@ -74,6 +78,8 @@ public class ModelReference {
         colors_list.add(vertexData.red);
         colors_list.add(vertexData.green);
         colors_list.add(vertexData.blue);
+        bone_list.addAll(Arrays.asList(vertexData.b));
+        weight_list.addAll(Arrays.asList(vertexData.w));
     }
 
     public static void compileBuffer() {
@@ -100,6 +106,16 @@ public class ModelReference {
         colors_list.forEach(colors_list_buffer::put);
         colors_list_buffer.flip();
 
+        IntBuffer bone_list_buffer =
+                BufferUtils.createIntBuffer(size * bone_size);
+        bone_list.forEach(bone_list_buffer::put);
+        bone_list_buffer.flip();
+
+        FloatBuffer weight_list_buffer =
+                BufferUtils.createFloatBuffer(size * bone_size);
+        weight_list.forEach(weight_list_buffer::put);
+        weight_list_buffer.flip();
+
         // create vbo
         vbo_vertex_handle = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_vertex_handle);
@@ -121,6 +137,16 @@ public class ModelReference {
         glBufferData(GL_ARRAY_BUFFER, colors_list_buffer, GL_STATIC_DRAW);
         glVertexAttribPointer(3, 3, GL_FLOAT, false, 0, 0L);
 
+        vbo_bone_handle = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_bone_handle);
+        glBufferData(GL_ARRAY_BUFFER, bone_list_buffer, GL_STATIC_DRAW);
+        glVertexAttribPointer(4, bone_size, GL_FLOAT, false, 0, 0L);
+
+        vbo_weight_handle = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_weight_handle);
+        glBufferData(GL_ARRAY_BUFFER, weight_list_buffer, GL_STATIC_DRAW);
+        glVertexAttribPointer(5, bone_size, GL_FLOAT, false, 0, 0L);
+
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
@@ -129,16 +155,22 @@ public class ModelReference {
         glDeleteBuffers(vbo_normal_handle);
         glDeleteBuffers(vbo_texture_handle);
         glDeleteBuffers(vbo_colors_handle);
+        glDeleteBuffers(vbo_bone_handle);
+        glDeleteBuffers(vbo_weight_handle);
 
         vbo_vertex_handle = 0;
         vbo_normal_handle = 0;
         vbo_texture_handle = 0;
         vbo_colors_handle = 0;
+        vbo_bone_handle = 0;
+        vbo_weight_handle = 0;
 
         vertex_list.clear();
         normal_list.clear();
         texture_list.clear();
         colors_list.clear();
+        bone_list.clear();
+        weight_list.clear();
     }
 
     public static void loadBlankModel() {
@@ -167,6 +199,16 @@ public class ModelReference {
                 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 0.0f));
+        bone_list.addAll(Arrays.asList(
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0));
+        weight_list.addAll(Arrays.asList(
+                1.0f, 0.0f, 0.0f, 0.0f,
+                1.0f, 0.0f, 0.0f, 0.0f,
+                1.0f, 0.0f, 0.0f, 0.0f,
+                1.0f, 0.0f, 0.0f, 0.0f));
 
         int vertex_count = vertex_list.size();
         blank.vertices = vertex_list.size() - vertex_start;

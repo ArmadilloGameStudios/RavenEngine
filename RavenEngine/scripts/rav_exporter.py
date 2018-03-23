@@ -272,7 +272,7 @@ class RavExport(bpy.types.Operator, ExportHelper):
                 #groups
                 vgroup = []
                 for g in v.groups:
-                    vgroup.append([vertex_groups[g.group].name, g.weight])
+                    vgroup.append([g.group, g.weight])
 
                 key = normal_key, uvcoord_key, color
 

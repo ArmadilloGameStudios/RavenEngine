@@ -10,6 +10,8 @@ public class VertexData {
 
     // Don't forget about the shader when adding more
     public Float x, y, z, nx, ny, nz, s, t, red, green, blue;
+    public Integer[] b = new Integer[] { 0, 0, 0, 0 };
+    public Float[] w = new Float[] { 1f, 0f, 0f, 0f };
 
     public VertexData(String[] data, Type type) {
         switch (type) {
@@ -52,6 +54,23 @@ public class VertexData {
         green = Float.parseFloat(data[9]);
         blue = Float.parseFloat(data[10]);
 
-        // TODO bones and weight
+        for (int i = 0; i + 13 < data.length; i += 2) {
+            b[i] = Integer.parseInt(data[i + 12]);
+            w[i] = Float.parseFloat(data[i + 13]);
+        }
+
+        System.out.println(this);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder cat = new StringBuilder();
+
+        for (int i = 0; i < 4; i++) {
+            cat.append(b[i]).append(" ");
+            cat.append(w[i]).append(" ");
+        }
+
+        return cat.toString();
     }
 }

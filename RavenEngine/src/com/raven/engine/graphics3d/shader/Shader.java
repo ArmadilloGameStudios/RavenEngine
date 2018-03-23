@@ -90,14 +90,14 @@ public abstract class Shader {
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
-    public static final int MAX_BONE_COUNT = 2;
+    public static final int MAX_BONE_COUNT = 4;
     private static FloatBuffer aBuffer = BufferUtils.createFloatBuffer(16 * MAX_BONE_COUNT);
 
     public static void setAnimationMatrices(Animation animation) {
         isClear = false;
 
         animation.toBuffer(aBuffer);
-        aBuffer.flip();
+        aBuffer.rewind();
 
         setAnimationMatrices();
     }
@@ -113,7 +113,7 @@ public abstract class Shader {
                 idMat.toBuffer(aBuffer);
             }
 
-            aBuffer.flip();
+            aBuffer.rewind();
 
             setAnimationMatrices();
         }
