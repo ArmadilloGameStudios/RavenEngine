@@ -1,8 +1,8 @@
 package com.raven.engine.scene.light;
 
 import com.raven.engine.graphics3d.shader.ShadowShader;
-import com.raven.engine.util.Matrix4f;
-import com.raven.engine.util.Vector3f;
+import com.raven.engine.util.math.Matrix4f;
+import com.raven.engine.util.math.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;

@@ -54,7 +54,7 @@ public class GameWindow {
 
     private BasicShader basicShader;
 
-    private int sun_light_buffer_handel, matrices_buffer_handel;
+    private int sun_light_buffer_handel, matrices_buffer_handel, animation_buffer_handel;
 
     private GameEngine engine;
 
@@ -133,12 +133,17 @@ public class GameWindow {
             glBindBuffer(GL_UNIFORM_BUFFER, sun_light_buffer_handel);
             glBindBufferBase(GL_UNIFORM_BUFFER, Shader.LIGHT, sun_light_buffer_handel);
             glBufferData(GL_UNIFORM_BUFFER, new float[4 * 3 + 1 + 16 * 2], GL_DYNAMIC_DRAW);
-            glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
             matrices_buffer_handel = glGenBuffers();
             glBindBuffer(GL_UNIFORM_BUFFER, matrices_buffer_handel);
             glBindBufferBase(GL_UNIFORM_BUFFER, Shader.MATRICES, matrices_buffer_handel);
             glBufferData(GL_UNIFORM_BUFFER, new float[4 * 4 * 7], GL_DYNAMIC_DRAW);
+
+
+            animation_buffer_handel = glGenBuffers();
+            glBindBuffer(GL_UNIFORM_BUFFER, animation_buffer_handel);
+            glBindBufferBase(GL_UNIFORM_BUFFER, Shader.ANIMATION, animation_buffer_handel);
+            glBufferData(GL_UNIFORM_BUFFER, new float[Shader.MAX_BONE_COUNT * 16], GL_DYNAMIC_DRAW);
             glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
             if (ms_count != 0) {
@@ -258,6 +263,10 @@ public class GameWindow {
 
     public int getMatricesHandel() {
         return matrices_buffer_handel;
+    }
+
+    public int getAnimationHandel() {
+        return animation_buffer_handel;
     }
 
     public void drawQuad() {

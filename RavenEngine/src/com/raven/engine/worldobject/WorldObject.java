@@ -1,12 +1,14 @@
 package com.raven.engine.worldobject;
 
 import com.raven.engine.GameEngine;
+import com.raven.engine.database.GameData;
 import com.raven.engine.graphics3d.model.ModelData;
+import com.raven.engine.graphics3d.model.animation.Animation;
 import com.raven.engine.graphics3d.shader.Shader;
 import com.raven.engine.graphics3d.shader.WorldMSShader;
 import com.raven.engine.scene.Scene;
-import com.raven.engine.util.Matrix4f;
-import com.raven.engine.util.Vector3f;
+import com.raven.engine.util.math.Matrix4f;
+import com.raven.engine.util.math.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,7 @@ public abstract class WorldObject<
     private float scale = 1f, rotation = 0f;
     private Vector3f position = new Vector3f();
     private Matrix4f matrix = new Matrix4f();
+    private Animation animation = null;
 
     private Highlight highlight = new Highlight();
 
@@ -35,18 +38,36 @@ public abstract class WorldObject<
     P parent;
     boolean parentIsWorldObject;
 
+    @Deprecated
     public WorldObject(S scene) {
         this(scene, (ModelData) null);
     }
 
+    @Deprecated
     public WorldObject(S scene, String modelsrc) {
         this(scene, GameEngine.getEngine().getModelData(modelsrc));
     }
 
+    @Deprecated
     public WorldObject(S scene, ModelData model) {
         // model
         this.scene = scene;
         this.model = model;
+
+        resolveMatrix();
+    }
+
+    public WorldObject(S scene, GameData data) {
+        // model
+        this.scene = scene;
+
+        if (data.has("model")) {
+            this.model = GameEngine.getEngine().getModelData(data.getString("model"));
+
+            if (data.has("animation")) {
+                this.animation = GameEngine.getEngine().getAnimation(data.getString("animation"));
+            }
+        }
 
         resolveMatrix();
     }
@@ -177,6 +198,14 @@ public abstract class WorldObject<
         setWorldMSProperties(shader);
 
         Shader.setModelMatrix(getModelMatrix());
+
+        if (animation != null) {
+            System.out.println("CAT!");
+            Shader.setAnimationMatrices(animation);
+        } else {
+            Shader.clearAnimationMatrices();
+        }
+
         if (model != null)
             model.getModelReference().draw();
 
@@ -189,6 +218,13 @@ public abstract class WorldObject<
         setWorldMSProperties(shader);
 
         Shader.setModelMatrix(parentMatrix.multiply(getModelMatrix(), drawMat));
+
+        if (animation != null) {
+            Shader.setAnimationMatrices(animation);
+        } else {
+            Shader.clearAnimationMatrices();
+        }
+
         if (model != null)
             model.getModelReference().draw();
 
@@ -199,6 +235,13 @@ public abstract class WorldObject<
 
     public void drawShadow() {
         Shader.setModelMatrix(getModelMatrix());
+
+        if (animation != null) {
+            Shader.setAnimationMatrices(animation);
+        } else {
+            Shader.clearAnimationMatrices();
+        }
+
         if (model != null)
             model.getModelReference().draw();
 
@@ -209,6 +252,13 @@ public abstract class WorldObject<
 
     public void drawShadow(Matrix4f parentMatrix) {
         Shader.setModelMatrix(parentMatrix.multiply(getModelMatrix(), drawMat));
+
+        if (animation != null) {
+            Shader.setAnimationMatrices(animation);
+        } else {
+            Shader.clearAnimationMatrices();
+        }
+
         if (model != null)
             model.getModelReference().draw();
 

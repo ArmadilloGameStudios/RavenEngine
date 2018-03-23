@@ -17,7 +17,7 @@ import com.raven.engine.scene.Camera;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.scene.light.GlobalDirectionalLight;
 import com.raven.engine.util.Range;
-import com.raven.engine.util.Vector3f;
+import com.raven.engine.util.math.Vector3f;
 import com.raven.engine.util.pathfinding.Path;
 import com.raven.engine.util.pathfinding.PathAdjacentNode;
 import com.raven.engine.util.pathfinding.PathFinder;

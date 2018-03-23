@@ -1,19 +1,16 @@
 package com.raven.breakingsands.scenes.battlescene.victory;
 
-import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.character.Augmentation;
 import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
-import com.raven.breakingsands.scenes.hud.HUDButton;
 import com.raven.breakingsands.scenes.hud.HUDCenterContainer;
 import com.raven.breakingsands.scenes.missionselectscene.MissionSelectScene;
-import com.raven.engine.util.Vector4f;
+import com.raven.engine.util.math.Vector4f;
 import com.raven.engine.worldobject.*;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class VictoryDisplay extends HUDCenterContainer<BattleScene> {
 

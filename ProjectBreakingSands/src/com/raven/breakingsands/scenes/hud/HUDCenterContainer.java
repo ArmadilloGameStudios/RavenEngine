@@ -1,13 +1,7 @@
 package com.raven.breakingsands.scenes.hud;
 
-import com.raven.breakingsands.scenes.battlescene.BattleScene;
-import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
-import com.raven.engine.scene.Layer;
 import com.raven.engine.scene.Scene;
-import com.raven.engine.util.Vector4f;
-import com.raven.engine.worldobject.Childable;
 import com.raven.engine.worldobject.HUDContainer;
-import com.raven.engine.worldobject.HUDObject;
 
 public abstract class HUDCenterContainer<S extends Scene>
         extends HUDContainer<S> {

@@ -1,4 +1,4 @@
-package com.raven.engine.util;
+package com.raven.engine.util.math;
 
 import org.lwjgl.BufferUtils;
 

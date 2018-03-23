@@ -3,8 +3,7 @@ package com.raven.engine.graphics3d.shader;
 import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
 import com.raven.engine.input.Mouse;
-import com.raven.engine.util.Vector3f;
-import com.raven.engine.util.Vector4f;
+import com.raven.engine.util.math.Vector3f;
 import com.raven.engine.worldobject.Highlight;
 import org.lwjgl.BufferUtils;
 
@@ -13,7 +12,6 @@ import java.nio.IntBuffer;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;

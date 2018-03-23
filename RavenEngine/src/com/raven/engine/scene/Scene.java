@@ -7,7 +7,7 @@ import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.graphics3d.model.ModelData;
 import com.raven.engine.graphics3d.shader.*;
 import com.raven.engine.scene.light.GlobalDirectionalLight;
-import com.raven.engine.util.Vector3f;
+import com.raven.engine.util.math.Vector3f;
 import com.raven.engine.worldobject.GameObject;
 import com.raven.engine.worldobject.HUDContainer;
 import com.raven.engine.worldobject.WorldObject;

@@ -1,11 +1,7 @@
 package com.raven.breakingsands.scenes.mainmenuscene;
 
 import com.raven.breakingsands.scenes.hud.HUDButton;
-import com.raven.engine.scene.Layer;
-import com.raven.engine.util.Vector4f;
 import com.raven.engine.worldobject.*;
-
-import java.awt.*;
 
 public class ContinueButton
         extends HUDButton<MainMenuScene, HUDContainer<MainMenuScene>> {

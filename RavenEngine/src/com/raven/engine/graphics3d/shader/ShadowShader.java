@@ -40,6 +40,9 @@ public class ShadowShader extends Shader {
         blockIndex = glGetUniformBlockIndex(getProgramHandel(), "Matrices");
         glUniformBlockBinding(getProgramHandel(), blockIndex, MATRICES);
 
+        blockIndex = glGetUniformBlockIndex(getProgramHandel(), "Animation");
+        glUniformBlockBinding(getProgramHandel(), blockIndex, ANIMATION);
+
         framebuffer_handel = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handel);
 

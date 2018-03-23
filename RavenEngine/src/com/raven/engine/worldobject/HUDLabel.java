@@ -1,7 +1,7 @@
 package com.raven.engine.worldobject;
 
 import com.raven.engine.scene.Scene;
-import com.raven.engine.util.Vector4f;
+import com.raven.engine.util.math.Vector4f;
 
 import java.awt.*;
 

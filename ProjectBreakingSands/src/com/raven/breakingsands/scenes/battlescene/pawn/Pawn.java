@@ -40,7 +40,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     private int team, hitPoints, totalMovement, remainingMovement, evasion, totalAttacks = 1, remainingAttacks;
 
     public Pawn(BattleScene scene, GameData gameData) {
-        super(scene, gameData.getString("model"));
+        super(scene, gameData);
 
         name = gameData.getString("name");
         team = gameData.getInteger("team");
@@ -58,7 +58,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
             public boolean matches(GameData row) {
                 return row.getString("name").equals("Player");
             }
-        }).getString("model"));
+        }));
 
         name = character.getTitle() + " " + character.getName();
         team = 0;

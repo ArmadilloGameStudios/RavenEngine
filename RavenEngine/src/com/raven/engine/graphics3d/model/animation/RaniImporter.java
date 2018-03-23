@@ -1,8 +1,7 @@
 package com.raven.engine.graphics3d.model.animation;
 
-import com.raven.engine.graphics3d.model.animation.Animation;
-import com.raven.engine.util.Quaternion;
-import com.raven.engine.util.Vector3f;
+import com.raven.engine.util.math.Quaternion;
+import com.raven.engine.util.math.Vector3f;
 
 import java.io.BufferedReader;
 import java.io.File;

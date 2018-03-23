@@ -1,12 +1,8 @@
 package com.raven.breakingsands.scenes.battlescene;
 
-import com.raven.breakingsands.scenes.battlescene.BattleScene;
-import com.raven.engine.scene.Layer;
-import com.raven.engine.util.Vector4f;
+import com.raven.engine.util.math.Vector4f;
 import com.raven.engine.worldobject.HUDContainer;
-import com.raven.engine.worldobject.HUDObject;
 import com.raven.engine.worldobject.HUDText;
-import com.raven.engine.worldobject.Parentable;
 
 public class HUDDetailText
         extends HUDText<BattleScene, HUDContainer<BattleScene>> {

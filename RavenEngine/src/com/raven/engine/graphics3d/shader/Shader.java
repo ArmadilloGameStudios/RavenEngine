@@ -2,10 +2,11 @@ package com.raven.engine.graphics3d.shader;
 
 import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
+import com.raven.engine.graphics3d.model.animation.Animation;
 import com.raven.engine.scene.Camera;
 import com.raven.engine.scene.light.Light;
-import com.raven.engine.util.Matrix4f;
-import com.raven.engine.util.Plane;
+import com.raven.engine.util.math.Matrix4f;
+import com.raven.engine.util.math.Plane;
 import org.lwjgl.BufferUtils;
 
 import java.io.File;
@@ -30,7 +31,7 @@ import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
  */
 public abstract class Shader {
 
-    public final static int LIGHT = 1, MATRICES = 2;
+    public final static int LIGHT = 1, MATRICES = 2, ANIMATION = 3;
 
     private static int nextTexture = 0;
 
@@ -39,12 +40,13 @@ public abstract class Shader {
         return nextTexture;
     }
 
-    private static FloatBuffer pvBuffer = BufferUtils.createFloatBuffer(16*6);
-    private static Plane plane = new Plane(0,1,0,0);
+    private static FloatBuffer pvBuffer = BufferUtils.createFloatBuffer(16 * 6);
+    private static Plane plane = new Plane(0, 1, 0, 0);
 
     // has 'memory leak'
     private static Matrix4f tempMat = new Matrix4f();
     private static Matrix4f tempMat2 = new Matrix4f();
+
     public static void setProjectionViewMatrices(Camera camera) {
         GameEngine.getEngine().getWindow().printErrors("pre setProjectionViewMatrices: ");
 
@@ -87,6 +89,42 @@ public abstract class Shader {
         glBufferSubData(GL_UNIFORM_BUFFER, 0, slBuffer);
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
+
+    public static final int MAX_BONE_COUNT = 2;
+    private static FloatBuffer aBuffer = BufferUtils.createFloatBuffer(16 * MAX_BONE_COUNT);
+
+    public static void setAnimationMatrices(Animation animation) {
+        isClear = false;
+
+        animation.toBuffer(aBuffer);
+        aBuffer.flip();
+
+        setAnimationMatrices();
+    }
+
+    private static boolean isClear = false;
+    private static final Matrix4f idMat = new Matrix4f();
+
+    public static void clearAnimationMatrices() {
+        if (!isClear) {
+            isClear = true;
+
+            for (int i = 0; i < MAX_BONE_COUNT; i++) {
+                idMat.toBuffer(aBuffer);
+            }
+
+            aBuffer.flip();
+
+            setAnimationMatrices();
+        }
+    }
+
+    private static void setAnimationMatrices() {
+        glBindBuffer(GL_UNIFORM_BUFFER, GameEngine.getEngine().getWindow().getAnimationHandel());
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, aBuffer);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    }
+
 
     int vertex_handel, fragment_handel, program_handel;
 

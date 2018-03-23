@@ -20,11 +20,16 @@ layout (std140) uniform Matrices
     mat4 inverse_projection_view;
 } matrix;
 
+layout (std140) uniform Animation
+{
+    mat4 bone[2];
+} animation;
+
 layout(location = 0) in vec3 vertex_pos;
 
 void main(void)
 {
-    vec4 world_pos = matrix.model * vec4(vertex_pos, 1.0);
+    vec4 world_pos = matrix.model * animation.bone[1] * vec4(vertex_pos, 1.0);
 
 	gl_Position = sunLight.projection * sunLight.view * world_pos;
 }

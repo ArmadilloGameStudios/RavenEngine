@@ -2,7 +2,7 @@ package com.raven.engine.graphics3d.shader;
 
 import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
-import com.raven.engine.util.Vector3f;
+import com.raven.engine.util.math.Vector3f;
 import com.raven.engine.worldobject.Highlight;
 import org.lwjgl.BufferUtils;
 
@@ -20,7 +20,6 @@ import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
-import static org.lwjgl.opengl.GL32.glFramebufferTexture;
 import static org.lwjgl.opengl.GL32.glTexImage2DMultisample;
 import static org.lwjgl.opengl.GL45.glNamedFramebufferDrawBuffers;
 
@@ -61,6 +60,9 @@ public class WorldMSShader extends Shader {
 
         blockIndex = glGetUniformBlockIndex(getProgramHandel(), "Matrices");
         glUniformBlockBinding(getProgramHandel(), blockIndex, MATRICES);
+
+        blockIndex = glGetUniformBlockIndex(getProgramHandel(), "Animation");
+        glUniformBlockBinding(getProgramHandel(), blockIndex, ANIMATION);
 
         int bfs[] = {
                 GL_COLOR_ATTACHMENT0, // Color

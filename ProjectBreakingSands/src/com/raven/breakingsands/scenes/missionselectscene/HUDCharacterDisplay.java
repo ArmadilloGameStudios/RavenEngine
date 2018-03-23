@@ -1,6 +1,6 @@
 package com.raven.breakingsands.scenes.missionselectscene;
 
-import com.raven.engine.util.Vector4f;
+import com.raven.engine.util.math.Vector4f;
 import com.raven.engine.worldobject.HUDText;
 import com.raven.engine.worldobject.TextObject;
 

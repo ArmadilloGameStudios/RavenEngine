@@ -192,7 +192,7 @@ public class GameEngine<G extends Game> implements Runnable {
         // render world as input
     }
 
-    private List<GameObject> newList = new ArrayList();
+    private List<GameObject> newList = new ArrayList<>();
 
     private void input(float delta) {
         glfwPollEvents();

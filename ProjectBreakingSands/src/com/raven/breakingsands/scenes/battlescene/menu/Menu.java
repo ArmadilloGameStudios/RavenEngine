@@ -3,8 +3,7 @@ package com.raven.breakingsands.scenes.battlescene.menu;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.hud.HUDCenterContainer;
 import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
-import com.raven.engine.scene.Scene;
-import com.raven.engine.util.Vector4f;
+import com.raven.engine.util.math.Vector4f;
 
 public class Menu extends HUDCenterContainer<BattleScene> {
 

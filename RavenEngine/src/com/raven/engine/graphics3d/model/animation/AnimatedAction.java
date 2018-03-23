@@ -31,9 +31,14 @@ public class AnimatedAction {
     }
 
     public void structureBones() {
+        // TODO calculate bone matrices?
         bones.forEach(b -> bones.stream()
                 .filter(p -> p.getName().equals(b.getParentName()))
                 .findAny()
                 .ifPresent(b::setParent));
+    }
+
+    public List<Bone> getBones() {
+        return bones;
     }
 }

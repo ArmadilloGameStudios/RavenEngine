@@ -1,8 +1,7 @@
 package com.raven.engine.scene;
 
 import com.raven.engine.GameProperties;
-import com.raven.engine.util.Matrix4f;
-import com.raven.engine.util.Vector3f;
+import com.raven.engine.util.math.Matrix4f;
 
 /**
  * Created by cookedbird on 11/15/17.

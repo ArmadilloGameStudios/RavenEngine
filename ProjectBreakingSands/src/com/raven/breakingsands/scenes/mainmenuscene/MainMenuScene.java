@@ -6,7 +6,7 @@ import com.raven.engine.graphics3d.model.ModelData;
 import com.raven.engine.scene.Camera;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.scene.light.GlobalDirectionalLight;
-import com.raven.engine.util.Vector3f;
+import com.raven.engine.util.math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Path;

@@ -1,9 +1,10 @@
 package com.raven.engine.graphics3d.model.animation;
 
-import com.raven.engine.util.Quaternion;
-import com.raven.engine.util.Vector3f;
+import com.raven.engine.util.math.Matrix4f;
+import com.raven.engine.util.math.Quaternion;
+import com.raven.engine.util.math.Vector3f;
 
-import java.util.List;
+import java.nio.FloatBuffer;
 
 public class Bone {
 
@@ -19,6 +20,9 @@ public class Bone {
     private Quaternion[] rotation;
     private Vector3f[] scale;
     private Vector3f[] vector;
+
+    private Matrix4f outMatrix = new Matrix4f();
+    private Matrix4f catMat = new Matrix4f();
 
 
     public Bone(String name) {
@@ -63,5 +67,10 @@ public class Bone {
 
     public String getName() {
         return name;
+    }
+
+    public void toBuffer(FloatBuffer aBuffer) {
+        catMat.rotate(12, .2f, .3f, .3f, outMatrix);
+        outMatrix.toBuffer(aBuffer);
     }
 }

@@ -1,14 +1,12 @@
 package com.raven.engine.graphics3d.shader;
 
 import com.raven.engine.GameEngine;
-import com.raven.engine.util.Vector4f;
+import com.raven.engine.util.math.Vector4f;
 import com.raven.engine.worldobject.HUDImage;
 import com.raven.engine.worldobject.HUDObject;
 import com.raven.engine.worldobject.HUDText;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
-import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT1;

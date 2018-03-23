@@ -1,6 +1,7 @@
 {
     name: "Player",
-    model: "models/test_rani.rav"
+    model: "models/test_rani.rav",
+    animation: "animations/test_rani.rani",
     team: 0,
     hp: 10,
     movement: 80,

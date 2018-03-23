@@ -1,5 +1,6 @@
 package com.raven.engine.graphics3d.model.animation;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 public class Animation {
 
     private HashMap<String, AnimatedAction> actions = new HashMap<>();
+    private AnimatedAction activeAction;
     private String name;
 
     public Animation(String name) {
@@ -15,5 +17,12 @@ public class Animation {
 
     public void addAction(AnimatedAction action) {
         actions.put(action.getName(), action);
+        activeAction = action;
+    }
+
+    public void toBuffer(FloatBuffer aBuffer) {
+        activeAction.getBones().forEach(bone -> {
+            bone.toBuffer(aBuffer);
+        });
     }
 }

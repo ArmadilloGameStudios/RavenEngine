@@ -1,7 +1,7 @@
 package com.raven.engine.graphics3d.shader;
 
 import com.raven.engine.GameProperties;
-import com.raven.engine.util.Matrix4f;
+import com.raven.engine.util.math.Matrix4f;
 import org.lwjgl.BufferUtils;
 
 import java.nio.IntBuffer;

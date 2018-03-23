@@ -1,18 +1,15 @@
 package com.raven.engine.worldobject;
 
 import com.raven.engine.graphics3d.shader.HUDShader;
-import com.raven.engine.util.Vector4f;
+import com.raven.engine.util.math.Vector4f;
 import com.sun.prism.impl.BufferUtil;
 
 import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.font.LineMetrics;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.GL_BGR;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
