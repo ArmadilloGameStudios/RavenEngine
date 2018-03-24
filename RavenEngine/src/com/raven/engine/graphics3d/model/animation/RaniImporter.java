@@ -49,29 +49,9 @@ public class RaniImporter {
                     }
                     bone.setParentName(line);
 
-                    // head
-                    line = br.readLine();
-                    String[] vals = line.split(" ");
-                    Vector3f head = new Vector3f(
-                            Float.parseFloat(vals[0]),
-                            Float.parseFloat(vals[1]),
-                            Float.parseFloat(vals[2])
-                    );
-                    bone.setHead(head);
-
-                    // tail
-                    line = br.readLine();
-                    vals = line.split(" ");
-                    Vector3f tail = new Vector3f(
-                            Float.parseFloat(vals[0]),
-                            Float.parseFloat(vals[1]),
-                            Float.parseFloat(vals[2])
-                    );
-                    bone.setTail(tail);
-
                     // location
                     line = br.readLine();
-                    vals = line.split(" ");
+                    String[] vals = line.split(" ");
                     Vector3f[] location = new Vector3f[keyframes.length];
                     for (int i = 0; i < keyframes.length; i++) {
                         location[i] = new Vector3f(
@@ -93,6 +73,7 @@ public class RaniImporter {
                                 Float.parseFloat(vals[i * 4 + 2]),
                                 Float.parseFloat(vals[i * 4 + 3])
                         );
+                        System.out.println(rotation[i]);
                     }
                     bone.setRotation(rotation);
 
@@ -121,6 +102,32 @@ public class RaniImporter {
                         );
                     }
                     bone.setVector(vector);
+
+                    // head
+                    line = br.readLine();
+                    vals = line.split(" ");
+                    Vector3f[] head = new Vector3f[keyframes.length];
+                    for (int i = 0; i < keyframes.length; i++) {
+                        head[i] = new Vector3f(
+                                Float.parseFloat(vals[i * 3]),
+                                Float.parseFloat(vals[i * 3 + 1]),
+                                Float.parseFloat(vals[i * 3 + 2])
+                        );
+                    }
+                    bone.setHead(head);
+
+                    // tail
+                    line = br.readLine();
+                    vals = line.split(" ");
+                    Vector3f[] tail = new Vector3f[keyframes.length];
+                    for (int i = 0; i < keyframes.length; i++) {
+                        tail[i] = new Vector3f(
+                                Float.parseFloat(vals[i * 3]),
+                                Float.parseFloat(vals[i * 3 + 1]),
+                                Float.parseFloat(vals[i * 3 + 2])
+                        );
+                    }
+                    bone.setTail(tail);
 
                     // bone or action?
                     line = br.readLine();

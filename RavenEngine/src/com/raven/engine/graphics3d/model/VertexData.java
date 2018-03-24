@@ -54,9 +54,9 @@ public class VertexData {
         green = Float.parseFloat(data[9]);
         blue = Float.parseFloat(data[10]);
 
-        for (int i = 0; i + 13 < data.length; i += 2) {
-            b[i] = Integer.parseInt(data[i + 12]);
-            w[i] = Float.parseFloat(data[i + 13]);
+        for (int i = 0; i + 14 < data.length; i += 2) {
+            b[i / 2] = Integer.parseInt(data[i + 12]);
+            w[i / 2] = Float.parseFloat(data[i + 13]);
         }
 
         System.out.println(this);

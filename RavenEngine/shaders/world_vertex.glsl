@@ -20,19 +20,19 @@ layout(location = 0) in vec3 vertex_pos;
 layout(location = 1) in vec3 vertex_normal;
 layout(location = 2) in vec2 vertex_texture;
 layout(location = 3) in vec3 vertex_color;
-layout(location = 4) in int[4] vertex_bones;
-layout(location = 5) in float[4] vertex_weights;
+layout(location = 4) in ivec4 vertex_bones;
+layout(location = 5) in vec4 vertex_weights;
 
 out vec3 color, normal;
 out vec4 world_pos;
 
 void main(void)
 {
-    mat4 aMat = (animation.bone[vertex_bones[0]] * vertex_weights[0] +
-                 animation.bone[vertex_bones[1]] * vertex_weights[1] +
-                 animation.bone[vertex_bones[2]] * vertex_weights[2] +
-                 animation.bone[vertex_bones[3]] * vertex_weights[3])
-                 / (vertex_weights[0] + vertex_weights[1] + vertex_weights[2] + vertex_weights[3]);
+    mat4 aMat = (animation.bone[vertex_bones.x] * vertex_weights.x +
+                 animation.bone[vertex_bones.y] * vertex_weights.y +
+                 animation.bone[vertex_bones.z] * vertex_weights.z +
+                 animation.bone[vertex_bones.w] * vertex_weights.w)
+                / (vertex_weights.x + vertex_weights.y + vertex_weights.z + vertex_weights.w);
 
     world_pos = matrix.model * aMat * vec4(vertex_pos, 1.0);
 

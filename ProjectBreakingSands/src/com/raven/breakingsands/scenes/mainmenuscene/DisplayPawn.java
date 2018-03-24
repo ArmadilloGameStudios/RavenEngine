@@ -31,6 +31,6 @@ public class DisplayPawn extends WorldObject<Scene, Terrain, WorldObject> {
             public boolean matches(GameData row) {
                 return row.getString("name").matches("Player");
             }
-        }).getString("model"));
+        }));
     }
 }

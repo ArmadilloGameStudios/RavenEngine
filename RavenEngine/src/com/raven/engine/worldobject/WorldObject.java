@@ -200,7 +200,6 @@ public abstract class WorldObject<
         Shader.setModelMatrix(getModelMatrix());
 
         if (animation != null) {
-            System.out.println("CAT!");
             Shader.setAnimationMatrices(animation);
         } else {
             Shader.clearAnimationMatrices();

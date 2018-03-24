@@ -43,10 +43,10 @@ public class Matrix4f {
     private static Matrix4f tempMat2 = new Matrix4f();
 
     FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
-    private float m00, m01, m02, m03;
-    private float m10, m11, m12, m13;
-    private float m20, m21, m22, m23;
-    private float m30, m31, m32, m33;
+    protected float m00, m01, m02, m03;
+    protected float m10, m11, m12, m13;
+    protected float m20, m21, m22, m23;
+    protected float m30, m31, m32, m33;
 
     /**
      * Creates a 4x4 identity matrix.

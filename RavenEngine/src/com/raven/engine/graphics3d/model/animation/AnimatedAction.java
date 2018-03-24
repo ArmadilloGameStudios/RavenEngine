@@ -1,5 +1,6 @@
 package com.raven.engine.graphics3d.model.animation;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,5 +41,28 @@ public class AnimatedAction {
 
     public List<Bone> getBones() {
         return bones;
+    }
+
+
+    float time = 0;
+
+    public void toBuffer(FloatBuffer aBuffer) {
+
+        time += .1f;
+
+        float frame = time % 120;
+
+        int i = 0;
+        for (; i < keyframes.length; i++)
+            if (frame < keyframes[i])
+                break;
+
+        final int keyframe = i - 1;
+
+        System.out.println(keyframe);
+
+        bones.forEach(bone -> {
+            bone.toBuffer(aBuffer, keyframe, 0);
+        });
     }
 }

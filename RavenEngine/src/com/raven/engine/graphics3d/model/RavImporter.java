@@ -59,6 +59,8 @@ public class RavImporter {
                         .forEach(model::addVertex);
             }
 
+
+
             return model;
         } catch (IOException e) {
             System.err.println(e);

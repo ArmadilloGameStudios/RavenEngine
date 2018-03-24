@@ -21,8 +21,6 @@ public class Animation {
     }
 
     public void toBuffer(FloatBuffer aBuffer) {
-        activeAction.getBones().forEach(bone -> {
-            bone.toBuffer(aBuffer);
-        });
+        activeAction.toBuffer(aBuffer);
     }
 }

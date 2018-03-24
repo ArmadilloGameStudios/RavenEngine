@@ -69,8 +69,8 @@ class RaniExport(bpy.types.Operator, ExportHelper):
                     bone = bones[boneName]
                 else:
                     bone = {
-                        'head': None,
-                        'tail': None,
+                        'head': [],
+                        'tail': [],
                         'location': [],
                         'rotation': [],
                         'scale': [],
@@ -88,31 +88,36 @@ class RaniExport(bpy.types.Operator, ExportHelper):
             frames.sort()
             frames = list(set(frames))
 
-            for name in bones:
-                bone = bones[name]
-                posebone = pose.bones[bone['name']]
-                bone['head'] = posebone.head
-                bone['tail'] = posebone.tail
+            # for name in bones:
+            #     bone = bones[name]
+            #     posebone = pose.bones[bone['name']]
+            #     bone['head'] = posebone.head
+            #     bone['tail'] = posebone.tail
 
             # get tail
-            scene.frame_set(0)
+            bpy.context.scene.frame_set(0)
 
             for frame in frames:
 
                 fw(str(frame) + " ")
 
-                scene.frame_set(frame)
+                bpy.context.scene.frame_set(frame)
 
                 for name in bones:
                     bone = bones[name]
-                    posebone = pose.bones[bone['name']]
+                    posebone = armature.pose.bones[bone['name']]
 
-                    bone['location'].append(posebone.location)
-                    bone['rotation'].append(posebone.rotation_quaternion)
-                    bone['scale'].append(posebone.scale)
-                    bone['vector'].append(posebone.vector)
+                    bone['location'].append(posebone.location[:])
+                    bone['rotation'].append(posebone.rotation_quaternion[:])
+                    bone['scale'].append(posebone.scale[:])
+                    bone['vector'].append(posebone.vector[:])
+                    bone['head'].append(posebone.head[:])
+                    bone['tail'].append(posebone.tail[:])
+                    print(frame)
+                    print(posebone.rotation_quaternion)
                     print(posebone.head)
                     print(posebone.tail)
+                    print()
 
                     if posebone.parent is not None:
                         bone['parent'] = posebone.parent.name
@@ -124,10 +129,10 @@ class RaniExport(bpy.types.Operator, ExportHelper):
 
                 fw(str(bone['name']) + "\n")
                 fw(str(bone['parent']) + "\n")
-                fw("%.6f %.6f %.6f " % tuple(bone['head']))
-                fw("\n")
-                fw("%.6f %.6f %.6f " % tuple(bone['tail']))
-                fw("\n")
+                # fw("%.6f %.6f %.6f " % tuple(bone['head']))
+                # fw("\n")
+                # fw("%.6f %.6f %.6f " % tuple(bone['tail']))
+                # fw("\n")
 
                 for location in bone['location']:
                     fw("%.6f %.6f %.6f " % tuple(location))
@@ -143,6 +148,14 @@ class RaniExport(bpy.types.Operator, ExportHelper):
 
                 for vector in bone['vector']:
                     fw("%.6f %.6f %.6f " % tuple(vector))
+                fw("\n")
+
+                for head in bone['head']:
+                    fw("%.6f %.6f %.6f " % tuple(head))
+                fw("\n")
+
+                for tail in bone['tail']:
+                    fw("%.6f %.6f %.6f " % tuple(tail))
                 fw("\n")
 
             fw("\n")

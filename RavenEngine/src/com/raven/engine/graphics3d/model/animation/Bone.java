@@ -9,7 +9,6 @@ import java.nio.FloatBuffer;
 public class Bone {
 
     private final String name;
-    private Vector3f head, tail;
 
     private Bone parent;
     private String parentName;
@@ -20,6 +19,8 @@ public class Bone {
     private Quaternion[] rotation;
     private Vector3f[] scale;
     private Vector3f[] vector;
+    private Vector3f[] head;
+    private Vector3f[] tail;
 
     private Matrix4f outMatrix = new Matrix4f();
     private Matrix4f catMat = new Matrix4f();
@@ -37,11 +38,11 @@ public class Bone {
         this.parent = parent;
     }
 
-    public void setHead(Vector3f head) {
+    public void setHead(Vector3f[] head) {
         this.head = head;
     }
 
-    public void setTail(Vector3f tail) {
+    public void setTail(Vector3f[] tail) {
         this.tail = tail;
     }
 
@@ -71,11 +72,12 @@ public class Bone {
 
     float time = 0;
 
-    public void toBuffer(FloatBuffer aBuffer) {
+    public void toBuffer(FloatBuffer aBuffer, int keyframe, float mix) {
 
-        time += .0001f;
+        time += .001f;
+        rotation[keyframe].toMatrix(outMatrix);
 
-        catMat.rotate(rotation[0].b * 50000f * (float)Math.sin(time), .2f, .3f, .3f, outMatrix);
+//        catMat.rotate(rotation[0].x * 50000f * (float)Math.sin(time), .2f, .3f, .3f, outMatrix);
         outMatrix.toBuffer(aBuffer);
     }
 }
