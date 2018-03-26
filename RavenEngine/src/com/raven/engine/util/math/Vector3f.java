@@ -179,19 +179,18 @@ public class Vector3f {
     }
 
     /**
-     * Calculates a linear interpolation between this vector with another
-     * vector.
+     * Calculates a linear interpolation between two vectors.
      *
-     * @param other The other vector
-     * @param alpha The alpha value, must be between 0.0 and 1.0
+     * @param a The a vector
+     * @param b The b vector
+     * @param alpha The alpha value, should be between 0.0 and 1.0
      *
      * @return Linear interpolated vector
      */
-    public Vector3f lerp(Vector3f other, float alpha, Vector3f out) {
-        this.scale(1f - alpha, tempVec);
-
-        tempVec.add(other.scale(alpha, tempVec2), out);
-
+    public static Vector3f lerp(Vector3f a, Vector3f b, float alpha, Vector3f out) {
+        out.x = a.x * (1f - alpha) + b.x * alpha;
+        out.y = a.y * (1f - alpha) + b.y * alpha;
+        out.z = a.z * (1f - alpha) + b.z * alpha;
 
         return out;
     }

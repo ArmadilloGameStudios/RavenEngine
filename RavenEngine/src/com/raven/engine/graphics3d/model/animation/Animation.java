@@ -20,7 +20,7 @@ public class Animation {
         activeAction = action;
     }
 
-    public void toBuffer(FloatBuffer aBuffer) {
-        activeAction.toBuffer(aBuffer);
+    public void toBuffer(FloatBuffer aBuffer, AnimationState animationState) {
+        activeAction.toBuffer(aBuffer, animationState);
     }
 }

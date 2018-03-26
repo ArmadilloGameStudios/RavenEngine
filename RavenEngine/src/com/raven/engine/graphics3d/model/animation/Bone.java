@@ -38,6 +38,10 @@ public class Bone {
         this.parent = parent;
     }
 
+    public void setKeyframesLength(int keyframesLength) {
+        this.keyframes = keyframesLength;
+    }
+
     public void setHead(Vector3f[] head) {
         this.head = head;
     }
@@ -70,14 +74,51 @@ public class Bone {
         return name;
     }
 
-    float time = 0;
+    private Quaternion qout = new Quaternion();
+    private Vector3f vout = new Vector3f();
+    private Vector3f tempVec = new Vector3f();
+    private Matrix4f tempMat = new Matrix4f();
+    private Matrix4f tempMat2 = new Matrix4f();
+
+    // TODO check if already calculated
+    public Matrix4f matrix(int keyframe, float mix) {
+
+        Vector3f va = head[keyframe], vb;
+        Quaternion qa = rotation[keyframe], qb;
+
+        if (keyframe != this.keyframes - 1) {
+            vb = head[keyframe + 1];
+            qb = rotation[keyframe + 1];
+        } else {
+            vb = head[0];
+            qb = rotation[0];
+        }
+
+        tempMat2.identity();
+
+        // translate
+        Vector3f.lerp(va, vb, mix, vout);
+        tempMat2.translate(vout, tempMat);
+
+        // rotate
+        Quaternion.lerp(qa, qb, mix, qout);
+        qout.toMatrix(tempMat2);
+        tempMat.multiply(tempMat2, outMatrix);
+
+        // translate back
+
+        outMatrix.translate(vout.negate(tempVec), tempMat2);
+
+
+        // do parent
+        if (parent != null)
+            tempMat2.multiply(parent.matrix(keyframe, mix), outMatrix);
+
+        return outMatrix;
+    }
+
 
     public void toBuffer(FloatBuffer aBuffer, int keyframe, float mix) {
-
-        time += .001f;
-        rotation[keyframe].toMatrix(outMatrix);
-
-//        catMat.rotate(rotation[0].x * 50000f * (float)Math.sin(time), .2f, .3f, .3f, outMatrix);
-        outMatrix.toBuffer(aBuffer);
+        matrix(keyframe, mix).toBuffer(aBuffer);
     }
 }

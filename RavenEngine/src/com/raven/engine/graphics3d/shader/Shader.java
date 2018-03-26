@@ -3,6 +3,7 @@ package com.raven.engine.graphics3d.shader;
 import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
 import com.raven.engine.graphics3d.model.animation.Animation;
+import com.raven.engine.graphics3d.model.animation.AnimationState;
 import com.raven.engine.scene.Camera;
 import com.raven.engine.scene.light.Light;
 import com.raven.engine.util.math.Matrix4f;
@@ -93,10 +94,10 @@ public abstract class Shader {
     public static final int MAX_BONE_COUNT = 4;
     private static FloatBuffer aBuffer = BufferUtils.createFloatBuffer(16 * MAX_BONE_COUNT);
 
-    public static void setAnimationMatrices(Animation animation) {
+    public static void setAnimationMatrices(AnimationState animationState) {
         isClear = false;
 
-        animation.toBuffer(aBuffer);
+        animationState.toBuffer(aBuffer);
         aBuffer.rewind();
 
         setAnimationMatrices();

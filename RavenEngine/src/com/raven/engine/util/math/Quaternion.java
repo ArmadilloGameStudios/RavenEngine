@@ -4,6 +4,35 @@ public class Quaternion {
 
     public float w, x, y, z;
 
+    public static Quaternion tempQuat = new Quaternion();
+
+    public static Quaternion lerp(Quaternion a, Quaternion b, float alpah, Quaternion out) {
+        return lerp(a, b, alpah, true, out);
+    }
+
+    public static Quaternion lerp(Quaternion a, Quaternion b, float alpah, boolean normalize, Quaternion out) {
+
+        if (normalize) {
+            tempQuat.w = a.w * (1f - alpah) + b.w * alpah;
+            tempQuat.x = a.x * (1f - alpah) + b.x * alpah;
+            tempQuat.y = a.y * (1f - alpah) + b.y * alpah;
+            tempQuat.z = a.z * (1f - alpah) + b.z * alpah;
+
+            tempQuat.normalize(out);
+        } else {
+            out.w = a.w * (1f - alpah) + b.w * alpah;
+            out.x = a.x * (1f - alpah) + b.x * alpah;
+            out.y = a.y * (1f - alpah) + b.y * alpah;
+            out.z = a.z * (1f - alpah) + b.z * alpah;
+        }
+
+        return out;
+    }
+
+    public Quaternion() {
+        this(1,0,0,0);
+    }
+
     public Quaternion(float w, float x, float y, float z) {
         this.w = w;
         this.x = x;
@@ -33,6 +62,29 @@ public class Quaternion {
         out.m33 = 1f;
 
         return out;
+    }
+
+    public Quaternion scale(float s, Quaternion out) {
+        out.w = this.w * s;
+        out.x = this.x * s;
+        out.y = this.y * s;
+        out.z = this.z * s;
+
+        return out;
+    }
+
+    public Quaternion normalize(Quaternion out) {
+        this.scale(1 / this.length(), out);
+
+        return out;
+    }
+
+    public float length2() {
+        return w*w + x*x + y*y + z*z;
+    }
+
+    public float length() {
+        return (float)Math.sqrt(length2());
     }
 
     @Override

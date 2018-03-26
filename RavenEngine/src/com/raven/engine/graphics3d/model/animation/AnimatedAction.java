@@ -1,5 +1,7 @@
 package com.raven.engine.graphics3d.model.animation;
 
+import com.raven.engine.GameEngine;
+
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,25 +46,34 @@ public class AnimatedAction {
     }
 
 
-    float time = 0;
+    public void toBuffer(FloatBuffer aBuffer, AnimationState state) {
 
-    public void toBuffer(FloatBuffer aBuffer) {
-
-        time += .1f;
+        float time = state.getTime() * 24f / 1000f;
 
         float frame = time % 120;
+        float mix = 0f;
 
         int i = 0;
         for (; i < keyframes.length; i++)
             if (frame < keyframes[i])
                 break;
 
-        final int keyframe = i - 1;
+        final int keyframeIndex = i - 1;
 
-        System.out.println(keyframe);
+        int keyframeIndex2 = i;
+        if (keyframeIndex2 != keyframes.length) {
+            float keyframe = keyframes[keyframeIndex];
+            float keyframe2 = keyframes[keyframeIndex2];
+
+            float len = keyframe2 - keyframe;
+            float pos = frame - keyframe;
+            mix = pos / len;
+        }
+
+        final float finalMix = mix;
 
         bones.forEach(bone -> {
-            bone.toBuffer(aBuffer, keyframe, 0);
+            bone.toBuffer(aBuffer, keyframeIndex, finalMix);
         });
     }
 }

@@ -10,6 +10,13 @@ import sys, getopt
 import bpy
 from bpy_extras.io_utils import ExportHelper
 
+def ytuple(v):
+    return tuple([v[0], v[2], v[1]])
+
+def yrtuple(v):
+    return tuple([v[0], v[1], v[2], v[3]])
+
+
 class RaniExport(bpy.types.Operator, ExportHelper):
     """Export a single object as a RavenEngine RANI armature, """ \
     """poses, and keyframes?..."""
@@ -53,6 +60,7 @@ class RaniExport(bpy.types.Operator, ExportHelper):
             fw(action.name + "\n")
 
             bones = {}
+            boneList = []
             frames = []
 
             # x y z qr qi qj qk sx sy sz
@@ -79,6 +87,7 @@ class RaniExport(bpy.types.Operator, ExportHelper):
                         'name': boneName
                     }
                     bones[boneName] = bone
+                    boneList.append(bone)
 
                 for kf in fcurve.keyframe_points:
                     frameIndex = int(kf.co[0])
@@ -124,8 +133,7 @@ class RaniExport(bpy.types.Operator, ExportHelper):
 
             fw("\n")
 
-            for name in bones:
-                bone = bones[name]
+            for bone in boneList:
 
                 fw(str(bone['name']) + "\n")
                 fw(str(bone['parent']) + "\n")
@@ -135,27 +143,27 @@ class RaniExport(bpy.types.Operator, ExportHelper):
                 # fw("\n")
 
                 for location in bone['location']:
-                    fw("%.6f %.6f %.6f " % tuple(location))
+                    fw("%.6f %.6f %.6f " % ytuple(location))
                 fw("\n")
 
                 for rotation in bone['rotation']:
-                    fw("%.6f %.6f %.6f %.6f " % tuple(rotation))
+                    fw("%.6f %.6f %.6f %.6f " % yrtuple(rotation))
                 fw("\n")
 
                 for scale in bone['scale']:
-                    fw("%.6f %.6f %.6f " % tuple(scale))
+                    fw("%.6f %.6f %.6f " % ytuple(scale))
                 fw("\n")
 
                 for vector in bone['vector']:
-                    fw("%.6f %.6f %.6f " % tuple(vector))
+                    fw("%.6f %.6f %.6f " % ytuple(vector))
                 fw("\n")
 
                 for head in bone['head']:
-                    fw("%.6f %.6f %.6f " % tuple(head))
+                    fw("%.6f %.6f %.6f " % ytuple(head))
                 fw("\n")
 
                 for tail in bone['tail']:
-                    fw("%.6f %.6f %.6f " % tuple(tail))
+                    fw("%.6f %.6f %.6f " % ytuple(tail))
                 fw("\n")
 
             fw("\n")
@@ -311,10 +319,14 @@ class RavExport(bpy.types.Operator, ExportHelper):
         # x y z nx ny nz s t r g b a
         for i, v in enumerate(ply_verts):
             # position
-            fw("%.6f %.6f %.6f" % mesh_verts[v[0]].co[:])
+            co = mesh_verts[v[0]].co
+            co = tuple([co[0], co[2], co[1]])
+            fw("%.6f %.6f %.6f" % co)
 
             # normal
-            fw(" %.6f %.6f %.6f" % v[1])
+            n = v[1]
+            n = tuple([n[0], n[2], n[1]])
+            fw(" %.6f %.6f %.6f" % n)
 
             # uv
             if use_uv_coords:
@@ -339,8 +351,10 @@ class RavExport(bpy.types.Operator, ExportHelper):
 
         # faces
         for pf in ply_faces:
+            pf = tuple([pf[0], pf[2], pf[1]])
+
             # make sure there are only three vertices
-            fw("%d %d %d\n" % tuple(pf[0:3]))
+            fw("%d %d %d\n" % pf)
 
         file.close()
 

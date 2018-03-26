@@ -42,6 +42,8 @@ public class RaniImporter {
                     // bone name
                     Bone bone = new Bone(line);
 
+                    bone.setKeyframesLength(keyframes.length);
+
                     // parent
                     line = br.readLine();
                     if (line.equals("") || line.equals("None")) {

@@ -4,6 +4,7 @@ import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
 import com.raven.engine.graphics3d.model.ModelData;
 import com.raven.engine.graphics3d.model.animation.Animation;
+import com.raven.engine.graphics3d.model.animation.AnimationState;
 import com.raven.engine.graphics3d.shader.Shader;
 import com.raven.engine.graphics3d.shader.WorldMSShader;
 import com.raven.engine.scene.Scene;
@@ -25,7 +26,7 @@ public abstract class WorldObject<
     private float scale = 1f, rotation = 0f;
     private Vector3f position = new Vector3f();
     private Matrix4f matrix = new Matrix4f();
-    private Animation animation = null;
+    private AnimationState animationState = null;
 
     private Highlight highlight = new Highlight();
 
@@ -62,10 +63,10 @@ public abstract class WorldObject<
         this.scene = scene;
 
         if (data.has("model")) {
-            this.model = GameEngine.getEngine().getModelData(data.getString("model"));
+            model = GameEngine.getEngine().getModelData(data.getString("model"));
 
             if (data.has("animation")) {
-                this.animation = GameEngine.getEngine().getAnimation(data.getString("animation"));
+                animationState = new AnimationState(GameEngine.getEngine().getAnimation(data.getString("animation")));
             }
         }
 
@@ -199,8 +200,8 @@ public abstract class WorldObject<
 
         Shader.setModelMatrix(getModelMatrix());
 
-        if (animation != null) {
-            Shader.setAnimationMatrices(animation);
+        if (animationState != null) {
+            Shader.setAnimationMatrices(animationState);
         } else {
             Shader.clearAnimationMatrices();
         }
@@ -218,8 +219,8 @@ public abstract class WorldObject<
 
         Shader.setModelMatrix(parentMatrix.multiply(getModelMatrix(), drawMat));
 
-        if (animation != null) {
-            Shader.setAnimationMatrices(animation);
+        if (animationState != null) {
+            Shader.setAnimationMatrices(animationState);
         } else {
             Shader.clearAnimationMatrices();
         }
@@ -235,8 +236,8 @@ public abstract class WorldObject<
     public void drawShadow() {
         Shader.setModelMatrix(getModelMatrix());
 
-        if (animation != null) {
-            Shader.setAnimationMatrices(animation);
+        if (animationState != null) {
+            Shader.setAnimationMatrices(animationState);
         } else {
             Shader.clearAnimationMatrices();
         }
@@ -252,8 +253,8 @@ public abstract class WorldObject<
     public void drawShadow(Matrix4f parentMatrix) {
         Shader.setModelMatrix(parentMatrix.multiply(getModelMatrix(), drawMat));
 
-        if (animation != null) {
-            Shader.setAnimationMatrices(animation);
+        if (animationState != null) {
+            Shader.setAnimationMatrices(animationState);
         } else {
             Shader.clearAnimationMatrices();
         }
@@ -335,6 +336,10 @@ public abstract class WorldObject<
     }
 
     final public void update(float deltaTime) {
+        if (animationState != null) {
+            animationState.update(deltaTime);
+        }
+
         this.onUpdate(deltaTime);
 
         for (WorldObject c : children) {
