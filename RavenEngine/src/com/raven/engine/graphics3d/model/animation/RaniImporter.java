@@ -70,11 +70,17 @@ public class RaniImporter {
                     Quaternion[] rotation = new Quaternion[keyframes.length];
                     for (int i = 0; i < keyframes.length; i++) {
                         rotation[i] = new Quaternion(
-                                Float.parseFloat(vals[i * 4]),
-                                Float.parseFloat(vals[i * 4 + 1]),
+                                Float.parseFloat(vals[i * 4 ]),
                                 Float.parseFloat(vals[i * 4 + 2]),
+                                Float.parseFloat(vals[i * 4 + 1]),
                                 Float.parseFloat(vals[i * 4 + 3])
                         );
+//                        rotation[i] = new Quaternion(
+//                                Float.parseFloat(vals[i * 4 ]),
+//                                Float.parseFloat(vals[i * 4 + 3]),
+//                                Float.parseFloat(vals[i * 4 + 1]),
+//                                Float.parseFloat(vals[i * 4 + 2])
+//                        );
                         System.out.println(rotation[i]);
                     }
                     bone.setRotation(rotation);
@@ -111,9 +117,9 @@ public class RaniImporter {
                     Vector3f[] head = new Vector3f[keyframes.length];
                     for (int i = 0; i < keyframes.length; i++) {
                         head[i] = new Vector3f(
-                                Float.parseFloat(vals[i * 3]),
-                                Float.parseFloat(vals[i * 3 + 1]),
-                                Float.parseFloat(vals[i * 3 + 2])
+                                Float.parseFloat(vals[i * 3 + 0]),
+                                Float.parseFloat(vals[i * 3 + 2]),
+                                Float.parseFloat(vals[i * 3 + 1])
                         );
                     }
                     bone.setHead(head);

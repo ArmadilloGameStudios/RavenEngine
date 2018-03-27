@@ -11,7 +11,7 @@ import bpy
 from bpy_extras.io_utils import ExportHelper
 
 def ytuple(v):
-    return tuple([v[0], v[2], v[1]])
+    return tuple([v[0], v[1], v[2]])
 
 def yrtuple(v):
     return tuple([v[0], v[1], v[2], v[3]])
@@ -93,9 +93,10 @@ class RaniExport(bpy.types.Operator, ExportHelper):
                     frameIndex = int(kf.co[0])
 
                     frames.append(frameIndex)
-
-            frames.sort()
+            print(frames)
             frames = list(set(frames))
+            frames.sort()
+            print(frames)
 
             # for name in bones:
             #     bone = bones[name]

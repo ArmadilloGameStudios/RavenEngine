@@ -1,6 +1,7 @@
 package com.raven.engine.graphics3d.model.animation;
 
 import com.raven.engine.GameEngine;
+import org.lwjgl.system.CallbackI;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -50,7 +51,8 @@ public class AnimatedAction {
 
         float time = state.getTime() * 24f / 1000f;
 
-        float frame = time % 120;
+        // TODO have the % be calculated
+        float frame = time % keyframes[keyframes.length - 1];
         float mix = 0f;
 
         int i = 0;

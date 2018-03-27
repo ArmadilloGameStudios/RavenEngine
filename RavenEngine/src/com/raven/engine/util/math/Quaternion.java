@@ -6,10 +6,12 @@ public class Quaternion {
 
     public static Quaternion tempQuat = new Quaternion();
 
+    @Deprecated
     public static Quaternion lerp(Quaternion a, Quaternion b, float alpah, Quaternion out) {
         return lerp(a, b, alpah, true, out);
     }
 
+    @Deprecated
     public static Quaternion lerp(Quaternion a, Quaternion b, float alpah, boolean normalize, Quaternion out) {
 
         if (normalize) {
@@ -29,6 +31,40 @@ public class Quaternion {
         return out;
     }
 
+    public static Quaternion slerp(Quaternion a, Quaternion b, float alpha, Quaternion out) {
+		final float d = a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+		float absDot = d < 0.f ? -d : d;
+
+		// Set the first and second scale for the interpolation
+		float scale0 = 1f - alpha;
+		float scale1 = alpha;
+
+		// Check if the angle between the 2 quaternions was big enough to
+		// warrant such calculations
+		if ((1 - absDot) > 0.1) {// Get the angle between the 2 quaternions,
+			// and then store the sin() of that angle
+			final float angle = (float)Math.acos(absDot);
+			final float invSinTheta = 1f / (float)Math.sin(angle);
+
+			// Calculate the scale for q1 and q2, according to the angle and
+			// it's sine value
+			scale0 = ((float)Math.sin((1f - alpha) * angle) * invSinTheta);
+			scale1 = ((float)Math.sin((alpha * angle)) * invSinTheta);
+		}
+
+		if (d < 0.f) scale1 = -scale1;
+
+		// Calculate the x, y, z and w values for the quaternion by using a
+		// special form of linear interpolation for quaternions.
+        out.w = (scale0 * a.w) + (scale1 * b.w);
+		out.x = (scale0 * a.x) + (scale1 * b.x);
+		out.y = (scale0 * a.y) + (scale1 * b.y);
+		out.z = (scale0 * a.z) + (scale1 * b.z);
+
+		// Return the interpolated quaternion
+        return out;
+    }
+
     public Quaternion() {
         this(1,0,0,0);
     }
@@ -38,6 +74,7 @@ public class Quaternion {
         this.x = x;
         this.y = y;
         this.z = z;
+        normalize();
     }
 
     public Matrix4f toMatrix(Matrix4f out) {
@@ -77,6 +114,10 @@ public class Quaternion {
         this.scale(1 / this.length(), out);
 
         return out;
+    }
+
+    public Quaternion normalize() {
+        return normalize(this);
     }
 
     public float length2() {

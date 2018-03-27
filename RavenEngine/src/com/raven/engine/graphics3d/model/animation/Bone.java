@@ -79,9 +79,25 @@ public class Bone {
     private Vector3f tempVec = new Vector3f();
     private Matrix4f tempMat = new Matrix4f();
     private Matrix4f tempMat2 = new Matrix4f();
+    private Matrix4f tempMat3 = new Matrix4f();
+    private int currentKeyframe = -1;
+    private float currentMix = 0f;
 
-    // TODO check if already calculated
+    public Matrix4f matrix_(int keyframe, float mix) {
+        if (keyframe == currentKeyframe && mix == currentMix) {
+            return outMatrix;
+        }
+
+        return outMatrix;
+    }
+
     public Matrix4f matrix(int keyframe, float mix) {
+        if (keyframe == currentKeyframe && mix == currentMix) {
+            return outMatrix;
+        }
+
+        currentKeyframe = keyframe;
+        currentMix = mix;
 
         Vector3f va = head[keyframe], vb;
         Quaternion qa = rotation[keyframe], qb;
@@ -94,24 +110,24 @@ public class Bone {
             qb = rotation[0];
         }
 
-        tempMat2.identity();
+        tempMat.identity();
 
         // translate
         Vector3f.lerp(va, vb, mix, vout);
-        tempMat2.translate(vout, tempMat);
+        tempMat.translate(vout, tempMat2);
+        tempMat2.inverse(tempMat3);
 
         // rotate
-        Quaternion.lerp(qa, qb, mix, qout);
-        qout.toMatrix(tempMat2);
-        tempMat.multiply(tempMat2, outMatrix);
+        Quaternion.slerp(qa, qb, mix, qout);
+        qout.toMatrix(outMatrix);
+        tempMat2.multiply(outMatrix, tempMat);
 
         // translate back
-
-        outMatrix.translate(vout.negate(tempVec), tempMat2);
-
+        tempMat.multiply(tempMat3, tempMat2);
 
         // do parent
         if (parent != null)
+//            parent.matrix(keyframe, mix).multiply(tempMat2, outMatrix);
             tempMat2.multiply(parent.matrix(keyframe, mix), outMatrix);
 
         return outMatrix;

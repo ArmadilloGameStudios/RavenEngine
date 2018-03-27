@@ -58,8 +58,6 @@ public class VertexData {
             b[i / 2] = Integer.parseInt(data[i + 12]);
             w[i / 2] = Float.parseFloat(data[i + 13]);
         }
-
-        System.out.println(this);
     }
 
     @Override
