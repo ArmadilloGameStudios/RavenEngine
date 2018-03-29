@@ -308,6 +308,16 @@ class RavExport(bpy.types.Operator, ExportHelper):
 
                 pf.append(pf_vidx)
 
+        # collect faces
+        final_faces = []
+        for pf in ply_faces:
+
+            if len(pf) is 4:
+                final_faces.append(tuple([pf[0], pf[2], pf[1]]))
+                final_faces.append(tuple([pf[3], pf[2], pf[0]]))
+            # else:
+            #     final_faces.append(tuple([pf[0], pf[2], pf[1]]))
+
         # write file
         file = open(filepath, "w", encoding="utf8", newline="\n")
         fw = file.write
@@ -315,7 +325,7 @@ class RavExport(bpy.types.Operator, ExportHelper):
         fw("rav\n")
 
         # write the count of vertices and faces
-        fw(str(vert_count) + " " + str(len(ply_faces)) + "\n")
+        fw(str(vert_count) + " " + str(len(final_faces)) + "\n")
 
         # x y z nx ny nz s t r g b a
         for i, v in enumerate(ply_verts):
@@ -351,11 +361,8 @@ class RavExport(bpy.types.Operator, ExportHelper):
 
 
         # faces
-        for pf in ply_faces:
-            pf = tuple([pf[0], pf[2], pf[1]])
-
-            # make sure there are only three vertices
-            fw("%d %d %d\n" % pf)
+        for f in final_faces:
+            fw("%d %d %d\n" % f)
 
         file.close()
 
