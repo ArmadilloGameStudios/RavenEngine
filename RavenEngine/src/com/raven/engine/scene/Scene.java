@@ -18,7 +18,7 @@ public abstract class Scene<G extends Game> {
     private Layer<WorldObject> layerDetails = new Layer<>(Layer.Destination.Details);
     private Layer<HUDContainer> layerHUD = new Layer<>(Layer.Destination.HUD);
 
-    private Vector3f backgroundColor;
+    private Vector3f backgroundColor = new Vector3f();
 
     private boolean renderWater = false, paused = false;
 

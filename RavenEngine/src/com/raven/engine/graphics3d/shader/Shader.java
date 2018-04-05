@@ -91,7 +91,7 @@ public abstract class Shader {
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
-    public static final int MAX_BONE_COUNT = 4;
+    public static final int MAX_BONE_COUNT = 24;
     private static FloatBuffer aBuffer = BufferUtils.createFloatBuffer(16 * MAX_BONE_COUNT);
 
     public static void setAnimationMatrices(AnimationState animationState) {
