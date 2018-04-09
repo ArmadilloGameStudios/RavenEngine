@@ -1,18 +1,19 @@
 package com.raven.engine2d.graphics2d.shader;
 
+import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimation;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.util.math.Vector2f;
+import com.raven.engine2d.util.math.Vector3f;
 import org.lwjgl.opengl.GL11;
 import sun.java2d.pipe.SpanClipRenderer;
 
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL14.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
@@ -40,8 +41,18 @@ public class MainShader extends Shader {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+        glEnable(GL_BLEND);
+        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
+
+        glDisable(GL_DEPTH_TEST);
+    }
+
+    @Override
+    public void endProgram() {
+        glDisable(GL_BLEND);
     }
 
     public void draw(SpriteSheet sheet, SpriteAnimation spriteAnimation, Vector2f position, DrawStyle style) {
@@ -53,15 +64,15 @@ public class MainShader extends Shader {
         }
     }
 
-    private float isoHeight = 17, isoWidth = 32;
+    private float isoHeight = 16, isoWidth = 31;
 
     private void drawIsometric(SpriteSheet sheet, SpriteAnimation spriteAnimation, Vector2f position, Vector2f offset) {
         glUniform1i(sprite_sheet_location, sheet.getTextureActiveLocation());
 
-        float x = position.x * isoWidth - position.y * isoWidth + offset.x;
-        float y = position.x * isoHeight + position.y * isoHeight + offset.y;
+        float x = position.y * isoWidth - position.x * isoWidth + offset.x;
+        float y = position.y * isoHeight + position.x * isoHeight + offset.y;
 
-        glViewport((int)x, (int)y, sheet.width * 2, sheet.height * 2);
+        glViewport((int) (x * 3f / 2f), (int) (y * 3f / 2f), sheet.width * 3, sheet.height * 3);
 
         glUniform4f(rect_location,
                 spriteAnimation.x, spriteAnimation.y,
@@ -70,12 +81,17 @@ public class MainShader extends Shader {
         window.drawQuad();
     }
 
-    @Override
-    public void endProgram() {
-
-    }
 
     public int getWorldObjectID() {
         return 0;
+    }
+
+    public void clear(Vector3f backgroundColor) {
+        glViewport(0, 0,
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight());
+
+        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 1f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 }

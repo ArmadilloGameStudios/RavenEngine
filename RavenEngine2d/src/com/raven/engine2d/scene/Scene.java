@@ -31,6 +31,8 @@ public abstract class Scene<G extends com.raven.engine2d.Game> {
         MainShader mainShader = window.getMainShader();
         mainShader.useProgram();
 
+        mainShader.clear(backgroundColor);
+
         // draw
         for (WorldObject o : layerTerrain.getChildren()) {
             o.draw(mainShader);

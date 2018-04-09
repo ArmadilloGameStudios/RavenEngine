@@ -2,14 +2,10 @@ package com.raven.engine2d.graphics2d.shader;
 
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
-import com.raven.engine2d.scene.Camera;
-import com.raven.engine2d.util.math.Matrix4f;
-import com.raven.engine2d.util.math.Plane;
 import org.lwjgl.BufferUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -17,10 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.GL_TRUE;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferSubData;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 
 /**
  * Created by cookedbird on 5/29/17.

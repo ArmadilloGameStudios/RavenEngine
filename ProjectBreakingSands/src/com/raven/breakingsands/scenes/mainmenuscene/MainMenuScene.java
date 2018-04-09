@@ -37,6 +37,25 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
     public void onEnterScene() {
         // Pawn
         pawn = new DisplayPawn(this);
+        pawn.setY(3);
+        getLayerDetails().addChild(pawn);
+
+        pawn = new DisplayPawn(this);
+        pawn.setY(1);
+        getLayerDetails().addChild(pawn);
+
+        pawn = new DisplayPawn(this);
+        pawn.setY(2);
+        getLayerDetails().addChild(pawn);
+
+        pawn = new DisplayPawn(this);
+        pawn.setY(2);
+        pawn.setX(1);
+        getLayerDetails().addChild(pawn);
+
+        pawn = new DisplayPawn(this);
+        pawn.setY(2);
+        pawn.setX(2);
         getLayerDetails().addChild(pawn);
 
         // Background
