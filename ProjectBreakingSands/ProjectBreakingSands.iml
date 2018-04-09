@@ -8,7 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module" module-name="RavenEngine" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="RavenEngine2d" exported="" />
   </component>
 </module>

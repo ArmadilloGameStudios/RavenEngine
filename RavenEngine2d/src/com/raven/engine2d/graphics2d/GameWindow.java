@@ -2,9 +2,8 @@ package com.raven.engine2d.graphics2d;
 
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
-import com.raven.engine.graphics3d.model.ModelReference;
 import com.raven.engine2d.graphics2d.shader.Shader;
-import com.raven.engine2d.graphics2d.shader.TerrainShader;
+import com.raven.engine2d.graphics2d.shader.MainShader;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -30,7 +29,7 @@ public class GameWindow {
     // The window handle
     private long window;
 
-    private TerrainShader terrainShader;
+    private MainShader mainShader;
 
     private int sun_light_buffer_handel, matrices_buffer_handel, animation_buffer_handel;
 
@@ -101,7 +100,7 @@ public class GameWindow {
 
         GL.createCapabilities();
 
-        terrainShader = new TerrainShader();
+        mainShader = new MainShader(this);
 
         // Enable depth test
         glEnable(GL_DEPTH_TEST);
@@ -110,8 +109,8 @@ public class GameWindow {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
 
-        // Setup ModelReference Error
-        ModelReference.loadBlankModel();
+        // Setup ScreenQuad
+        ScreenQuad.loadQuad();
     }
 
     public void destroy() {
@@ -129,8 +128,8 @@ public class GameWindow {
         return window;
     }
 
-    public TerrainShader getTerrainShader() {
-        return terrainShader;
+    public MainShader getMainShader() {
+        return mainShader;
     }
 
     public int getLightHandel() {

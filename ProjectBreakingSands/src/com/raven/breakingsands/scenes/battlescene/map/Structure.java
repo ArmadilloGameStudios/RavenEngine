@@ -1,13 +1,11 @@
 package com.raven.breakingsands.scenes.battlescene.map;
 
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
-import com.raven.engine.GameEngine;
-import com.raven.engine.database.GameData;
-import com.raven.engine.database.GameDataList;
-import com.raven.engine.database.GameDataTable;
-import com.raven.engine.database.GameDatabase;
-import com.raven.engine.worldobject.WorldObject;
-import org.lwjgl.system.Struct;
+import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDataList;
+import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,7 +76,7 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
 //                    .forEach(e -> e.setConnected(true));
 
         this.setX(x * 2);
-        this.setZ(y * 2);
+        this.setY(y * 2);
     }
 
     public StructureEntrance[] getEntrances() {

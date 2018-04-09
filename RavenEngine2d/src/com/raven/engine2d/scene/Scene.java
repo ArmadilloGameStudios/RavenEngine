@@ -3,9 +3,9 @@ package com.raven.engine2d.scene;
 import java.util.List;
 
 import com.raven.engine2d.graphics2d.GameWindow;
-import com.raven.engine2d.graphics2d.shader.TerrainShader;
-import com.raven.engine.graphics3d.model.ModelData;
-import com.raven.engine2d.scene.light.GlobalDirectionalLight;
+import com.raven.engine2d.graphics2d.ScreenQuad;
+import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.ui.UIContainer;
 import com.raven.engine2d.worldobject.WorldObject;
@@ -18,46 +18,35 @@ public abstract class Scene<G extends com.raven.engine2d.Game> {
 
     private Vector3f backgroundColor = new Vector3f();
 
-    private boolean renderWater = false, paused = false;
+    private boolean paused = false;
 
     private G game;
 
-    private Camera camera;
-
-    private GlobalDirectionalLight globalDirectionalLight;
-
     public Scene(G game) {
         this.game = game;
-
-        camera = new Camera();
-    }
-
-    public Camera getCamera() {
-        return camera;
     }
 
     final public void draw(GameWindow window) {
         // shader
-        TerrainShader terrainShader = window.getTerrainShader();
-        terrainShader.useProgram();
+        MainShader mainShader = window.getMainShader();
+        mainShader.useProgram();
 
         // draw
-        for (com.raven.engine2d.worldobject.WorldObject o : layerTerrain.getChildren()) {
-            o.draw();
+        for (WorldObject o : layerTerrain.getChildren()) {
+            o.draw(mainShader);
             window.printErrors("Draw Error: ");
         }
 
-        for (com.raven.engine2d.worldobject.WorldObject o : layerDetails.getChildren()) {
-            o.draw();
+        for (WorldObject o : layerDetails.getChildren()) {
+            o.draw(mainShader);
         }
 
-        for (com.raven.engine2d.worldobject.WorldObject o : layerWater.getChildren()) {
-            o.draw();
+        for (WorldObject o : layerWater.getChildren()) {
+            o.draw(mainShader);
         }
     }
 
     final public void update(float deltaTime) {
-        camera.update(deltaTime);
 
         if (!isPaused()) {
             onUpdate(deltaTime);
@@ -70,23 +59,23 @@ public abstract class Scene<G extends com.raven.engine2d.Game> {
         layerUI.update(deltaTime);
     }
 
-    final public com.raven.engine2d.scene.Layer<WorldObject> getLayerTerrain() {
+    final public Layer<WorldObject> getLayerTerrain() {
         return layerTerrain;
     }
 
-    final public com.raven.engine2d.scene.Layer<WorldObject> getLayerWater() {
+    final public Layer<WorldObject> getLayerWater() {
         return layerWater;
     }
 
-    final public com.raven.engine2d.scene.Layer<WorldObject> getLayerDetails() {
+    final public Layer<WorldObject> getLayerDetails() {
         return layerDetails;
     }
 
-    final public com.raven.engine2d.scene.Layer<UIContainer> getLayerUI() {
+    final public Layer<UIContainer> getLayerUI() {
         return layerUI;
     }
 
-    public com.raven.engine2d.scene.Layer getLayer(com.raven.engine2d.scene.Layer.Destination destination) {
+    public Layer getLayer(Layer.Destination destination) {
         switch (destination) {
             case Water:
                 return getLayerWater();
@@ -98,9 +87,13 @@ public abstract class Scene<G extends com.raven.engine2d.Game> {
         }
     }
 
-    abstract public List<ModelData> getSceneModels();
+    abstract public List<SpriteSheet> getSpriteSheets();
 
     public final void enterScene() {
+        for (SpriteSheet sheet : getSpriteSheets()) {
+            sheet.load();
+        }
+
         onEnterScene();
     }
 
@@ -125,33 +118,14 @@ public abstract class Scene<G extends com.raven.engine2d.Game> {
             obj.release();
         }
 
-        for (ModelData modelData : getSceneModels()) {
-            modelData.release();
+        for (SpriteSheet sheet : getSpriteSheets()) {
+            sheet.release();
         }
-
-        globalDirectionalLight.release();
     }
 
     abstract public void onExitScene();
 
     abstract public void onUpdate(float deltaTime);
-
-    public void setGlobalDirectionalLight(GlobalDirectionalLight light) {
-        globalDirectionalLight = light;
-    }
-
-    public void removeGlobalDirectionalLight() {
-        if (globalDirectionalLight != null)
-            globalDirectionalLight.release();
-    }
-
-    public void setRenderWater(boolean renderWater) {
-        this.renderWater = renderWater;
-    }
-
-    public boolean getRenderWater() {
-        return renderWater;
-    }
 
     public void setBackgroundColor(Vector3f color) {
         backgroundColor = color;
@@ -163,8 +137,6 @@ public abstract class Scene<G extends com.raven.engine2d.Game> {
 
     public void setPaused(boolean paused) {
         this.paused = paused;
-
-        camera.setInteractable(!paused);
     }
 
     public boolean isPaused() {

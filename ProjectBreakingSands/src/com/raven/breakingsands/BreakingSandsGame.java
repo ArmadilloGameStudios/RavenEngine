@@ -2,14 +2,14 @@ package com.raven.breakingsands;
 
 import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.mission.Mission;
+import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
-import com.raven.breakingsands.scenes.missionselectscene.MissionSelectScene;
-import com.raven.engine.Game;
-import com.raven.engine.database.GameData;
-import com.raven.engine.database.GameDataReader;
-import com.raven.engine.database.GameDataTable;
-import com.raven.engine.launcher.GameLauncher;
-import com.raven.engine.scene.Scene;
+import com.raven.engine2d.Game;
+import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDataReader;
+import com.raven.engine2d.database.GameDataTable;
+import com.raven.engine2d.launcher.GameLauncher;
+import com.raven.engine2d.scene.Scene;
 
 import java.io.File;
 import java.io.IOException;
@@ -105,7 +105,7 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
             success = false;
         }
 
-        prepTransitionScene(new MissionSelectScene(this));
+        prepTransitionScene(new BattleScene(this));
 
         return success;
     }

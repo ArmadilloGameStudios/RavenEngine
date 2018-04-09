@@ -1,11 +1,11 @@
 package com.raven.breakingsands.scenes.battlescene.menu;
 
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
-import com.raven.breakingsands.scenes.hud.HUDCenterContainer;
+import com.raven.breakingsands.scenes.hud.UICenterContainer;
 import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
-import com.raven.engine.util.math.Vector4f;
+import com.raven.engine2d.util.math.Vector4f;
 
-public class Menu extends HUDCenterContainer<BattleScene> {
+public class Menu extends UICenterContainer<BattleScene> {
 
     private Vector4f color = new Vector4f(.25f, .25f, .25f, .5f);
 

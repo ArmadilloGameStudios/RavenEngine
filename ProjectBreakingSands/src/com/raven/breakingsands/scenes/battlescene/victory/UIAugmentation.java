@@ -2,13 +2,13 @@ package com.raven.breakingsands.scenes.battlescene.victory;
 
 import com.raven.breakingsands.character.Augmentation;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
-import com.raven.breakingsands.scenes.hud.HUDButton;
+import com.raven.breakingsands.scenes.hud.UIButton;
 
-public class HUDAugmentation extends HUDButton<BattleScene, VictoryDisplay> {
+public class UIAugmentation extends UIButton<BattleScene, VictoryDisplay> {
 
     private Augmentation augmentation;
 
-    public HUDAugmentation(BattleScene scene, Augmentation augmentation) {
+    public UIAugmentation(BattleScene scene, Augmentation augmentation) {
         super(scene, "");
 
         this.augmentation = augmentation;

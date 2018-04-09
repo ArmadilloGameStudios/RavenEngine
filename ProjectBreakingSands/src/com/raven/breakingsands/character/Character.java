@@ -1,7 +1,7 @@
 package com.raven.breakingsands.character;
 
-import com.raven.engine.database.GameData;
-import com.raven.engine.database.GameDatable;
+import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDatable;
 
 import java.util.ArrayList;
 import java.util.HashMap;

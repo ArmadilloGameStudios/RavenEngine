@@ -1,7 +1,7 @@
 package com.raven.breakingsands.character;
 
-import com.raven.engine.GameEngine;
-import com.raven.engine.database.GameData;
+import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.database.GameData;
 
 public class Augmentation {
     private String name = "Cat";

@@ -1,7 +1,6 @@
 {
     name: "Player",
-    model: "models/test_rani.rav",
-    animation: "animations/test_rani.rani",
+    sprite: "sprites/tile_a.png",
     team: 0,
     hp: 10,
     movement: 80,
@@ -9,7 +8,7 @@
 },
 {
     name: "Service Drone",
-    model: "models/enemy.ply",
+    sprite: "sprites/tile_a.png",
     team: 1,
     hp: 5,
     movement: 3,
@@ -17,7 +16,7 @@
 },
 {
     name: "Guard Drone",
-    model: "models/enemy.ply",
+    sprite: "sprites/tile_a.png",
     team: 1,
     hp: 15,
     resistance: 1,

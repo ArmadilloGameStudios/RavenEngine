@@ -2,15 +2,13 @@ package com.raven.breakingsands.scenes.battlescene.ai;
 
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
-import com.raven.engine.util.pathfinding.Path;
-import com.raven.engine.util.pathfinding.PathAdjacentNode;
-import com.raven.engine.util.pathfinding.PathFinder;
+import com.raven.engine2d.util.pathfinding.Path;
+import com.raven.engine2d.util.pathfinding.PathFinder;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
 
 public class AI implements Runnable {
 

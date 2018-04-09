@@ -2,9 +2,7 @@ package com.raven.engine2d.graphics2d.shader;
 
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
-import com.raven.engine.graphics3d.model.animation.AnimationState;
 import com.raven.engine2d.scene.Camera;
-import com.raven.engine2d.scene.light.Light;
 import com.raven.engine2d.util.math.Matrix4f;
 import com.raven.engine2d.util.math.Plane;
 import org.lwjgl.BufferUtils;
@@ -29,12 +27,11 @@ import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
  */
 public abstract class Shader {
 
-    public final static int LIGHT = 1, MATRICES = 2, ANIMATION = 3;
     public static final int TEXTURE = getNextTexture();
 
     private static int nextTexture = 0;
 
-    protected static int getNextTexture() {
+    public static int getNextTexture() {
         nextTexture++;
         return nextTexture;
     }
@@ -48,7 +45,7 @@ public abstract class Shader {
 
             // Create Shaders
             // Vertex Shader
-            File shaderv = new File("RavenEngine" + File.separator + "shaders" + File.separator
+            File shaderv = new File("RavenEngine2d" + File.separator + "shaders" + File.separator
                     + vertex_shader);
             vertex_handel = glCreateShader(GL_VERTEX_SHADER);
 
@@ -78,7 +75,7 @@ public abstract class Shader {
             }
 
             // Frag Shader
-            File shaderf = new File("RavenEngine" + File.separator + "shaders" + File.separator
+            File shaderf = new File("RavenEngine2d" + File.separator + "shaders" + File.separator
                     + fragment_shader);
             fragment_handel = glCreateShader(GL_FRAGMENT_SHADER);
 

@@ -1,10 +1,10 @@
 package com.raven.breakingsands.scenes.mainmenuscene;
 
-import com.raven.breakingsands.scenes.hud.HUDButton;
-import com.raven.engine.worldobject.*;
+import com.raven.breakingsands.scenes.hud.UIButton;
+import com.raven.engine2d.ui.UIContainer;
 
 public class ContinueButton
-        extends HUDButton<MainMenuScene, HUDContainer<MainMenuScene>> {
+        extends UIButton<MainMenuScene, UIContainer<MainMenuScene>> {
 
 
     public ContinueButton(MainMenuScene scene) {

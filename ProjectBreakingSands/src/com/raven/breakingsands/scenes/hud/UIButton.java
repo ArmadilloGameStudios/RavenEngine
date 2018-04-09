@@ -1,13 +1,16 @@
 package com.raven.breakingsands.scenes.hud;
 
-import com.raven.engine.scene.Scene;
-import com.raven.engine.util.math.Vector4f;
-import com.raven.engine.worldobject.*;
+import com.raven.engine2d.scene.Scene;
+import com.raven.engine2d.ui.UIContainer;
+import com.raven.engine2d.ui.UIText;
+import com.raven.engine2d.util.math.Vector4f;
+import com.raven.engine2d.worldobject.MouseHandler;
+import com.raven.engine2d.worldobject.TextObject;
 
 import java.awt.*;
 
-public abstract class HUDButton<S extends Scene, C extends HUDContainer<S>>
-        extends HUDText<S, C>
+public abstract class UIButton<S extends Scene, C extends UIContainer<S>>
+        extends UIText<S, C>
         implements MouseHandler {
 
     private float x, y;
@@ -16,7 +19,7 @@ public abstract class HUDButton<S extends Scene, C extends HUDContainer<S>>
 
     private String text;
 
-    public HUDButton(S scene, String text) {
+    public UIButton(S scene, String text) {
         super(scene);
 
         this.text = text;

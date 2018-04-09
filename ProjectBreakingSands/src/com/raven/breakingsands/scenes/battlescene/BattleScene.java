@@ -5,25 +5,24 @@ import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.scenes.battlescene.ai.AI;
 import com.raven.breakingsands.scenes.battlescene.decal.Decal;
 import com.raven.breakingsands.scenes.battlescene.map.Map;
-import com.raven.breakingsands.scenes.battlescene.map.Structure;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
 import com.raven.breakingsands.scenes.battlescene.victory.VictoryDisplay;
-import com.raven.breakingsands.scenes.hud.HUDBottomContainer;
+import com.raven.breakingsands.scenes.hud.UIBottomContainer;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
-import com.raven.engine.GameEngine;
-import com.raven.engine.graphics3d.model.ModelData;
-import com.raven.engine.scene.Camera;
-import com.raven.engine.scene.Scene;
-import com.raven.engine.scene.light.GlobalDirectionalLight;
-import com.raven.engine.util.Range;
-import com.raven.engine.util.math.Vector3f;
-import com.raven.engine.util.pathfinding.Path;
-import com.raven.engine.util.pathfinding.PathAdjacentNode;
-import com.raven.engine.util.pathfinding.PathFinder;
-import com.raven.engine.worldobject.Highlight;
-import com.raven.engine.worldobject.TextObject;
+import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
+import com.raven.engine2d.scene.Camera;
+import com.raven.engine2d.scene.Scene;
+import com.raven.engine2d.util.Range;
+import com.raven.engine2d.util.math.Vector2f;
+import com.raven.engine2d.util.math.Vector3f;
+import com.raven.engine2d.util.pathfinding.Path;
+import com.raven.engine2d.util.pathfinding.PathAdjacentNode;
+import com.raven.engine2d.util.pathfinding.PathFinder;
+import com.raven.engine2d.worldobject.Highlight;
+import com.raven.engine2d.worldobject.TextObject;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
@@ -46,7 +45,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     private Menu menu;
     private VictoryDisplay victoryDisplay;
-    private HUDDetailText hudDetailText;
+    private UIDetailText hudDetailText;
 
     public enum State {
         MOVING, ATTACKING, SELECT_MOVE_AI, SELECT_MOVE,
@@ -54,7 +53,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     private Random random = new Random();
 
-    private GlobalDirectionalLight sunLight;
     private Map map;
 
     private HashMap<Terrain, Path<Terrain>> pathMap;
@@ -81,13 +79,13 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     @Override
-    public List<ModelData> getSceneModels() {
-        List<ModelData> models = new ArrayList<>();
+    public List<SpriteSheet> getSpriteSheets() {
+        List<SpriteSheet> models = new ArrayList<>();
 
         // TODO
-        models.addAll(Terrain.getModelData());
-        models.addAll(Decal.getModelData());
-        models.addAll(Pawn.getModelData());
+        models.addAll(Terrain.getSpriteSheets());
+        models.addAll(Decal.getSpriteSheets());
+        models.addAll(Pawn.getSpriteSheets());
 
         return models;
     }
@@ -106,25 +104,11 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         }
     }
 
-    private Vector3f tempVec = new Vector3f();
+    private Vector2f tempVec = new Vector2f();
 
     @Override
     public void onEnterScene() {
         setBackgroundColor(new Vector3f(0f, 0f, 0f));
-
-        // Light
-        sunLight = new GlobalDirectionalLight();
-        sunLight.origin = new Vector3f(0, 2, 0);
-        sunLight.color = new Vector3f(1, 1, 1);
-        sunLight.intensity = 1f;
-        sunLight.shadowTransparency = .2f;
-        sunLight.size = 46f;
-        sunLight.height = 4f;
-
-        Vector3f dir = new Vector3f(1, 5, 2);
-        sunLight.setDirection(dir.normalize(tempVec));
-
-        setGlobalDirectionalLight(sunLight);
 
         // Terrain
         map = new Map(this);
@@ -132,11 +116,11 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         addPawns();
 
-        // Bottom HUD
-        HUDBottomContainer<BattleScene> bottomContainer = new HUDBottomContainer<>(this);
-        getLayerHUD().addChild(bottomContainer);
+        // Bottom UI
+        UIBottomContainer<BattleScene> bottomContainer = new UIBottomContainer<>(this);
+        getLayerUI().addChild(bottomContainer);
 
-        hudDetailText = new HUDDetailText(this);
+        hudDetailText = new UIDetailText(this);
 
         bottomContainer.addChild(hudDetailText);
         bottomContainer.pack();
@@ -146,13 +130,13 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         // Menu
         menu = new Menu(this);
 //        menu.pack();
-        getLayerHUD().addChild(menu);
+        getLayerUI().addChild(menu);
         menu.setVisibility(false);
 
         // Victory
         victoryDisplay = new VictoryDisplay(this);
         victoryDisplay.pack();
-        getLayerHUD().addChild(victoryDisplay);
+        getLayerUI().addChild(victoryDisplay);
         victoryDisplay.setVisibility(false);
 
 //        victory();
@@ -200,7 +184,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         getGame().saveGame();
     }
 
-    private Vector3f tempVec2 = new Vector3f();
+    private Vector2f tempVec2 = new Vector2f();
 
     @Override
     public void onUpdate(float deltaTime) {
@@ -240,28 +224,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             }
 
 
-            Vector3f movement = next.getNode().getWorldPosition().subtract(current.getWorldPosition(), tempVec);
-
-            // fixes movement from terrain rotation
-            switch (activePawn.getParent().getParent().getMapRotation()) {
-                default:
-                case 0:
-                    break;
-                case 1:
-                    float x = -movement.x;
-                    movement.x = movement.z;
-                    movement.z = x;
-                    break;
-                case 2:
-                    movement.x = -movement.x;
-                    movement.z = -movement.z;
-                    break;
-                case 3:
-                    float z = -movement.z;
-                    movement.z = movement.x;
-                    movement.x = z;
-                    break;
-            }
+            Vector2f movement = next.getNode().getWorldPosition().subtract(current.getWorldPosition(), tempVec);
 
             activePawn.move(movement.scale(delta / (pathSpeed * cost), tempVec2));
 
@@ -273,7 +236,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             pathIndex = 0;
             pathMoveTime = 0f;
 
-            activePawn.setPosition(0, 0, 0);
+            activePawn.setPosition(0, 0);
             current.setPawn(activePawn);
 
             if (activePawn.getRemainingMovement() > 0 ||
@@ -314,9 +277,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         activePawn.ready();
 
-        Camera camera = getCamera();
-        Vector3f pos = pawn.getWorldPosition();
-        camera.setPosition(pos.x, pos.z);
+        Vector2f pos = pawn.getWorldPosition();
+        // TODO focus on pawn
 
         switch (state) {
             case MOVING:

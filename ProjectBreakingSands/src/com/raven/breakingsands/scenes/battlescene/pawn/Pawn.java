@@ -5,13 +5,13 @@ import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
-import com.raven.engine.GameEngine;
-import com.raven.engine.database.GameData;
-import com.raven.engine.database.GameDataList;
-import com.raven.engine.database.GameDataQuery;
-import com.raven.engine.database.GameDatabase;
-import com.raven.engine.graphics3d.model.ModelData;
-import com.raven.engine.worldobject.WorldObject;
+import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDataList;
+import com.raven.engine2d.database.GameDataQuery;
+import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
+import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +23,11 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         return dataList;
     }
 
-    public static List<ModelData> getModelData() {
-        List<ModelData> data = new ArrayList<>();
+    public static List<SpriteSheet> getSpriteSheets() {
+        List<SpriteSheet> data = new ArrayList<>();
 
         for (GameData gameData : dataList) {
-            data.add(GameEngine.getEngine().getModelData(gameData.getString("model")));
+            data.add(GameEngine.getEngine().getSpriteSheet(gameData.getString("sprite")));
         }
 
         return data;

@@ -4,16 +4,16 @@ import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.decal.Decal;
 import com.raven.breakingsands.scenes.battlescene.decal.DecalFactory;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
-import com.raven.engine.GameEngine;
-import com.raven.engine.database.GameData;
-import com.raven.engine.database.GameDataList;
-import com.raven.engine.database.GameDatabase;
-import com.raven.engine.graphics3d.model.ModelData;
-import com.raven.engine.util.pathfinding.PathAdjacentNode;
-import com.raven.engine.util.pathfinding.PathNode;
-import com.raven.engine.worldobject.MouseHandler;
-import com.raven.engine.worldobject.TextObject;
-import com.raven.engine.worldobject.WorldObject;
+import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDataList;
+import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
+import com.raven.engine2d.util.pathfinding.PathAdjacentNode;
+import com.raven.engine2d.util.pathfinding.PathNode;
+import com.raven.engine2d.worldobject.MouseHandler;
+import com.raven.engine2d.worldobject.TextObject;
+import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +24,11 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     private static GameDataList dataList = GameDatabase.all("terrain");
 
-    public static List<ModelData> getModelData() {
-        List<ModelData> data = new ArrayList<>();
+    public static List<SpriteSheet> getSpriteSheets() {
+        List<SpriteSheet> data = new ArrayList<>();
 
         for (GameData gameData : dataList) {
-            data.add(GameEngine.getEngine().getModelData(gameData.getString("model")));
+            data.add(GameEngine.getEngine().getSpriteSheet(gameData.getString("sprite")));
         }
 
         return data;
@@ -59,7 +59,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     private TextObject details;
 
     public Terrain(BattleScene scene, Structure structure, GameData terrainData, GameData propData) {
-        super(scene, terrainData.getString("model"));
+        super(scene, terrainData);
 
         switch (structure.getMapRotation()) {
             default:
@@ -85,9 +85,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                 break;
         }
 
-        setRotation(-90 * structure.getMapRotation());
         setX((this.x - structure.getMapX()) * 2);
-        setZ((this.y - structure.getMapY()) * 2);
+        setY((this.y - structure.getMapY()) * 2);
 
         this.addMouseHandler(this);
 
@@ -101,12 +100,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             this.passable = terrainData.getBoolean("passable");
         }
 
-        if (propData.has("rotation")) {
-            float r = propData.getInteger("rotation");
-
-            this.setRotation(r + getRotation());
-        }
-
         if (propData.has("decal")) {
             GameData decalData = propData.getData("decal");
 
@@ -117,12 +110,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             }
 
             Decal decal = f.getInstance();
-            if (decalData.has("rotation")) {
-                float r = decalData.getInteger("rotation");
-
-                decal.setRotation(r);
-            }
-
             setDecal(decal);
         }
     }

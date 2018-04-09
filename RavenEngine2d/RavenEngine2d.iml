@@ -53,6 +53,5 @@
         <jarDirectory url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-opengl" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="RavenEngine" />
   </component>
 </module>

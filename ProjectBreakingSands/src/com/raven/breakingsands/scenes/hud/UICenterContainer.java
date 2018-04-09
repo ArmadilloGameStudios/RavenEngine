@@ -1,14 +1,14 @@
 package com.raven.breakingsands.scenes.hud;
 
-import com.raven.engine.scene.Scene;
-import com.raven.engine.worldobject.HUDContainer;
+import com.raven.engine2d.scene.Scene;
+import com.raven.engine2d.ui.UIContainer;
 
-public abstract class HUDCenterContainer<S extends Scene>
-        extends HUDContainer<S> {
+public abstract class UICenterContainer<S extends Scene>
+        extends UIContainer<S> {
 
     private float x, y;
 
-    public HUDCenterContainer(S scene) {
+    public UICenterContainer(S scene) {
         super(scene);
     }
 

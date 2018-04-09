@@ -17,11 +17,12 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 public class ScreenQuad {
     private static ScreenQuad blank;
 
-    private final static int vertex_size = 3;
+    private final static int vertex_size = 3, texture_size = 2;
 
     private static List<Float> vertex_list = new LinkedList<>();
+    private static List<Float> texture_list = new LinkedList<>();
 
-    private static int vbo_vertex_handle;
+    private static int vbo_vertex_handle, vbo_texture_handle;
 
     public static void compileBuffer() {
         int size = vertex_list.size() / vertex_size;
@@ -32,21 +33,34 @@ public class ScreenQuad {
         vertex_list.forEach(vertex_list_buffer::put);
         vertex_list_buffer.flip();
 
+        FloatBuffer texture_list_buffer =
+                BufferUtils.createFloatBuffer(size * texture_size);
+        texture_list.forEach(texture_list_buffer::put);
+        texture_list_buffer.flip();
+
         // create vbo
         vbo_vertex_handle = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_vertex_handle);
         glBufferData(GL_ARRAY_BUFFER, vertex_list_buffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0L);
+        glVertexAttribPointer(0, vertex_size, GL_FLOAT, false, 0, 0L);
+
+        vbo_texture_handle = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_texture_handle);
+        glBufferData(GL_ARRAY_BUFFER, texture_list_buffer, GL_STATIC_DRAW);
+        glVertexAttribPointer(1, texture_size, GL_FLOAT, false, 0, 0L);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     public static void clearBuffers() {
         glDeleteBuffers(vbo_vertex_handle);
+        glDeleteBuffers(vbo_texture_handle);
 
         vbo_vertex_handle = 0;
+        vbo_texture_handle = 0;
 
         vertex_list.clear();
+        texture_list.clear();
     }
 
     public static void loadQuad() {
@@ -57,9 +71,15 @@ public class ScreenQuad {
 
         vertex_list.addAll(Arrays.asList(
                 -1.0f, -1.0f, 0.0f,
-                1.0f, -1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-                -1.0f, 1.0f, 0.0f));
+                 1.0f, -1.0f, 0.0f,
+                 1.0f,  1.0f, 0.0f,
+                -1.0f,  1.0f, 0.0f));
+
+        texture_list.addAll(Arrays.asList(
+                0.0f, 1f,
+                1.0f, 1f,
+                1.0f, 0f,
+                0.0f, 0f));
 
         int vertex_count = vertex_list.size();
         blank.vertices = vertex_list.size() - vertex_start;

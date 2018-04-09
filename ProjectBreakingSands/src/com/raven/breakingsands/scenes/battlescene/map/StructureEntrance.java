@@ -1,8 +1,6 @@
 package com.raven.breakingsands.scenes.battlescene.map;
 
-import com.raven.breakingsands.scenes.mainmenuscene.ContinueButton;
-import com.raven.engine.database.GameData;
-import com.raven.engine.database.GameDataList;
+import com.raven.engine2d.database.GameData;
 
 public class StructureEntrance {
 

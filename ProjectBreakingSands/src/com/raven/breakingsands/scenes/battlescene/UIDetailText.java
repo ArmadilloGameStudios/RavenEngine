@@ -1,17 +1,17 @@
 package com.raven.breakingsands.scenes.battlescene;
 
-import com.raven.engine.util.math.Vector4f;
-import com.raven.engine.worldobject.HUDContainer;
-import com.raven.engine.worldobject.HUDText;
+import com.raven.engine2d.util.math.Vector4f;
+import com.raven.engine2d.ui.UIContainer;
+import com.raven.engine2d.ui.UIText;
 
-public class HUDDetailText
-        extends HUDText<BattleScene, HUDContainer<BattleScene>> {
+public class UIDetailText
+        extends UIText<BattleScene, UIContainer<BattleScene>> {
 
     private float x, y;
 
     private Vector4f color = new Vector4f();
 
-    public HUDDetailText(BattleScene scene) {
+    public UIDetailText(BattleScene scene) {
         super(scene);
     }
 

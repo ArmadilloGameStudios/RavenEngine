@@ -14,7 +14,6 @@ import com.raven.engine2d.graphics2d.sprite.SpriteAnimation;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.input.Keyboard;
 import com.raven.engine2d.input.Mouse;
-import com.raven.engine2d.scene.Camera;
 import com.raven.engine2d.worldobject.GameObject;
 
 public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
@@ -39,7 +38,7 @@ public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
 
     private G game;
     private Thread thread;
-    private com.raven.engine2d.graphics2d.GameWindow window;
+    private GameWindow window;
     private List<GameObject> oldMouseList = new ArrayList<>();
     private GameDatabase gdb;
     private Map<String, SpriteSheet> spriteSheetsMap = new HashMap<>();
@@ -168,7 +167,7 @@ public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
     private void input(float delta) {
         glfwPollEvents();
 
-        int id = window.getTerrainShader().getWorldObjectID();
+        int id = window.getMainShader().getWorldObjectID();
 
         if (id != 0) {
             GameObject hover = GameObject.getGameObjectFromID(id);
@@ -266,14 +265,11 @@ public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
     }
 
     public void inputMouseMove(double xpos, double ypos) {
-        Camera camera = this.getGame().getCurrentScene().getCamera();
 
-        if (mouse.isMiddleButtonDown() && camera.isInteractable()) {
-            camera.rotate(xpos - mouse.getX(), ypos - mouse.getY());
+        if (mouse.isMiddleButtonDown()) {
         }
 
-        if (mouse.isRightButtonDown() && camera.isInteractable()) {
-            camera.move(xpos - mouse.getX(), ypos - mouse.getY());
+        if (mouse.isRightButtonDown()) {
         }
 
         mouse.setPos(xpos, ypos);
@@ -284,9 +280,6 @@ public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
     }
 
     public void inputScroll(double xoffset, double yoffset) {
-        Camera camera = this.getGame().getCurrentScene().getCamera();
 
-        if (camera.isInteractable())
-            camera.zoom(yoffset);
     }
 }

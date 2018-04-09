@@ -1,14 +1,17 @@
 package com.raven.breakingsands.scenes.hud;
 
-import com.raven.engine.scene.Scene;
-import com.raven.engine.worldobject.HUDContainer;
+import com.raven.engine2d.scene.Scene;
+import com.raven.engine2d.util.math.Vector4f;
+import com.raven.engine2d.ui.UIContainer;
 
-public abstract class HUDLeftContainer<S extends Scene>
-        extends HUDContainer<S> {
+public class UIBottomContainer<S extends Scene>
+        extends UIContainer<S> {
 
     private float x, y;
 
-    public HUDLeftContainer(S scene) {
+    private Vector4f color = new Vector4f(.25f,.25f,.25f,.5f);
+
+    public UIBottomContainer(S scene) {
         super(scene);
     }
 
@@ -19,7 +22,7 @@ public abstract class HUDLeftContainer<S extends Scene>
 
     @Override
     public float getXOffset() {
-        return getWidth() / 2f + x;
+        return x;
     }
 
     @Override
@@ -29,7 +32,7 @@ public abstract class HUDLeftContainer<S extends Scene>
 
     @Override
     public float getYOffset() {
-        return y;
+        return getHeight() + y;
     }
 
     @Override
@@ -39,7 +42,12 @@ public abstract class HUDLeftContainer<S extends Scene>
 
     @Override
     public int getStyle() {
-        return 2;
+        return 1;
+    }
+
+    @Override
+    public Vector4f getColor() {
+        return color;
     }
 
     @Override

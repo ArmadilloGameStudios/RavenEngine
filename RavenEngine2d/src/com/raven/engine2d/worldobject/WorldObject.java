@@ -1,10 +1,14 @@
 package com.raven.engine2d.worldobject;
 
+import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.graphics2d.DrawStyle;
+import com.raven.engine2d.graphics2d.GameWindow;
+import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimation;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
-import com.raven.engine2d.util.math.Vector2i;
+import com.raven.engine2d.util.math.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +24,14 @@ public abstract class WorldObject<
 
     private float scale = 1f, rotation = 0f;
 
-    private Vector2i position = new Vector2i();
+    private Vector2f position = new Vector2f();
 
     private com.raven.engine2d.worldobject.Highlight highlight = new com.raven.engine2d.worldobject.Highlight();
 
     private List<C> children = new ArrayList<>();
 
     private SpriteSheet spriteSheet;
-    private SpriteAnimation spriteAnimation;
+    private SpriteAnimation spriteAnimation = new SpriteAnimation();
 
     private long timeOffset = 0;
 
@@ -35,53 +39,56 @@ public abstract class WorldObject<
     boolean parentIsWorldObject;
 
     public WorldObject(S scene, GameData data) {
-        // model
         this.scene = scene;
 
         if (data.has("sprite")) {
-            spriteSheet = com.raven.engine2d.GameEngine.getEngine().getSpriteSheet(data.getString("sprite"));
+            spriteSheet = GameEngine.getEngine().getSpriteSheet(data.getString("sprite"));
 
             if (data.has("animation")) {
-                spriteAnimation = com.raven.engine2d.GameEngine.getEngine().getAnimation(data.getString("animation"));
+                spriteAnimation = GameEngine.getEngine().getAnimation(data.getString("animation"));
             }
         }
     }
 
+    public WorldObject(S scene) {
+        this.scene = scene;
+    }
 
-    public int getX() {
+
+    public float getX() {
         return position.x;
     }
 
-    public void setX(int x) {
+    public void setX(float x) {
         position.x = x;
     }
 
-    public void moveX(int x) {
+    public void moveX(float x) {
         setX(getX() + x);
     }
 
-    public int getY() {
+    public float getY() {
         return position.y;
     }
 
-    public void setY(int y) {
+    public void setY(float y) {
         position.y = y;
     }
 
-    public void moveY(int y) {
+    public void moveY(float y) {
         setY(getY() + y);
     }
 
-    public void move(Vector2i amount) {
+    public void move(Vector2f amount) {
         setPosition(getPosition().add(amount, getPosition()));
     }
 
-    public Vector2i getPosition() {
+    public Vector2f getPosition() {
         return position;
     }
 
-    private Vector2i worldPos = new Vector2i();
-    public Vector2i getWorldPosition() {
+    private Vector2f worldPos = new Vector2f();
+    public Vector2f getWorldPosition() {
         if (this.parentIsWorldObject) {
             return position.add(((WorldObject)getParent()).getWorldPosition(), worldPos);
         }
@@ -93,7 +100,7 @@ public abstract class WorldObject<
         this.position.y = y;
     }
 
-    public void setPosition(Vector2i position) {
+    public void setPosition(Vector2f position) {
         this.position.x = position.x;
         this.position.y = position.y;
     }
@@ -110,15 +117,15 @@ public abstract class WorldObject<
         }
     }
 
-    public com.raven.engine2d.worldobject.Highlight getHighlight() {
+    public Highlight getHighlight() {
         return highlight;
     }
 
-    public void draw() {
-        spriteSheet.draw(position, spriteAnimation);
+    public void draw(MainShader shader) {
+        shader.draw(spriteSheet, spriteAnimation, position, DrawStyle.ISOMETRIC);
 
         for (C child : children) {
-            child.draw();
+            child.draw(shader);
         }
     }
 
