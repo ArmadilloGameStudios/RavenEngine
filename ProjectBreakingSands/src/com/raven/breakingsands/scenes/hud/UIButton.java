@@ -1,13 +1,11 @@
 package com.raven.breakingsands.scenes.hud;
 
+import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.ui.UIContainer;
 import com.raven.engine2d.ui.UIText;
 import com.raven.engine2d.util.math.Vector4f;
 import com.raven.engine2d.worldobject.MouseHandler;
-import com.raven.engine2d.worldobject.TextObject;
-
-import java.awt.*;
 
 public abstract class UIButton<S extends Scene, C extends UIContainer<S>>
         extends UIText<S, C>
@@ -15,25 +13,8 @@ public abstract class UIButton<S extends Scene, C extends UIContainer<S>>
 
     private float x, y;
 
-    private TextObject defaultText, hoverText;
-
-    private String text;
-
-    public UIButton(S scene, String text) {
-        super(scene);
-
-        this.text = text;
-
-        defaultText = new TextObject((int)getWidth(), (int)getHeight());
-        defaultText.setFont(new Font( "SansSerif", Font.PLAIN, 20));
-        defaultText.setText(text);
-
-        this.setTexture(defaultText);
-
-        hoverText = new TextObject((int)getWidth(), (int)getHeight());
-        hoverText.setFont(new Font( "SansSerif", Font.PLAIN, 20));
-        hoverText.setBackgroundColor(new Vector4f(.1f, .6f, .9f, 1f));
-        hoverText.setText(text);
+    public UIButton(S scene, GameData data) {
+        super(scene, data);
 
         this.addMouseHandler(this);
     }
@@ -41,26 +22,6 @@ public abstract class UIButton<S extends Scene, C extends UIContainer<S>>
     @Override
     public void release() {
         super.release();
-
-        defaultText.release();
-        hoverText.release();
-    }
-
-    public void updateTexture() {
-        defaultText.updateTexture();
-        hoverText.updateTexture();
-    }
-
-    @Override
-    public void setText(String text) {
-        defaultText.setText(text);
-        hoverText.setText(text);
-    }
-
-    @Override
-    public void setFont(Font font) {
-        defaultText.setFont(font);
-        hoverText.setFont(font);
     }
 
     @Override
@@ -100,12 +61,12 @@ public abstract class UIButton<S extends Scene, C extends UIContainer<S>>
 
     @Override
     public void handleMouseEnter() {
-        this.setTexture(hoverText);
+        this.setAnimationAction("hover");
     }
 
     @Override
     public void handleMouseLeave() {
-        this.setTexture(defaultText);
+        this.setAnimationAction("idle");
     }
 
     @Override

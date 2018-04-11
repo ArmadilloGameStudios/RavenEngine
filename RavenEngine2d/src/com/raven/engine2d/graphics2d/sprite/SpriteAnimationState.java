@@ -38,4 +38,10 @@ public class SpriteAnimationState {
     public int getHeight() {
         return activeFrame.getHeight();
     }
+
+    public void setAction(String action) {
+        this.activeAction = animation.getAction(action);
+        this.activeFrame = activeAction.getFrames().get(0);
+        this.time = 0;
+    }
 }

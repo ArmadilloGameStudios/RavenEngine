@@ -60,6 +60,9 @@ public class MainShader extends Shader {
             case ISOMETRIC:
                 drawIsometric(sheet, spriteAnimation, position, offset);
                 break;
+            case UI:
+                drawUI(sheet, spriteAnimation, position, offset);
+                break;
         }
     }
 
@@ -80,6 +83,10 @@ public class MainShader extends Shader {
                 (float) spriteAnimation.getHeight() / (float) sheet.height);
 
         window.drawQuad();
+    }
+
+    private void drawUI(SpriteSheet sheet, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset) {
+
     }
 
 

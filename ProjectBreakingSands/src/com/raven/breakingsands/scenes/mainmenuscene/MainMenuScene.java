@@ -17,8 +17,6 @@ import java.util.List;
 
 public class MainMenuScene extends Scene<BreakingSandsGame> {
 
-    private float zoom = -4f;
-
     private DisplayPawn pawn;
 
     public MainMenuScene(BreakingSandsGame game) {
@@ -57,19 +55,19 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
 
         Path charPath = Paths.get(getGame().getMainDirectory(), "save");
 
-        if (charPath.toFile().list().length > 0) {
-            ContinueButton continueBtn = new ContinueButton(this);
-            container.addChild(continueBtn);
-            continueBtn.updateTexture();
-        }
+//        if (charPath.toFile().list().length > 0) {
+//            ContinueButton continueBtn = new ContinueButton(this);
+//            container.addChild(continueBtn);
+//            continueBtn.updateTexture();
+//        }
 
         NewGameButton newGameBtn = new NewGameButton(this);
         container.addChild(newGameBtn);
-        newGameBtn.updateTexture();
+//        newGameBtn.updateTexture();
 
-        ExitButton exitBtn = new ExitButton(this);
-        container.addChild(exitBtn);
-        exitBtn.updateTexture();
+//        ExitButton exitBtn = new ExitButton(this);
+//        container.addChild(exitBtn);
+//        exitBtn.updateTexture();
 
         container.pack();
     }

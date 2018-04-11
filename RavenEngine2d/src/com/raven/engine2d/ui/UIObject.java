@@ -1,15 +1,23 @@
 package com.raven.engine2d.ui;
 
+import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.graphics2d.GameWindow;
+import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.shader.Shader;
+import com.raven.engine2d.graphics2d.sprite.SpriteAnimationAction;
+import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
+import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector4f;
+import com.raven.engine2d.worldobject.GameObject;
+import com.raven.engine2d.worldobject.Parentable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class UIObject<S extends Scene, P extends com.raven.engine2d.worldobject.Parentable<UIObject>>
-        extends com.raven.engine2d.worldobject.GameObject<UIObject, P, UIObject> {
+public abstract class UIObject<S extends Scene, P extends Parentable<UIObject>>
+        extends GameObject<UIObject, P, UIObject> {
 
     private List<UIObject> children = new ArrayList<>();
 
@@ -32,7 +40,7 @@ public abstract class UIObject<S extends Scene, P extends com.raven.engine2d.wor
     }
 
     @Override
-    public void update(float delta) {
+    public void update(float deltaTime) {
 
     }
 
@@ -50,6 +58,7 @@ public abstract class UIObject<S extends Scene, P extends com.raven.engine2d.wor
     }
 
     private List<UIObject> parentList = new ArrayList();
+
     @Override
     public List<UIObject> getParentGameObjectList() {
         parentList.clear();
@@ -66,13 +75,10 @@ public abstract class UIObject<S extends Scene, P extends com.raven.engine2d.wor
         return scene;
     }
 
-    public void draw(GameWindow window, Shader shader) {
-//        shader.setProperties(this);
-        window.drawQuad();
-
+    public void draw(MainShader shader) {
         for (UIObject o : this.getChildren()) {
             if (o.getVisibility())
-                o.draw(window, shader);
+                o.draw(shader);
         }
     }
 

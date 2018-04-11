@@ -1,5 +1,6 @@
 package com.raven.breakingsands.scenes.battlescene;
 
+import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.util.math.Vector4f;
 import com.raven.engine2d.ui.UIContainer;
 import com.raven.engine2d.ui.UIText;
@@ -12,7 +13,7 @@ public class UIDetailText
     private Vector4f color = new Vector4f();
 
     public UIDetailText(BattleScene scene) {
-        super(scene);
+        super(scene, new GameData("text"));
     }
 
     @Override

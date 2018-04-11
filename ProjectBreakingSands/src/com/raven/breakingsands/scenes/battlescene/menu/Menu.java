@@ -21,8 +21,6 @@ public class Menu extends UICenterContainer<BattleScene> {
             }
         };
         addChild(resumeButton);
-        resumeButton.updateTexture();
-
         MenuButton mainMenuButton = new MenuButton(getScene(), "Main Menu") {
             @Override
             public void handleMouseClick() {
@@ -30,7 +28,6 @@ public class Menu extends UICenterContainer<BattleScene> {
             }
         };
         addChild(mainMenuButton);
-        mainMenuButton.updateTexture();
 
         MenuButton exitButton = new MenuButton(getScene(), "Exit") {
             @Override
@@ -39,7 +36,6 @@ public class Menu extends UICenterContainer<BattleScene> {
                 getScene().getGame().exit();
             }
         };
-        exitButton.updateTexture();
         addChild(exitButton);
 
         pack();

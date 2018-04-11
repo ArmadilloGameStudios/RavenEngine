@@ -109,7 +109,7 @@ public abstract class WorldObject<
         return scene;
     }
 
-    public void setHighlight(com.raven.engine2d.worldobject.Highlight h) {
+    public void setHighlight(Highlight h) {
         highlight = h;
 
         for (C child : children) {

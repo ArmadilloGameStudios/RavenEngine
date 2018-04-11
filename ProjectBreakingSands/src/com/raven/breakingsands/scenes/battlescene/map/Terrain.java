@@ -12,7 +12,6 @@ import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.util.pathfinding.PathAdjacentNode;
 import com.raven.engine2d.util.pathfinding.PathNode;
 import com.raven.engine2d.worldobject.MouseHandler;
-import com.raven.engine2d.worldobject.TextObject;
 import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
@@ -56,8 +55,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     private Decal decal;
     private Pawn pawn;
 
-    private TextObject details;
-
     public Terrain(BattleScene scene, Structure structure, GameData terrainData, GameData propData) {
         super(scene, terrainData);
 
@@ -91,8 +88,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         this.addMouseHandler(this);
 
         this.setState(State.UNSELECTABLE);
-
-        details = new TextObject(250, 250);
 
         updateText();
 
@@ -159,7 +154,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                     break;
             }
 
-            getScene().setDetailText(details);
+            // TODO
+//            getScene().setDetailText(details);
         }
     }
 
@@ -288,10 +284,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         selectHighlight();
     }
 
-    public TextObject getDetailText() {
-        return details;
-    }
-
     private void selectHighlight() {
         switch (getScene().getState()) {
             case MOVING:
@@ -365,8 +357,9 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             text += "\n" + pawn.getArmor().getName() + ", " + pawn.getArmor().getResistance();
         }
 
-        details.setText(text);
-        details.updateTexture();
+        // TODO
+//        details.setText(text);
+//        details.updateTexture();
     }
 
     public boolean isPassable() {

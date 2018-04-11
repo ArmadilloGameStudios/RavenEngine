@@ -1,6 +1,7 @@
 package com.raven.engine2d.ui;
 
 import com.raven.engine2d.graphics2d.GameWindow;
+import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.scene.Scene;
 import org.lwjgl.BufferUtils;
@@ -78,17 +79,8 @@ public abstract class UIImage
     }
 
     @Override
-    public void draw(GameWindow window, Shader shader) {
-//        shader.setProperties(this);
-
-        glActiveTexture(GL_TEXTURE0 + Shader.TEXTURE);
-        glBindTexture(GL_TEXTURE_2D, texture);
-
-        window.drawQuad();
-
-        for (UIObject o : this.getChildren()) {
-            o.draw(window, shader);
-        }
+    public void draw(MainShader shader) {
+        // TODO add sprite, animation, and drawing
     }
 
     @Override

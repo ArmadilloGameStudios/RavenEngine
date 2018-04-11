@@ -1,5 +1,6 @@
 package com.raven.engine2d.ui;
 
+import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector4f;
 
@@ -11,17 +12,12 @@ public class UILabel<S extends Scene, P extends UIContainer<S>>
     private int width, height;
     private float x, y;
 
-    private com.raven.engine2d.worldobject.TextObject textObject;
 
-    public UILabel(S scene, String text, int width, int height) {
-        super(scene);
+    public UILabel(S scene, GameData data, int width, int height) {
+        super(scene, data);
 
         this.width = width;
         this.height = height;
-
-        textObject = new com.raven.engine2d.worldobject.TextObject(width, height);
-        textObject.setText(text);
-        this.setTexture(textObject);
     }
 
     @Override
@@ -62,15 +58,6 @@ public class UILabel<S extends Scene, P extends UIContainer<S>>
     @Override
     public Vector4f getColor() {
         return null;
-    }
-
-    @Override
-    public void setText(String text) {
-        getTexture().setText(text);
-    }
-
-    public void setFont(Font font) {
-        getTexture().setFont(font);
     }
 
     @Override

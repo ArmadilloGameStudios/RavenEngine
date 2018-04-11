@@ -1,6 +1,7 @@
 package com.raven.breakingsands.scenes.mainmenuscene;
 
 import com.raven.breakingsands.scenes.hud.UIButton;
+import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.ui.UIContainer;
 
 public class ContinueButton
@@ -8,7 +9,7 @@ public class ContinueButton
 
 
     public ContinueButton(MainMenuScene scene) {
-        super(scene, "Continue");
+        super(scene, new GameData("Continue"));
     }
 
     @Override

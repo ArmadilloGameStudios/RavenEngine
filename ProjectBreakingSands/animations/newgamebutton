@@ -1,0 +1,12 @@
+{
+    name: "idle",
+    width: 100,
+    height: 32,
+    frames: [{ time: 1000, x: 0 }]
+},
+{
+    name: "hover",
+    width: 100,
+    height: 32,
+    frames: [{ time: 1000, x: 100 }]
+}

@@ -1,0 +1,5 @@
+{
+    name: "new game",
+    sprite: "sprites/newgamebutton.png",
+    animation: "newgamebutton"
+}

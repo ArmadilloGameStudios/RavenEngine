@@ -7,7 +7,6 @@ import com.raven.breakingsands.scenes.battlescene.decal.Decal;
 import com.raven.breakingsands.scenes.battlescene.map.Map;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
-import com.raven.breakingsands.scenes.battlescene.victory.VictoryDisplay;
 import com.raven.breakingsands.scenes.hud.UIBottomContainer;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
@@ -22,7 +21,6 @@ import com.raven.engine2d.util.pathfinding.Path;
 import com.raven.engine2d.util.pathfinding.PathAdjacentNode;
 import com.raven.engine2d.util.pathfinding.PathFinder;
 import com.raven.engine2d.worldobject.Highlight;
-import com.raven.engine2d.worldobject.TextObject;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
@@ -44,7 +42,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             GREEN_CHANGING = new Highlight(.3f, 1f, .2f, .5f);
 
     private Menu menu;
-    private VictoryDisplay victoryDisplay;
     private UIDetailText hudDetailText;
 
     public enum State {
@@ -93,14 +90,13 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     @Override
     public void inputKey(int key, int action, int mods) {
         if (GLFW.GLFW_KEY_ESCAPE == key && GLFW.GLFW_PRESS == action) {
-            if (!victoryDisplay.getVisibility())
-                if (isPaused()) {
-                    menu.setVisibility(false);
-                    setPaused(false);
-                } else {
-                    menu.setVisibility(true);
-                    setPaused(true);
-                }
+            if (isPaused()) {
+                menu.setVisibility(false);
+                setPaused(false);
+            } else {
+                menu.setVisibility(true);
+                setPaused(true);
+            }
         }
     }
 
@@ -125,19 +121,14 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         bottomContainer.addChild(hudDetailText);
         bottomContainer.pack();
 
-        setDetailText(activePawn.getParent().getDetailText());
+        // TODO
+//        setDetailText(activePawn.getParent().getDetailText());
 
         // Menu
         menu = new Menu(this);
 //        menu.pack();
         getLayerUI().addChild(menu);
         menu.setVisibility(false);
-
-        // Victory
-        victoryDisplay = new VictoryDisplay(this);
-        victoryDisplay.pack();
-        getLayerUI().addChild(victoryDisplay);
-        victoryDisplay.setVisibility(false);
 
 //        victory();
     }
@@ -317,7 +308,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     private boolean doSpawn() {
-        int a = 10 - (int)pawns.stream().filter(p -> p.getTeam() != 0).count();
+        int a = 10 - (int) pawns.stream().filter(p -> p.getTeam() != 0).count();
         int b = random.nextInt(10);
 
         return a > b;
@@ -540,7 +531,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             }
         }
 
-        victoryDisplay.setVisibility(true);
         setPaused(true);
     }
 
@@ -548,7 +538,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         return canLevelUp;
     }
 
-    public void setDetailText(TextObject textObject) {
-        hudDetailText.setTexture(textObject);
+    public void setDetailText() {
+        // TODO
     }
 }
