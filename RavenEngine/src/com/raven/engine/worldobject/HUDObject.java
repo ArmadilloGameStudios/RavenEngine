@@ -2,7 +2,7 @@ package com.raven.engine.worldobject;
 
 import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.graphics3d.shader.HUDMSShader;
-import com.raven.engine.graphics3d.shader.HUDShader;
+import com.raven.engine.graphics3d.shader.UIShader;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.util.math.Vector4f;
 
@@ -67,7 +67,7 @@ public abstract class HUDObject<S extends Scene, P extends Parentable<HUDObject>
         return scene;
     }
 
-    public void draw(GameWindow window, HUDShader shader) {
+    public void draw(GameWindow window, UIShader shader) {
         shader.setProperties(this);
         window.drawQuad();
 

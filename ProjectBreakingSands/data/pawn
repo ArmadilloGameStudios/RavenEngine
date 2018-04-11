@@ -1,6 +1,7 @@
 {
     name: "Player",
-    sprite: "sprites/tile_a.png",
+    sprite: "sprites/character.png",
+    animation: "character"
     team: 0,
     hp: 10,
     movement: 80,
@@ -8,7 +9,7 @@
 },
 {
     name: "Service Drone",
-    sprite: "sprites/tile_a.png",
+    sprite: "sprites/character.png",
     team: 1,
     hp: 5,
     movement: 3,
@@ -16,7 +17,7 @@
 },
 {
     name: "Guard Drone",
-    sprite: "sprites/tile_a.png",
+    sprite: "sprites/character.png",
     team: 1,
     hp: 15,
     resistance: 1,

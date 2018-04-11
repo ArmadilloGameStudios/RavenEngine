@@ -1,6 +1,6 @@
 package com.raven.engine.worldobject;
 
-import com.raven.engine.graphics3d.shader.HUDShader;
+import com.raven.engine.graphics3d.shader.UIShader;
 import com.raven.engine.util.math.Vector4f;
 import com.sun.prism.impl.BufferUtil;
 
@@ -32,7 +32,7 @@ public class TextObject {
         img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
         // Default Texture
-        glActiveTexture(GL_TEXTURE0 + HUDShader.TEXTURE);
+        glActiveTexture(GL_TEXTURE0 + UIShader.TEXTURE);
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -92,7 +92,7 @@ public class TextObject {
         pixels.flip();
 
         // Set Texture
-        glActiveTexture(GL_TEXTURE0 + HUDShader.TEXTURE);
+        glActiveTexture(GL_TEXTURE0 + UIShader.TEXTURE);
         glBindTexture(GL_TEXTURE_2D, texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
@@ -114,7 +114,7 @@ public class TextObject {
 	}
 
 	public void draw() {
-	    glActiveTexture(GL_TEXTURE0 + HUDShader.TEXTURE);
+	    glActiveTexture(GL_TEXTURE0 + UIShader.TEXTURE);
         glBindTexture(GL_TEXTURE_2D, texture);
     }
 

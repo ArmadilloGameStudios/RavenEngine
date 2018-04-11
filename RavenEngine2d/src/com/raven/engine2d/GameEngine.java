@@ -6,6 +6,7 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import java.io.File;
 import java.util.*;
 
+import com.raven.engine2d.database.GameDataTable;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.ScreenQuad;
@@ -223,7 +224,7 @@ public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
 
         // load database
         gdb = new GameDatabase();
-        gdb.load();
+        gdb.load("data");
     }
 
     private void loadSprites(File base) {
@@ -243,20 +244,16 @@ public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
     }
 
     private void loadAnimations(File base) {
-        for (File f : base.listFiles()) {
-            if (f.isFile()) {
-                System.out.println("SpriteAnimation: " + f.getPath());
+        GameDatabase d = new GameDatabase();
+        d.load("animations");
 
-                animationMap.put(f.getPath(), AnimationImporter.Import(f));
-
-            } else if (f.isDirectory()) {
-                loadAnimations(f);
-            }
+        for (GameDataTable table : d.getTables()) {
+            animationMap.put(table.getName(), new SpriteAnimation(table));
         }
     }
 
     public SpriteAnimation getAnimation(String name) {
-        return animationMap.get(game.getMainDirectory() + File.separator + name);
+        return animationMap.get(name);
     }
 
     // input

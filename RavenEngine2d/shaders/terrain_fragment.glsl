@@ -9,4 +9,6 @@ in vec2 coords;
 void main() {
     vec4 sprite = texture(spriteSheet, coords);
     frag_color = sprite.rgba;
+
+    gl_FragDepth = 1.0 - 1.0 * sprite.a;
 }

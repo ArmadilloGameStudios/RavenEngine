@@ -1,5 +1,8 @@
 package com.raven.engine2d.database;
 
+import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.GameProperties;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -20,11 +23,11 @@ public class GameDatabase {
 		return tables.get(name);
 	}
 
-	public boolean load() {
+	public boolean load(String name) {
 		try {
-			System.out.println("Loading to database.");
+			System.out.println("Loading to " + name);
 
-			File dataDirectory = new File(com.raven.engine2d.GameProperties.getMainDirectory() + File.separator + "data");
+			File dataDirectory = new File(GameProperties.getMainDirectory() + File.separator + name);
 
 			// Find Tables
 			for (File f : dataDirectory.listFiles()) {
@@ -36,7 +39,8 @@ public class GameDatabase {
 					populateTable(t, f);
 				}
 			}
-			System.out.println("Database loaded successfully...");
+
+			System.out.println(name + " loaded successfully");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -47,7 +51,7 @@ public class GameDatabase {
 	//<editor-fold> private methods
 	private void populateTable(GameDataTable table, File file) {
 		try {
-			for (com.raven.engine2d.database.GameData data : GameDataReader.readFile(Paths.get(file.getPath()))) {
+			for (GameData data : GameDataReader.readFile(Paths.get(file.getPath()))) {
 				table.add(data);
 			}
 		} catch (IOException e) {
@@ -57,8 +61,8 @@ public class GameDatabase {
 	//</editor-fold>
 
 	//<editor-fold> static methods
-	public static com.raven.engine2d.database.GameDataList queryAll(String table, String prop, String value) {
-		return com.raven.engine2d.GameEngine.getEngine().getGameDatabase().getTable(table).queryAll(new GameDataQuery() {
+	public static GameDataList queryAll(String table, String prop, String value) {
+		return GameEngine.getEngine().getGameDatabase().getTable(table).queryAll(new GameDataQuery() {
 			@Override
 			public boolean matches(com.raven.engine2d.database.GameData row) {
 				return row.getData(prop).asString().equals(value);
@@ -66,8 +70,8 @@ public class GameDatabase {
 		});
 	}
 
-	public static com.raven.engine2d.database.GameData queryFirst(String table, String prop, String value) {
-		return com.raven.engine2d.GameEngine.getEngine().getGameDatabase().getTable(table).queryFirst(new GameDataQuery() {
+	public static GameData queryFirst(String table, String prop, String value) {
+		return GameEngine.getEngine().getGameDatabase().getTable(table).queryFirst(new GameDataQuery() {
 			@Override
 			public boolean matches(com.raven.engine2d.database.GameData row) {
 				return row.getData(prop).asString().equals(value);
@@ -75,8 +79,8 @@ public class GameDatabase {
 		});
 	}
 
-	public static com.raven.engine2d.database.GameData queryRandom(String table, String prop, String value) {
-		return com.raven.engine2d.GameEngine.getEngine().getGameDatabase().getTable(table).queryRandom(new GameDataQuery() {
+	public static GameData queryRandom(String table, String prop, String value) {
+		return GameEngine.getEngine().getGameDatabase().getTable(table).queryRandom(new GameDataQuery() {
 			@Override
 			public boolean matches(com.raven.engine2d.database.GameData row) {
 				return row.getData(prop).asString().equals(value);

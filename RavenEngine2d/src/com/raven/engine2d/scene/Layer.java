@@ -9,7 +9,7 @@ import com.raven.engine2d.graphics2d.GameWindow;
 public class Layer<C extends com.raven.engine2d.worldobject.Childable>
         implements com.raven.engine2d.worldobject.Parentable<C> {
 
-    public enum Destination {Terrain, Water, UI, Details}
+    public enum Destination { Terrain, UI, Details}
 
     private Scene scene;
     private Destination destination;

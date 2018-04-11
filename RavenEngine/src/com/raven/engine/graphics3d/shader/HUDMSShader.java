@@ -42,7 +42,7 @@ public class HUDMSShader extends Shader {
         glUseProgram(getProgramHandel());
         glDrawBuffers(new int[] { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 });
 
-        glUniform1i(text_location, HUDShader.TEXTURE);
+        glUniform1i(text_location, UIShader.TEXTURE);
 
         glDisable(GL_DEPTH_TEST);
 

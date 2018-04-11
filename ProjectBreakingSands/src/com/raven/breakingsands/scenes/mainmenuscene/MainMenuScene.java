@@ -2,9 +2,11 @@ package com.raven.breakingsands.scenes.mainmenuscene;
 
 import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.scenes.hud.UIBottomContainer;
+import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Camera;
 import com.raven.engine2d.scene.Scene;
+import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
@@ -37,29 +39,17 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
     public void onEnterScene() {
         // Pawn
         pawn = new DisplayPawn(this);
-        pawn.setY(3);
-        getLayerDetails().addChild(pawn);
-
-        pawn = new DisplayPawn(this);
-        pawn.setY(1);
-        getLayerDetails().addChild(pawn);
-
-        pawn = new DisplayPawn(this);
-        pawn.setY(2);
-        getLayerDetails().addChild(pawn);
-
-        pawn = new DisplayPawn(this);
-        pawn.setY(2);
-        pawn.setX(1);
-        getLayerDetails().addChild(pawn);
-
-        pawn = new DisplayPawn(this);
-        pawn.setY(2);
-        pawn.setX(2);
         getLayerDetails().addChild(pawn);
 
         // Background
         setBackgroundColor(new Vector3f(0f,0f,0f));
+
+        // World Offset
+
+        Vector2f wo = getWorldOffset();
+
+        wo.x = GameProperties.getScreenWidth() / 2f;
+        wo.y = GameProperties.getScreenHeight() / 2f;
 
         // UI
         UIBottomContainer container = new UIBottomContainer(this);

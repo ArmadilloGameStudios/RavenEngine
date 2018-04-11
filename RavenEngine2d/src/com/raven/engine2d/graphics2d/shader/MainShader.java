@@ -4,6 +4,7 @@ import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimation;
+import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
@@ -46,8 +47,6 @@ public class MainShader extends Shader {
 
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
-
-        glDisable(GL_DEPTH_TEST);
     }
 
     @Override
@@ -55,28 +54,30 @@ public class MainShader extends Shader {
         glDisable(GL_BLEND);
     }
 
-    public void draw(SpriteSheet sheet, SpriteAnimation spriteAnimation, Vector2f position, DrawStyle style) {
+    public void draw(SpriteSheet sheet, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset, DrawStyle style) {
 
         switch (style) {
             case ISOMETRIC:
-                drawIsometric(sheet, spriteAnimation, position, new Vector2f(10f, 10f));
+                drawIsometric(sheet, spriteAnimation, position, offset);
                 break;
         }
     }
 
     private float isoHeight = 16, isoWidth = 31;
 
-    private void drawIsometric(SpriteSheet sheet, SpriteAnimation spriteAnimation, Vector2f position, Vector2f offset) {
+    private void drawIsometric(SpriteSheet sheet, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset) {
         glUniform1i(sprite_sheet_location, sheet.getTextureActiveLocation());
 
         float x = position.y * isoWidth - position.x * isoWidth + offset.x;
         float y = position.y * isoHeight + position.x * isoHeight + offset.y;
 
-        glViewport((int) (x * 3f / 2f), (int) (y * 3f / 2f), sheet.width * 3, sheet.height * 3);
+        glViewport((int) x, (int) y, spriteAnimation.getWidth() * 2, spriteAnimation.getHeight() * 2);
 
         glUniform4f(rect_location,
-                spriteAnimation.x, spriteAnimation.y,
-                1, 1);
+                (float) spriteAnimation.getX() / (float) sheet.width,
+                (float) spriteAnimation.getY() / (float) sheet.height,
+                (float) spriteAnimation.getWidth() / (float) sheet.width,
+                (float) spriteAnimation.getHeight() / (float) sheet.height);
 
         window.drawQuad();
     }

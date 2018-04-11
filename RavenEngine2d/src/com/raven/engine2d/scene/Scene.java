@@ -2,21 +2,24 @@ package com.raven.engine2d.scene;
 
 import java.util.List;
 
+import com.raven.engine2d.Game;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.ScreenQuad;
 import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
+import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.ui.UIContainer;
+import com.raven.engine2d.worldobject.GameObject;
 import com.raven.engine2d.worldobject.WorldObject;
 
-public abstract class Scene<G extends com.raven.engine2d.Game> {
-    private com.raven.engine2d.scene.Layer<WorldObject> layerTerrain = new com.raven.engine2d.scene.Layer<>(com.raven.engine2d.scene.Layer.Destination.Terrain);
-    private com.raven.engine2d.scene.Layer<WorldObject> layerWater = new com.raven.engine2d.scene.Layer<>(com.raven.engine2d.scene.Layer.Destination.Water);
-    private com.raven.engine2d.scene.Layer<WorldObject> layerDetails = new com.raven.engine2d.scene.Layer<>(com.raven.engine2d.scene.Layer.Destination.Details);
-    private com.raven.engine2d.scene.Layer<UIContainer> layerUI = new com.raven.engine2d.scene.Layer<>(com.raven.engine2d.scene.Layer.Destination.UI);
+public abstract class Scene<G extends Game> {
+    private Layer<WorldObject> layerTerrain = new Layer<>(Layer.Destination.Terrain);
+    private Layer<WorldObject> layerDetails = new Layer<>(Layer.Destination.Details);
+    private Layer<UIContainer> layerUI = new Layer<>(Layer.Destination.UI);
 
     private Vector3f backgroundColor = new Vector3f();
+    private Vector2f worldOffset = new Vector2f();
 
     private boolean paused = false;
 
@@ -42,10 +45,6 @@ public abstract class Scene<G extends com.raven.engine2d.Game> {
         for (WorldObject o : layerDetails.getChildren()) {
             o.draw(mainShader);
         }
-
-        for (WorldObject o : layerWater.getChildren()) {
-            o.draw(mainShader);
-        }
     }
 
     final public void update(float deltaTime) {
@@ -54,7 +53,6 @@ public abstract class Scene<G extends com.raven.engine2d.Game> {
             onUpdate(deltaTime);
 
             layerTerrain.update(deltaTime);
-            layerWater.update(deltaTime);
             layerDetails.update(deltaTime);
         }
 
@@ -63,10 +61,6 @@ public abstract class Scene<G extends com.raven.engine2d.Game> {
 
     final public Layer<WorldObject> getLayerTerrain() {
         return layerTerrain;
-    }
-
-    final public Layer<WorldObject> getLayerWater() {
-        return layerWater;
     }
 
     final public Layer<WorldObject> getLayerDetails() {
@@ -79,8 +73,6 @@ public abstract class Scene<G extends com.raven.engine2d.Game> {
 
     public Layer getLayer(Layer.Destination destination) {
         switch (destination) {
-            case Water:
-                return getLayerWater();
             case Terrain:
                 return getLayerTerrain();
             case Details:
@@ -90,6 +82,10 @@ public abstract class Scene<G extends com.raven.engine2d.Game> {
     }
 
     abstract public List<SpriteSheet> getSpriteSheets();
+
+    public Vector2f getWorldOffset() {
+        return worldOffset;
+    }
 
     public final void enterScene() {
         for (SpriteSheet sheet : getSpriteSheets()) {
@@ -104,19 +100,15 @@ public abstract class Scene<G extends com.raven.engine2d.Game> {
     public final void exitScene() {
         onExitScene();
 
-        for (com.raven.engine2d.worldobject.GameObject obj : layerTerrain.getChildren()) {
+        for (GameObject obj : layerTerrain.getChildren()) {
             obj.release();
         }
 
-        for (com.raven.engine2d.worldobject.GameObject obj : layerWater.getChildren()) {
+        for (GameObject obj : layerDetails.getChildren()) {
             obj.release();
         }
 
-        for (com.raven.engine2d.worldobject.GameObject obj : layerDetails.getChildren()) {
-            obj.release();
-        }
-
-        for (com.raven.engine2d.worldobject.GameObject obj : layerUI.getChildren()) {
+        for (GameObject obj : layerUI.getChildren()) {
             obj.release();
         }
 
@@ -146,4 +138,5 @@ public abstract class Scene<G extends com.raven.engine2d.Game> {
     }
 
     public abstract void inputKey(int key, int action, int mods);
+
 }

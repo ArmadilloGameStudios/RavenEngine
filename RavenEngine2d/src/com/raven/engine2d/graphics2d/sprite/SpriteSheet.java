@@ -70,11 +70,9 @@ public class SpriteSheet {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, 0);
 
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public int getTextureActiveLocation() {

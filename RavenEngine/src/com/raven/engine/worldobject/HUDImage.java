@@ -1,17 +1,12 @@
 package com.raven.engine.worldobject;
 
 import com.raven.engine.graphics3d.GameWindow;
-import com.raven.engine.graphics3d.shader.HUDShader;
-import com.raven.engine.scene.Layer;
+import com.raven.engine.graphics3d.shader.UIShader;
 import com.raven.engine.scene.Scene;
-import com.sun.prism.impl.BufferUtil;
 import org.lwjgl.BufferUtils;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferInt;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -51,9 +46,8 @@ public abstract class HUDImage
 
         buffer.flip();
 
-
         // Set Texture
-        glActiveTexture(GL_TEXTURE0 + HUDShader.TEXTURE);
+        glActiveTexture(GL_TEXTURE0 + UIShader.TEXTURE);
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -83,10 +77,10 @@ public abstract class HUDImage
     }
 
     @Override
-    public void draw(GameWindow window, HUDShader shader) {
+    public void draw(GameWindow window, UIShader shader) {
         shader.setProperties(this);
 
-        glActiveTexture(GL_TEXTURE0 + HUDShader.TEXTURE);
+        glActiveTexture(GL_TEXTURE0 + UIShader.TEXTURE);
         glBindTexture(GL_TEXTURE_2D, texture);
 
         window.drawQuad();

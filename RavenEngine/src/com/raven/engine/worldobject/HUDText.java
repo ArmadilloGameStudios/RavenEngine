@@ -2,8 +2,7 @@ package com.raven.engine.worldobject;
 
 import com.raven.engine.graphics3d.GameWindow;
 import com.raven.engine.graphics3d.shader.HUDMSShader;
-import com.raven.engine.graphics3d.shader.HUDShader;
-import com.raven.engine.scene.Layer;
+import com.raven.engine.graphics3d.shader.UIShader;
 import com.raven.engine.scene.Scene;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -27,7 +26,7 @@ public abstract class HUDText<S extends Scene, P extends HUDContainer<S>>
     }
 
     @Override
-    public void draw(GameWindow window, HUDShader shader) {
+    public void draw(GameWindow window, UIShader shader) {
         shader.setProperties(this);
         if (text != null)
             text.draw();

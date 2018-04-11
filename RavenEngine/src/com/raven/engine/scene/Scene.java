@@ -162,7 +162,7 @@ public abstract class Scene<G extends Game> {
         }
 
         // HUD
-        HUDShader hudShader = window.getHUDShader();
+        UIShader hudShader = window.getHUDShader();
         hudShader.useProgram();
         for (HUDContainer o : layerHUD.getChildren()) {
             if (o.getVisibility())

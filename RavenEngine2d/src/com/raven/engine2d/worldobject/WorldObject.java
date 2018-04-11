@@ -3,9 +3,8 @@ package com.raven.engine2d.worldobject;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.graphics2d.DrawStyle;
-import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.shader.MainShader;
-import com.raven.engine2d.graphics2d.sprite.SpriteAnimation;
+import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
@@ -31,7 +30,7 @@ public abstract class WorldObject<
     private List<C> children = new ArrayList<>();
 
     private SpriteSheet spriteSheet;
-    private SpriteAnimation spriteAnimation = new SpriteAnimation();
+    private SpriteAnimationState spriteAnimationState;
 
     private long timeOffset = 0;
 
@@ -45,7 +44,8 @@ public abstract class WorldObject<
             spriteSheet = GameEngine.getEngine().getSpriteSheet(data.getString("sprite"));
 
             if (data.has("animation")) {
-                spriteAnimation = GameEngine.getEngine().getAnimation(data.getString("animation"));
+                String animationName = data.getString("animation");
+                spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation(animationName));
             }
         }
     }
@@ -122,7 +122,7 @@ public abstract class WorldObject<
     }
 
     public void draw(MainShader shader) {
-        shader.draw(spriteSheet, spriteAnimation, position, DrawStyle.ISOMETRIC);
+        shader.draw(spriteSheet, spriteAnimationState, position, getScene().getWorldOffset(), DrawStyle.ISOMETRIC);
 
         for (C child : children) {
             child.draw(shader);
@@ -171,8 +171,8 @@ public abstract class WorldObject<
     }
 
     final public void update(float deltaTime) {
-        if (spriteAnimation != null) {
-            spriteAnimation.update(deltaTime);
+        if (spriteAnimationState != null) {
+            spriteAnimationState.update(deltaTime);
         }
 
         this.onUpdate(deltaTime);
