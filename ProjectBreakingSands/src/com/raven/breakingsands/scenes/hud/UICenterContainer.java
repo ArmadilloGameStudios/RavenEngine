@@ -13,11 +13,6 @@ public abstract class UICenterContainer<S extends Scene>
     }
 
     @Override
-    public float getBorder() {
-        return 5f;
-    }
-
-    @Override
     public int getStyle() {
         return 0;
     }
@@ -40,10 +35,5 @@ public abstract class UICenterContainer<S extends Scene>
     @Override
     public void setXOffset(float x) {
         this.x = x;
-    }
-
-    @Override
-    public boolean doBlend() {
-        return true;
     }
 }

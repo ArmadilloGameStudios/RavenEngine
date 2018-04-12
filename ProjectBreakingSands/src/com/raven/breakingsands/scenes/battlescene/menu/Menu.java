@@ -7,8 +7,6 @@ import com.raven.engine2d.util.math.Vector4f;
 
 public class Menu extends UICenterContainer<BattleScene> {
 
-    private Vector4f color = new Vector4f(.25f, .25f, .25f, .5f);
-
     public Menu(BattleScene scene) {
         super(scene);
 
@@ -39,10 +37,5 @@ public class Menu extends UICenterContainer<BattleScene> {
         addChild(exitButton);
 
         pack();
-    }
-
-    @Override
-    public Vector4f getColor() {
-        return color;
     }
 }

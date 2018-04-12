@@ -1,15 +1,8 @@
 package com.raven.engine2d.ui;
 
-import com.raven.engine2d.GameEngine;
-import com.raven.engine2d.database.GameData;
-import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.shader.MainShader;
-import com.raven.engine2d.graphics2d.shader.Shader;
-import com.raven.engine2d.graphics2d.sprite.SpriteAnimationAction;
-import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
-import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
-import com.raven.engine2d.util.math.Vector4f;
+import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.GameObject;
 import com.raven.engine2d.worldobject.Parentable;
 
@@ -23,7 +16,7 @@ public abstract class UIObject<S extends Scene, P extends Parentable<UIObject>>
 
     private S scene;
     private P parent;
-    private boolean parentIsHUDObject = false;
+    private boolean parentIsUIObject = false;
 
     public UIObject(S scene) {
         this.scene = scene;
@@ -46,7 +39,7 @@ public abstract class UIObject<S extends Scene, P extends Parentable<UIObject>>
 
     @Override
     public void addChild(UIObject obj) {
-        obj.parentIsHUDObject = true;
+        obj.parentIsUIObject = true;
 
         obj.setParent(this);
         children.add(obj);
@@ -63,7 +56,7 @@ public abstract class UIObject<S extends Scene, P extends Parentable<UIObject>>
     public List<UIObject> getParentGameObjectList() {
         parentList.clear();
 
-        if (parentIsHUDObject) {
+        if (parentIsUIObject) {
             parentList.addAll(((UIObject) parent).getParentGameObjectList());
             parentList.add((UIObject) parent);
         }
@@ -95,8 +88,4 @@ public abstract class UIObject<S extends Scene, P extends Parentable<UIObject>>
     public abstract float getXOffset();
 
     public abstract void setXOffset(float x);
-
-    public abstract Vector4f getColor();
-
-    public abstract boolean doBlend();
 }

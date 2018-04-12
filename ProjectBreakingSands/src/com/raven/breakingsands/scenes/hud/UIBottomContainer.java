@@ -9,15 +9,8 @@ public class UIBottomContainer<S extends Scene>
 
     private float x, y;
 
-    private Vector4f color = new Vector4f(.25f,.25f,.25f,.5f);
-
     public UIBottomContainer(S scene) {
         super(scene);
-    }
-
-    @Override
-    public float getBorder() {
-        return 5f;
     }
 
     @Override
@@ -42,16 +35,6 @@ public class UIBottomContainer<S extends Scene>
 
     @Override
     public int getStyle() {
-        return 1;
-    }
-
-    @Override
-    public Vector4f getColor() {
-        return color;
-    }
-
-    @Override
-    public boolean doBlend() {
-        return true;
+        return UIContainer.BOTTOM;
     }
 }

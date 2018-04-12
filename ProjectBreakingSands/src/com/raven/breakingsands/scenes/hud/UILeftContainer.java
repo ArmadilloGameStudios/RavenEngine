@@ -13,11 +13,6 @@ public abstract class UILeftContainer<S extends Scene>
     }
 
     @Override
-    public float getBorder() {
-        return 5f;
-    }
-
-    @Override
     public float getXOffset() {
         return getWidth() / 2f + x;
     }
@@ -40,10 +35,5 @@ public abstract class UILeftContainer<S extends Scene>
     @Override
     public int getStyle() {
         return 2;
-    }
-
-    @Override
-    public boolean doBlend() {
-        return true;
     }
 }

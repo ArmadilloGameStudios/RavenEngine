@@ -19,7 +19,6 @@ public class Layer<C extends com.raven.engine2d.worldobject.Childable>
 
     public Layer(Destination destination) {
         this.destination = destination;
-        this.scene = scene;
 
         this.window = GameEngine.getEngine().getWindow();
     }

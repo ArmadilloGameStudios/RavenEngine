@@ -6,10 +6,25 @@ import com.raven.breakingsands.scenes.hud.UIButton;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataQuery;
+import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.ui.UIContainer;
+
+import java.util.Collection;
+import java.util.List;
 
 public class NewGameButton
         extends UIButton<MainMenuScene, UIContainer<MainMenuScene>> {
+
+    public static SpriteSheet getSpriteSheet() {
+         return GameEngine.getEngine().getSpriteSheet(GameEngine.getEngine().getGameDatabase().getTable("buttons").queryFirst(
+                new GameDataQuery() {
+                    @Override
+                    public boolean matches(GameData row) {
+                        return row.getString("name").equals("new game");
+                    }
+                }
+        ).getString("sprite"));
+    }
 
     public NewGameButton(MainMenuScene scene) {
         super(scene, GameEngine.getEngine().getGameDatabase().getTable("buttons").queryFirst(
@@ -24,12 +39,12 @@ public class NewGameButton
 
     @Override
     public float getHeight() {
-        return 75f;
+        return getSpriteAnimationState().getHeight();
     }
 
     @Override
     public float getWidth() {
-        return 200f;
+        return getSpriteAnimationState().getWidth();
     }
 
     @Override

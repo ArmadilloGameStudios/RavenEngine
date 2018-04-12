@@ -32,4 +32,9 @@ public class Vector2f {
 
         return out;
     }
+
+    @Override
+    public String toString() {
+        return "" + x + " " + y;
+    }
 }

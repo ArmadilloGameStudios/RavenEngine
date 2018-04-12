@@ -50,16 +50,6 @@ public abstract class UIButton<S extends Scene, C extends UIContainer<S>>
     }
 
     @Override
-    public Vector4f getColor() {
-        return null;
-    }
-
-    @Override
-    public boolean doBlend() {
-        return false;
-    }
-
-    @Override
     public void handleMouseEnter() {
         this.setAnimationAction("hover");
     }

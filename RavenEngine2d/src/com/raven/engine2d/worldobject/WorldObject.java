@@ -14,9 +14,9 @@ import java.util.List;
 
 public abstract class WorldObject<
         S extends Scene,
-        P extends com.raven.engine2d.worldobject.Parentable<WorldObject>,
+        P extends Parentable<WorldObject>,
         C extends WorldObject>
-        extends com.raven.engine2d.worldobject.GameObject<WorldObject, P, C> {
+        extends GameObject<WorldObject, P, C> {
 
     private List<WorldObject> parentList = new ArrayList<>();
     private S scene;
@@ -25,7 +25,7 @@ public abstract class WorldObject<
 
     private Vector2f position = new Vector2f();
 
-    private com.raven.engine2d.worldobject.Highlight highlight = new com.raven.engine2d.worldobject.Highlight();
+    private Highlight highlight = new Highlight();
 
     private List<C> children = new ArrayList<>();
 
@@ -122,7 +122,7 @@ public abstract class WorldObject<
     }
 
     public void draw(MainShader shader) {
-        shader.draw(spriteSheet, spriteAnimationState, position, getScene().getWorldOffset(), DrawStyle.ISOMETRIC);
+        shader.draw(spriteSheet, spriteAnimationState, position, getScene().getWorldOffset(), getID(), DrawStyle.ISOMETRIC);
 
         for (C child : children) {
             child.draw(shader);

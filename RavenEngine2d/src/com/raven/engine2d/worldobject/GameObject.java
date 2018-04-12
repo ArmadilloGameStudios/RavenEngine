@@ -30,7 +30,7 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
         gameObjectIDMap.put(id, this);
     }
 
-    public int getID() {
+    public final int getID() {
         return id;
     }
 

@@ -10,8 +10,6 @@ public class UIDetailText
 
     private float x, y;
 
-    private Vector4f color = new Vector4f();
-
     public UIDetailText(BattleScene scene) {
         super(scene, new GameData("text"));
     }
@@ -49,15 +47,5 @@ public class UIDetailText
     @Override
     public void setXOffset(float x) {
         this.x = x;
-    }
-
-    @Override
-    public Vector4f getColor() {
-        return color;
-    }
-
-    @Override
-    public boolean doBlend() {
-        return false;
     }
 }

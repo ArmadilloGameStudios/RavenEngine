@@ -17,9 +17,10 @@ import java.awt.*;
 public abstract class UIText<S extends Scene, P extends UIContainer<S>>
         extends UIObject<S, P> {
 
-    private Vector2f position = new Vector2f();
     private SpriteSheet spriteSheet;
     private SpriteAnimationState spriteAnimationState;
+
+    private Vector2f position = new Vector2f();
 
     public UIText(S scene, GameData data) {
         super(scene);
@@ -34,10 +35,8 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
         }
     }
 
-
     public void draw(MainShader shader) {
-        shader.draw(spriteSheet, spriteAnimationState, position, getScene().getWorldOffset(), DrawStyle.UI);
-
+        shader.draw(spriteSheet, spriteAnimationState, position, getScene().getWorldOffset(), getID(), DrawStyle.UI);
 
         for (UIObject o : this.getChildren()) {
             if (o.getVisibility())
@@ -47,6 +46,10 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
 
     public void setAnimationAction(String action) {
         this.spriteAnimationState.setAction(action);
+    }
+
+    public SpriteAnimationState getSpriteAnimationState() {
+        return spriteAnimationState;
     }
 
     @Override
@@ -60,7 +63,6 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
         for (UIObject o : this.getChildren()) {
             o.update(deltaTime);
         }
-
     }
 
     @Override

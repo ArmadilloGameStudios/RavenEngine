@@ -54,14 +54,4 @@ public class UILabel<S extends Scene, P extends UIContainer<S>>
     public void setXOffset(float x) {
         this.x = x;
     }
-
-    @Override
-    public Vector4f getColor() {
-        return null;
-    }
-
-    @Override
-    public boolean doBlend() {
-        return false;
-    }
 }

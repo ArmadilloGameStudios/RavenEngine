@@ -7,6 +7,7 @@ import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.ScreenQuad;
 import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
+import com.raven.engine2d.ui.UIObject;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.ui.UIContainer;
@@ -31,10 +32,12 @@ public abstract class Scene<G extends Game> {
 
     final public void draw(GameWindow window) {
         // shader
+
         MainShader mainShader = window.getMainShader();
         mainShader.useProgram();
 
         mainShader.clear(backgroundColor);
+
 
         // draw
         for (WorldObject o : layerTerrain.getChildren()) {
@@ -42,9 +45,17 @@ public abstract class Scene<G extends Game> {
             window.printErrors("Draw Error: ");
         }
 
+
         for (WorldObject o : layerDetails.getChildren()) {
             o.draw(mainShader);
         }
+
+        // ui
+        for (UIObject o : layerUI.getChildren()) {
+            o.draw(mainShader);
+        }
+
+        mainShader.blitToScreen();
     }
 
     final public void update(float deltaTime) {

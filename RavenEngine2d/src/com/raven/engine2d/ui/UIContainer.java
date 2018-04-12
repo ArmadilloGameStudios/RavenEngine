@@ -26,8 +26,6 @@ public abstract class UIContainer<S extends Scene>
         super(scene);
     }
 
-    public abstract float getBorder();
-
     @Override
     public void addChild(UIObject child) {
         super.addChild(child);
@@ -36,14 +34,14 @@ public abstract class UIContainer<S extends Scene>
     public void pack() {
         switch (getStyle()) {
             case BOTTOM: // bottom
-                width = getBorder();
+                width = 0;
                 height = 0f;
 
                 List<UIObject> children = this.getChildren();
 
                 for (UIObject obj : children) {
-                    height = Math.max(obj.getHeight() + getBorder() * 2f, height);
-                    width += getBorder() + obj.getWidth();
+                    height = Math.max(obj.getHeight(), height);
+                    width += obj.getWidth();
                 }
 
                 // Get Offset
@@ -52,7 +50,7 @@ public abstract class UIContainer<S extends Scene>
                 for (int i = 0; i < children.size(); i++) {
                     UIObject obj = children.get(i);
 
-                    obj.setXOffset(getBorder() * 2f + getBorder() * i * 2f - width + obj.getWidth() + offset);
+                    obj.setXOffset(-width + obj.getWidth() + offset);
 
                     offset += obj.getWidth() * 2f;
                 }
@@ -60,13 +58,13 @@ public abstract class UIContainer<S extends Scene>
             case CENTER: // center
             default:
                 width = 0f;
-                height = getBorder();
+                height = 0;
 
                 children = this.getChildren();
 
                 for (UIObject obj : children) {
-                    width = Math.max(obj.getWidth() + getBorder() * 2f, width);
-                    height += getBorder() + obj.getHeight();
+                    width = Math.max(obj.getWidth(), width);
+                    height += obj.getHeight();
                 }
 
                 // Get Offset
@@ -75,7 +73,7 @@ public abstract class UIContainer<S extends Scene>
                 for (int i = 0; i < children.size(); i++) {
                     UIObject obj = children.get(i);
 
-                    offset += obj.getHeight() * .5f + getBorder();
+                    offset += obj.getHeight() * .5f;
 
                     obj.setYOffset(height * .5f - offset);
 
