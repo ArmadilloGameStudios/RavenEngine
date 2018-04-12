@@ -34,7 +34,7 @@ public class GameData implements GameDatable {
 
 	// Get
 	public boolean has(String prop) {
-	    return  vals.containsKey(prop);
+	    return vals.containsKey(prop);
     }
 
 	public Map<String, GameData> getValues() {

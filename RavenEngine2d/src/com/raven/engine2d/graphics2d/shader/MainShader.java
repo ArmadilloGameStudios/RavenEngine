@@ -182,20 +182,37 @@ public class MainShader extends Shader {
     private float isoHeight = 16, isoWidth = 31;
 
     private void drawIsometric(SpriteSheet sheet, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset) {
-        glUniform1i(sprite_sheet_location, sheet.getTextureActiveLocation());
+        if (spriteAnimation != null) {
+            glUniform1i(sprite_sheet_location, sheet.getTextureActiveLocation());
 
-        float x = position.y * isoWidth - position.x * isoWidth + offset.x;
-        float y = position.y * isoHeight + position.x * isoHeight + offset.y;
+            float x = position.y * isoWidth - position.x * isoWidth + offset.x;
+            float y = position.y * isoHeight + position.x * isoHeight + offset.y;
 
-        glViewport((int) x, (int) y, spriteAnimation.getWidth() * 2, spriteAnimation.getHeight() * 2);
+            glViewport((int) x, (int) y, spriteAnimation.getWidth() * 2, spriteAnimation.getHeight() * 2);
 
-        glUniform4f(rect_location,
-                (float) spriteAnimation.getX() / (float) sheet.width,
-                (float) spriteAnimation.getY() / (float) sheet.height,
-                (float) spriteAnimation.getWidth() / (float) sheet.width,
-                (float) spriteAnimation.getHeight() / (float) sheet.height);
+            glUniform4f(rect_location,
+                    (float) spriteAnimation.getX() / (float) sheet.width,
+                    (float) spriteAnimation.getY() / (float) sheet.height,
+                    (float) spriteAnimation.getWidth() / (float) sheet.width,
+                    (float) spriteAnimation.getHeight() / (float) sheet.height);
 
-        window.drawQuad();
+            window.drawQuad();
+        } else {
+            glUniform1i(sprite_sheet_location, sheet.getTextureActiveLocation());
+
+            float x = position.y * isoWidth - position.x * isoWidth + offset.x;
+            float y = position.y * isoHeight + position.x * isoHeight + offset.y;
+
+            glViewport((int) x, (int) y, sheet.width * 2, sheet.height * 2);
+
+            glUniform4f(rect_location,
+                    0,
+                    0,
+                    1,
+                    1);
+
+            window.drawQuad();
+        }
     }
 
     private void drawUI(SpriteSheet sheet, SpriteAnimationState spriteAnimation, Vector2f position) {
@@ -249,7 +266,6 @@ public class MainShader extends Shader {
 
                 glUniform3f(id_location, r / 255.0f, g / 255.0f, b / 255.0f);
             }
-
     }
 
     public void blitToScreen() {

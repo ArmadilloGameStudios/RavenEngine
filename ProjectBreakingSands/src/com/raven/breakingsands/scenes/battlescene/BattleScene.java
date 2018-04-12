@@ -10,7 +10,9 @@ import com.raven.breakingsands.scenes.battlescene.menu.Menu;
 import com.raven.breakingsands.scenes.hud.UIBottomContainer;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
+import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Camera;
 import com.raven.engine2d.scene.Scene;
@@ -112,23 +114,27 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         addPawns();
 
+        Vector2f wo = this.getWorldOffset();
+        wo.x = GameProperties.getScreenWidth() / 2f;
+        wo.y = GameProperties.getScreenHeight() / 2f;
+
+        // TODOq
         // Bottom UI
-        UIBottomContainer<BattleScene> bottomContainer = new UIBottomContainer<>(this);
-        getLayerUI().addChild(bottomContainer);
+//        UIBottomContainer<BattleScene> bottomContainer = new UIBottomContainer<>(this);
+//        getLayerUI().addChild(bottomContainer);
+//
+//        hudDetailText = new UIDetailText(this);
+//
+//        bottomContainer.addChild(hudDetailText);
+//        bottomContainer.pack();
 
-        hudDetailText = new UIDetailText(this);
-
-        bottomContainer.addChild(hudDetailText);
-        bottomContainer.pack();
-
-        // TODO
 //        setDetailText(activePawn.getParent().getDetailText());
 
         // Menu
-        menu = new Menu(this);
+//        menu = new Menu(this);
 //        menu.pack();
-        getLayerUI().addChild(menu);
-        menu.setVisibility(false);
+//        getLayerUI().addChild(menu);
+//        menu.setVisibility(false);
 
 //        victory();
     }
@@ -164,6 +170,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         List<Terrain> terrainList = map.getTerrainList();
         List<Terrain> validTerrainList = terrainList.stream().filter(t -> t.getPawn() == null && t.isPassable()).collect(Collectors.toList());
+
+        System.out.println(terrainList);
+        System.out.println(validTerrainList);
 
         int r = random.nextInt(validTerrainList.size());
 

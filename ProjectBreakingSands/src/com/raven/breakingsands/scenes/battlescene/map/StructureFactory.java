@@ -65,16 +65,11 @@ public class StructureFactory extends Factory<Structure> {
                     GameData gdEntrance = gdStructure.getList("valid entrances").getRandom();
                     gdStructure.getList("valid entrances").remove(gdEntrance);
 
-                    int r = (connectedStructure.getMapRotation());
-
                     int x = 0;
                     int y = 0;
 
                     int entranceSide = gdEntrance.getInteger("side");
 
-                    switch ((r + connectedEntrance.getSide()) % 4) {
-                        default:
-                        case 0:
                             x = connectedEntrance.getLocation();
 
                             if (entranceSide % 2 == 0) {
@@ -88,56 +83,15 @@ public class StructureFactory extends Factory<Structure> {
                                         gdEntrance.getInteger("location") -
                                         gdEntrance.getInteger("length");
                             }
-                            break;
-                        case 1:
-                            x = connectedStructure.getWidth();
-                            y = connectedEntrance.getLocation();
-
-                            if (entranceSide % 2 == 0) {
-                                y -= gdStructure.getInteger("width") -
-                                        gdEntrance.getInteger("location") -
-                                        gdEntrance.getInteger("length");
-                            } else {
-                                y -= gdStructure.getInteger("height") -
-                                        gdEntrance.getInteger("location") -
-                                        gdEntrance.getInteger("length");
-                            }
-                            break;
-                        case 2:
-                            y = connectedStructure.getHeight();
-                            x = connectedStructure.getWidth() - connectedEntrance.getLocation() - connectedEntrance.getLength();
-
-                            if (entranceSide % 2 == 0) {
-                                x -= gdEntrance.getInteger("location");
-                            } else {
-                                x -= gdEntrance.getInteger("location");
-                            }
-                            break;
-                        case 3:
-                            y = connectedStructure.getHeight() - connectedEntrance.getLocation() - connectedEntrance.getLength();
-
-                            if (entranceSide % 2 == 0) {
-                                x = -gdStructure.getInteger("height");
-                                y -= gdEntrance.getInteger("location");
-                            } else {
-                                x = -gdStructure.getInteger("width");
-                                y -= gdEntrance.getInteger("location");
-                            }
-                            break;
-                    }
 
                     x += connectedStructure.getMapX();
                     y += connectedStructure.getMapY();
-
-                    r = (6 + connectedStructure.getMapRotation() +
-                            connectedEntrance.getSide() -
-                            gdEntrance.getInteger("side")) % 4;
 
                     Structure s = new Structure(
                             map.getScene(),
                             gdStructure,
                             gdEntrance,
-                            r, x, y);
+                            x, y);
 
                     // Check collision
                     List<Structure> structures = map.getStructures();

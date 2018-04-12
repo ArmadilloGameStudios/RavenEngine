@@ -16,8 +16,6 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
     private int width = 3, height = 3;
     private int x, y;
 
-    private int mapRotation = 0;
-
     private String name;
 
     private StructureEntrance[] entrances;
@@ -28,23 +26,17 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
         this(scene,
                 GameEngine.getEngine().getGameDatabase().getTable("structure").getRandom(),
                 null,
-                0, x, y);
+                x, y);
     }
 
-    public Structure(BattleScene scene, GameData gameData, GameData connected, int rotation, int x, int y) {
+    public Structure(BattleScene scene, GameData gameData, GameData connected, int x, int y) {
         super(scene);
 
         this.x = x;
         this.y = y;
 
-        if (rotation % 2 == 0) {
-            width = gameData.getInteger("width");
-            height = gameData.getInteger("height");
-        } else {
-            height = gameData.getInteger("width");
-            width = gameData.getInteger("height");
-        }
-        mapRotation = rotation;
+        width = gameData.getInteger("width");
+        height = gameData.getInteger("height");
 
         name = gameData.getString("name");
 
@@ -75,8 +67,8 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
 //                            e.getSide() == connected.getInteger("side"))
 //                    .forEach(e -> e.setConnected(true));
 
-        this.setX(x * 2);
-        this.setY(y * 2);
+        this.setX(x);
+        this.setY(y);
     }
 
     public StructureEntrance[] getEntrances() {
@@ -105,10 +97,6 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
 
     public int getHeight() {
         return height;
-    }
-
-    public int getMapRotation() {
-        return mapRotation;
     }
 
     public boolean overlaps(Structure other) {
@@ -140,45 +128,16 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
                                                 a.getString("name").equals(other.name) &&
                                                         a.getString("entrance").equals(o.getName())))) {
 
-                    int sum = ((mapRotation + e.getSide()) % 4) -
-                            ((other.mapRotation + o.getSide()) % 4);
-
-                    if (Math.abs(sum) == 2) {
-                        boolean connected = false;
-                        switch ((mapRotation + e.getSide()) % 4) {
-                            case 0:
-                                if (y == other.y + other.height) {
-                                    connected = x + e.getLocation() + e.getLength() ==
-                                            other.x + other.width - o.getLocation();
-                                }
-                                break;
-                            case 1:
-                                if (x + width == other.x) {
-                                    connected = y + e.getLocation() + e.getLength() ==
-                                            other.y + other.height - o.getLocation();
-                                }
-                                break;
-                            case 2:
-                                if (y + height == other.y) {
-                                    connected = x + width - e.getLocation() ==
-                                            other.x + o.getLocation() + o.getLength();
-                                }
-                                break;
-                            case 3:
-                                if (x == other.x + other.width) {
-                                    connected = y + height - e.getLocation() ==
-                                            other.y + o.getLocation() + o.getLength();
-                                }
-                                break;
-                        }
-
-                        if (connected) {
-                            e.setConnected(o);
-                            o.setConnected(e);
-                        }
+                    boolean connected = false;
+                    if (y + height == other.y) {
+                        connected = x + width - e.getLocation() ==
+                                other.x + o.getLocation() + o.getLength();
+                    }
+                    if (connected) {
+                        e.setConnected(o);
+                        o.setConnected(e);
                     }
                 }
-
             }
         }));
     }

@@ -1,23 +1,23 @@
 {
     name: "sand",
-    model: "models/sand.ply"
+    sprite: "sprites/tile_a.png",
 },
 {
     name: "floor",
-    model: "models/floor.ply"
+    sprite: "sprites/tile_a.png",
 },
 {
     name: "wall",
-    model: "models/wall.ply"
+    sprite: "sprites/tile_a.png",
     passable: false
 },
 {
     name: "corner",
-    model: "models/wall_corner.ply"
+    sprite: "sprites/tile_a.png",
     passable: false
 },
 {
     name: "pillar",
-    model: "models/pillar.ply",
+    sprite: "sprites/tile_a.png",
     passable: false
 }

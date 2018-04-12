@@ -88,9 +88,10 @@ public abstract class WorldObject<
     }
 
     private Vector2f worldPos = new Vector2f();
+
     public Vector2f getWorldPosition() {
         if (this.parentIsWorldObject) {
-            return position.add(((WorldObject)getParent()).getWorldPosition(), worldPos);
+            return position.add(((WorldObject) getParent()).getWorldPosition(), worldPos);
         }
         return position;
     }
@@ -122,7 +123,8 @@ public abstract class WorldObject<
     }
 
     public void draw(MainShader shader) {
-        shader.draw(spriteSheet, spriteAnimationState, position, getScene().getWorldOffset(), getID(), DrawStyle.ISOMETRIC);
+        if (spriteSheet != null)
+            shader.draw(spriteSheet, spriteAnimationState, position, getScene().getWorldOffset(), getID(), DrawStyle.ISOMETRIC);
 
         for (C child : children) {
             child.draw(shader);

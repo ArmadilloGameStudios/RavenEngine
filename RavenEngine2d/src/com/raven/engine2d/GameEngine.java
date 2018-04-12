@@ -240,7 +240,13 @@ public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
     }
 
     public SpriteSheet getSpriteSheet(String spriteSrc) {
-        return spriteSheetsMap.get(game.getMainDirectory() + File.separator + spriteSrc);
+        SpriteSheet sheet = spriteSheetsMap.get(game.getMainDirectory() + File.separator + spriteSrc);
+
+        if (sheet == null) {
+            throw new NoSuchElementException();
+        }
+
+        return sheet;
     }
 
     private void loadAnimations(File base) {
@@ -253,7 +259,13 @@ public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
     }
 
     public SpriteAnimation getAnimation(String name) {
-        return animationMap.get(name);
+        SpriteAnimation animation = animationMap.get(name);
+
+        if (animation == null) {
+            throw new NoSuchElementException();
+        }
+
+        return animation;
     }
 
     // input

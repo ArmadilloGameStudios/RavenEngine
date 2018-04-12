@@ -21,6 +21,12 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
     public Map(BattleScene scene) {
         super(scene);
 
+        while (structures.size() == 0) {
+            startGeneration();
+        }
+    }
+
+    private void startGeneration() {
         StructureFactory structureFactory = new StructureFactory(this);
 
         Structure s = firstStructure = structureFactory.getInstance();
@@ -29,8 +35,9 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         addChild(s);
         System.out.println(s);
 
-        while (generate(structureFactory))
-            continue;
+
+        while (generate(structureFactory)) {
+        }
     }
 
     int i = 100;

@@ -1,6 +1,6 @@
 {
     description: "Obelisk",
-    model: "models/obelisk.ply",
+    sprite: "sprites/tile_a.png",
     type: [
         "obelisk",
         "blocker"
@@ -9,7 +9,7 @@
 },
 {
     description: "Wall, Tall",
-    model: "models/wall_corner.ply",
+    sprite: "sprites/tile_a.png",
     type: [
         "tall",
         "wall",
@@ -20,7 +20,7 @@
 },
 {
     description: "Wall, Tall",
-    model: "models/wall.ply",
+    sprite: "sprites/tile_a.png",
     type: [
         "tall",
         "wall",
@@ -31,7 +31,7 @@
 },
 {
     description: "Wall, Tall",
-    model: "models/ceiling_tall.ply",
+    sprite: "sprites/tile_a.png",
     type: [
         "tall",
         "ceiling",
@@ -41,7 +41,7 @@
 },
 {
     description: "Wall, Short",
-    model: "models/wall_short.ply",
+    sprite: "sprites/tile_a.png",
     type: [
         "short",
         "wall",
@@ -52,7 +52,7 @@
 },
 {
     description: "Wall, Tall",
-    model: "models/wall_tall_short.ply",
+    sprite: "sprites/tile_a.png",
     type: [
         "short",
         "tall"
