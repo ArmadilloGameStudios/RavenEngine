@@ -39,7 +39,7 @@ public class MainShader extends Shader {
     private int framebuffer_handle;
     private int color_texture, id_texture, depth_texture;
 
-    private int sprite_sheet_location, rect_location, id_location;
+    private int sprite_sheet_location, rect_location, id_location, z_location;
 
     private IntBuffer buffers;
 
@@ -52,6 +52,7 @@ public class MainShader extends Shader {
         glBindAttribLocation(getProgramHandel(), 1, "vertex_textures_coords");
 
         id_location = glGetUniformLocation(getProgramHandel(), "id");
+        z_location = glGetUniformLocation(getProgramHandel(), "z");
         sprite_sheet_location = glGetUniformLocation(getProgramHandel(), "spriteSheet");
         rect_location = glGetUniformLocation(getProgramHandel(), "rect");
 
@@ -69,15 +70,14 @@ public class MainShader extends Shader {
         framebuffer_handle = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handle);
 
-
         // Color
         color_texture = glGenTextures();
         glActiveTexture(GL_TEXTURE0 + COLOR);
         glBindTexture(GL_TEXTURE_2D, color_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight(),
+                GameProperties.getScreenWidth() / 2,
+                GameProperties.getScreenHeight() / 2,
                 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -91,8 +91,8 @@ public class MainShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, id_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight(),
+                GameProperties.getScreenWidth() / 2,
+                GameProperties.getScreenHeight() / 2,
                 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -106,8 +106,8 @@ public class MainShader extends Shader {
         glBindTexture(GL_TEXTURE_2D, depth_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight(),
+                GameProperties.getScreenWidth() / 2,
+                GameProperties.getScreenHeight() / 2,
                 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -133,9 +133,10 @@ public class MainShader extends Shader {
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handle);
 
         glViewport(0, 0,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight());
+                GameProperties.getScreenWidth() / 2,
+                GameProperties.getScreenHeight() / 2);
 
+        glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFuncSeparatei(0, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
@@ -166,8 +167,10 @@ public class MainShader extends Shader {
         glDisable(GL_BLEND);
     }
 
-    public void draw(SpriteSheet sheet, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset, int id, DrawStyle style) {
+    public void draw(SpriteSheet sheet, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset, int id, float z, DrawStyle style) {
         setWorldObjectID(id);
+
+        glUniform1f(z_location, z);
 
         switch (style) {
             case ISOMETRIC:
@@ -179,7 +182,7 @@ public class MainShader extends Shader {
         }
     }
 
-    private float isoHeight = 16, isoWidth = 31;
+    private float isoHeight = 16, isoWidth = 32;
 
     private void drawIsometric(SpriteSheet sheet, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset) {
         if (spriteAnimation != null) {
@@ -188,7 +191,7 @@ public class MainShader extends Shader {
             float x = position.y * isoWidth - position.x * isoWidth + offset.x;
             float y = position.y * isoHeight + position.x * isoHeight + offset.y;
 
-            glViewport((int) x, (int) y, spriteAnimation.getWidth() * 2, spriteAnimation.getHeight() * 2);
+            glViewport((int) x  / 2, (int) y  / 2, spriteAnimation.getWidth(), spriteAnimation.getHeight());
 
             glUniform4f(rect_location,
                     (float) spriteAnimation.getX() / (float) sheet.width,
@@ -203,7 +206,7 @@ public class MainShader extends Shader {
             float x = position.y * isoWidth - position.x * isoWidth + offset.x;
             float y = position.y * isoHeight + position.x * isoHeight + offset.y;
 
-            glViewport((int) x, (int) y, sheet.width * 2, sheet.height * 2);
+            glViewport((int) x / 2, (int) y / 2, sheet.width, sheet.height);
 
             glUniform4f(rect_location,
                     0,
@@ -223,7 +226,7 @@ public class MainShader extends Shader {
         float x = position.x;
         float y = position.y;
 
-        glViewport((int) x, (int) y, spriteAnimation.getWidth() * 2, spriteAnimation.getHeight() * 2);
+        glViewport((int) x / 2, (int) y / 2, spriteAnimation.getWidth(), spriteAnimation.getHeight());
 
         glUniform4f(rect_location,
                 (float) spriteAnimation.getX() / (float) sheet.width,
@@ -234,7 +237,6 @@ public class MainShader extends Shader {
         window.drawQuad();
     }
 
-
     private IntBuffer pixelReadBuffer = BufferUtils.createIntBuffer(1);
 
     public int getWorldObjectID() {
@@ -244,8 +246,8 @@ public class MainShader extends Shader {
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glReadBuffer(GL_COLOR_ATTACHMENT1);
         glReadPixels(
-                (int) mouse.getX(),
-                GameProperties.getScreenHeight() - (int) mouse.getY(),
+                (int) mouse.getX() / 2,
+                (GameProperties.getScreenHeight() - (int) mouse.getY()) / 2,
                 1, 1,
                 GL_RGB, GL_UNSIGNED_BYTE,
                 pixelReadBuffer);
@@ -277,8 +279,8 @@ public class MainShader extends Shader {
 
         glBlitFramebuffer(
                 0, 0,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight(),
+                GameProperties.getScreenWidth() / 2,
+                GameProperties.getScreenHeight() / 2,
                 0, 0,
                 GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight(),

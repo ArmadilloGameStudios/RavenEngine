@@ -45,7 +45,6 @@ public abstract class Scene<G extends Game> {
             window.printErrors("Draw Error: ");
         }
 
-
         for (WorldObject o : layerDetails.getChildren()) {
             o.draw(mainShader);
         }

@@ -1,5 +1,6 @@
 package com.raven.breakingsands.scenes.mainmenuscene;
 
+import com.raven.breakingsands.ZLayer;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
@@ -32,5 +33,10 @@ public class DisplayPawn extends WorldObject<Scene, Terrain, WorldObject> {
                 return row.getString("name").matches("Player");
             }
         }));
+    }
+
+    @Override
+    public float getZ() {
+        return ZLayer.PAWN.getValue();
     }
 }

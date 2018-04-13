@@ -1,5 +1,5 @@
 {
-    name: "cell",
+    name: "cell 1",
 
     tags: [ "prison", "cell" ],
 
@@ -9,6 +9,7 @@
     entrance: [{ side: 0, location: 1, length: 1, name: "a" }],
 
     terrain: [
+        { type: "floor", x: 1, y: 0 },
         { type: "floor", x: 1, y: 1 },
         { type: "floor", x: 2, y: 1 },
 
@@ -17,127 +18,39 @@
     ]
 },
 {
-    name: "corner 1",
+    name: "cell 2",
 
-    tags: [ "prison", "corner", "main" ],
+    tags: [ "prison", "cell" ],
 
-    width: 5,
-    height: 5,
+    width: 4,
+    height: 4,
 
-    entrance: [{ side: 0, location: 1, length: 4, name: "a" },
-               { side: 1, location: 0, length: 4, name: "b" },
-               { side: 3, location: 2, length: 1, name: "c" },
-               { side: 2, location: 2, length: 1, name: "d" }],
+    entrance: [{ side: 2, location: 1, length: 1, name: "a" }],
 
     terrain: [
-        { type: "floor", x: 1, y: 0 },
-        { type: "floor", x: 2, y: 0 },
-        { type: "floor", x: 3, y: 0 },
-        { type: "floor", x: 4, y: 0 },
-
-        { type: "floor", x: 1, y:1 },
-        { type: "floor", x: 2, y:1 },
-        { type: "floor", x: 3, y:1 },
-        { type: "floor", x: 4, y:1 },
-
-        { type: "floor", x: 0, y: 2},
-        { type: "floor", x: 1, y:2 },
-        { type: "floor", x: 2, y:2 },
-        { type: "floor", x: 3, y:2 },
-        { type: "floor", x: 4, y:2 },
-
-        { type: "floor", x: 1, y:3 },
-        { type: "floor", x: 2, y:3 },
-        { type: "floor", x: 3, y:3 },
-        { type: "floor", x: 4, y:3 },
-
-        { type: "floor", x: 2, y: 4 },
-    ]
-},
-{
-    name: "corner 2",
-
-    tags: [ "prison", "corner", "main" ],
-
-    width: 5,
-    height: 5,
-
-    entrance: [{ side: 0, location: 1, length: 4, name: "a" },
-               { side: 1, location: 0, length: 4, name: "b" },
-               { side: 3, location: 2, length: 1, name: "c" },
-               { side: 2, location: 2, length: 1, name: "d" }],
-
-    terrain: [
-        { type: "floor", x: 1, y: 0 },
-        { type: "floor", x: 2, y: 0 },
-        { type: "floor", x: 3, y: 0 },
-        { type: "floor", x: 4, y: 0 },
-
-        { type: "floor", x: 1, y:1 },
-        { type: "floor", x: 2, y:1 },
-        { type: "floor", x: 3, y:1 },
-        { type: "floor", x: 4, y:1 },
-
-        { type: "floor", x: 0, y: 2},
-        { type: "floor", x: 1, y:2 },
-        { type: "floor", x: 2, y:2 },
-        { type: "floor", x: 4, y:2 },
-
-        { type: "floor", x: 1, y:3 },
-        { type: "floor", x: 2, y:3 },
-        { type: "floor", x: 3, y:3 },
-        { type: "floor", x: 4, y:3 },
-
-        { type: "floor", x: 2, y: 4 },
-    ]
-},
-{
-    name: "hall 1",
-
-    tags: [ "prison", "hall" ],
-
-    width: 3,
-    height: 6,
-
-    entrance: [{ side: 0, location: 1, length: 1, name: "a" },
-               { side: 2, location: 1, length: 1, name: "b" }],
-
-    terrain: [
-        { type: "floor", x: 1, y: 0 },
-        { type: "floor", x: 1, y: 1 },
-        { type: "floor", x: 1, y: 2 },
         { type: "floor", x: 1, y: 3 },
-        { type: "floor", x: 1, y: 4 },
-        { type: "floor", x: 1, y: 5 }
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+
+        { type: "floor", x: 1, y: 2 },
+        { type: "floor", x: 2, y: 2 },
     ]
 },
 {
-    name: "hall 2",
+    name: "short hall",
 
     tags: [ "prison", "hall" ],
 
-    width: 3,
+    width: 1,
     height: 3,
 
-    entrance: [{ side: 0, location: 1, length: 1, name: "a" },
-               { side: 2, location: 1, length: 1, name: "b" }],
+    entrance: [{ side: 0, location: 0, length: 1, name: "a" },
+               { side: 2, location: 0, length: 1, name: "b" }],
 
     terrain: [
-        { type: "floor", x: 1, y: 0 },
-        { type: "floor", x: 1, y: 1 },
-        { type: "floor", x: 1, y: 2 }
+        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 0, y: 2 },
     ]
-},
-{
-    name: "small door",
 
-    tags: [ "prison", "closed" ],
-
-    width: 3,
-    height: 1,
-
-    entrance: [{ side: 0, location: 1, length: 1, name: "a" }],
-
-    terrain: [
-    ]
 }

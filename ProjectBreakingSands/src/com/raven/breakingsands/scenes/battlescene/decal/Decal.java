@@ -1,5 +1,6 @@
 package com.raven.breakingsands.scenes.battlescene.decal;
 
+import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.engine2d.GameEngine;
@@ -50,5 +51,10 @@ public class Decal extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public boolean isPassable() {
         return passable;
+    }
+
+    @Override
+    public float getZ() {
+        return ZLayer.DECAL.getValue();
     }
 }

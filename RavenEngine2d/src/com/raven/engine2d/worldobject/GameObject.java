@@ -34,6 +34,8 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
         return id;
     }
 
+    public abstract float getZ();
+
     public void addMouseHandler(MouseHandler c) {
         this.clickHandlers.add(c);
     }

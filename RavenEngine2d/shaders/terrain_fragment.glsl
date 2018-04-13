@@ -5,12 +5,13 @@ layout(location = 1) out vec3 frag_id;
 
 uniform sampler2D spriteSheet;
 uniform vec3 id;
+uniform float z;
 
 in vec2 coords;
 
 void main() {
     vec4 sprite = texture(spriteSheet, coords);
-    gl_FragDepth = 1.0 - 1.0 * sprite.a;
+    gl_FragDepth = mix(1, z, sprite.a - coords.y / 1000);
 
     frag_color = sprite.rgba;
     frag_id = id;

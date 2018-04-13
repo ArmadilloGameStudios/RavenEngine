@@ -164,4 +164,9 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
 
         return connections;
     }
+
+    @Override
+    public float getZ() {
+        return .5f;
+    }
 }

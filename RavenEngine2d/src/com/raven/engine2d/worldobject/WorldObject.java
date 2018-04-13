@@ -21,8 +21,6 @@ public abstract class WorldObject<
     private List<WorldObject> parentList = new ArrayList<>();
     private S scene;
 
-    private float scale = 1f, rotation = 0f;
-
     private Vector2f position = new Vector2f();
 
     private Highlight highlight = new Highlight();
@@ -31,8 +29,6 @@ public abstract class WorldObject<
 
     private SpriteSheet spriteSheet;
     private SpriteAnimationState spriteAnimationState;
-
-    private long timeOffset = 0;
 
     P parent;
     boolean parentIsWorldObject;
@@ -53,7 +49,6 @@ public abstract class WorldObject<
     public WorldObject(S scene) {
         this.scene = scene;
     }
-
 
     public float getX() {
         return position.x;
@@ -124,7 +119,7 @@ public abstract class WorldObject<
 
     public void draw(MainShader shader) {
         if (spriteSheet != null)
-            shader.draw(spriteSheet, spriteAnimationState, position, getScene().getWorldOffset(), getID(), DrawStyle.ISOMETRIC);
+            shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), DrawStyle.ISOMETRIC);
 
         for (C child : children) {
             child.draw(shader);

@@ -1,5 +1,6 @@
 package com.raven.breakingsands.scenes.battlescene.map;
 
+import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.decal.Decal;
 import com.raven.breakingsands.scenes.battlescene.decal.DecalFactory;
@@ -62,8 +63,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         y = propData.getInteger("y") + structure.getMapY();
 
 
-        setX(this.x - structure.getMapX());
-        setY(this.y - structure.getMapY());
+        setX(propData.getInteger("x"));
+        setY(propData.getInteger("y"));
 
         this.addMouseHandler(this);
 
@@ -344,5 +345,10 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     public boolean isPassable() {
         return passable;
+    }
+
+    @Override
+    public float getZ() {
+        return ZLayer.TERRAIN.getValue();
     }
 }

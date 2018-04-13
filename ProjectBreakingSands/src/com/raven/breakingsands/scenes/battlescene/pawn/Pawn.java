@@ -1,5 +1,6 @@
 package com.raven.breakingsands.scenes.battlescene.pawn;
 
+import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.character.Armor;
 import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.character.Weapon;
@@ -143,5 +144,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         System.out.println("DIE");
         getParent().removePawn();
         getScene().removePawn(this);
+    }
+
+    @Override
+    public float getZ() {
+        return ZLayer.PAWN.getValue();
     }
 }

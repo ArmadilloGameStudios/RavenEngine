@@ -1,5 +1,6 @@
 package com.raven.breakingsands.scenes.battlescene.map;
 
+import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.scene.Layer;
@@ -22,6 +23,7 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         super(scene);
 
         while (structures.size() == 0) {
+            i = 7;
             startGeneration();
         }
     }
@@ -162,5 +164,10 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
     public List<Structure> getStructures() {
         return structures;
+    }
+
+    @Override
+    public float getZ() {
+        return ZLayer.TERRAIN.getValue();
     }
 }

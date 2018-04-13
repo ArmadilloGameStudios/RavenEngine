@@ -1,5 +1,6 @@
 package com.raven.breakingsands.scenes.mainmenuscene;
 
+import com.raven.breakingsands.ZLayer;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
@@ -35,4 +36,8 @@ public class Terrain extends WorldObject<MainMenuScene, Layer<WorldObject>, Worl
         }));
     }
 
+    @Override
+    public float getZ() {
+        return ZLayer.TERRAIN.getValue();
+    }
 }

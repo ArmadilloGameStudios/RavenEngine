@@ -36,7 +36,7 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
     }
 
     public void draw(MainShader shader) {
-        shader.draw(spriteSheet, spriteAnimationState, position, getScene().getWorldOffset(), getID(), DrawStyle.UI);
+        shader.draw(spriteSheet, spriteAnimationState, position, getScene().getWorldOffset(), getID(), getZ(), DrawStyle.UI);
 
         for (UIObject o : this.getChildren()) {
             if (o.getVisibility())

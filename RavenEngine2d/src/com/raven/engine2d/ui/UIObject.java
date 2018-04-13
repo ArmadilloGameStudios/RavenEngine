@@ -75,6 +75,11 @@ public abstract class UIObject<S extends Scene, P extends Parentable<UIObject>>
         }
     }
 
+    @Override
+    public float getZ() {
+        return 0.0f;
+    }
+
     public abstract int getStyle();
 
     public abstract float getHeight();
