@@ -77,7 +77,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         }
 
         if (propData.has("decal")) {
-            GameData decalData = propData.getData("decal");
+            GameData decalData = propData.asData("decal");
 
             DecalFactory f = new DecalFactory(scene);
 

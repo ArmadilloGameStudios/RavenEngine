@@ -1,7 +1,7 @@
 package com.raven.breakingsands;
 
 public enum ZLayer {
-    UI(1f), TERRAIN(.65f), PAWN(.4f), DECAL(.45f);
+    UI(1f), TERRAIN(.6f), PAWN(.4f), DECAL(.45f);
 
     private float value;
     ZLayer(float value) {

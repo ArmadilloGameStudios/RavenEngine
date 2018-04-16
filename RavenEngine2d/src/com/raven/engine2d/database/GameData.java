@@ -3,127 +3,133 @@ package com.raven.engine2d.database;
 import java.util.Map;
 
 public class GameData implements GameDatable {
-	private Map<String, GameData> vals;
-	private GameDataList list;
-	private Integer integer;
-	private boolean bool;
-	private boolean isBool;
-	private String str;
 
-	// Constructors
-	public GameData(Map<String, GameData> vals) {
-		this.vals = vals;
-	}
-
-	public GameData(GameDataList list) {
-		this.list = list;
-	}
-
-	public GameData(boolean bool) {
-		this.isBool = true;
-		this.bool = bool;
-	}
-
-	public GameData(String str) {
-		this.str = str;
-	}
-
-	public GameData(int integer) {
-		this.integer = new Integer(integer);
-	}
-
-	// Get
-	public boolean has(String prop) {
-	    return vals.containsKey(prop);
+    private enum DataType {
+        DATA, LIST, INTEGER, BOOL, STRING,
     }
 
-	public Map<String, GameData> getValues() {
-		return vals;
-	}
+    private Object value;
+    private DataType dataType;
 
-	public boolean isData() {
-		return vals != null;
-	}
+    // Constructors
+    public GameData(Map<String, GameData> value) {
+        this.value = value;
+        dataType = DataType.DATA;
+    }
 
-	public Map<String, GameData> getData() {
-		return vals;
-	}
-	
-	public GameData getData(String prop) {
-		return vals.get(prop.toLowerCase());
-	}
+    public GameData(GameDataList value) {
+        this.value = value;
+        dataType = DataType.LIST;
+    }
 
-	public boolean isList() {
-		return list != null;
-	}
+    public GameData(boolean value) {
+        this.value = value;
+        dataType = DataType.BOOL;
+    }
 
-	public GameDataList asList() {
-		return list;
-	}
+    public GameData(String value) {
+        this.value = value;
+        dataType = DataType.STRING;
+    }
 
-	public GameDataList getList(String prop) {
-        return getData(prop).asList();
+    public GameData(int value) {
+        this.value = value;
+        dataType = DataType.INTEGER;
+    }
+
+    public boolean has(String prop) {
+        if (isData()) {
+            return asData().containsKey(prop);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isData() {
+        return dataType == DataType.DATA;
+    }
+
+    private Map<String, GameData> asData() {
+        return ((Map<String, GameData>) value);
+    }
+
+    public GameData asData(String prop) {
+        if (isData())
+            return asData().get(prop.toLowerCase());
+        return null;
+    }
+
+    public boolean isList() {
+        return dataType == DataType.LIST;
+    }
+
+    public GameDataList asList() {
+        return (GameDataList) value;
+    }
+
+    public GameDataList getList(String prop) {
+        return asData(prop).asList();
     }
 
     public void addList(String prop, GameDataList value) {
-        vals.put(prop, new GameData(value));
+        asData().put(prop, new GameData(value));
     }
 
-	public boolean isString() {
-		return str != null;
-	}
-	
-	public String asString() {
-		return str;
-	}
-
-	public String getString(String prop) {
-	    return getData(prop).asString();
-    }
-	
-	public boolean isBoolean() {
-		return isBool;
-	}
-
-	public boolean asBoolean() {
-		return bool;
-	}
-
-	public boolean getBoolean(String prop) {
-	    return getData(prop).asBoolean();
+    public boolean isString() {
+        return dataType == DataType.STRING;
     }
 
-	public boolean isInteger() {
-		return integer != null;
-	}
-	
-	public int asInteger() {
-		return integer;
-	}
-
-	public int getInteger(String prop) {
-	    return getData(prop).asInteger();
+    public String asString() {
+        return (String) value;
     }
 
-	@Override
-	public String toString() {
-		if (isBoolean()) {
-			return String.valueOf(this.asBoolean());
-		} else if (isInteger()) {
-			return String.valueOf(asInteger());
-		} else if (isString()) {
-			return String.format("\"%1$s\"", asString());
-		} else if (this.isData()) {
-			return String.valueOf(vals);
-		} else if (this.isList()) {
-			return String.valueOf(list);
-		}
-				
-		return super.toString();
-	}
+    public String getString(String prop) {
+        return asData(prop).asString();
+    }
 
-	@Override
-	public GameData toGameData() {
-		return this;
-	}
+    public boolean isBoolean() {
+        return dataType == DataType.BOOL;
+    }
+
+    public boolean asBoolean() {
+        return (boolean) value;
+    }
+
+    public boolean getBoolean(String prop) {
+        return asData(prop).asBoolean();
+    }
+
+    public boolean isInteger() {
+        return dataType == DataType.INTEGER;
+    }
+
+    public int asInteger() {
+        return (int) value;
+    }
+
+    public int getInteger(String prop) {
+        return asData(prop).asInteger();
+    }
+
+    @Override
+    public String toString() {
+        if (isBoolean()) {
+            return String.valueOf(this.asBoolean());
+        } else if (isInteger()) {
+            return String.valueOf(asInteger());
+        } else if (isString()) {
+            return String.format("\"%1$s\"", asString());
+        } else if (this.isData()) {
+            return String.valueOf(value);
+        } else if (this.isList()) {
+            return String.valueOf(value);
+        }
+
+        return super.toString();
+    }
+
+    @Override
+    public GameData toGameData() {
+        return this;
+    }
 }
