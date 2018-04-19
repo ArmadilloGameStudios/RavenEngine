@@ -1,10 +1,11 @@
 package com.raven.sunny.scenes;
 
-import com.raven.engine.graphics3d.ModelData;
-import com.raven.engine.graphics3d.VertexData;
+import com.raven.engine.Game;
+import com.raven.engine.graphics3d.model.ModelData;
+import com.raven.engine.graphics3d.model.VertexData;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.scene.light.GlobalDirectionalLight;
-import com.raven.engine.util.Vector3f;
+import com.raven.engine.util.math.Vector3f;
 import com.raven.engine.worldobject.WorldObject;
 import com.raven.sunny.Bush;
 import com.raven.sunny.Tree;
@@ -23,8 +24,8 @@ public class RandomScene extends Scene {
     private ModelData water;
     private GlobalDirectionalLight sunLight;
 
-    public RandomScene() {
-        super();
+    public RandomScene(Game g) {
+        super(g);
 
         setRenderWater(true);
 
@@ -34,7 +35,9 @@ public class RandomScene extends Scene {
         sunLight = new GlobalDirectionalLight();
         sunLight.origin.y = 2f;
 
-        addLight(sunLight);
+
+        this.setGlobalDirectionalLight(sunLight);
+
 //        addLight(sunLight);
 //        addLight(sunLight);
 //        addLight(sunLight);
@@ -120,15 +123,16 @@ public class RandomScene extends Scene {
     }
 
     @Override
-    public void enterScene() {
+    public void onEnterScene() {
 
     }
 
     @Override
-    public void exitScene() {
+    public void onExitScene() {
 
     }
 
+    Vector3f cat = new Vector3f();
     @Override
     public void onUpdate(float deltaTime) {
         f += deltaTime * 0.2f;
@@ -136,7 +140,7 @@ public class RandomScene extends Scene {
         dir.x = (float) Math.sin(f / 10000f) / 4f;
         dir.z = (float) Math.cos(f / 10000f);
         dir.y = (float) Math.abs(Math.sin(f / 10000f));
-        dir = dir.normalize();
+        dir = dir.normalize(cat);
         sunLight.setDirection(dir);
 
         Vector3f color = sunLight.color;
@@ -146,5 +150,10 @@ public class RandomScene extends Scene {
 
         sunLight.intensity = Math.min(1f, Math.max(0f, dir.y * 3.0f));
         sunLight.shadowTransparency = 0.2f;
+    }
+
+    @Override
+    public void inputKey(int key, int action, int mods) {
+
     }
 }
