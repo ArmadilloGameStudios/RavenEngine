@@ -34,6 +34,8 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
 
         this.x = x;
         this.y = y;
+        this.setX(x);
+        this.setY(y);
 
         width = gameData.getInteger("width");
         height = gameData.getInteger("height");
@@ -60,15 +62,6 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
             entrances[i] = new StructureEntrance(this, gdcList.get(i));
         }
 
-//        if (connected != null)
-//            Arrays.stream(entrances).filter(e ->
-//                    e.getLength() == connected.getInteger("length") &&
-//                            e.getLocation() == connected.getInteger("location") &&
-//                            e.getSide() == connected.getInteger("side"))
-//                    .forEach(e -> e.setConnected(true));
-
-        this.setX(x);
-        this.setY(y);
     }
 
     public StructureEntrance[] getEntrances() {
@@ -129,13 +122,39 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
                                                         a.getString("entrance").equals(o.getName())))) {
 
                     boolean connected = false;
-                    if (y + height == other.y) {
-                        connected = x + width - e.getLocation() ==
-                                other.x + o.getLocation() + o.getLength();
+                    switch ((e.getSide())) {
+                        case 0:
+                            if (y == other.y + other.height) {
+                                connected = x + e.getLocation() + e.getLength() ==
+                                        other.x + other.width - o.getLocation();
+                            }
+                            break;
+                        case 1:
+                            if (x + width == other.x) {
+                                connected = y + e.getLocation() + e.getLength() ==
+                                        other.y + other.height - o.getLocation();
+                            }
+                            break;
+                        case 2:
+                            if (y + height == other.y) {
+                                connected = x + width - e.getLocation() ==
+                                        other.x + o.getLocation() + o.getLength();
+                            }
+                            break;
+                        case 3:
+                            if (x == other.x + other.width) {
+                                connected = y + height - e.getLocation() ==
+                                        other.y + o.getLocation() + o.getLength();
+                            }
+                            break;
                     }
+
                     if (connected) {
+                        System.out.println("Connected");
                         e.setConnected(o);
                         o.setConnected(e);
+                    } else {
+                        System.out.println("No Connection");
                     }
                 }
             }

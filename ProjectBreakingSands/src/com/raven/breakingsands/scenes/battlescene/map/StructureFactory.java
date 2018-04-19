@@ -5,6 +5,7 @@ import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.util.Factory;
+import org.lwjgl.system.CallbackI;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,21 +69,35 @@ public class StructureFactory extends Factory<Structure> {
                     int x = 0;
                     int y = 0;
 
-                    int entranceSide = gdEntrance.getInteger("side");
+                    int entranceSide = connectedEntrance.getSide();
 
-                            x = connectedEntrance.getLocation();
+                    switch (entranceSide) {
+                        case 0:
+                            y -= gdStructure.getInteger("height");
+                            x -= gdStructure.getInteger("width") -
+                                    gdEntrance.getInteger("location") -
+                                    gdEntrance.getInteger("length") +
+                                    connectedEntrance.getLocation();
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            y += connectedStructure.getHeight();
+                            x += connectedStructure.getWidth() -
+                                    connectedEntrance.getLocation() -
+                                    connectedEntrance.getLength() +
+                                    gdEntrance.getInteger("location");
+                            break;
+                        case 3:
+                            break;
+                    }
 
-                            if (entranceSide % 2 == 0) {
-                                y = -gdStructure.getInteger("height");
-                                x -= gdStructure.getInteger("width") -
-                                        gdEntrance.getInteger("location") -
-                                        gdEntrance.getInteger("length");
-                            } else {
-                                y = -gdStructure.getInteger("width");
-                                x -= gdStructure.getInteger("height") -
-                                        gdEntrance.getInteger("location") -
-                                        gdEntrance.getInteger("length");
-                            }
+                    System.out.println("Entrance Side " + entranceSide);
+                    System.out.println(connectedStructure.getName());
+                    System.out.println(connectedStructure.getMapX());
+                    System.out.println(connectedStructure.getMapY());
+                    System.out.println(connectedStructure.getWidth());
+                    System.out.println(connectedStructure.getHeight());
 
                     x += connectedStructure.getMapX();
                     y += connectedStructure.getMapY();
@@ -92,6 +107,12 @@ public class StructureFactory extends Factory<Structure> {
                             gdStructure,
                             gdEntrance,
                             x, y);
+
+                    System.out.println(s.getName());
+                    System.out.println(s.getMapX());
+                    System.out.println(s.getMapY());
+                    System.out.println(s.getWidth());
+                    System.out.println(s.getHeight());
 
                     // Check collision
                     List<Structure> structures = map.getStructures();
@@ -110,6 +131,8 @@ public class StructureFactory extends Factory<Structure> {
                         System.out.println("Not Safe: " + s.getName());
                         continue;
                     }
+
+                    System.out.println("S Count: " + structures.size());
 
                     // check if entrances match
                     for (Structure structure : structures) {
@@ -141,7 +164,9 @@ public class StructureFactory extends Factory<Structure> {
         connectedEntrance = e;
         connectionPossibleNames = new GameDataList();
 
-        for (GameData con : GameDatabase.all("connections").stream().filter(c -> c.getBoolean("closed") == closed).collect(Collectors.toList())) {
+        for (GameData con : GameDatabase.all("connections").stream()
+                .filter(c -> c.getBoolean("closed") == closed)
+                .collect(Collectors.toList())) {
             if (con.getList("a").stream().anyMatch(gd ->
                     gd.getString("name").equals(connectedStructure.getName()) &&
                             gd.getString("entrance").equals(connectedEntrance.getName()))) {

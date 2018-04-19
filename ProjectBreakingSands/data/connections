@@ -1,12 +1,12 @@
 {
     name: "prison small",
-    closed: false,
+    closed: true,
     a: [{ name: "cell 1", entrance: "a" }],
     b: [{ name: "short hall", entrance: "b" }]
 },
 {
     name: "prison small 1",
-    closed: false,
+    closed: true,
     a: [{ name: "short hall", entrance: "a" }],
     b: [{ name: "cell 2", entrance: "a" }]
 },

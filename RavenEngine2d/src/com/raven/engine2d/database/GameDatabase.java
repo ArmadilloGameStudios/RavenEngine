@@ -65,7 +65,7 @@ public class GameDatabase {
 		return GameEngine.getEngine().getGameDatabase().getTable(table).queryAll(new GameDataQuery() {
 			@Override
 			public boolean matches(com.raven.engine2d.database.GameData row) {
-				return row.getData(prop).asString().equals(value);
+				return row.asData(prop).asString().equals(value);
 			}
 		});
 	}
@@ -74,7 +74,7 @@ public class GameDatabase {
 		return GameEngine.getEngine().getGameDatabase().getTable(table).queryFirst(new GameDataQuery() {
 			@Override
 			public boolean matches(com.raven.engine2d.database.GameData row) {
-				return row.getData(prop).asString().equals(value);
+				return row.asData(prop).asString().equals(value);
 			}
 		});
 	}
@@ -83,7 +83,7 @@ public class GameDatabase {
 		return GameEngine.getEngine().getGameDatabase().getTable(table).queryRandom(new GameDataQuery() {
 			@Override
 			public boolean matches(com.raven.engine2d.database.GameData row) {
-				return row.getData(prop).asString().equals(value);
+				return row.asData(prop).asString().equals(value);
 			}
 		});
 	}

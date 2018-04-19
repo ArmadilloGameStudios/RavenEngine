@@ -23,7 +23,7 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         super(scene);
 
         while (structures.size() == 0) {
-            i = 7;
+            i = 2;
             startGeneration();
         }
     }
@@ -80,7 +80,6 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
             System.out.println("Add");
             addStructure(s);
         }
-
 
         return true;
     }
