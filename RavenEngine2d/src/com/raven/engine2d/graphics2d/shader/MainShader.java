@@ -188,8 +188,8 @@ public class MainShader extends Shader {
         if (spriteAnimation != null) {
             glUniform1i(sprite_sheet_location, sheet.getTextureActiveLocation());
 
-            float x = position.y * isoWidth - position.x * isoWidth + offset.x;
-            float y = position.y * isoHeight + position.x * isoHeight + offset.y;
+            float x = position.y * isoWidth + position.x * isoWidth + offset.x;
+            float y = position.y * isoHeight - position.x * isoHeight + offset.y;
 
             glViewport((int) x  / 2, (int) y  / 2, spriteAnimation.getWidth(), spriteAnimation.getHeight());
 
@@ -203,8 +203,8 @@ public class MainShader extends Shader {
         } else {
             glUniform1i(sprite_sheet_location, sheet.getTextureActiveLocation());
 
-            float x = position.y * isoWidth - position.x * isoWidth + offset.x;
-            float y = position.y * isoHeight + position.x * isoHeight + offset.y;
+            float x = position.y * isoWidth + position.x * isoWidth + offset.x;
+            float y = position.y * isoHeight - position.x * isoHeight + offset.y;
 
             glViewport((int) x / 2, (int) y / 2, sheet.width, sheet.height);
 
