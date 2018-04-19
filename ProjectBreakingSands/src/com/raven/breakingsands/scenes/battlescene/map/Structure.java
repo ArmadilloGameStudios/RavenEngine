@@ -2,13 +2,13 @@ package com.raven.breakingsands.scenes.battlescene.map;
 
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.engine2d.GameEngine;
-import com.raven.engine2d.database.GameData;
-import com.raven.engine2d.database.GameDataList;
-import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.database.*;
+import com.raven.engine2d.util.math.Vector2i;
 import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
@@ -121,40 +121,54 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
                                                 a.getString("name").equals(other.name) &&
                                                         a.getString("entrance").equals(o.getName())))) {
 
+
                     boolean connected = false;
-                    switch ((e.getSide())) {
+                    boolean valid = true;
+
+                    switch (e.getSide()) {
                         case 0:
-                            if (y == other.y + other.height) {
-                                connected = x + e.getLocation() + e.getLength() ==
-                                        other.x + other.width - o.getLocation();
-                            }
+                            if (o.getSide() != 2) valid = false;
                             break;
                         case 1:
-                            if (x + width == other.x) {
-                                connected = y + e.getLocation() + e.getLength() ==
-                                        other.y + other.height - o.getLocation();
-                            }
+                            if (o.getSide() != 3) valid = false;
                             break;
                         case 2:
-                            if (y + height == other.y) {
-                                connected = x + width - e.getLocation() ==
-                                        other.x + o.getLocation() + o.getLength();
-                            }
+                            if (o.getSide() != 0) valid = false;
                             break;
                         case 3:
-                            if (x == other.x + other.width) {
-                                connected = y + height - e.getLocation() ==
-                                        other.y + o.getLocation() + o.getLength();
-                            }
+                            if (o.getSide() != 1) valid = false;
                             break;
                     }
 
+                    if (valid) {
+
+                        Vector2i conPos = StructureEntrance.getEntrancePosition(
+                                e.getSide(),
+                                e.getLocation(),
+                                width,
+                                height);
+
+                        conPos.x += x;
+                        conPos.y += y;
+
+                        Vector2i gdPos = StructureEntrance.getEntrancePosition(
+                                o.getSide(),
+                                o.getLocation(),
+                                other.width,
+                                other.height);
+
+                        gdPos.x += other.x;
+                        gdPos.y += other.y;
+
+                        connected = StructureEntrance.isConnected(
+                                e.getSide(),
+                                e.getLength(),
+                                conPos, gdPos);
+                    }
+
                     if (connected) {
-                        System.out.println("Connected");
                         e.setConnected(o);
                         o.setConnected(e);
-                    } else {
-                        System.out.println("No Connection");
                     }
                 }
             }

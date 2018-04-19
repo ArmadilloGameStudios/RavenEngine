@@ -14,8 +14,10 @@ import com.raven.engine2d.util.pathfinding.PathAdjacentNode;
 import com.raven.engine2d.util.pathfinding.PathNode;
 import com.raven.engine2d.worldobject.MouseHandler;
 import com.raven.engine2d.worldobject.WorldObject;
+import org.lwjgl.system.CallbackI;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -121,6 +123,10 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     @Override
     public void handleMouseEnter() {
+        System.out.println(getParent().getName());
+        System.out.println(Arrays.stream(getParent().getEntrances()).filter(StructureEntrance::isConnected).count());
+        System.out.println("X: " + x + ", Y: " + y);
+
         if (!getScene().isPaused()) {
             switch (getScene().getState()) {
                 case SELECT_MOVE:

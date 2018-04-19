@@ -1,14 +1,91 @@
 package com.raven.breakingsands.scenes.battlescene.map;
 
 import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDataList;
+import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.util.math.Vector2f;
+import com.raven.engine2d.util.math.Vector2i;
+import javafx.util.Pair;
+import org.lwjgl.system.CallbackI;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class StructureEntrance {
 
     private int side, location, length;
     private String name;
 
+    private List<PotentialStructure> potentialStructures = new LinkedList<>();
     private StructureEntrance connection;
     private Structure structure;
+
+    public static Vector2i getEntrancePosition(int side, int location, int width, int height) {
+        Vector2i pos = new Vector2i();
+
+        switch (side) {
+            case 0:
+                pos.x = location;
+                pos.y = height;
+                break;
+            case 1:
+                pos.x = width;
+                pos.y = height - location;
+                break;
+            case 2:
+                pos.x = width - location;
+                pos.y = 0;
+                break;
+            case 3:
+                pos.x = 0;
+                pos.y = location;
+                break;
+        }
+
+        return pos;
+    }
+
+    public static Vector2i getEntranceOffset(int side, int len, Vector2i a, Vector2i b) {
+        Vector2i offset = new Vector2i();
+
+        switch (side) {
+            case 0:
+                offset.x = a.x + len - b.x;
+                offset.y = a.y - b.y;
+                break;
+            case 1:
+                offset.x = a.x - b.x;
+                offset.y = a.y - len - b.y;
+                break;
+            case 2:
+                offset.x = a.x - len - b.x;
+                offset.y = a.y - b.y;
+                break;
+            case 3:
+                offset.x = a.x - b.x;
+                offset.y = a.y + len - b.y;
+                break;
+        }
+
+        return offset;
+    }
+
+    public static boolean isConnected(int side, int len,
+                                      Vector2i a, Vector2i b) {
+        switch (side) {
+            case 0:
+                return a.x + len == b.x && a.y == b.y;
+            case 1:
+                return a.x == b.x && a.y - len == b.y;
+            case 2:
+                return a.x - len == b.x && a.y == b.y;
+            case 3:
+                return a.x == b.x && a.y + len == b.y;
+        }
+
+        return false;
+    }
 
     public StructureEntrance(Structure structure, GameData data) {
         this.structure = structure;
@@ -17,6 +94,33 @@ public class StructureEntrance {
         location = data.getInteger("location");
         length = data.getInteger("length");
         name = data.getString("name");
+
+        // Create Potential Structures
+        createPotentialStructures();
+    }
+
+    private void createPotentialStructures() {
+        List<GameData> potential = new ArrayList<>();
+
+        GameDataList connectionsTable = GameDatabase.all("connections");
+
+        connectionsTable.stream()
+                .filter(row -> row.getList("a").stream().anyMatch(a -> a.getString("entrance").equals(name)))
+                .map(connections -> connections.getList("b"))
+                .forEach(potential::addAll);
+
+        connectionsTable.stream()
+                .filter(row -> row.getList("b").stream().anyMatch(a -> a.getString("entrance").equals(name)))
+                .map(connections -> connections.getList("a"))
+                .forEach(potential::addAll);
+
+        for (GameData connection : potential) {
+            PotentialStructure ps = new PotentialStructure(this, connection);
+
+            if (ps.getStructure() != null && ps.getEntrance() != null) {
+                potentialStructures.add(ps);
+            }
+        }
     }
 
     public int getLength() {
@@ -49,5 +153,9 @@ public class StructureEntrance {
 
     public Structure getStructure() {
         return structure;
+    }
+
+    public List<PotentialStructure> getPotentialStructures() {
+        return potentialStructures;
     }
 }
