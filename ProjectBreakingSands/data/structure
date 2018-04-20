@@ -167,7 +167,6 @@
 {
     name: "corner d",
 
-
     tags: [ "prison", "corner" ],
 
     width: 2,
@@ -180,5 +179,22 @@
         { type: "floor", x: 0, y: 0 },
         { type: "floor", x: 1, y: 0 },
         { type: "floor", x: 1, y: 1 },
+    ]
+},
+{
+    name: "split",
+
+    tags: [ "prison", "split" ],
+
+    width: 1,
+    height: 1,
+
+    entrance: [{ side: 0, location: 0, length: 1, name: "a" },
+               { side: 1, location: 0, length: 1, name: "b" },
+               { side: 2, location: 0, length: 1, name: "c" },
+               { side: 3, location: 0, length: 1, name: "d" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0 },
     ]
 }

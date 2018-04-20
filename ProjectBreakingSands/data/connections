@@ -18,7 +18,7 @@
         { name: "corner d", entrance: "b" },]
 },
 {
-    name: "prison small 2",
+    name: "prison hall",
     a: [{ name: "short hall a", entrance: "a" },
         { name: "short hall a", entrance: "b" },
         { name: "short hall b", entrance: "a" },
@@ -31,8 +31,8 @@
         { name: "corner c", entrance: "b" },
         { name: "corner d", entrance: "a" },
         { name: "corner d", entrance: "b" },
-        { name: "short hall a", entrance: "a" },
-        { name: "short hall a", entrance: "b" },
-        { name: "short hall b", entrance: "a" },
-        { name: "short hall b", entrance: "b" },]
+        { name: "split", entrance: "a" },
+        { name: "split", entrance: "b" },
+        { name: "split", entrance: "c" },
+        { name: "split", entrance: "d" },]
 }

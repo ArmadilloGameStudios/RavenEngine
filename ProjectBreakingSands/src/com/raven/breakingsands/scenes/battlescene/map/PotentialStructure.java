@@ -2,7 +2,9 @@ package com.raven.breakingsands.scenes.battlescene.map;
 
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDataTable;
+import com.raven.engine2d.database.GameDatabase;
 
 public class PotentialStructure {
     private GameData gdStructure;
@@ -10,10 +12,11 @@ public class PotentialStructure {
     private boolean terminal = false;
 
     public PotentialStructure(StructureEntrance existingEntrance, GameData gdConnection) {
-        GameDataTable structures = GameEngine.getEngine().getGameDatabase().getTable("structure");
 
         if (gdConnection.has("terminal"))
             terminal = gdConnection.getBoolean("terminal");
+
+        GameDataList structures = GameDatabase.all("structure");
 
         structures.stream()
                 .filter(s ->

@@ -24,7 +24,10 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
 
     public Structure(BattleScene scene, int x, int y) {
         this(scene,
-                GameEngine.getEngine().getGameDatabase().getTable("structure").getRandom(),
+                GameEngine.getEngine().getGameDatabase().getTable("structure").stream()
+                        .filter(s -> s.getString("name").equals("cell 1"))
+                        .findAny()
+                        .get(),
                 null,
                 x, y);
     }
@@ -93,86 +96,26 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
     }
 
     public boolean overlaps(Structure other) {
-        if (x >= other.x + other.width ||
-                other.x >= x + width) {
-            return false;
-        }
+        return overlaps(x, y, width, height,
+                other.x, other.y, other.width, other.height);
+    }
 
-        return y < other.y + other.height &&
-                other.y < y + height;
+    public static boolean overlaps(int x, int y, int width, int height,
+                                   int x2, int y2, int width2, int height2) {
+        return
+                x2 + width2 > x &&
+                        y2 + height2 > y &&
+                        x2 < x + width &&
+                        y2 < y + height;
     }
 
     public void tryConnect(Structure other) {
-        GameDataList connections = GameDatabase.all("connections");
 
-        Arrays.stream(entrances).filter(e -> !e.isConnected()).forEach(e -> Arrays.stream(other.entrances).filter(o -> !o.isConnected()).forEach(o -> {
-            if (e.getLength() == o.getLength()) {
-                if (connections.stream().anyMatch(con ->
-                        con.getList("a").stream().anyMatch(a ->
-                                a.getString("name").equals(name) &&
-                                        a.getString("entrance").equals(e.getName())) &&
-                                con.getList("b").stream().anyMatch(b ->
-                                        b.getString("name").equals(other.name) &&
-                                                b.getString("entrance").equals(o.getName())) ||
-                                con.getList("b").stream().anyMatch(b ->
-                                        b.getString("name").equals(name) &&
-                                                b.getString("entrance").equals(e.getName())) &&
-                                        con.getList("a").stream().anyMatch(a ->
-                                                a.getString("name").equals(other.name) &&
-                                                        a.getString("entrance").equals(o.getName())))) {
-
-
-                    boolean connected = false;
-                    boolean valid = true;
-
-                    switch (e.getSide()) {
-                        case 0:
-                            if (o.getSide() != 2) valid = false;
-                            break;
-                        case 1:
-                            if (o.getSide() != 3) valid = false;
-                            break;
-                        case 2:
-                            if (o.getSide() != 0) valid = false;
-                            break;
-                        case 3:
-                            if (o.getSide() != 1) valid = false;
-                            break;
-                    }
-
-                    if (valid) {
-
-                        Vector2i conPos = StructureEntrance.getEntrancePosition(
-                                e.getSide(),
-                                e.getLocation(),
-                                width,
-                                height);
-
-                        conPos.x += x;
-                        conPos.y += y;
-
-                        Vector2i gdPos = StructureEntrance.getEntrancePosition(
-                                o.getSide(),
-                                o.getLocation(),
-                                other.width,
-                                other.height);
-
-                        gdPos.x += other.x;
-                        gdPos.y += other.y;
-
-                        connected = StructureEntrance.isConnected(
-                                e.getSide(),
-                                e.getLength(),
-                                conPos, gdPos);
-                    }
-
-                    if (connected) {
-                        e.setConnected(o);
-                        o.setConnected(e);
-                    }
-                }
-            }
-        }));
+        Arrays.stream(entrances)
+                .filter(e -> !e.isConnected())
+                .forEach(e -> Arrays.stream(other.entrances)
+                        .filter(o -> !o.isConnected())
+                        .forEach(e::tryConnect));
     }
 
     public List<Structure> getConnections() {
@@ -188,6 +131,8 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
             if (entrance.getConnection() != null) {
                 Structure s = entrance.getConnection().getStructure();
 
+                // if part of the map structures and not in the list
+                // add to list
                 if (s.getParent().getStructures().contains(s) &&
                         !connections.contains(s)) {
                     s.getConnections(connections);

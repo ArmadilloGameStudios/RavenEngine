@@ -14,7 +14,6 @@ import com.raven.engine2d.util.pathfinding.PathAdjacentNode;
 import com.raven.engine2d.util.pathfinding.PathNode;
 import com.raven.engine2d.worldobject.MouseHandler;
 import com.raven.engine2d.worldobject.WorldObject;
-import org.lwjgl.system.CallbackI;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,7 +78,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         }
 
         if (propData.has("decal")) {
-            GameData decalData = propData.asData("decal");
+            GameData decalData = propData.getData("decal");
 
             DecalFactory f = new DecalFactory(scene);
 

@@ -1,5 +1,6 @@
 package com.raven.engine2d.database;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class GameData implements GameDatable {
@@ -12,6 +13,11 @@ public class GameData implements GameDatable {
     private DataType dataType;
 
     // Constructors
+    public GameData() {
+        this.value = new HashMap<String, GameData>();
+        dataType = DataType.DATA;
+    }
+
     public GameData(Map<String, GameData> value) {
         this.value = value;
         dataType = DataType.DATA;
@@ -53,7 +59,7 @@ public class GameData implements GameDatable {
         return ((Map<String, GameData>) value);
     }
 
-    public GameData asData(String prop) {
+    public GameData getData(String prop) {
         if (isData())
             return asData().get(prop.toLowerCase());
         return null;
@@ -68,7 +74,7 @@ public class GameData implements GameDatable {
     }
 
     public GameDataList getList(String prop) {
-        return asData(prop).asList();
+        return getData(prop).asList();
     }
 
     public void addList(String prop, GameDataList value) {
@@ -84,7 +90,7 @@ public class GameData implements GameDatable {
     }
 
     public String getString(String prop) {
-        return asData(prop).asString();
+        return getData(prop).asString();
     }
 
     public boolean isBoolean() {
@@ -96,7 +102,7 @@ public class GameData implements GameDatable {
     }
 
     public boolean getBoolean(String prop) {
-        return asData(prop).asBoolean();
+        return getData(prop).asBoolean();
     }
 
     public boolean isInteger() {
@@ -108,7 +114,7 @@ public class GameData implements GameDatable {
     }
 
     public int getInteger(String prop) {
-        return asData(prop).asInteger();
+        return getData(prop).asInteger();
     }
 
     @Override

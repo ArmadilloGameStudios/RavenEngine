@@ -17,7 +17,7 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
     private Structure firstStructure;
 
-    private int size = 14;
+    private int size = 100;
     private int i = 0;
 
     public Map(BattleScene scene) {
@@ -39,7 +39,6 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
         Structure s = firstStructure = structureFactory.getInstance();
         addStructure(s);
-        System.out.println(s.getName());
 
         while (generate(structureFactory)) {
             i = size - structures.size();
@@ -56,7 +55,7 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         int sCount = openStructures.size();
 
         if (sCount == 0) {
-            System.out.println("None Left");
+            System.out.println("Done");
             return false;
         }
 
@@ -67,29 +66,14 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         Structure s = structureFactory.getInstance();
 
         if (s == null) {
-            System.out.println("Remove");
-            System.out.println(buildFrom.getName());
             removeStructure(buildFrom);
         } else {
-            System.out.println("Add");
-            System.out.println(s.getName());
             addStructure(s);
         }
 
         // redo all connections
         // TODO remove
-//        for (Structure structure : this.structures) {
-//            for (StructureEntrance e : structure.getEntrances()) {
-//                e.setConnected(null);
-//            }
-//        }
-//
-//        for (Structure structure : this.structures) {
-//            for (Structure structure2 : this.structures) {
-//                if (structure2 != structure)
-//                    structure2.tryConnect(structure);
-//            }
-//        }
+//        redoConnections();
 
         return true;
     }
@@ -116,6 +100,16 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
             removeOnlyStructure(r);
         }
 
+        redoConnections();
+    }
+
+    private void removeOnlyStructure(Structure s) {
+        this.structures.remove(s);
+        terrain.removeAll(s.getTerrainList());
+        removeChild(s);
+    }
+
+    private void redoConnections() {
         // redo connections
         for (Structure toRedo : structures) {
             for (StructureEntrance se : toRedo.getEntrances()) {
@@ -124,12 +118,6 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         }
 
         structures.forEach(st -> structures.forEach(st::tryConnect));
-    }
-
-    private void removeOnlyStructure(Structure s) {
-        this.structures.remove(s);
-        terrain.removeAll(s.getTerrainList());
-        removeChild(s);
     }
 
     public Optional<Terrain> get(int x, int y) {

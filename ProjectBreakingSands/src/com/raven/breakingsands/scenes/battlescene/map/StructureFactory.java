@@ -3,7 +3,9 @@ package com.raven.breakingsands.scenes.battlescene.map;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.util.Factory;
 import com.raven.engine2d.util.math.Vector2i;
+import com.sun.java.swing.plaf.windows.WindowsTreeUI;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,9 +26,13 @@ public class StructureFactory extends Factory<Structure> {
         if (connectedStructure == null) {
             return new Structure(map.getScene(), 0, 0);
         } else {
-            // get random entrance
-            int eCount = connectedStructure.getEntrances().length;
-            StructureEntrance connectedEntrance = connectedStructure.getEntrances()[map.getScene().getRandom().nextInt(eCount)];
+            // get random empty entrance
+            // if nothing can connect to it, fail
+            List<StructureEntrance> entrances = Arrays.stream(connectedStructure.getEntrances())
+                    .filter(e -> !e.isConnected())
+                    .collect(Collectors.toList());
+            int eCount = entrances.size();
+            StructureEntrance connectedEntrance = entrances.get(map.getScene().getRandom().nextInt(eCount));
 
             // get potential structs
             List<PotentialStructure> potentialStructures = connectedEntrance.getPotentialStructures().stream()
@@ -39,6 +45,7 @@ public class StructureFactory extends Factory<Structure> {
                 int psCount = potentialStructures.size();
                 PotentialStructure potentialStructure = potentialStructures.get(map.getScene().getRandom().nextInt(psCount));
                 potentialStructures.remove(potentialStructure);
+                connectedEntrance.getPotentialStructures().remove(potentialStructure);
 
                 GameData gdStructure = potentialStructure.getStructure();
                 GameData gdEntrance = potentialStructure.getEntrance();
@@ -82,27 +89,14 @@ public class StructureFactory extends Factory<Structure> {
                         conPos,
                         gdPos);
 
-//                System.out.println("Entrance Side: " + entranceSide);
-//                System.out.println(connectedStructure.getName());
-//                System.out.println(connectedStructure.getMapX());
-//                System.out.println(connectedStructure.getMapY());
-//                System.out.println(connectedStructure.getWidth());
-//                System.out.println(connectedStructure.getHeight());
-
                 offset.x += connectedStructure.getMapX();
                 offset.y += connectedStructure.getMapY();
 
-                Structure s = new Structure(
+                Structure structureToAdd = new Structure(
                         map.getScene(),
                         gdStructure,
                         gdEntrance,
                         offset.x, offset.y);
-
-//                System.out.println(s.getName());
-//                System.out.println(s.getMapX());
-//                System.out.println(s.getMapY());
-//                System.out.println(s.getWidth());
-//                System.out.println(s.getHeight());
 
                 // Check collision
                 List<Structure> structures = map.getStructures();
@@ -110,37 +104,22 @@ public class StructureFactory extends Factory<Structure> {
                 boolean safe = true;
 
                 for (Structure structure : structures) {
-
-                    if (s.overlaps(structure)) {
+                    if (structureToAdd.overlaps(structure)) {
                         safe = false;
-
-                        System.out.println(structure.getName());
-                        System.out.println(structure.getMapX());
-                        System.out.println(structure.getMapY());
-                        System.out.println(structure.getWidth());
-                        System.out.println(structure.getHeight());
-                        System.out.println(s.getName());
-                        System.out.println(s.getMapX());
-                        System.out.println(s.getMapY());
-                        System.out.println(s.getWidth());
-                        System.out.println(s.getHeight());
-
                         break;
                     }
                 }
 
                 if (!safe) {
-                    System.out.println("Not Safe: " + s.getName());
-
                     continue;
                 }
 
                 // check if entrances match
                 for (Structure structure : structures) {
-                    s.tryConnect(structure);
+                    structureToAdd.tryConnect(structure);
                 }
 
-                return s;
+                return structureToAdd;
 
             }
         }

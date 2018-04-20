@@ -105,12 +105,18 @@ public class StructureEntrance {
         GameDataList connectionsTable = GameDatabase.all("connections");
 
         connectionsTable.stream()
-                .filter(row -> row.getList("a").stream().anyMatch(a -> a.getString("entrance").equals(name)))
+                .filter(row -> row.getList("a").stream().anyMatch(a ->
+                        a.getString("name").equals(structure.getName()) &&
+                                a.getString("entrance").equals(name)
+                ))
                 .map(connections -> connections.getList("b"))
                 .forEach(potential::addAll);
 
         connectionsTable.stream()
-                .filter(row -> row.getList("b").stream().anyMatch(a -> a.getString("entrance").equals(name)))
+                .filter(row -> row.getList("b").stream().anyMatch(b ->
+                        b.getString("name").equals(structure.getName()) &&
+                                b.getString("entrance").equals(name)
+                ))
                 .map(connections -> connections.getList("a"))
                 .forEach(potential::addAll);
 
@@ -141,6 +147,71 @@ public class StructureEntrance {
 
     public boolean isConnected() {
         return connection != null;
+    }
+
+    public static boolean connectionContainsBoth(StructureEntrance sa, StructureEntrance sb) {
+        GameDataList connections = GameDatabase.all("connections");
+
+        return connections.stream().anyMatch(con ->
+                (con.getList("a").stream().anyMatch(a -> entranceMatch(a, sa)) &&
+                        con.getList("b").stream().anyMatch(b -> entranceMatch(b, sb))) ||
+                        (con.getList("b").stream().anyMatch(b -> entranceMatch(b, sa)) &&
+                                con.getList("a").stream().anyMatch(a -> entranceMatch(a, sb))));
+    }
+
+    private static boolean entranceMatch(GameData gdEntrance, StructureEntrance entrance) {
+        return
+                gdEntrance.getString("name").equals(entrance.structure.getName()) &&
+                        gdEntrance.getString("entrance").equals(entrance.getName());
+    }
+
+    public void tryConnect(StructureEntrance other) {
+        if (this.getLength() == this.getLength()) {
+            if (connectionContainsBoth(this, other)) {
+
+                switch (side) {
+                    case 0:
+                        if (other.side != 2) return;
+                        break;
+                    case 1:
+                        if (other.side != 3) return;
+                        break;
+                    case 2:
+                        if (other.side != 0) return;
+                        break;
+                    case 3:
+                        if (other.side != 1) return;
+                        break;
+                }
+
+                Vector2i conPos = StructureEntrance.getEntrancePosition(
+                        side,
+                        location,
+                        structure.getWidth(),
+                        structure.getHeight());
+
+                conPos.x += structure.getMapX();
+                conPos.y += structure.getMapY();
+
+                Vector2i gdPos = StructureEntrance.getEntrancePosition(
+                        other.side,
+                        other.location,
+                        other.structure.getWidth(),
+                        other.structure.getHeight());
+
+                gdPos.x += other.structure.getMapX();
+                gdPos.y += other.structure.getMapY();
+
+                if (StructureEntrance.isConnected(
+                        this.getSide(),
+                        this.getLength(),
+                        conPos, gdPos)) {
+
+                    this.setConnected(other);
+                    other.setConnected(this);
+                }
+            }
+        }
     }
 
     public String getName() {

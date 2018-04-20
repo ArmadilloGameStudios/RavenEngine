@@ -119,7 +119,7 @@ public abstract class WorldObject<
 
     public void draw(MainShader shader) {
         if (spriteSheet != null)
-            shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), DrawStyle.ISOMETRIC);
+            shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), getHighlight(), DrawStyle.ISOMETRIC);
 
         for (C child : children) {
             child.draw(shader);
