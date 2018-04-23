@@ -2,6 +2,7 @@
   <component name="FileTypeManager" version="17">
     <extensionMap>
       <mapping pattern="characters" type="PLAIN_TEXT" />
+      <mapping pattern="wall_north" type="PLAIN_TEXT" />
       <mapping pattern="decal" type="PLAIN_TEXT" />
       <mapping pattern="missions" type="PLAIN_TEXT" />
       <mapping pattern="armor" type="PLAIN_TEXT" />
