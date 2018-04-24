@@ -6,6 +6,7 @@
       <mapping pattern="corner_west" type="PLAIN_TEXT" />
       <mapping pattern="decal" type="PLAIN_TEXT" />
       <mapping pattern="missions" type="PLAIN_TEXT" />
+      <mapping pattern="corner_out" type="PLAIN_TEXT" />
       <mapping pattern="corner_in" type="PLAIN_TEXT" />
       <mapping pattern="armor" type="PLAIN_TEXT" />
       <mapping pattern="pawn" type="PLAIN_TEXT" />
