@@ -3,18 +3,15 @@ package com.raven.breakingsands.scenes.battlescene;
 import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.scenes.battlescene.ai.AI;
-import com.raven.breakingsands.scenes.battlescene.decal.Decal;
+import com.raven.breakingsands.scenes.battlescene.decal.Wall;
 import com.raven.breakingsands.scenes.battlescene.map.Map;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
-import com.raven.breakingsands.scenes.hud.UIBottomContainer;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
-import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
-import com.raven.engine2d.scene.Camera;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.Range;
 import com.raven.engine2d.util.math.Vector2f;
@@ -83,7 +80,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         // TODO
         models.addAll(Terrain.getSpriteSheets());
-        models.addAll(Decal.getSpriteSheets());
+        models.addAll(Wall.getSpriteSheets());
         models.addAll(Pawn.getSpriteSheets());
 
         return models;

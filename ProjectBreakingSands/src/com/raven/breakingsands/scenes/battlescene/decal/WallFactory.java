@@ -9,22 +9,22 @@ import com.raven.engine2d.database.GameDataQuery;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DecalFactory extends Factory<Decal> {
+public class WallFactory extends Factory<Wall> {
     private List<String> types = new ArrayList<>();
     private BattleScene scene;
 
-    public DecalFactory(BattleScene scene) {
+    public WallFactory(BattleScene scene) {
         this.scene = scene;
     }
 
-    public Decal getInstance() {
-        GameData gameData = Decal.getDataList().queryRandom(new GameDataQuery() {
+    public Wall getInstance() {
+        GameData gameData = Wall.getDataList().queryRandom(new GameDataQuery() {
             @Override
             public boolean matches(GameData row) {
 
                 boolean found = true;
 
-                GameDataList datatypes = row.getList("type");
+                GameDataList datatypes = row.getList("tags");
 
                 for (String type : types) {
                     found &= datatypes.stream().anyMatch(x -> x.asString().equals(type));
@@ -35,7 +35,7 @@ public class DecalFactory extends Factory<Decal> {
             }
         });
 
-        return new Decal(scene, gameData);
+        return new Wall(scene, gameData);
     }
 
     public void addTypeRestriction(String type) {

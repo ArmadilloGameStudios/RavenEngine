@@ -83,15 +83,19 @@
 
     tags: [ "prison", "hall" ],
 
-    width: 1,
+    width: 2,
     height: 2,
 
-    entrance: [{ side: 0, location: 0, length: 1, name: "a" },
+    entrance: [{ side: 0, location: 1, length: 1, name: "a" },
                { side: 2, location: 0, length: 1, name: "b" }],
 
     terrain: [
-        { type: "floor", x: 0, y: 1 },
-        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 1, y: 1,
+            wall: [ "red light", "west" ]
+        },
+        { type: "floor", x: 1, y: 0,
+            wall: [ "red light", "west" ]
+        },
     ]
 },
 {
@@ -100,32 +104,40 @@
     tags: [ "prison", "hall" ],
 
     width: 2,
-    height: 1,
+    height: 2,
 
-    entrance: [{ side: 1, location: 0, length: 1, name: "a" },
+    entrance: [{ side: 1, location: 1, length: 1, name: "a" },
                { side: 3, location: 0, length: 1, name: "b" }],
 
     terrain: [
-        { type: "floor", x: 1, y: 0 },
-        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 1, y: 0,
+            wall: [ "red light", "north" ]
+        },
+        { type: "floor", x: 0, y: 0,
+            wall: [ "red light", "north" ]
+        },
     ]
 },
 {
     name: "corner a",
 
-
     tags: [ "prison", "corner" ],
 
-    width: 2,
+    width: 3,
     height: 2,
 
-    entrance: [{ side: 0, location: 0, length: 1, name: "a" },
+    entrance: [{ side: 0, location: 1, length: 1, name: "a" },
                { side: 1, location: 1, length: 1, name: "b" }],
 
     terrain: [
-        { type: "floor", x: 0, y: 0 },
-        { type: "floor", x: 0, y: 1 },
-        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 1, y: 0,
+            wall: [ "red light", "west" ]
+        },
+        { type: "floor", x: 1, y: 1,
+            wall: [ "red light", "west" ]
+        },
+        { type: "floor", x: 2, y: 0,
+            wall: [ "corner", "north" ] },
     ]
 },
 {
@@ -134,16 +146,22 @@
 
     tags: [ "prison", "corner" ],
 
-    width: 2,
-    height: 2,
+    width: 3,
+    height: 3,
 
-    entrance: [{ side: 1, location: 0, length: 1, name: "a" },
+    entrance: [{ side: 1, location: 1, length: 1, name: "a" },
                { side: 2, location: 1, length: 1, name: "b" }],
 
     terrain: [
-        { type: "floor", x: 0, y: 0 },
-        { type: "floor", x: 0, y: 1 },
-        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 1, y: 0,
+            wall: [ "red light", "west" ]
+        },
+        { type: "floor", x: 1, y: 1,
+            wall: [ "corner", "in" ]
+        },
+        { type: "floor", x: 2, y: 1,
+            wall: [ "red light", "north" ]
+ },
     ]
 },
 {
@@ -153,15 +171,21 @@
     tags: [ "prison", "corner" ],
 
     width: 2,
-    height: 2,
+    height: 3,
 
     entrance: [{ side: 2, location: 0, length: 1, name: "a" },
                { side: 3, location: 1, length: 1, name: "b" }],
 
     terrain: [
-        { type: "floor", x: 0, y: 1 },
-        { type: "floor", x: 1, y: 0 },
-        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 0, y: 1,
+            wall: [ "red light", "north" ]
+        },
+        { type: "floor", x: 1, y: 0,
+            wall: [ "corner", "west" ]
+        },
+        { type: "floor", x: 1, y: 1,
+            wall: [ "red light", "north" ]
+        },
     ]
 },
 {
@@ -176,9 +200,13 @@
                { side: 0, location: 1, length: 1, name: "b" }],
 
     terrain: [
-        { type: "floor", x: 0, y: 0 },
-        { type: "floor", x: 1, y: 0 },
-        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 0, y: 0,
+            wall: [ "red light", "north" ] },
+        { type: "floor", x: 1, y: 0,
+            wall: [ "corner", "out" ]
+        },
+        { type: "floor", x: 1, y: 1,
+            wall: [ "red light", "west" ] },
     ]
 },
 {
@@ -186,15 +214,24 @@
 
     tags: [ "prison", "split" ],
 
-    width: 1,
-    height: 1,
+    width: 3,
+    height: 3,
 
-    entrance: [{ side: 0, location: 0, length: 1, name: "a" },
-               { side: 1, location: 0, length: 1, name: "b" },
-               { side: 2, location: 0, length: 1, name: "c" },
-               { side: 3, location: 0, length: 1, name: "d" }],
+    entrance: [{ side: 0, location: 1, length: 1, name: "a" },
+               { side: 1, location: 1, length: 1, name: "b" },
+               { side: 2, location: 1, length: 1, name: "c" },
+               { side: 3, location: 1, length: 1, name: "d" }],
 
     terrain: [
-        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 1, y: 1,
+            wall: [ "corner", "out" ] },
+        { type: "floor", x: 0, y: 1,
+            wall: [ "red light", "north" ] },
+        { type: "floor", x: 1, y: 2,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 2, y: 1,
+            wall: [ "corner", "north" ] },
+        { type: "floor", x: 1, y: 0,
+            wall: [ "corner", "west" ] },
     ]
 }

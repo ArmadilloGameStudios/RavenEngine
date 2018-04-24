@@ -1,0 +1,36 @@
+{
+    name: "Wall, Red Light",
+    animation: "wall_west",
+    sprite: "sprites/wall_a.png",
+    tags: [ "red light", "west" ]
+},
+{
+    name: "Wall, Red Light",
+    animation: "wall_north",
+    sprite: "sprites/wall_b.png",
+    tags: [ "red light", "north" ]
+},
+{
+    name: "Corner",
+    animation: "corner_west",
+    sprite: "sprites/corner_a.png",
+    tags: [ "corner", "west" ]
+},
+{
+    name: "Corner",
+    animation: "corner_north",
+    sprite: "sprites/corner_b.png",
+    tags: [ "corner", "north" ]
+},
+{
+    name: "Corner",
+    animation: "corner_in",
+    sprite: "sprites/corner_c.png",
+    tags: [ "corner", "in" ]
+},
+{
+    name: "Corner",
+    animation: "corner_out",
+    sprite: "sprites/corner_d.png",
+    tags: [ "corner", "out" ]
+}

@@ -31,6 +31,14 @@ public class SpriteAnimationState {
         return activeFrame.getY();
     }
 
+    public float getXOffset() {
+        return activeFrame.getXOffset();
+    }
+
+    public float getYOffset() {
+        return activeFrame.getYOffset();
+    }
+
     public int getWidth() {
         return activeFrame.getWidth();
     }

@@ -199,6 +199,9 @@ public class MainShader extends Shader {
         glUniform1i(sprite_sheet_location, sheet.getTextureActiveLocation());
 
         if (spriteAnimation != null) {
+            x += spriteAnimation.getXOffset();
+            y += spriteAnimation.getYOffset();
+
             glViewport((int) x / 2, (int) y / 2, spriteAnimation.getWidth(), spriteAnimation.getHeight());
 
             glUniform4f(rect_location,

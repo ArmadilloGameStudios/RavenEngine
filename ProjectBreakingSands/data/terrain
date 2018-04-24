@@ -1,23 +1,4 @@
 {
-    name: "sand",
-    sprite: "sprites/tile_a.png",
-},
-{
     name: "floor",
     sprite: "sprites/tile_a.png",
-},
-{
-    name: "wall",
-    sprite: "sprites/tile_a.png",
-    passable: false
-},
-{
-    name: "corner",
-    sprite: "sprites/tile_a.png",
-    passable: false
-},
-{
-    name: "pillar",
-    sprite: "sprites/tile_a.png",
-    passable: false
 }
