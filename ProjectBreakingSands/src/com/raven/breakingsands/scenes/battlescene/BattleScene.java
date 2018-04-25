@@ -54,7 +54,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private HashMap<Terrain, Path<Terrain>> pathMap;
     private Path<Terrain> currentPath;
     private int pathIndex = 0;
-    private float pathSpeed = 100f;
+    private float pathSpeed = 4f * 100f;
     private float pathMoveTime = 0f;
 
     private HashMap<Terrain, Float> rangeMap;
@@ -326,6 +326,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         switch (state) {
             case SELECT_MOVE:
+                activePawn.setAnimationAction("idle");
                 if (doSpawn()) {
                     spawnPawn("Service Drone");
                 }
@@ -333,12 +334,15 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                 setStateSelectMove();
                 break;
             case SELECT_MOVE_AI:
+                activePawn.setAnimationAction("idle");
                 currentPath = null;
                 map.setState(Terrain.State.UNSELECTABLE);
 
                 aiFuture = aiExecutorService.submit(ai);
                 break;
             case MOVING:
+
+                activePawn.setAnimationAction("walking");
                 activePawn.move(currentPath.getCost());
 
                 map.setState(Terrain.State.UNSELECTABLE);

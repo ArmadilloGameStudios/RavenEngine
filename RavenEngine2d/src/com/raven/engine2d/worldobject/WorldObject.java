@@ -117,6 +117,11 @@ public abstract class WorldObject<
         return highlight;
     }
 
+
+    public void setAnimationAction(String animationState) {
+        this.spriteAnimationState.setAction(animationState);
+    }
+
     public void draw(MainShader shader) {
         if (spriteSheet != null)
             shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), getHighlight(), DrawStyle.ISOMETRIC);

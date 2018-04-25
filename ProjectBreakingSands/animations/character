@@ -4,4 +4,13 @@
     height: 32,
     frames: [{ time: 500, x: 0 },
              { time: 500, x: 32 }]
+},
+{
+    name: "walking",
+    width: 32,
+    height: 32,
+    frames: [{ time: 100, x: 0, y: 32 },
+             { time: 100, x: 32, y: 32 },
+             { time: 100, x: 64, y: 32 },
+             { time: 100, x: 96, y: 32 }]
 }

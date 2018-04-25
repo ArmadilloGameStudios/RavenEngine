@@ -122,10 +122,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     @Override
     public void handleMouseEnter() {
-        System.out.println(getParent().getName());
-        System.out.println(Arrays.stream(getParent().getEntrances()).filter(StructureEntrance::isConnected).count());
-        System.out.println("X: " + x + ", Y: " + y);
-
         if (!getScene().isPaused()) {
             switch (getScene().getState()) {
                 case SELECT_MOVE:
