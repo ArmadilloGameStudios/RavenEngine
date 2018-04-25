@@ -326,7 +326,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         switch (state) {
             case SELECT_MOVE:
-                if (doSpawn() && false) {
+                if (doSpawn()) {
                     spawnPawn("Service Drone");
                 }
 
