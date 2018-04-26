@@ -225,6 +225,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
             activePawn.move(movement.scale(delta / (pathSpeed * cost), tempVec2));
 
+            activePawn.setAnimationFlip(movement.y > 0f || movement.x > 0f);
+
             if (overflow > 0f) {
                 pathIndex += 1;
                 movePawn(overflow);

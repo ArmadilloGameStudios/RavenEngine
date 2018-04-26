@@ -199,18 +199,33 @@ public class MainShader extends Shader {
         glUniform1i(sprite_sheet_location, sheet.getTextureActiveLocation());
 
         if (spriteAnimation != null) {
-            x += spriteAnimation.getXOffset();
-            y += spriteAnimation.getYOffset();
+            if (!spriteAnimation.getFlip()) {
+                x += spriteAnimation.getXOffset();
+                y += spriteAnimation.getYOffset();
 
-            glViewport((int) x / 2, (int) y / 2, spriteAnimation.getWidth(), spriteAnimation.getHeight());
+                glViewport((int) x / 2, (int) y / 2, spriteAnimation.getWidth(), spriteAnimation.getHeight());
 
-            glUniform4f(rect_location,
-                    (float) spriteAnimation.getX() / (float) sheet.width,
-                    (float) spriteAnimation.getY() / (float) sheet.height,
-                    (float) spriteAnimation.getWidth() / (float) sheet.width,
-                    (float) spriteAnimation.getHeight() / (float) sheet.height);
+                glUniform4f(rect_location,
+                        (float) spriteAnimation.getX() / (float) sheet.width,
+                        (float) spriteAnimation.getY() / (float) sheet.height,
+                        (float) spriteAnimation.getWidth() / (float) sheet.width,
+                        (float) spriteAnimation.getHeight() / (float) sheet.height);
 
-            window.drawQuad();
+                window.drawQuad();
+            } else {
+                x += spriteAnimation.getXOffset();
+                y += spriteAnimation.getYOffset();
+
+                glViewport((int) x / 2, (int) y / 2, spriteAnimation.getWidth(), spriteAnimation.getHeight());
+
+                glUniform4f(rect_location,
+                        (float) (spriteAnimation.getX() + spriteAnimation.getWidth()) / (float) sheet.width,
+                        (float) spriteAnimation.getY() / (float) sheet.height,
+                        (float) -spriteAnimation.getWidth() / (float) sheet.width,
+                        (float) spriteAnimation.getHeight() / (float) sheet.height);
+
+                window.drawQuad();
+            }
         } else {
             glViewport((int) x / 2, (int) y / 2, sheet.width, sheet.height);
 
