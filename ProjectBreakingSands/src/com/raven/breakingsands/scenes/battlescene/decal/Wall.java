@@ -13,8 +13,8 @@ import com.raven.engine2d.worldobject.WorldObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Decal extends WorldObject<BattleScene, Terrain, WorldObject> {
-    private static GameDataList dataList = GameDatabase.all("decal");
+public class Wall extends WorldObject<BattleScene, Terrain, WorldObject> {
+    private static GameDataList dataList = GameDatabase.all("wall");
 
     public static GameDataList getDataList() {
         return dataList;
@@ -32,21 +32,20 @@ public class Decal extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     // instance
     private GameData gameData;
-    private String description = "";
+    private String name = "";
     private boolean passable = true;
 
-    public Decal(BattleScene scene, GameData gameData) {
+    public Wall(BattleScene scene, GameData gameData) {
         super(scene, gameData);
 
         this.gameData = gameData;
 
-        description = gameData.getString("description");
-        passable = gameData.getBoolean("passable");
+        name = gameData.getString("name");
     }
 
 
-    public String getDescription() {
-        return description;
+    public String getName() {
+        return name;
     }
 
     public boolean isPassable() {

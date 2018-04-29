@@ -1,18 +1,38 @@
 {
-    name: "prison small",
-    closed: true,
-    a: [{ name: "cell 1", entrance: "a" }],
-    b: [{ name: "short hall", entrance: "b" }]
+    name: "prison cell",
+    a: [{ name: "cell 1", entrance: "a", terminal: true },
+        { name: "cell 2", entrance: "a", terminal: true },
+        { name: "cell 3", entrance: "a", terminal: true },
+        { name: "cell 4", entrance: "a", terminal: true },],
+    b: [{ name: "short hall a", entrance: "a" },
+        { name: "short hall a", entrance: "b" },
+        { name: "short hall b", entrance: "a" },
+        { name: "short hall b", entrance: "b" },
+        { name: "corner a", entrance: "a" },
+        { name: "corner a", entrance: "b" },
+        { name: "corner b", entrance: "a" },
+        { name: "corner b", entrance: "b" },
+        { name: "corner c", entrance: "a" },
+        { name: "corner c", entrance: "b" },
+        { name: "corner d", entrance: "a" },
+        { name: "corner d", entrance: "b" },]
 },
 {
-    name: "prison small 1",
-    closed: true,
-    a: [{ name: "short hall", entrance: "a" }],
-    b: [{ name: "cell 2", entrance: "a" }]
-},
-{
-    name: "prison small 2",
-    closed: false,
-    a: [{ name: "short hall", entrance: "a" }],
-    b: [{ name: "short hall", entrance: "b" }]
-},
+    name: "prison hall",
+    a: [{ name: "short hall a", entrance: "a" },
+        { name: "short hall a", entrance: "b" },
+        { name: "short hall b", entrance: "a" },
+        { name: "short hall b", entrance: "b" },],
+    b: [{ name: "corner a", entrance: "a" },
+        { name: "corner a", entrance: "b" },
+        { name: "corner b", entrance: "a" },
+        { name: "corner b", entrance: "b" },
+        { name: "corner c", entrance: "a" },
+        { name: "corner c", entrance: "b" },
+        { name: "corner d", entrance: "a" },
+        { name: "corner d", entrance: "b" },
+        { name: "split", entrance: "a" },
+        { name: "split", entrance: "b" },
+        { name: "split", entrance: "c" },
+        { name: "split", entrance: "d" },]
+}

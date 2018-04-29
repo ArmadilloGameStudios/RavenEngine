@@ -4,7 +4,7 @@ import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataList;
 import com.raven.engine.database.GameDatabase;
-import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.graphics3d.model.ModelData;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.worldobject.MouseHandler;
 import com.raven.engine.worldobject.WorldObject;

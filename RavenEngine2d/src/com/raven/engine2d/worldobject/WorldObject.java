@@ -117,9 +117,18 @@ public abstract class WorldObject<
         return highlight;
     }
 
+
+    public void setAnimationAction(String animationState) {
+        this.spriteAnimationState.setAction(animationState);
+    }
+
+    public void setAnimationFlip(boolean flip) {
+        this.spriteAnimationState.setFlip(flip);
+    }
+
     public void draw(MainShader shader) {
         if (spriteSheet != null)
-            shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), DrawStyle.ISOMETRIC);
+            shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), getHighlight(), DrawStyle.ISOMETRIC);
 
         for (C child : children) {
             child.draw(shader);

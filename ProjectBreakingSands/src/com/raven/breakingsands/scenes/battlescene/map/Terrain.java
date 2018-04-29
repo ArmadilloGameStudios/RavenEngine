@@ -2,8 +2,8 @@ package com.raven.breakingsands.scenes.battlescene.map;
 
 import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
-import com.raven.breakingsands.scenes.battlescene.decal.Decal;
-import com.raven.breakingsands.scenes.battlescene.decal.DecalFactory;
+import com.raven.breakingsands.scenes.battlescene.decal.Wall;
+import com.raven.breakingsands.scenes.battlescene.decal.WallFactory;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
@@ -16,6 +16,7 @@ import com.raven.engine2d.worldobject.MouseHandler;
 import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +54,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     private boolean passable = true;
 
-    private Decal decal;
+    private Wall wall;
     private Pawn pawn;
 
     public Terrain(BattleScene scene, Structure structure, GameData terrainData, GameData propData) {
@@ -76,17 +77,17 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             this.passable = terrainData.getBoolean("passable");
         }
 
-        if (propData.has("decal")) {
-            GameData decalData = propData.asData("decal");
+        if (propData.has("wall")) {
+            GameData wallData = propData.getData("wall");
 
-            DecalFactory f = new DecalFactory(scene);
+            WallFactory f = new WallFactory(scene);
 
-            for (GameData restriction : decalData.getList("restriction")) {
-                f.addTypeRestriction(restriction.asString());
+            for (GameData tag : wallData.asList()) {
+                f.addTypeRestriction(tag.asString());
             }
 
-            Decal decal = f.getInstance();
-            setDecal(decal);
+            Wall wall = f.getInstance();
+            setWall(wall);
         }
     }
 
@@ -213,16 +214,16 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         return neighbors;
     }
 
-    public void setDecal(Decal decal) {
-        if (this.decal != null) {
-            removeChild(this.decal);
+    public void setWall(Wall wall) {
+        if (this.wall != null) {
+            removeChild(this.wall);
         }
 
-        this.decal = decal;
+        this.wall = wall;
 
-        this.passable = decal.isPassable();
+        this.passable = wall.isPassable();
 
-        this.addChild(decal);
+        this.addChild(wall);
 
         updateText();
     }
@@ -316,8 +317,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     public void updateText() {
         String text = "" + x + ", " + y + "\n" + cover + "\n";
 
-        if (decal != null) {
-            text += "Terrain:\n" + decal.getDescription();
+        if (wall != null) {
+            text += "Terrain:\n" + wall.getName();
         } else {
             text += "Terrain:\nSand";
         }

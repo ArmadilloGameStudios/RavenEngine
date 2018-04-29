@@ -10,6 +10,7 @@ import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.input.Mouse;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
+import com.raven.engine2d.worldobject.Highlight;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import sun.java2d.pipe.SpanClipRenderer;
@@ -39,7 +40,7 @@ public class MainShader extends Shader {
     private int framebuffer_handle;
     private int color_texture, id_texture, depth_texture;
 
-    private int sprite_sheet_location, rect_location, id_location, z_location;
+    private int sprite_sheet_location, rect_location, id_location, highlight_location, z_location;
 
     private IntBuffer buffers;
 
@@ -52,6 +53,7 @@ public class MainShader extends Shader {
         glBindAttribLocation(getProgramHandel(), 1, "vertex_textures_coords");
 
         id_location = glGetUniformLocation(getProgramHandel(), "id");
+        highlight_location = glGetUniformLocation(getProgramHandel(), "highlight");
         z_location = glGetUniformLocation(getProgramHandel(), "z");
         sprite_sheet_location = glGetUniformLocation(getProgramHandel(), "spriteSheet");
         rect_location = glGetUniformLocation(getProgramHandel(), "rect");
@@ -167,10 +169,15 @@ public class MainShader extends Shader {
         glDisable(GL_BLEND);
     }
 
-    public void draw(SpriteSheet sheet, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset, int id, float z, DrawStyle style) {
+    public void draw(SpriteSheet sheet, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset, int id, float z, Highlight highlight, DrawStyle style) {
         setWorldObjectID(id);
 
         glUniform1f(z_location, z);
+
+        if (highlight != null)
+            glUniform4f(highlight_location, highlight.r, highlight.g, highlight.b, highlight.a);
+        else
+            glUniform4f(highlight_location, 0f, 0f, 0f, 0f);
 
         switch (style) {
             case ISOMETRIC:
@@ -185,27 +192,41 @@ public class MainShader extends Shader {
     private float isoHeight = 16, isoWidth = 32;
 
     private void drawIsometric(SpriteSheet sheet, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset) {
+
+        float x = position.y * isoWidth + position.x * isoWidth + offset.x;
+        float y = position.y * isoHeight - position.x * isoHeight + offset.y;
+
+        glUniform1i(sprite_sheet_location, sheet.getTextureActiveLocation());
+
         if (spriteAnimation != null) {
-            glUniform1i(sprite_sheet_location, sheet.getTextureActiveLocation());
+            if (!spriteAnimation.getFlip()) {
+                x += spriteAnimation.getXOffset();
+                y += spriteAnimation.getYOffset();
 
-            float x = position.y * isoWidth - position.x * isoWidth + offset.x;
-            float y = position.y * isoHeight + position.x * isoHeight + offset.y;
+                glViewport((int) x / 2, (int) y / 2, spriteAnimation.getWidth(), spriteAnimation.getHeight());
 
-            glViewport((int) x  / 2, (int) y  / 2, spriteAnimation.getWidth(), spriteAnimation.getHeight());
+                glUniform4f(rect_location,
+                        (float) spriteAnimation.getX() / (float) sheet.width,
+                        (float) spriteAnimation.getY() / (float) sheet.height,
+                        (float) spriteAnimation.getWidth() / (float) sheet.width,
+                        (float) spriteAnimation.getHeight() / (float) sheet.height);
 
-            glUniform4f(rect_location,
-                    (float) spriteAnimation.getX() / (float) sheet.width,
-                    (float) spriteAnimation.getY() / (float) sheet.height,
-                    (float) spriteAnimation.getWidth() / (float) sheet.width,
-                    (float) spriteAnimation.getHeight() / (float) sheet.height);
+                window.drawQuad();
+            } else {
+                x += spriteAnimation.getXOffset();
+                y += spriteAnimation.getYOffset();
 
-            window.drawQuad();
+                glViewport((int) x / 2, (int) y / 2, spriteAnimation.getWidth(), spriteAnimation.getHeight());
+
+                glUniform4f(rect_location,
+                        (float) (spriteAnimation.getX() + spriteAnimation.getWidth()) / (float) sheet.width,
+                        (float) spriteAnimation.getY() / (float) sheet.height,
+                        (float) -spriteAnimation.getWidth() / (float) sheet.width,
+                        (float) spriteAnimation.getHeight() / (float) sheet.height);
+
+                window.drawQuad();
+            }
         } else {
-            glUniform1i(sprite_sheet_location, sheet.getTextureActiveLocation());
-
-            float x = position.y * isoWidth - position.x * isoWidth + offset.x;
-            float y = position.y * isoHeight + position.x * isoHeight + offset.y;
-
             glViewport((int) x / 2, (int) y / 2, sheet.width, sheet.height);
 
             glUniform4f(rect_location,

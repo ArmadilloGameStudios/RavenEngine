@@ -2,13 +2,13 @@ package com.raven.breakingsands.scenes.battlescene.map;
 
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.engine2d.GameEngine;
-import com.raven.engine2d.database.GameData;
-import com.raven.engine2d.database.GameDataList;
-import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.database.*;
+import com.raven.engine2d.util.math.Vector2i;
 import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
@@ -24,7 +24,10 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
 
     public Structure(BattleScene scene, int x, int y) {
         this(scene,
-                GameEngine.getEngine().getGameDatabase().getTable("structure").getRandom(),
+                GameEngine.getEngine().getGameDatabase().getTable("structure").stream()
+                        .filter(s -> s.getString("name").equals("cell 1"))
+                        .findAny()
+                        .get(),
                 null,
                 x, y);
     }
@@ -93,72 +96,26 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
     }
 
     public boolean overlaps(Structure other) {
-        if (x >= other.x + other.width ||
-                other.x >= x + width) {
-            return false;
-        }
+        return overlaps(x, y, width, height,
+                other.x, other.y, other.width, other.height);
+    }
 
-        return y < other.y + other.height &&
-                other.y < y + height;
+    public static boolean overlaps(int x, int y, int width, int height,
+                                   int x2, int y2, int width2, int height2) {
+        return
+                x2 + width2 > x &&
+                        y2 + height2 > y &&
+                        x2 < x + width &&
+                        y2 < y + height;
     }
 
     public void tryConnect(Structure other) {
-        GameDataList connections = GameDatabase.all("connections");
 
-        Arrays.stream(entrances).filter(e -> !e.isConnected()).forEach(e -> Arrays.stream(other.entrances).filter(o -> !o.isConnected()).forEach(o -> {
-            if (e.getLength() == o.getLength()) {
-                if (connections.stream().anyMatch(con ->
-                        con.getList("a").stream().anyMatch(a ->
-                                a.getString("name").equals(name) &&
-                                        a.getString("entrance").equals(e.getName())) &&
-                                con.getList("b").stream().anyMatch(b ->
-                                        b.getString("name").equals(other.name) &&
-                                                b.getString("entrance").equals(o.getName())) ||
-                                con.getList("b").stream().anyMatch(b ->
-                                        b.getString("name").equals(name) &&
-                                                b.getString("entrance").equals(e.getName())) &&
-                                        con.getList("a").stream().anyMatch(a ->
-                                                a.getString("name").equals(other.name) &&
-                                                        a.getString("entrance").equals(o.getName())))) {
-
-                    boolean connected = false;
-                    switch ((e.getSide())) {
-                        case 0:
-                            if (y == other.y + other.height) {
-                                connected = x + e.getLocation() + e.getLength() ==
-                                        other.x + other.width - o.getLocation();
-                            }
-                            break;
-                        case 1:
-                            if (x + width == other.x) {
-                                connected = y + e.getLocation() + e.getLength() ==
-                                        other.y + other.height - o.getLocation();
-                            }
-                            break;
-                        case 2:
-                            if (y + height == other.y) {
-                                connected = x + width - e.getLocation() ==
-                                        other.x + o.getLocation() + o.getLength();
-                            }
-                            break;
-                        case 3:
-                            if (x == other.x + other.width) {
-                                connected = y + height - e.getLocation() ==
-                                        other.y + o.getLocation() + o.getLength();
-                            }
-                            break;
-                    }
-
-                    if (connected) {
-                        System.out.println("Connected");
-                        e.setConnected(o);
-                        o.setConnected(e);
-                    } else {
-                        System.out.println("No Connection");
-                    }
-                }
-            }
-        }));
+        Arrays.stream(entrances)
+                .filter(e -> !e.isConnected())
+                .forEach(e -> Arrays.stream(other.entrances)
+                        .filter(o -> !o.isConnected())
+                        .forEach(e::tryConnect));
     }
 
     public List<Structure> getConnections() {
@@ -174,6 +131,8 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
             if (entrance.getConnection() != null) {
                 Structure s = entrance.getConnection().getStructure();
 
+                // if part of the map structures and not in the list
+                // add to list
                 if (s.getParent().getStructures().contains(s) &&
                         !connections.contains(s)) {
                     s.getConnections(connections);

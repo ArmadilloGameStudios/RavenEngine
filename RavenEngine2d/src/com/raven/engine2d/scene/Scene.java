@@ -42,7 +42,7 @@ public abstract class Scene<G extends Game> {
         // draw
         for (WorldObject o : layerTerrain.getChildren()) {
             o.draw(mainShader);
-            window.printErrors("Draw Error: ");
+            window.printErrors("Draw World Object Error: ");
         }
 
         for (WorldObject o : layerDetails.getChildren()) {
@@ -52,6 +52,7 @@ public abstract class Scene<G extends Game> {
         // ui
         for (UIObject o : layerUI.getChildren()) {
             o.draw(mainShader);
+            window.printErrors("Draw UI Error: ");
         }
 
         mainShader.blitToScreen();

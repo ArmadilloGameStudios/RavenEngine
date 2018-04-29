@@ -6,6 +6,7 @@ public class SpriteAnimationState {
     private SpriteAnimationFrame activeFrame;
 
     private float time = 0;
+    private boolean flip = false;
 
 
     public SpriteAnimationState(SpriteAnimation animation) {
@@ -31,6 +32,14 @@ public class SpriteAnimationState {
         return activeFrame.getY();
     }
 
+    public float getXOffset() {
+        return activeFrame.getXOffset();
+    }
+
+    public float getYOffset() {
+        return activeFrame.getYOffset();
+    }
+
     public int getWidth() {
         return activeFrame.getWidth();
     }
@@ -43,5 +52,13 @@ public class SpriteAnimationState {
         this.activeAction = animation.getAction(action);
         this.activeFrame = activeAction.getFrames().get(0);
         this.time = 0;
+    }
+
+    public void setFlip(boolean flip) {
+        this.flip = flip;
+    }
+
+    public boolean getFlip() {
+        return flip;
     }
 }

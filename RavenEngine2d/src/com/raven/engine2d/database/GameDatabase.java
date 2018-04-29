@@ -65,7 +65,7 @@ public class GameDatabase {
 		return GameEngine.getEngine().getGameDatabase().getTable(table).queryAll(new GameDataQuery() {
 			@Override
 			public boolean matches(com.raven.engine2d.database.GameData row) {
-				return row.asData(prop).asString().equals(value);
+				return row.getData(prop).asString().equals(value);
 			}
 		});
 	}
@@ -74,7 +74,7 @@ public class GameDatabase {
 		return GameEngine.getEngine().getGameDatabase().getTable(table).queryFirst(new GameDataQuery() {
 			@Override
 			public boolean matches(com.raven.engine2d.database.GameData row) {
-				return row.asData(prop).asString().equals(value);
+				return row.getData(prop).asString().equals(value);
 			}
 		});
 	}
@@ -83,14 +83,14 @@ public class GameDatabase {
 		return GameEngine.getEngine().getGameDatabase().getTable(table).queryRandom(new GameDataQuery() {
 			@Override
 			public boolean matches(com.raven.engine2d.database.GameData row) {
-				return row.asData(prop).asString().equals(value);
+				return row.getData(prop).asString().equals(value);
 			}
 		});
 	}
 
 
-	public static com.raven.engine2d.database.GameDataList all(String table) {
-		return com.raven.engine2d.GameEngine.getEngine().getGameDatabase().getTable(table);
+	public static GameDataList all(String table) {
+		return GameEngine.getEngine().getGameDatabase().getTable(table);
 	}
     //</editor-fold>
 }

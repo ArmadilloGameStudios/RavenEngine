@@ -5,11 +5,9 @@ import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.worldobject.WorldObject;
+import org.lwjgl.system.CallbackI;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObject> {
@@ -19,67 +17,66 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
     private Structure firstStructure;
 
+    private int size = 100;
+    private int i = 0;
+    private int tries = 0;
+
     public Map(BattleScene scene) {
         super(scene);
 
         while (structures.size() == 0) {
-            i = 2;
+            i = size;
             startGeneration();
         }
+
+        System.out.println(tries);
+
+        // show all connections
+
     }
 
     private void startGeneration() {
+        System.out.println("Starting Map Gen");
+
         StructureFactory structureFactory = new StructureFactory(this);
 
         Structure s = firstStructure = structureFactory.getInstance();
-        structures.add(s);
-        terrain.addAll(s.getTerrainList());
-        addChild(s);
-        System.out.println(s);
-
+        addStructure(s);
 
         while (generate(structureFactory)) {
+            i = size - structures.size();
+            tries++;
         }
     }
 
-    int i = 100;
-
     private boolean generate(StructureFactory structureFactory) {
-
-        System.out.println(i);
-
-        List<Structure> structures = this.structures.stream()
-                .filter(s ->
-                        Arrays.stream(s.getEntrances()).anyMatch(e -> !e.isConnected()))
+        // find a structure with open connections
+        List<Structure> openStructures = this.structures.stream()
+                .filter(st -> Arrays.stream(st.getEntrances()).anyMatch(e -> !e.isConnected()))
                 .collect(Collectors.toList());
 
-        i--;
-        if (structures.size() == 0) {
-            System.out.println("None left");
+        int sCount = openStructures.size();
+
+        if (sCount == 0) {
+            System.out.println("Done");
             return false;
         }
 
-        int randInt = getScene().getRandom().nextInt(structures.size());
-        Structure buildFrom = structures.get(randInt);
-
-        StructureEntrance se = Arrays.stream(buildFrom.getEntrances())
-                .filter(e -> !e.isConnected()).findAny().get();
-
-        structureFactory.setClosed(i <= 0);
-
-        structureFactory.setConnection(buildFrom, se);
+        Structure buildFrom = openStructures.get(getScene().getRandom().nextInt(sCount));
+        structureFactory.setConnection(buildFrom);
+        structureFactory.setTerminal(i < 0);
 
         Structure s = structureFactory.getInstance();
 
         if (s == null) {
-            System.out.println("Remove");
-            int r = removeStructure(buildFrom);
-            System.out.println(r);
-            i += r;
+            removeStructure(buildFrom);
         } else {
-            System.out.println("Add");
             addStructure(s);
         }
+
+        // redo all connections
+        // TODO remove
+//        redoConnections();
 
         return true;
     }
@@ -90,7 +87,7 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         addChild(s);
     }
 
-    private int removeStructure(Structure s) {
+    private void removeStructure(Structure s) {
         removeOnlyStructure(s);
 
         // remove all not connected to the first
@@ -106,6 +103,16 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
             removeOnlyStructure(r);
         }
 
+        redoConnections();
+    }
+
+    private void removeOnlyStructure(Structure s) {
+        this.structures.remove(s);
+        terrain.removeAll(s.getTerrainList());
+        removeChild(s);
+    }
+
+    private void redoConnections() {
         // redo connections
         for (Structure toRedo : structures) {
             for (StructureEntrance se : toRedo.getEntrances()) {
@@ -114,21 +121,6 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         }
 
         structures.forEach(st -> structures.forEach(st::tryConnect));
-
-        // return the count of removed structures
-        removedCount += 1;
-
-        if (removedCount == structures.size()) {
-            removedCount -= 1;
-        }
-
-        return removedCount;
-    }
-
-    private void removeOnlyStructure(Structure s) {
-        this.structures.remove(s);
-        terrain.removeAll(s.getTerrainList());
-        removeChild(s);
     }
 
     public Optional<Terrain> get(int x, int y) {

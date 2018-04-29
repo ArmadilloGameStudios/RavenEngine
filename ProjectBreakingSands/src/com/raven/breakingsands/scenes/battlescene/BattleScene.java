@@ -3,18 +3,15 @@ package com.raven.breakingsands.scenes.battlescene;
 import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.scenes.battlescene.ai.AI;
-import com.raven.breakingsands.scenes.battlescene.decal.Decal;
+import com.raven.breakingsands.scenes.battlescene.decal.Wall;
 import com.raven.breakingsands.scenes.battlescene.map.Map;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
-import com.raven.breakingsands.scenes.hud.UIBottomContainer;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
-import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
-import com.raven.engine2d.scene.Camera;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.Range;
 import com.raven.engine2d.util.math.Vector2f;
@@ -57,7 +54,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private HashMap<Terrain, Path<Terrain>> pathMap;
     private Path<Terrain> currentPath;
     private int pathIndex = 0;
-    private float pathSpeed = 100f;
+    private float pathSpeed = 4f * 100f;
     private float pathMoveTime = 0f;
 
     private HashMap<Terrain, Float> rangeMap;
@@ -83,7 +80,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         // TODO
         models.addAll(Terrain.getSpriteSheets());
-        models.addAll(Decal.getSpriteSheets());
+        models.addAll(Wall.getSpriteSheets());
         models.addAll(Pawn.getSpriteSheets());
 
         return models;
@@ -228,6 +225,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
             activePawn.move(movement.scale(delta / (pathSpeed * cost), tempVec2));
 
+            activePawn.setAnimationFlip(movement.y > 0f || movement.x > 0f);
+
             if (overflow > 0f) {
                 pathIndex += 1;
                 movePawn(overflow);
@@ -329,19 +328,23 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         switch (state) {
             case SELECT_MOVE:
-                if (doSpawn() && false) {
+                activePawn.setAnimationAction("idle");
+                if (doSpawn()) {
                     spawnPawn("Service Drone");
                 }
 
                 setStateSelectMove();
                 break;
             case SELECT_MOVE_AI:
+                activePawn.setAnimationAction("idle");
                 currentPath = null;
                 map.setState(Terrain.State.UNSELECTABLE);
 
                 aiFuture = aiExecutorService.submit(ai);
                 break;
             case MOVING:
+
+                activePawn.setAnimationAction("walking");
                 activePawn.move(currentPath.getCost());
 
                 map.setState(Terrain.State.UNSELECTABLE);

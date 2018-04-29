@@ -1,25 +1,20 @@
 package com.raven.breakingsands.scenes.battlescene.map;
 
-import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
-import com.raven.engine2d.database.GameDataList;
-import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.util.Factory;
-import org.lwjgl.system.CallbackI;
+import com.raven.engine2d.util.math.Vector2i;
+import com.sun.java.swing.plaf.windows.WindowsTreeUI;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class StructureFactory extends Factory<Structure> {
 
     private Map map;
 
     private Structure connectedStructure;
-    private StructureEntrance connectedEntrance;
-
-    private GameDataList connectionPossibleNames;
-    private boolean closed;
+    private boolean terminal;
 
     public StructureFactory(Map map) {
         this.map = map;
@@ -31,155 +26,118 @@ public class StructureFactory extends Factory<Structure> {
         if (connectedStructure == null) {
             return new Structure(map.getScene(), 0, 0);
         } else {
-            GameDataList gdlPossibleStructure = new GameDataList();
+            // get random empty entrance
+            // if nothing can connect to it, fail
+            List<StructureEntrance> entrances = Arrays.stream(connectedStructure.getEntrances())
+                    .filter(e -> !e.isConnected())
+                    .collect(Collectors.toList());
+            int eCount = entrances.size();
+            StructureEntrance connectedEntrance = entrances.get(map.getScene().getRandom().nextInt(eCount));
 
-            for (GameData row : GameEngine.getEngine().getGameDatabase().getTable("structure")) {
+            // get potential structs
+            List<PotentialStructure> potentialStructures = connectedEntrance.getPotentialStructures().stream()
+                    .filter(ps -> ps.isTerminal() == terminal)
+                    .collect(Collectors.toList());
 
-                List<GameData> namedConnections = connectionPossibleNames.stream()
-                        .filter(con ->
-                                con.getString("name").equals(row.getString("name")))
-                        .collect(Collectors.toList());
+            while (potentialStructures.size() > 0) {
 
-                if (namedConnections.size() > 0) {
+                // get and remove potential
+                int psCount = potentialStructures.size();
+                PotentialStructure potentialStructure = potentialStructures.get(map.getScene().getRandom().nextInt(psCount));
+                potentialStructures.remove(potentialStructure);
+                connectedEntrance.getPotentialStructures().remove(potentialStructure);
 
-                    GameDataList entrances = new GameDataList(getEntrances(row)
-                            .filter(e -> namedConnections.stream().anyMatch(con ->
-                                    con.getString("entrance").equals(e.getString("name"))))
-                            .collect(Collectors.toList()));
+                GameData gdStructure = potentialStructure.getStructure();
+                GameData gdEntrance = potentialStructure.getEntrance();
 
-                    if (entrances.size() > 0) {
-                        gdlPossibleStructure.add(row);
 
-                        row.addList("valid entrances", entrances);
+                // skip if it isn't a valid side
+                // TODO move to potential structure generation
+                switch (gdEntrance.getInteger("side")) {
+                    case 0:
+                        if (connectedEntrance.getSide() != 2) continue;
+                        break;
+                    case 1:
+                        if (connectedEntrance.getSide() != 3) continue;
+                        break;
+                    case 2:
+                        if (connectedEntrance.getSide() != 0) continue;
+                        break;
+                    case 3:
+                        if (connectedEntrance.getSide() != 1) continue;
+                        break;
+                }
+
+
+                Vector2i conPos = StructureEntrance.getEntrancePosition(
+                        connectedEntrance.getSide(),
+                        connectedEntrance.getLocation(),
+                        connectedStructure.getWidth(),
+                        connectedStructure.getHeight());
+
+                Vector2i gdPos = StructureEntrance.getEntrancePosition(
+                        gdEntrance.getInteger("side"),
+                        gdEntrance.getInteger("location"),
+                        gdStructure.getInteger("width"),
+                        gdStructure.getInteger("height"));
+
+                int len = connectedEntrance.getLength();
+
+                Vector2i offset = StructureEntrance.getEntranceOffset(
+                        connectedEntrance.getSide(),
+                        len,
+                        conPos,
+                        gdPos);
+
+                offset.x += connectedStructure.getMapX();
+                offset.y += connectedStructure.getMapY();
+
+                Structure structureToAdd = new Structure(
+                        map.getScene(),
+                        gdStructure,
+                        gdEntrance,
+                        offset.x, offset.y);
+
+                // Check collision
+                List<Structure> structures = map.getStructures();
+
+                boolean safe = true;
+
+                for (Structure structure : structures) {
+                    if (structureToAdd.overlaps(structure)) {
+                        safe = false;
+                        break;
                     }
                 }
 
-            }
-
-            while (gdlPossibleStructure.size() > 0) {
-
-                GameData gdStructure = gdlPossibleStructure.getRandom();
-                gdlPossibleStructure.remove(gdStructure);
-
-                while (gdStructure.getList("valid entrances").size() > 0) {
-
-                    GameData gdEntrance = gdStructure.getList("valid entrances").getRandom();
-                    gdStructure.getList("valid entrances").remove(gdEntrance);
-
-                    int x = 0;
-                    int y = 0;
-
-                    int entranceSide = connectedEntrance.getSide();
-
-                    switch (entranceSide) {
-                        case 0:
-                            y -= gdStructure.getInteger("height");
-                            x -= gdStructure.getInteger("width") -
-                                    gdEntrance.getInteger("location") -
-                                    gdEntrance.getInteger("length") +
-                                    connectedEntrance.getLocation();
-                            break;
-                        case 1:
-                            break;
-                        case 2:
-                            y += connectedStructure.getHeight();
-                            x += connectedStructure.getWidth() -
-                                    connectedEntrance.getLocation() -
-                                    connectedEntrance.getLength() +
-                                    gdEntrance.getInteger("location");
-                            break;
-                        case 3:
-                            break;
-                    }
-
-                    System.out.println("Entrance Side " + entranceSide);
-                    System.out.println(connectedStructure.getName());
-                    System.out.println(connectedStructure.getMapX());
-                    System.out.println(connectedStructure.getMapY());
-                    System.out.println(connectedStructure.getWidth());
-                    System.out.println(connectedStructure.getHeight());
-
-                    x += connectedStructure.getMapX();
-                    y += connectedStructure.getMapY();
-
-                    Structure s = new Structure(
-                            map.getScene(),
-                            gdStructure,
-                            gdEntrance,
-                            x, y);
-
-                    System.out.println(s.getName());
-                    System.out.println(s.getMapX());
-                    System.out.println(s.getMapY());
-                    System.out.println(s.getWidth());
-                    System.out.println(s.getHeight());
-
-                    // Check collision
-                    List<Structure> structures = map.getStructures();
-
-                    boolean safe = true;
-
-                    for (Structure structure : structures) {
-
-                        if (s.overlaps(structure)) {
-                            safe = false;
-                            break;
-                        }
-                    }
-
-                    if (!safe) {
-                        System.out.println("Not Safe: " + s.getName());
-                        continue;
-                    }
-
-                    System.out.println("S Count: " + structures.size());
-
-                    // check if entrances match
-                    for (Structure structure : structures) {
-                        s.tryConnect(structure);
-                    }
-
-                    return s;
+                if (!safe) {
+                    continue;
                 }
+
+                // check if entrances match
+                for (Structure structure : structures) {
+                    structureToAdd.tryConnect(structure);
+                }
+
+                return structureToAdd;
+
             }
         }
 
         return null;
     }
 
-    private Stream<GameData> getEntrances(GameData data) {
-        return data.getList("entrance").stream()
-                .filter(d -> d.getInteger("length") == connectedEntrance.getLength());
-    }
-
     @Override
     public void clear() {
         connectedStructure = null;
-        connectedEntrance = null;
-        closed = false;
+        terminal = false;
     }
 
-    public void setConnection(Structure s, StructureEntrance e) {
+    public void setConnection(Structure s) {
         connectedStructure = s;
-        connectedEntrance = e;
-        connectionPossibleNames = new GameDataList();
-
-        for (GameData con : GameDatabase.all("connections").stream()
-                .filter(c -> c.getBoolean("closed") == closed)
-                .collect(Collectors.toList())) {
-            if (con.getList("a").stream().anyMatch(gd ->
-                    gd.getString("name").equals(connectedStructure.getName()) &&
-                            gd.getString("entrance").equals(connectedEntrance.getName()))) {
-                connectionPossibleNames.addAll(con.getList("b"));
-            } else if (con.getList("b").stream().anyMatch(gd ->
-                    gd.getString("name").equals(connectedStructure.getName()) &&
-                            gd.getString("entrance").equals(connectedEntrance.getName()))) {
-                connectionPossibleNames.addAll(con.getList("a"));
-            }
-        }
     }
 
-    public void setClosed(boolean closed) {
-        this.closed = closed;
+    public void setTerminal(boolean terminal) {
+        this.terminal = terminal;
     }
 }
