@@ -5,6 +5,7 @@
       <mapping pattern="characters" type="PLAIN_TEXT" />
       <mapping pattern="wall_north" type="PLAIN_TEXT" />
       <mapping pattern="corner_west" type="PLAIN_TEXT" />
+      <mapping pattern="disk" type="PLAIN_TEXT" />
       <mapping pattern="terrain" type="PLAIN_TEXT" />
       <mapping pattern="missions" type="PLAIN_TEXT" />
       <mapping pattern="corner_out" type="PLAIN_TEXT" />
