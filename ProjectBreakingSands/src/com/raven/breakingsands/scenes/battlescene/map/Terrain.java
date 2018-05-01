@@ -112,8 +112,9 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                             getScene().setState(BattleScene.State.MOVING);
                             break;
                         case ATTACK:
-                            getScene().getActivePawn().attack(getPawn());
-                            getScene().selectNextPawn();
+                            getScene().setTargetPawn(getPawn());
+//                            getScene().getActivePawn().attack(getPawn());
+                            getScene().setState(BattleScene.State.ATTACKING);
                             break;
                     }
                 break;

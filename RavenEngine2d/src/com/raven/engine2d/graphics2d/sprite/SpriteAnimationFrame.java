@@ -13,12 +13,16 @@ public class SpriteAnimationFrame {
 
         if (gdFrame.has("x")) {
             x = gdFrame.getInteger("x");
+        } else if (gdAction.has("x")) {
+            x = gdAction.getInteger("x");
         } else {
             x = 0;
         }
 
         if (gdFrame.has("y")) {
             y = gdFrame.getInteger("y");
+        } else if (gdAction.has("y")) {
+            y = gdAction.getInteger("y");
         } else {
             y = 0;
         }

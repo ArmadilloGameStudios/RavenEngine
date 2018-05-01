@@ -11,6 +11,7 @@ import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
+import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.Range;
@@ -61,6 +62,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     private List<Pawn> pawns = new ArrayList<>();
     private Pawn activePawn;
+    private Pawn targetPawn;
 
     private List<Character> canLevelUp = new ArrayList<>();
 
@@ -225,7 +227,14 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
             activePawn.move(movement.scale(delta / (pathSpeed * cost), tempVec2));
 
-            activePawn.setAnimationFlip(movement.y > 0f || movement.x > 0f);
+            SpriteAnimationState animationState = activePawn.getAnimationState();
+            animationState.setFlip(movement.y > 0f || movement.x > 0f);
+
+            if (movement.y > 0f || movement.x < 0f) {
+                animationState.setAction("walking up", false);
+            } else {
+                animationState.setAction("walking down", false);
+            }
 
             if (overflow > 0f) {
                 pathIndex += 1;
@@ -315,6 +324,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         return activePawn;
     }
 
+    public void setTargetPawn(Pawn targetPawn) {
+        this.targetPawn = targetPawn;
+    }
+
     private boolean doSpawn() {
         int a = 10 - (int) pawns.stream().filter(p -> p.getTeam() != 0).count();
         int b = random.nextInt(10);
@@ -328,28 +341,39 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         switch (state) {
             case SELECT_MOVE:
-                activePawn.setAnimationAction("idle");
+                activePawn.getAnimationState().setAction("idle");
                 if (doSpawn()) {
                     spawnPawn("Service Drone");
                 }
 
                 setStateSelectMove();
                 break;
+
             case SELECT_MOVE_AI:
-                activePawn.setAnimationAction("idle");
+                activePawn.getAnimationState().setAction("idle");
                 currentPath = null;
                 map.setState(Terrain.State.UNSELECTABLE);
 
                 aiFuture = aiExecutorService.submit(ai);
                 break;
-            case MOVING:
 
-                activePawn.setAnimationAction("walking");
+            case MOVING:
+                activePawn.getAnimationState().setAction("walking up");
                 activePawn.move(currentPath.getCost());
 
                 map.setState(Terrain.State.UNSELECTABLE);
                 break;
+
             case ATTACKING:
+                activePawn.getAnimationState().setAction("attack");
+                activePawn.getAnimationState().addActionFinishHandler(x -> {
+
+                    activePawn.getAnimationState().setAction("idle");
+                    getActivePawn().attack(targetPawn);
+
+                    selectNextPawn();
+                });
+
                 break;
         }
     }

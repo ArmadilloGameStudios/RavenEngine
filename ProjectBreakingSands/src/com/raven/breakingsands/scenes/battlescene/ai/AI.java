@@ -105,8 +105,8 @@ public class AI implements Runnable {
 
     public void resolve() {
         if (attack != null) {
-            scene.getActivePawn().attack(attack.getPawn());
-            scene.selectNextPawn();
+            scene.setTargetPawn(attack.getPawn());
+            scene.setState(BattleScene.State.ATTACKING);
             return;
         }
 

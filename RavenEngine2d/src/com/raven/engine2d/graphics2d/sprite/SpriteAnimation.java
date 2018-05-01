@@ -26,6 +26,12 @@ public class SpriteAnimation {
     }
 
     public SpriteAnimationAction getAction(String name) {
-        return actions.get(name);
+        SpriteAnimationAction action = actions.get(name);
+
+        if (action == null) {
+            action = actions.values().stream().findFirst().get();
+        }
+
+        return action;
     }
 }

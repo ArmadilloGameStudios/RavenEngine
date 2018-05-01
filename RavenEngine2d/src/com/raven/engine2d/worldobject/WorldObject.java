@@ -118,12 +118,8 @@ public abstract class WorldObject<
     }
 
 
-    public void setAnimationAction(String animationState) {
-        this.spriteAnimationState.setAction(animationState);
-    }
-
-    public void setAnimationFlip(boolean flip) {
-        this.spriteAnimationState.setFlip(flip);
+    public SpriteAnimationState getAnimationState() {
+        return spriteAnimationState;
     }
 
     public void draw(MainShader shader) {
