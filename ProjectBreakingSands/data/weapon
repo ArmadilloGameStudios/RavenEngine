@@ -10,4 +10,12 @@
     piercing: 2,
     range: 1,
     accuracy: 10,
+},
+{
+    name: "Guard Disk",
+    damage: 4,
+    range: 3,
+    piercing: 1,
+    accuracy: 6,
+    effect: "disk"
 }

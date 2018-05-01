@@ -2,6 +2,7 @@ package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.character.Character;
+import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.scenes.battlescene.ai.AI;
 import com.raven.breakingsands.scenes.battlescene.decal.Wall;
 import com.raven.breakingsands.scenes.battlescene.map.Map;
@@ -84,6 +85,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         models.addAll(Terrain.getSpriteSheets());
         models.addAll(Wall.getSpriteSheets());
         models.addAll(Pawn.getSpriteSheets());
+        models.addAll(Effect.getSpriteSheets());
 
         return models;
     }
@@ -342,6 +344,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         switch (state) {
             case SELECT_MOVE:
                 activePawn.getAnimationState().setAction("idle");
+
+                // TODO change spawn
                 if (doSpawn()) {
                     spawnPawn("Service Drone");
                 }
@@ -365,13 +369,21 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                 break;
 
             case ATTACKING:
-                activePawn.getAnimationState().setAction("attack");
+                activePawn.getAnimationState().setAction("attack start");
                 activePawn.getAnimationState().addActionFinishHandler(x -> {
+                    Effect effect = activePawn.getWeapon().getEffect();
+                    if (effect != null) {
+                        targetPawn.addChild(effect);
+                        effect.getAnimationState().addActionFinishHandler(a -> targetPawn.removeChild(effect));
+                    }
 
-                    activePawn.getAnimationState().setAction("idle");
-                    getActivePawn().attack(targetPawn);
+                    activePawn.getAnimationState().setAction("attack end");
+                    activePawn.getAnimationState().addActionFinishHandler(a -> {
+                        activePawn.getAnimationState().setAction("idle");
+                        getActivePawn().attack(targetPawn);
 
-                    selectNextPawn();
+                        selectNextPawn();
+                    });
                 });
 
                 break;

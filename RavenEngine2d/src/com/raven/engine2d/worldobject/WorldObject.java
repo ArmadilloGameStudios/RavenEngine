@@ -11,6 +11,7 @@ import com.raven.engine2d.util.math.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class WorldObject<
         S extends Scene,
@@ -25,7 +26,7 @@ public abstract class WorldObject<
 
     private Highlight highlight = new Highlight();
 
-    private List<C> children = new ArrayList<>();
+    private List<C> children = new CopyOnWriteArrayList<>();
 
     private SpriteSheet spriteSheet;
     private SpriteAnimationState spriteAnimationState;

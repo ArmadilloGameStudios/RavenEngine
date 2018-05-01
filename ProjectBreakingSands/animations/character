@@ -26,7 +26,7 @@
              { time: 100, x: 96 }]
 },
 {
-    name: "attack",
+    name: "attack start",
     width: 32,
     height: 32,
     frames: [{ time: 200, x: 0, y: 0 },
@@ -42,4 +42,15 @@
              { time: 100, x: 32, y: 128 },
              { time: 100, x: 64, y: 128 },
              { time: 100, x: 32, y: 128 }]
+},
+{
+    name: "attack end",
+    width: 32,
+    height: 32,
+    frames: [{ time: 400, x: 96, y: 128 },
+             { time: 100, x: 64, y: 128 },
+             { time: 100, x: 32, y: 128 },
+             { time: 100, x: 0, y: 128 },
+             { time: 100, x: 96, y: 96 },
+             { time: 100, x: 64, y: 96 }]
 }

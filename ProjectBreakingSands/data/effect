@@ -1,0 +1,5 @@
+{
+    name: "disk",
+    sprite: "sprites/disk.png",
+    animation: "disk"
+}

@@ -3,17 +3,16 @@ package com.raven.engine2d.graphics2d.sprite;
 import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
 import com.raven.engine2d.graphics2d.sprite.handler.FrameFinishHandler;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SpriteAnimationState {
     private SpriteAnimation animation;
     private SpriteAnimationAction activeAction;
     private SpriteAnimationFrame activeFrame;
 
-    private List<FrameFinishHandler> frameFinishHandlers = new LinkedList<>();
-    private List<ActionFinishHandler> actionFinishHandlers = new LinkedList<>();
+    private List<FrameFinishHandler> frameFinishHandlers = new CopyOnWriteArrayList<>();
+    private List<ActionFinishHandler> actionFinishHandlers = new CopyOnWriteArrayList<>();
 
     private float time = 0;
     private boolean flip = false;
@@ -41,7 +40,6 @@ public class SpriteAnimationState {
                 for (ActionFinishHandler handler : actionFinishHandlers) {
                     handler.onActionFinish(this);
                 }
-                actionFinishHandlers.clear();
             }
         }
     }
@@ -75,6 +73,7 @@ public class SpriteAnimationState {
     }
 
     public void setAction(String action, boolean reset) {
+        actionFinishHandlers.clear();
         if (reset || !activeAction.getName().equals(action)) {
             this.activeAction = animation.getAction(action);
             this.activeFrame = activeAction.getFrames().get(0);

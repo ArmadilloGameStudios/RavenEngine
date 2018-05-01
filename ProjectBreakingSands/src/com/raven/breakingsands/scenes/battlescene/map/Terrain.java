@@ -113,7 +113,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                             break;
                         case ATTACK:
                             getScene().setTargetPawn(getPawn());
-//                            getScene().getActivePawn().attack(getPawn());
                             getScene().setState(BattleScene.State.ATTACKING);
                             break;
                     }

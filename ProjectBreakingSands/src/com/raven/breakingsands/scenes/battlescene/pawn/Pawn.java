@@ -49,8 +49,37 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         totalMovement = gameData.getInteger("movement");
         evasion = gameData.getInteger("evasion");
 
-        weapon = new Weapon(GameDatabase.all("weapon").getRandom());
-        armor = new Armor(GameDatabase.all("armor").getRandom());
+        // weapon
+        if (gameData.has("weapon")) {
+            GameData gdWeapon = gameData.getData("weapon");
+
+            if (gdWeapon.isString()) {
+                GameDatabase.all("weapon").stream()
+                        .filter(w -> w.getString("name").equals(gdWeapon.asString()))
+                        .findFirst()
+                        .ifPresent(w -> weapon = new Weapon(scene, w));
+            } else {
+                weapon = new Weapon(scene, gdWeapon);
+            }
+        } else {
+            weapon = new Weapon(scene, GameDatabase.all("weapon").getRandom());
+        }
+
+        // armor
+        if (gameData.has("armor")) {
+            GameData gdArmor = gameData.getData("armor");
+
+            if (gdArmor.isString()) {
+                GameDatabase.all("armor").stream()
+                        .filter(a -> a.getString("name").equals(gdArmor.asString()))
+                        .findFirst()
+                        .ifPresent(a -> armor = new Armor(a));
+            } else {
+                armor = new Armor(gdArmor);
+            }
+        } else {
+            armor = new Armor(GameDatabase.all("armor").getRandom());
+        }
     }
 
     public Pawn(BattleScene scene, Character character) {
@@ -67,7 +96,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         totalMovement = character.getMovement();
         evasion = character.getEvasion();
 
-        weapon = new Weapon(GameDatabase.all("weapon").getRandom());
+        weapon = new Weapon(scene, GameDatabase.all("weapon").getRandom());
         armor = new Armor(GameDatabase.all("armor").getRandom());
     }
 
