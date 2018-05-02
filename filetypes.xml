@@ -1,6 +1,7 @@
 <application>
   <component name="FileTypeManager" version="17">
     <extensionMap>
+      <mapping pattern="guarddrone" type="PLAIN_TEXT" />
       <mapping pattern="corner_out" type="PLAIN_TEXT" />
       <mapping pattern="wall_north" type="PLAIN_TEXT" />
       <mapping pattern="buttons" type="PLAIN_TEXT" />
