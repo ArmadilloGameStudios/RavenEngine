@@ -19,43 +19,43 @@ public class GameDataReader {
 
 	private static int i = 0;
 
-	public static List<com.raven.engine2d.database.GameData> readFile(Path path) throws IOException {
+	public static List<GameData> readFile(Path path) throws IOException {
 	    return readFile(new String(Files.readAllBytes(path)).toCharArray());
     }
 
-	public static List<com.raven.engine2d.database.GameData> readFile(char[] chars) {
+	public static List<GameData> readFile(char[] chars) {
 		i = 0;
 
-		List<com.raven.engine2d.database.GameData> data = new ArrayList<com.raven.engine2d.database.GameData>();
+		List<GameData> data = new ArrayList<GameData>();
 
 		while (i < chars.length) {
-			com.raven.engine2d.database.GameData d = readData(chars);
+			GameData d = readData(chars);
 
 			if (d != null)
 				data.add(d);
 		}
 
-		for (com.raven.engine2d.database.GameData d : data) {
+		for (GameData d : data) {
 			System.out.println(d);
 		}
 
 		return data;
 	}
 
-	private static com.raven.engine2d.database.GameData readData(char[] chars) {
+	private static GameData readData(char[] chars) {
 		return readData(chars, false);
 	}
 
-	private static com.raven.engine2d.database.GameData readData(char[] chars, boolean array) {
-		Map<String, com.raven.engine2d.database.GameData> data = new HashMap<String, com.raven.engine2d.database.GameData>();
-		com.raven.engine2d.database.GameDataList list = new com.raven.engine2d.database.GameDataList();
+	private static GameData readData(char[] chars, boolean array) {
+		Map<String, GameData> data = new HashMap<>();
+		GameDataList list = new GameDataList();
 
 		ReadDataState state = ReadDataState.Open;
 		ValueType type = ValueType.GameData;
 
 		String prop = "";
 		String value = "";
-		com.raven.engine2d.database.GameData d;
+		GameData d;
 
 		boolean done = false;
 		while (!done) {
@@ -129,21 +129,21 @@ public class GameDataReader {
 				case Boolean:
 					if (Character.isWhitespace(chars[i]) || chars[i] == ',') {
 						if (array) {
-							list.add(new com.raven.engine2d.database.GameData(Boolean.parseBoolean(value)));
+							list.add(new GameData(Boolean.parseBoolean(value)));
 							state = ReadDataState.FindValue;
 						} else {
 							data.put(prop.toLowerCase(),
-									new com.raven.engine2d.database.GameData(Boolean.parseBoolean(value)));
+									new GameData(Boolean.parseBoolean(value)));
 							state = ReadDataState.FindProperty;
 						}
 					} else if (chars[i] == '}' || chars[i] == ']') {
 						state = ReadDataState.FindProperty;
 						if (array) {
-							list.add(new com.raven.engine2d.database.GameData(Boolean.parseBoolean(value)));
+							list.add(new GameData(Boolean.parseBoolean(value)));
 							state = ReadDataState.FindValue;
 						} else {
 							data.put(prop.toLowerCase(),
-									new com.raven.engine2d.database.GameData(Boolean.parseBoolean(value)));
+									new GameData(Boolean.parseBoolean(value)));
 							state = ReadDataState.FindProperty;
 						}
 						done = true;
@@ -154,20 +154,20 @@ public class GameDataReader {
 				case Integer:
 					if (Character.isWhitespace(chars[i]) || chars[i] == ',') {
 						if (array) {
-							list.add(new com.raven.engine2d.database.GameData(Integer.parseInt(value)));
+							list.add(new GameData(Integer.parseInt(value)));
 							state = ReadDataState.FindValue;
 						} else {
 							data.put(prop.toLowerCase(),
-									new com.raven.engine2d.database.GameData(Integer.parseInt(value)));
+									new GameData(Integer.parseInt(value)));
 							state = ReadDataState.FindProperty;
 						}
 					} else if (chars[i] == '}' || chars[i] == ']') {
 						if (array) {
-							list.add(new com.raven.engine2d.database.GameData(Integer.parseInt(value)));
+							list.add(new GameData(Integer.parseInt(value)));
 							state = ReadDataState.FindValue;
 						} else {
 							data.put(prop.toLowerCase(),
-									new com.raven.engine2d.database.GameData(Integer.parseInt(value)));
+									new GameData(Integer.parseInt(value)));
 							state = ReadDataState.FindProperty;
 						}
 						done = true;
@@ -177,13 +177,13 @@ public class GameDataReader {
 					break;
 				case String:
 					if (chars[i] == '"') {
-						data.put(prop.toLowerCase(), new com.raven.engine2d.database.GameData(value));
+						data.put(prop.toLowerCase(), new GameData(value));
 						state = ReadDataState.FindProperty;
 						if (array) {
-							list.add(new com.raven.engine2d.database.GameData(value));
+							list.add(new GameData(value));
 							state = ReadDataState.FindValue;
 						} else {
-							data.put(prop.toLowerCase(), new com.raven.engine2d.database.GameData(value));
+							data.put(prop.toLowerCase(), new GameData(value));
 							state = ReadDataState.FindProperty;
 						}
 					} else {
@@ -205,10 +205,10 @@ public class GameDataReader {
 		}
 
 		if (array)
-			return new com.raven.engine2d.database.GameData(list);
+			return new GameData(list);
 
 		if (data.size() != 0)
-			return new com.raven.engine2d.database.GameData(data);
+			return new GameData(data);
 
 		return null;
 	}

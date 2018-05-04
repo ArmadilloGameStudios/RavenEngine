@@ -10,7 +10,7 @@
 {
     name: "Service Drone",
     sprite: "sprites/enemy.png",
-    animation: "character"
+    animation: "guarddrone"
     team: 1,
     hp: 5,
     movement: 3,
@@ -20,7 +20,7 @@
 {
     name: "Guard Drone",
     sprite: "sprites/enemy.png",
-    animation: "character"
+    animation: "guarddrone"
     team: 1,
     hp: 15,
     resistance: 1,
