@@ -247,13 +247,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
             activePawn.move(movement.scale(delta / (pathSpeed * cost), tempVec2));
 
-            // TODO clean this mess
-            SpriteAnimationState animationState = activePawn.getAnimationState();
-            animationState.setFlip(movement.y > 0f || movement.x > 0f);
-            SpriteAnimationState weaponAnimationState = activePawn.getWeapon().getAnimationState();
-            if (weaponAnimationState != null)
-                weaponAnimationState.setFlip(movement.y > 0f || movement.x > 0f);
+            activePawn.setFlip(movement.y > 0f || movement.x > 0f);
 
+            SpriteAnimationState animationState = activePawn.getAnimationState();
             if (movement.y > 0f || movement.x < 0f) {
                 animationState.setAction("walking up", false);
             } else {

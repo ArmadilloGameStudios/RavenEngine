@@ -12,6 +12,7 @@ import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDataQuery;
 import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
 import com.raven.engine2d.worldobject.WorldObject;
@@ -151,7 +152,11 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public void runAttackAnimation(Pawn target, ActionFinishHandler onAttackDone) {
         boolean directional = getWeapon().getDirectional();
-        boolean directionUp = true; // TODO set from target
+        boolean directionUp = target.getParent().getMapX() < getParent().getMapX() ||
+                        target.getParent().getMapY() > getParent().getMapY();
+
+        setFlip(target.getParent().getMapY() > getParent().getMapY() ||
+                target.getParent().getMapX() > getParent().getMapX());
 
         if (directional)
             if (directionUp)
@@ -163,13 +168,13 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
         getAnimationState().addActionFinishHandler(x -> {
 
-                if (directional)
-                    if (directionUp)
-                        getAnimationState().setAction("attack up end");
-                    else
-                        getAnimationState().setAction("attack down end");
+            if (directional)
+                if (directionUp)
+                    getAnimationState().setAction("attack up end");
                 else
-                    getAnimationState().setAction("attack end");
+                    getAnimationState().setAction("attack down end");
+            else
+                getAnimationState().setAction("attack end");
 
             getAnimationState().addActionFinishHandler(a -> {
                 getAnimationState().setAction("idle");
@@ -185,7 +190,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
             getAnimationState().addActionFinishHandler(onAttackDone);
         });
 
-        weapon.runAttackAnimation(true);
+        weapon.runAttackAnimation(directionUp);
 
     }
 
@@ -228,4 +233,12 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         return ZLayer.PAWN.getValue();
     }
 
+    public void setFlip(boolean flip) {
+        getAnimationState().setFlip(flip);
+
+        SpriteAnimationState weaponState = getWeapon().getAnimationState();
+        if (weaponState != null) {
+            weaponState.setFlip(flip);
+        }
+    }
 }
