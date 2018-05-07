@@ -3,6 +3,7 @@ package com.raven.breakingsands.scenes.battlescene;
 import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.character.Effect;
+import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.ai.AI;
 import com.raven.breakingsands.scenes.battlescene.decal.Wall;
 import com.raven.breakingsands.scenes.battlescene.map.Map;
@@ -12,6 +13,8 @@ import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
+import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
@@ -86,6 +89,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         models.addAll(Wall.getSpriteSheets());
         models.addAll(Pawn.getSpriteSheets());
         models.addAll(Effect.getSpriteSheets());
+        models.addAll(Weapon.getSpriteSheets());
 
         return models;
     }
@@ -144,15 +148,29 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         List<Terrain> terrainList = map.getTerrainList();
 
         // characters
-        for (Character character : getGame().getCharacters()) {
+//        for (Character character : getGame().getCharacters()) {
+//
+//            Pawn p = new Pawn(this, character);
+//            pawns.add(p);
+//
+//            Optional<Terrain> o = terrainList.stream().filter(t -> t.getPawn() == null && t.isPassable()).findAny();
+//
+//            map.setPawn(o.get(), p);
+//        }
 
-            Pawn p = new Pawn(this, character);
+        for (int i = 0; i < 3; i++) {
+            GameData gdPawn = GameDatabase.all("pawn").stream()
+                    .filter(p -> p.getString("name").equals("Player"))
+                    .findFirst().get();
+
+            Pawn p = new Pawn(this, gdPawn);
             pawns.add(p);
 
             Optional<Terrain> o = terrainList.stream().filter(t -> t.getPawn() == null && t.isPassable()).findAny();
 
             map.setPawn(o.get(), p);
         }
+
 
         activePawn = pawns.get(0);
 
@@ -229,8 +247,12 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
             activePawn.move(movement.scale(delta / (pathSpeed * cost), tempVec2));
 
+            // TODO clean this mess
             SpriteAnimationState animationState = activePawn.getAnimationState();
             animationState.setFlip(movement.y > 0f || movement.x > 0f);
+            SpriteAnimationState weaponAnimationState = activePawn.getWeapon().getAnimationState();
+            if (weaponAnimationState != null)
+                weaponAnimationState.setFlip(movement.y > 0f || movement.x > 0f);
 
             if (movement.y > 0f || movement.x < 0f) {
                 animationState.setAction("walking up", false);
@@ -343,7 +365,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         switch (state) {
             case SELECT_MOVE:
-                activePawn.getAnimationState().setAction("idle");
 
                 // TODO change spawn
                 if (doSpawn()) {
@@ -369,28 +390,24 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                 break;
 
             case ATTACKING:
-                activePawn.getAnimationState().setAction("attack start");
-                activePawn.getAnimationState().addActionFinishHandler(x -> {
-                    Effect effect = activePawn.getWeapon().getEffect();
-                    if (effect != null) {
-                        targetPawn.addChild(effect);
-                        effect.getAnimationState().addActionFinishHandler(a -> targetPawn.removeChild(effect));
-                    }
 
-                    activePawn.getAnimationState().setAction("attack end");
-                    activePawn.getAnimationState().addActionFinishHandler(a -> {
-                        activePawn.getAnimationState().setAction("idle");
-                        getActivePawn().attack(targetPawn);
-
-                        selectNextPawn();
-                    });
-                });
+                setStateSelectAttacking();
 
                 break;
         }
     }
 
+    public void setStateSelectAttacking() {
+        map.setState(Terrain.State.UNSELECTABLE);
+
+        activePawn.runAttackAnimation(targetPawn, a -> {
+            getActivePawn().attack(targetPawn);
+            selectNextPawn();
+        });
+    }
+
     private void setStateSelectMove() {
+        activePawn.getAnimationState().setAction("idle");
 
         // clear
 

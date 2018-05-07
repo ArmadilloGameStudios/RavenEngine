@@ -1,18 +1,41 @@
 package com.raven.breakingsands.character;
 
+import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
+import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.database.GameDatable;
+import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.worldobject.WorldObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Weapon
         extends WorldObject<BattleScene, Pawn, WorldObject>
         implements GameDatable {
+
+    private static GameDataList dataList = GameDatabase.all("weapon");
+
+    public static List<SpriteSheet> getSpriteSheets() {
+        List<SpriteSheet> data = new ArrayList<>();
+
+        for (GameData gameData : dataList) {
+            if (gameData.has("sprite"))
+                data.add(GameEngine.getEngine().getSpriteSheet(
+                        gameData.getString("sprite")));
+        }
+
+        return data;
+    }
+
     private GameData gameData;
     private int damage, piercing = 0, range, accuracy;
+    private boolean directional;
     private String name;
     private Effect effect;
 
@@ -24,6 +47,10 @@ public class Weapon
         damage = gameData.getInteger("damage");
         range = gameData.getInteger("range");
         accuracy = gameData.getInteger("accuracy");
+
+        if (gameData.has("directional")) {
+            directional = gameData.getBoolean("directional");
+        }
 
         if (gameData.has("piercing")) {
             piercing = gameData.getInteger("piercing");
@@ -43,6 +70,36 @@ public class Weapon
         }
 
         this.gameData = gameData;
+    }
+
+    public void runAttackAnimation(boolean directionUp) {
+        if (getAnimationState() != null) {
+
+//            setVisibility(true);
+
+            if (directional)
+                if (directionUp)
+                    getAnimationState().setAction("attack up start");
+                else
+                    getAnimationState().setAction("attack down start");
+            else
+                getAnimationState().setAction("attack start");
+
+            getAnimationState().addActionFinishHandler(x -> {
+                if (directional)
+                    if (directionUp)
+                        getAnimationState().setAction("attack up end");
+                    else
+                        getAnimationState().setAction("attack down end");
+                else
+                    getAnimationState().setAction("attack end");
+
+                getAnimationState().addActionFinishHandler(r -> {
+                    getAnimationState().setAction("idle");
+//                    setVisibility(false);
+                });
+            });
+        }
     }
 
     public int getDamage() {
@@ -76,6 +133,10 @@ public class Weapon
 
     @Override
     public float getZ() {
-        return 0f;
+        return ZLayer.WEAPON.getValue();
+    }
+
+    public boolean getDirectional() {
+        return directional;
     }
 }

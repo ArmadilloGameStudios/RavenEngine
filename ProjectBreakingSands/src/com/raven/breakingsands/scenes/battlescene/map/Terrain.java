@@ -259,6 +259,13 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             case MOVEABLE:
                 if (this.pawn == getScene().getActivePawn()) {
                     this.state = State.UNSELECTABLE;
+                } else if (this.isMouseHovering()) {
+                    getScene().selectPath(this);
+                }
+                break;
+            case ATTACKABLE:
+                if (this.isMouseHovering()) {
+                    setState(State.ATTACK);
                 }
                 break;
         }
@@ -309,6 +316,9 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                 }
                 break;
             case SELECT_MOVE_AI:
+                setHighlight(BattleScene.OFF);
+                break;
+            case ATTACKING:
                 setHighlight(BattleScene.OFF);
                 break;
         }

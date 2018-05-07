@@ -6,15 +6,6 @@
              { time: 500, x: 32 }]
 },
 {
-    name: "idle",
-    width: 32,
-    height: 32,
-    frames: [{ time: 500, x: 0 },
-             { time: 500, x: 0, y: 96 },
-             { time: 200, x: 32, y: 96, xoffset: -16, yoffset: 16 },
-             { time: 500, x: 64, y: 96, xoffset: -32, yoffset: 0 }]
-},
-{
     name: "walking up",
     width: 32,
     height: 32,
@@ -35,25 +26,30 @@
              { time: 100, x: 96 }]
 },
 {
-    name: "attack start",
+    name: "attack up start",
     width: 32,
     height: 32,
-    frames: [{ time: 200, x: 0, y: 0 },
-             { time: 200, x: 0, y: 96 },
-             { time: 200, x: 32, y: 96 },
-             { time: 200, x: 64, y: 96 },
-             { time: 100, x: 96, y: 96 },
-             { time: 100, x: 0, y: 128 },
-             { time: 100, x: 32, y: 128 },
-             { time: 100, x: 64, y: 128 },
-             { time: 100, x: 32, y: 128 },
-             { time: 100, x: 64, y: 128 },
-             { time: 100, x: 32, y: 128 },
-             { time: 100, x: 64, y: 128 },
-             { time: 100, x: 32, y: 128 }]
+    frames: [{ time: 500, x: 0, y: 96 },
+             { time: 200, x: 32, y: 96, xoffset: -5, yoffset: 16 },
+             { time: 500, x: 64, y: 96, xoffset: -10, yoffset: 10 }]
 },
 {
-    name: "attack end",
+    name: "attack up end",
+    width: 32,
+    height: 32,
+    frames: [{ time: 200, x: 0, y: 0 }]
+},
+{
+    name: "attack down start",
+    width: 32,
+    height: 32,
+    frames: [{ time: 500, x: 0 },
+             { time: 500, x: 0, y: 96 },
+             { time: 200, x: 32, y: 96, xoffset: -5, yoffset: -4 },
+             { time: 500, x: 64, y: 96, xoffset: -10, yoffset: -10 }]
+},
+{
+    name: "attack down end",
     width: 32,
     height: 32,
     frames: [{ time: 400, x: 96, y: 128 },

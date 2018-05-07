@@ -213,7 +213,7 @@ public class MainShader extends Shader {
 
                 window.drawQuad();
             } else {
-                x += spriteAnimation.getXOffset();
+                x -= spriteAnimation.getXOffset();
                 y += spriteAnimation.getYOffset();
 
                 glViewport((int) x / 2, (int) y / 2, spriteAnimation.getWidth(), spriteAnimation.getHeight());

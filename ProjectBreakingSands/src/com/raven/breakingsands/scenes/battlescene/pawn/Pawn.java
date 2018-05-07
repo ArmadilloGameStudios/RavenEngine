@@ -3,6 +3,7 @@ package com.raven.breakingsands.scenes.battlescene.pawn;
 import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.character.Armor;
 import com.raven.breakingsands.character.Character;
+import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
@@ -12,6 +13,7 @@ import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDataQuery;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
+import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
 import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
@@ -65,6 +67,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
             weapon = new Weapon(scene, GameDatabase.all("weapon").getRandom());
         }
 
+        if (weapon != null) {
+            addChild(weapon);
+        }
+
         // armor
         if (gameData.has("armor")) {
             GameData gdArmor = gameData.getData("armor");
@@ -97,6 +103,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         evasion = character.getEvasion();
 
         weapon = new Weapon(scene, GameDatabase.all("weapon").getRandom());
+        addChild(weapon);
+
         armor = new Armor(GameDatabase.all("armor").getRandom());
     }
 
@@ -141,6 +149,46 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         remainingMovement = Math.max(remainingMovement - amount, 0);
     }
 
+    public void runAttackAnimation(Pawn target, ActionFinishHandler onAttackDone) {
+        boolean directional = getWeapon().getDirectional();
+        boolean directionUp = true; // TODO set from target
+
+        if (directional)
+            if (directionUp)
+                getAnimationState().setAction("attack up start");
+            else
+                getAnimationState().setAction("attack down start");
+        else
+            getAnimationState().setAction("attack start");
+
+        getAnimationState().addActionFinishHandler(x -> {
+
+                if (directional)
+                    if (directionUp)
+                        getAnimationState().setAction("attack up end");
+                    else
+                        getAnimationState().setAction("attack down end");
+                else
+                    getAnimationState().setAction("attack end");
+
+            getAnimationState().addActionFinishHandler(a -> {
+                getAnimationState().setAction("idle");
+            });
+
+
+            Effect effect = weapon.getEffect();
+            if (effect != null) {
+                target.addChild(effect);
+                effect.getAnimationState().addActionFinishHandler(a -> target.removeChild(effect));
+            }
+
+            getAnimationState().addActionFinishHandler(onAttackDone);
+        });
+
+        weapon.runAttackAnimation(true);
+
+    }
+
     public void attack(Pawn pawn) {
         remainingAttacks = Math.max(totalAttacks - 1, 0);
 
@@ -179,4 +227,5 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     public float getZ() {
         return ZLayer.PAWN.getValue();
     }
+
 }
