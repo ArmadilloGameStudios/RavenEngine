@@ -11,6 +11,7 @@
       <mapping pattern="augmentation" type="PLAIN_TEXT" />
       <mapping pattern="armor" type="PLAIN_TEXT" />
       <mapping pattern="structure" type="PLAIN_TEXT" />
+      <mapping pattern="text" type="PLAIN_TEXT" />
       <mapping pattern="corner_north" type="PLAIN_TEXT" />
       <mapping pattern="disk" type="PLAIN_TEXT" />
       <mapping pattern="connections" type="PLAIN_TEXT" />
