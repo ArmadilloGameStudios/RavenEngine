@@ -13,8 +13,8 @@ public class UILabel<S extends Scene, P extends UIContainer<S>>
     private float x, y;
 
 
-    public UILabel(S scene, GameData data, int width, int height) {
-        super(scene, data);
+    public UILabel(S scene, String text, int width, int height) {
+        super(scene, text);
 
         this.width = width;
         this.height = height;

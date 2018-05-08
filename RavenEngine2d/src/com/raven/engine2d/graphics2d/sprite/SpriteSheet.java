@@ -1,5 +1,6 @@
 package com.raven.engine2d.graphics2d.sprite;
 
+import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.shader.Shader;
 import org.lwjgl.BufferUtils;
 
@@ -10,20 +11,17 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_RGB;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL30.GL_RGBA32F;
-import static org.lwjgl.opengl.GL30.GL_RGBA32I;
 
-public class SpriteSheet {
+public class SpriteSheet extends ShaderTexture {
 
     private int textureName;
     private int textureActiveLocation;
     private String filePath;
-    public int height;
-    public int width;
+    private int height;
+    private int width;
 
     public SpriteSheet(File f) {
         filePath = f.getPath();
@@ -54,6 +52,7 @@ public class SpriteSheet {
 
             buffer.flip();
 
+            // Set Texture
             textureActiveLocation = Shader.getNextTexture();
 
             glActiveTexture(GL_TEXTURE0 + textureActiveLocation);
@@ -86,5 +85,14 @@ public class SpriteSheet {
 
     public int getTextureName() {
         return textureName;
+    }
+
+    public int getHeight()
+    {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
     }
 }

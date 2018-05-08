@@ -3,6 +3,7 @@ package com.raven.engine2d.ui;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.shader.Shader;
+import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.scene.Scene;
 import org.lwjgl.BufferUtils;
 
@@ -13,21 +14,23 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
-public abstract class UIImage
-        <S extends Scene,
-         C extends UIContainer<S>>
-        extends UIObject<S, C> {
+public class UIImage
+        extends ShaderTexture {
 
+    private int textureActiveLocation;
     private int width, height, texture;
 
     private BufferedImage img;
 
-    public UIImage(S scene, BufferedImage img) {
-        super(scene);
+    public UIImage(int width, int height) {
+        this.img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-        this.img = img;
-        this.width = img.getWidth();
-        this.height = img.getHeight();
+        this.width = width;
+        this.height = height;
+    }
+
+    @Override
+    public void load() {
 
         // To Byte Array
         int[] pixels = new int[width * height];
@@ -35,8 +38,8 @@ public abstract class UIImage
 
         ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
 
-        for(int y = 0; y < height; y++){
-            for(int x = 0; x < width; x++){
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
                 int pixel = pixels[y * width + x];
                 buffer.put((byte) ((pixel >> 16) & 0xFF));    // Red component
                 buffer.put((byte) ((pixel >> 8) & 0xFF));     // Green component
@@ -47,10 +50,15 @@ public abstract class UIImage
 
         buffer.flip();
 
-
         // Set Texture
-        glActiveTexture(GL_TEXTURE0 + Shader.TEXTURE);
-        texture = glGenTextures();
+        if (textureActiveLocation == 0)
+            textureActiveLocation = Shader.getNextTexture();
+
+        glActiveTexture(GL_TEXTURE0 + textureActiveLocation);
+
+        if (texture == 0)
+            texture = glGenTextures();
+
         glBindTexture(GL_TEXTURE_2D, texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
@@ -64,29 +72,27 @@ public abstract class UIImage
     }
 
     @Override
-    public int getStyle() {
-        return getParent().getStyle();
+    public int getTextureActiveLocation() {
+        return textureActiveLocation;
     }
 
     @Override
-    public final float getWidth() {
+    public final int getWidth() {
         return width;
     }
 
     @Override
-    public final float getHeight() {
+    public final int getHeight() {
         return height;
     }
 
     @Override
-    public void draw(MainShader shader) {
-        // TODO add sprite, animation, and drawing
+    public void release() {
+        // TODO make sure this is correct
+        glDeleteTextures(texture);
     }
 
-    @Override
-    public void release() {
-        super.release();
-
-        glDeleteTextures(texture);
+    public BufferedImage getImage() {
+        return img;
     }
 }

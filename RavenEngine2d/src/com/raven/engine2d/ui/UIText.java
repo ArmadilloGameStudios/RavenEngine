@@ -17,26 +17,21 @@ import java.awt.*;
 public abstract class UIText<S extends Scene, P extends UIContainer<S>>
         extends UIObject<S, P> {
 
-    private SpriteSheet spriteSheet;
+    private UIImage image;
     private SpriteAnimationState spriteAnimationState;
 
     private Vector2f position = new Vector2f();
 
-    public UIText(S scene, GameData data) {
+    public UIText(S scene, String text) {
         super(scene);
 
-        if (data.has("sprite")) {
-            spriteSheet = GameEngine.getEngine().getSpriteSheet(data.getString("sprite"));
+        image = new UIImage(100, 14);
 
-            if (data.has("animation")) {
-                String animationName = data.getString("animation");
-                spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation(animationName));
-            }
-        }
+        UITextWriter.write(image, text);
     }
 
     public void draw(MainShader shader) {
-        shader.draw(spriteSheet, spriteAnimationState, position, getScene().getWorldOffset(), getID(), getZ(), null, DrawStyle.UI);
+        shader.draw(image, spriteAnimationState, position, getScene().getWorldOffset(), getID(), getZ(), null, DrawStyle.UI);
 
         for (UIObject o : this.getChildren()) {
             if (o.getVisibility())

@@ -18,7 +18,7 @@ public class GameProperties {
     }
 
     public static String getMainDirectory() {
-        return com.raven.engine2d.GameEngine.getEngine().getGame().getMainDirectory();
+        return GameEngine.getEngine().getGame().getMainDirectory();
     }
 
     public static void setMultisampleCount(int multiSample) {

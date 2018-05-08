@@ -4,7 +4,7 @@
     animation: "character"
     team: 0,
     hp: 10,
-    movement: 80,
+    movement: 5,
     evasion: 2,
     weapon: "Plasma Blade"
 },
