@@ -9,8 +9,6 @@ import com.raven.engine2d.ui.UIText;
 public class UIDetailText
         extends UIText<BattleScene, UIContainer<BattleScene>> {
 
-    private float x, y;
-
     public UIDetailText(BattleScene scene) {
         super(scene, "text");
     }
@@ -28,26 +26,6 @@ public class UIDetailText
     @Override
     public float getWidth() {
         return 250;
-    }
-
-    @Override
-    public float getYOffset() {
-        return getParent().getYOffset() + y;
-    }
-
-    @Override
-    public void setYOffset(float y) {
-        this.y = y;
-    }
-
-    @Override
-    public float getXOffset() {
-        return getParent().getXOffset() + x;
-    }
-
-    @Override
-    public void setXOffset(float x) {
-        this.x = x;
     }
 
     @Override

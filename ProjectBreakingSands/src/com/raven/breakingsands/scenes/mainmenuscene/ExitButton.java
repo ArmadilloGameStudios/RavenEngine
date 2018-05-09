@@ -8,17 +8,17 @@ public class ExitButton
         extends UIButton<MainMenuScene, UIContainer<MainMenuScene>> {
 
     public ExitButton(MainMenuScene scene) {
-        super(scene, "exit");
+        super(scene, "quit");
     }
 
     @Override
     public float getHeight() {
-        return 75f;
+        return getSpriteAnimationState().getHeight();
     }
 
     @Override
     public float getWidth() {
-        return 200f;
+        return getSpriteAnimationState().getWidth();
     }
 
     @Override

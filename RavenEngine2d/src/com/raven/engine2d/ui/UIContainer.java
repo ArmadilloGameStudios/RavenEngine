@@ -2,6 +2,7 @@ package com.raven.engine2d.ui;
 
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
+import com.raven.engine2d.util.math.Vector2f;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ public abstract class UIContainer<S extends Scene>
     public static final int CENTER = 0, BOTTOM = 1;
 
     protected float width, height;
+    private Vector2f position = new Vector2f();
 
     @Override
     public float getHeight() {
@@ -29,6 +31,32 @@ public abstract class UIContainer<S extends Scene>
     @Override
     public void addChild(UIObject child) {
         super.addChild(child);
+    }
+
+
+    @Override
+    public final float getYOffset() {
+        return position.y;
+    }
+
+    @Override
+    public final void setYOffset(float y) {
+        position.y = y;
+    }
+
+    @Override
+    public final float getXOffset() {
+        return position.x;
+    }
+
+    @Override
+    public final void setXOffset(float x) {
+        position.x = x;
+    }
+
+    @Override
+    public Vector2f getPosition() {
+        return position;
     }
 
     public void pack() {
@@ -50,7 +78,7 @@ public abstract class UIContainer<S extends Scene>
                 for (int i = 0; i < children.size(); i++) {
                     UIObject obj = children.get(i);
 
-                    obj.setXOffset(-width + obj.getWidth() + offset);
+                    obj.setXOffset(offset);
 
                     offset += obj.getWidth() * 2f;
                 }

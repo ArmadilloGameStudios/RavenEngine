@@ -44,7 +44,6 @@ public class UITextWriter {
         imgGraphics.setComposite(
                 AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
 
-        background.load(); // TODO remove
         imgGraphics.drawImage(background.getImage(), 0, 0, null);
     }
 
@@ -60,7 +59,6 @@ public class UITextWriter {
                 .map(d -> d.getList("chars"))
                 .get();
 
-        // TODO draw the text on the img
         for (Character c : text.toCharArray()) {
             writeChar(c, alphabetLocation);
         }

@@ -3,6 +3,7 @@ package com.raven.engine2d.ui;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
+import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.ui.UIContainer;
 import com.raven.engine2d.ui.UIText;
@@ -14,16 +15,23 @@ public abstract class UIButton<S extends Scene, C extends UIContainer<S>>
         extends UIText<S, C>
         implements MouseHandler {
 
+    private static final String btnImgSrc = "sprites/button.png";
+
+    public static SpriteSheet getSpriteSheet() {
+        return GameEngine.getEngine().getSpriteSheet(btnImgSrc);
+    }
+
     private float x, y;
     private SpriteAnimationState spriteAnimationState;
 
     public UIButton(S scene, String text) {
-        super(scene, text, "sprites/button.png");
+        super(scene, text, btnImgSrc);
 
         spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation("newgamebutton"));
 
         this.addMouseHandler(this);
     }
+
 
     @Override
     public void release() {
@@ -33,26 +41,6 @@ public abstract class UIButton<S extends Scene, C extends UIContainer<S>>
     @Override
     public int getStyle() {
         return getParent().getStyle();
-    }
-
-    @Override
-    public float getYOffset() {
-        return getParent().getYOffset() + y;
-    }
-
-    @Override
-    public void setYOffset(float y) {
-        this.y = y;
-    }
-
-    @Override
-    public float getXOffset() {
-        return getParent().getXOffset() + x;
-    }
-
-    @Override
-    public void setXOffset(float x) {
-        this.x = x;
     }
 
     @Override

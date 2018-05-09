@@ -3,6 +3,8 @@ package com.raven.engine2d.ui;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.scene.Scene;
+import com.raven.engine2d.util.math.Vector2f;
+import com.raven.engine2d.util.math.Vector2i;
 import com.raven.engine2d.util.math.Vector4f;
 
 import java.awt.*;
@@ -11,7 +13,6 @@ public class UILabel<S extends Scene, P extends UIContainer<S>>
         extends UIText<S, P> {
 
     private int width, height;
-    private float x, y;
 
     public UILabel(S scene, String text, int width, int height) {
         super(scene, text);
@@ -33,26 +34,6 @@ public class UILabel<S extends Scene, P extends UIContainer<S>>
     @Override
     public float getWidth() {
         return width;
-    }
-
-    @Override
-    public float getYOffset() {
-        return getParent().getYOffset() + y;
-    }
-
-    @Override
-    public void setYOffset(float y) {
-        this.y = y;
-    }
-
-    @Override
-    public float getXOffset() {
-        return getParent().getXOffset() + x;
-    }
-
-    @Override
-    public void setXOffset(float x) {
-        this.x = x;
     }
 
     @Override

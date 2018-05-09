@@ -17,6 +17,8 @@ import java.awt.*;
 public abstract class UIText<S extends Scene, P extends UIContainer<S>>
         extends UIObject<S, P> {
 
+    private final String text;
+    private final String backgroundSrc;
     private UIImage image;
 
     private Vector2f position = new Vector2f();
@@ -28,6 +30,11 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
     public UIText(S scene, String text, String backgroundSrc) {
         super(scene);
 
+        this.text = text;
+        this.backgroundSrc = backgroundSrc;
+    }
+
+    public void load() {
         image = new UIImage(100, 64);
 
         UITextWriter textWriter = new UITextWriter(image);
@@ -41,7 +48,7 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
     }
 
     public void draw(MainShader shader) {
-        shader.draw(image, getSpriteAnimationState(), position, getScene().getWorldOffset(), getID(), getZ(), null, DrawStyle.UI);
+        shader.draw(image, getSpriteAnimationState(), getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), null, DrawStyle.UI);
 
         for (UIObject o : this.getChildren()) {
             if (o.getVisibility())
@@ -54,6 +61,31 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
     }
 
     public abstract SpriteAnimationState getSpriteAnimationState();
+
+    @Override
+    public final float getYOffset() {
+        return position.y;
+    }
+
+    @Override
+    public final void setYOffset(float y) {
+        position.y = y;
+    }
+
+    @Override
+    public final float getXOffset() {
+        return position.x;
+    }
+
+    @Override
+    public final void setXOffset(float x) {
+        position.x = x;
+    }
+
+    @Override
+    public final Vector2f getPosition() {
+        return position;
+    }
 
     @Override
     public void update(float deltaTime) {
