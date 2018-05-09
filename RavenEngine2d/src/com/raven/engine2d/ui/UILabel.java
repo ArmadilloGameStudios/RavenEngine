@@ -1,6 +1,7 @@
 package com.raven.engine2d.ui;
 
 import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector4f;
 
@@ -11,7 +12,6 @@ public class UILabel<S extends Scene, P extends UIContainer<S>>
 
     private int width, height;
     private float x, y;
-
 
     public UILabel(S scene, String text, int width, int height) {
         super(scene, text);
@@ -53,5 +53,10 @@ public class UILabel<S extends Scene, P extends UIContainer<S>>
     @Override
     public void setXOffset(float x) {
         this.x = x;
+    }
+
+    @Override
+    public SpriteAnimationState getSpriteAnimationState() {
+        return null;
     }
 }

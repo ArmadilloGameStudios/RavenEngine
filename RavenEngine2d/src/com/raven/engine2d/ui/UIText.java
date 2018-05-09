@@ -18,20 +18,30 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
         extends UIObject<S, P> {
 
     private UIImage image;
-    private SpriteAnimationState spriteAnimationState;
 
     private Vector2f position = new Vector2f();
 
     public UIText(S scene, String text) {
+        this(scene, text, null);
+    }
+
+    public UIText(S scene, String text, String backgroundSrc) {
         super(scene);
 
-        image = new UIImage(100, 14);
+        image = new UIImage(100, 64);
 
-        UITextWriter.write(image, text);
+        UITextWriter textWriter = new UITextWriter(image);
+
+        if (backgroundSrc != null)
+            textWriter.drawBackground(backgroundSrc);
+
+        textWriter.write(text);
+
+        image.load();
     }
 
     public void draw(MainShader shader) {
-        shader.draw(image, spriteAnimationState, position, getScene().getWorldOffset(), getID(), getZ(), null, DrawStyle.UI);
+        shader.draw(image, getSpriteAnimationState(), position, getScene().getWorldOffset(), getID(), getZ(), null, DrawStyle.UI);
 
         for (UIObject o : this.getChildren()) {
             if (o.getVisibility())
@@ -40,19 +50,17 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
     }
 
     public void setAnimationAction(String action) {
-        this.spriteAnimationState.setAction(action);
+        this.getSpriteAnimationState().setAction(action);
     }
 
-    public SpriteAnimationState getSpriteAnimationState() {
-        return spriteAnimationState;
-    }
+    public abstract SpriteAnimationState getSpriteAnimationState();
 
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
 
-        if (spriteAnimationState != null) {
-            spriteAnimationState.update(deltaTime);
+        if (getSpriteAnimationState() != null) {
+            getSpriteAnimationState().update(deltaTime);
         }
 
         for (UIObject o : this.getChildren()) {

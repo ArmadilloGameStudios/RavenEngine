@@ -1,20 +1,26 @@
-package com.raven.breakingsands.scenes.hud;
+package com.raven.engine2d.ui;
 
+import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.ui.UIContainer;
 import com.raven.engine2d.ui.UIText;
 import com.raven.engine2d.util.math.Vector4f;
 import com.raven.engine2d.worldobject.MouseHandler;
+import com.sun.org.glassfish.gmbal.ManagedObject;
 
 public abstract class UIButton<S extends Scene, C extends UIContainer<S>>
         extends UIText<S, C>
         implements MouseHandler {
 
     private float x, y;
+    private SpriteAnimationState spriteAnimationState;
 
-    public UIButton(S scene, GameData data) {
-        super(scene, data);
+    public UIButton(S scene, String text) {
+        super(scene, text, "sprites/button.png");
+
+        spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation("newgamebutton"));
 
         this.addMouseHandler(this);
     }
@@ -62,5 +68,10 @@ public abstract class UIButton<S extends Scene, C extends UIContainer<S>>
     @Override
     public void handleMouseHover(float delta) {
 
+    }
+
+    @Override
+    public SpriteAnimationState getSpriteAnimationState() {
+        return spriteAnimationState;
     }
 }

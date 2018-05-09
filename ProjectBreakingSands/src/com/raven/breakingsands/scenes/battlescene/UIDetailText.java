@@ -1,6 +1,7 @@
 package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.util.math.Vector4f;
 import com.raven.engine2d.ui.UIContainer;
 import com.raven.engine2d.ui.UIText;
@@ -11,7 +12,7 @@ public class UIDetailText
     private float x, y;
 
     public UIDetailText(BattleScene scene) {
-        super(scene, new GameData("text"));
+        super(scene, "text");
     }
 
     @Override
@@ -47,5 +48,10 @@ public class UIDetailText
     @Override
     public void setXOffset(float x) {
         this.x = x;
+    }
+
+    @Override
+    public SpriteAnimationState getSpriteAnimationState() {
+        return null;
     }
 }

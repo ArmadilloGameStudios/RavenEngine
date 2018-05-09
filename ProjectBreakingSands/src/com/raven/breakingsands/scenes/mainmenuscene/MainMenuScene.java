@@ -41,7 +41,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         getLayerDetails().addChild(pawn);
 
         // Background
-        setBackgroundColor(new Vector3f(0f,0f,0f));
+        setBackgroundColor(new Vector3f(.5f,.5f,.5f));
 
         // World Offset
 

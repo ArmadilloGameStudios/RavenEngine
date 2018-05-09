@@ -22,6 +22,7 @@ public class SpriteSheet extends ShaderTexture {
     private String filePath;
     private int height;
     private int width;
+    private BufferedImage img;
 
     public SpriteSheet(File f) {
         filePath = f.getPath();
@@ -29,7 +30,7 @@ public class SpriteSheet extends ShaderTexture {
 
     public void load() {
         try {
-            BufferedImage img = ImageIO.read(new File(filePath));
+            img = ImageIO.read(new File(filePath));
 
             this.width = img.getWidth();
             this.height = img.getHeight();
@@ -94,5 +95,9 @@ public class SpriteSheet extends ShaderTexture {
 
     public int getWidth() {
         return width;
+    }
+
+    public BufferedImage getImage() {
+        return img;
     }
 }
