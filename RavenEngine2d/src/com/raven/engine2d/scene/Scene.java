@@ -41,17 +41,20 @@ public abstract class Scene<G extends Game> {
 
         // draw
         for (WorldObject o : layerTerrain.getChildren()) {
-            o.draw(mainShader);
+            if (o.getVisibility())
+                o.draw(mainShader);
             window.printErrors("Draw World Object Error: ");
         }
 
         for (WorldObject o : layerDetails.getChildren()) {
-            o.draw(mainShader);
+            if (o.getVisibility())
+                o.draw(mainShader);
         }
 
         // ui
         for (UIObject o : layerUI.getChildren()) {
-            o.draw(mainShader);
+            if (o.getVisibility())
+                o.draw(mainShader);
             window.printErrors("Draw UI Error: ");
         }
 

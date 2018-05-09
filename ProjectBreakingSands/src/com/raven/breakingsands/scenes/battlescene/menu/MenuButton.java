@@ -12,7 +12,7 @@ public abstract class MenuButton extends UIButton<BattleScene, Menu> {
 
     @Override
     public float getHeight() {
-        return 75f;
+        return 64f;
     }
 
     @Override

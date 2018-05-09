@@ -136,10 +136,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 //        setDetailText(activePawn.getParent().getDetailText());
 
         // Menu
-//        menu = new Menu(this);
-//        menu.pack();
-//        getLayerUI().addChild(menu);
-//        menu.setVisibility(false);
+        menu = new Menu(this);
+        menu.pack();
+        getLayerUI().addChild(menu);
+        menu.setVisibility(false);
 
 //        victory();
     }

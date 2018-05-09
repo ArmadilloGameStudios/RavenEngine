@@ -1,5 +1,6 @@
 package com.raven.engine2d.ui;
 
+import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
@@ -103,11 +104,13 @@ public abstract class UIContainer<S extends Scene>
 
                     offset += obj.getHeight() * .5f;
 
-                    obj.setYOffset(height * .5f - offset);
+                    obj.setYOffset(height * .5f - offset + GameProperties.getScreenHeight() / 2f);
+                    obj.setXOffset(GameProperties.getScreenWidth() / 2f - obj.getWidth() / 2f);
 
                     offset += obj.getHeight() * .5f;
 
                 }
+
                 break;
         }
     }
