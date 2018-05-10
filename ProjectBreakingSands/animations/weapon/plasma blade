@@ -25,7 +25,7 @@
     name: "attack down end",
     width: 32,
     height: 32,
-    frames: [{ time: 200, x: 64, y: 32 }]
+    frames: [{ time: 200, x: 96, y: 32 }]
 },
 {
     name: "attack up start",
@@ -48,6 +48,6 @@
     name: "attack up end",
     width: 32,
     height: 32,
-    frames: [{ time: 200, x: 64, y: 32 }]
+    frames: [{ time: 200, x: 96, y: 32 }]
 },
 

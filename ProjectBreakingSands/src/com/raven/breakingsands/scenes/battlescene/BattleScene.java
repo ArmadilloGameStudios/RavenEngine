@@ -94,17 +94,56 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         return models;
     }
 
+
+    private boolean isDownKey = false;
+    private boolean isUpKey = false;
+    private boolean isRightKey = false;
+    private boolean isLeftKey = false;
+
     @Override
     public void inputKey(int key, int action, int mods) {
-        if (GLFW.GLFW_KEY_ESCAPE == key && GLFW.GLFW_PRESS == action) {
-            if (isPaused()) {
-                menu.setVisibility(false);
-                setPaused(false);
-            } else {
-                menu.setVisibility(true);
-                setPaused(true);
-            }
+        switch (key) {
+            case GLFW.GLFW_KEY_ESCAPE:
+                if (action == GLFW.GLFW_PRESS) {
+                    if (isPaused()) {
+                        menu.setVisibility(false);
+                        setPaused(false);
+                    } else {
+                        menu.setVisibility(true);
+                        setPaused(true);
+                    }
+                }
+                break;
+            case GLFW.GLFW_KEY_DOWN:
+                if (action == GLFW.GLFW_PRESS) {
+                    isDownKey = true;
+                } else if (action == GLFW.GLFW_RELEASE) {
+                    isDownKey = false;
+                }
+                break;
+            case GLFW.GLFW_KEY_UP:
+                if (action == GLFW.GLFW_PRESS) {
+                    isUpKey = true;
+                } else if (action == GLFW.GLFW_RELEASE) {
+                    isUpKey = false;
+                }
+                break;
+            case GLFW.GLFW_KEY_RIGHT:
+                if (action == GLFW.GLFW_PRESS) {
+                    isRightKey = true;
+                } else if (action == GLFW.GLFW_RELEASE) {
+                    isRightKey = false;
+                }
+                break;
+            case GLFW.GLFW_KEY_LEFT:
+                if (action == GLFW.GLFW_PRESS) {
+                    isLeftKey = true;
+                } else if (action == GLFW.GLFW_RELEASE) {
+                    isLeftKey = false;
+                }
+                break;
         }
+
     }
 
     private Vector2f tempVec = new Vector2f();
@@ -220,6 +259,25 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                     ai.resolve();
                 }
                 break;
+        }
+
+        float smoothing = .5f;
+        Vector2f worldOffset = getWorldOffset();
+
+        if (isDownKey) {
+            worldOffset.y += smoothing * deltaTime;
+        }
+
+        if (isUpKey) {
+            worldOffset.y -= smoothing * deltaTime;
+        }
+
+        if (isRightKey) {
+            worldOffset.x -= smoothing * deltaTime;
+        }
+
+        if (isLeftKey) {
+            worldOffset.x += smoothing * deltaTime;
         }
     }
 

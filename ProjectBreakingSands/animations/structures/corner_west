@@ -3,6 +3,6 @@
     width: 17,
     height: 32,
     xoffset: 0,
-    yoffset: 19,
+    yoffset: 18,
     frames: [{ time: 1000, x: 0 }]
 }
