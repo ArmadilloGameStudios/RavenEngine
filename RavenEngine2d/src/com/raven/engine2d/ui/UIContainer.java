@@ -108,7 +108,6 @@ public abstract class UIContainer<S extends Scene>
                     obj.setXOffset(GameProperties.getScreenWidth() / 2f - obj.getWidth() / 2f);
 
                     offset += obj.getHeight() * .5f;
-
                 }
 
                 break;

@@ -101,23 +101,24 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     @Override
     public void handleMouseClick() {
-        switch (getScene().getState()) {
-            case SELECT_MOVE:
-                if (pawn == getScene().getActivePawn()) {
-                    getScene().selectNextPawn();
-                } else
-                    switch (state) {
-                        case MOVE:
-                            getScene().clearAllPaths();
-                            getScene().setState(BattleScene.State.MOVING);
-                            break;
-                        case ATTACK:
-                            getScene().setTargetPawn(getPawn());
-                            getScene().setState(BattleScene.State.ATTACKING);
-                            break;
-                    }
-                break;
-        }
+        if (!getScene().isPaused())
+            switch (getScene().getState()) {
+                case SELECT_MOVE:
+                    if (pawn == getScene().getActivePawn()) {
+                        getScene().selectNextPawn();
+                    } else
+                        switch (state) {
+                            case MOVE:
+                                getScene().clearAllPaths();
+                                getScene().setState(BattleScene.State.MOVING);
+                                break;
+                            case ATTACK:
+                                getScene().setTargetPawn(getPawn());
+                                getScene().setState(BattleScene.State.ATTACKING);
+                                break;
+                        }
+                    break;
+            }
     }
 
     @Override
