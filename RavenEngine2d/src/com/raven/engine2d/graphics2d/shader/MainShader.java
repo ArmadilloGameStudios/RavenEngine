@@ -203,7 +203,7 @@ public class MainShader extends Shader {
                 x += spriteAnimation.getXOffset();
                 y += spriteAnimation.getYOffset();
 
-                glViewport((int) x / 2, (int) y / 2, spriteAnimation.getWidth(), spriteAnimation.getHeight());
+                glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), spriteAnimation.getWidth(), spriteAnimation.getHeight());
 
                 glUniform4f(rect_location,
                         (float) spriteAnimation.getX() / (float) texture.getWidth(),
@@ -216,7 +216,7 @@ public class MainShader extends Shader {
                 x -= spriteAnimation.getXOffset();
                 y += spriteAnimation.getYOffset();
 
-                glViewport((int) x / 2, (int) y / 2, spriteAnimation.getWidth(), spriteAnimation.getHeight());
+                glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), spriteAnimation.getWidth(), spriteAnimation.getHeight());
 
                 glUniform4f(rect_location,
                         (float) (spriteAnimation.getX() + spriteAnimation.getWidth()) / (float) texture.getWidth(),
@@ -227,7 +227,7 @@ public class MainShader extends Shader {
                 window.drawQuad();
             }
         } else {
-            glViewport((int) x / 2, (int) y / 2, texture.getWidth(), texture.getHeight());
+            glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), texture.getWidth(), texture.getHeight());
 
             glUniform4f(rect_location,
                     0,
@@ -245,7 +245,7 @@ public class MainShader extends Shader {
         float x = position.x;
         float y = position.y;
 
-        glViewport((int) x / 2, (int) y / 2, spriteAnimation.getWidth(), spriteAnimation.getHeight());
+        glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), spriteAnimation.getWidth(), spriteAnimation.getHeight());
 
         glUniform4f(rect_location,
                 (float) spriteAnimation.getX() / (float) texture.getWidth(),
