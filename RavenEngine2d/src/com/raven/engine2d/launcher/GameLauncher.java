@@ -1,5 +1,8 @@
 package com.raven.engine2d.launcher;
 
+import com.raven.engine2d.Game;
+import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.GameProperties;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
@@ -27,14 +30,16 @@ public class GameLauncher {
     }
 
     // OpenGL 2.0
-    private static <G extends com.raven.engine2d.Game> void OpenBasic(G game) {
+    private static <G extends Game> void OpenBasic(G game) {
         com.raven.engine2d.GameProperties.setSupportsOpenGL4(false);
         com.raven.engine2d.GameEngine.Launch(game);
     }
 
     // OpenGL 4.0
-    private static <G extends com.raven.engine2d.Game> void OpenAdvanced(G game) {
+    private static <G extends Game> void OpenAdvanced(G game) {
         // Doesn't work on linux and nvidia
+        // correction, didn't work on nvidia optimus?
+        // TODO allow selection
         GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] devices = g.getScreenDevices();
         for (GraphicsDevice device : devices) {
@@ -53,55 +58,17 @@ public class GameLauncher {
         winMain.setLocationRelativeTo(null);
         winMain.setLayout(new GridLayout(3, 1));
 
-        // Water Quality
-        Container conWaterQuality = new Container();
-        conWaterQuality.setLayout(new FlowLayout());
-        winMain.add(conWaterQuality);
-
-        JLabel lblWaterQuality = new JLabel("Water Quality");
-        conWaterQuality.add(lblWaterQuality);
-
-        JComboBox cbWaterQuality = new JComboBox(new String[]{"High", "Medium", "Low", "Very Low"});
-        conWaterQuality.add(cbWaterQuality);
-
-        JCheckBox chbReflectTerrain = new JCheckBox("Reflect Terrain");
-        chbReflectTerrain.setSelected(true);
-        conWaterQuality.add(chbReflectTerrain);
-
-        JCheckBox chbReflectObjects = new JCheckBox("Reflect Objects");
-        chbReflectObjects.setSelected(true);
-        conWaterQuality.add(chbReflectObjects);
-
-        chbReflectTerrain.addActionListener(actionEvent -> {
-            if (!chbReflectTerrain.isSelected()) {
-                chbReflectObjects.setSelected(false);
-            }
-        });
-
-        chbReflectObjects.addActionListener(actionEvent -> {
-            if (chbReflectObjects.isSelected()) {
-                chbReflectTerrain.setSelected(true);
-            }
-        });
-
         // Multisample
         Container conMultisample = new Container();
         conMultisample.setLayout(new FlowLayout());
         winMain.add(conMultisample);
 
-        JCheckBox chbMultisample = new JCheckBox("Multisample");
-        chbMultisample.setSelected(true);
-        conMultisample.add(chbMultisample);
-
-        JLabel lblMultisampleCount = new JLabel("Samples");
+        JLabel lblMultisampleCount = new JLabel("Scaling");
         conMultisample.add(lblMultisampleCount);
 
-        JComboBox cbMultisampleCount = new JComboBox(new String[]{"2", "4", "8", "16", "32"});
+        JComboBox cbMultisampleCount = new JComboBox(new String[]{"1", "2", "3", "4"});
         conMultisample.add(cbMultisampleCount);
         cbMultisampleCount.setSelectedIndex(1);
-
-        chbMultisample.addActionListener(actionEvent ->
-                cbMultisampleCount.setEnabled(chbMultisample.isSelected()));
 
         // Launch Button
         Container conLaunch = new Container();
@@ -112,32 +79,10 @@ public class GameLauncher {
         conLaunch.add(btnLaunch);
 
         btnLaunch.addActionListener(actionEvent -> {
-            if (chbMultisample.isSelected()) {
-                com.raven.engine2d.GameProperties.setMultisampleCount(Integer.parseInt(cbMultisampleCount.getSelectedItem().toString()));
-            } else {
-                com.raven.engine2d.GameProperties.setMultisampleCount(0);
-            }
 
-            switch (cbWaterQuality.getSelectedIndex()) {
-                case 1:
-                    com.raven.engine2d.GameProperties.setWaterQuality(2);
-                    break;
-                case 2:
-                    com.raven.engine2d.GameProperties.setWaterQuality(4);
-                    break;
-                case 3:
-                    com.raven.engine2d.GameProperties.setWaterQuality(8);
-                    break;
-                case 0:
-                default:
-                    com.raven.engine2d.GameProperties.setWaterQuality(1);
-                    break;
-            }
+            GameProperties.setScaling(Integer.parseInt(cbMultisampleCount.getSelectedItem().toString()));
 
-            com.raven.engine2d.GameProperties.setReflectTerrain(chbReflectTerrain.isSelected());
-            com.raven.engine2d.GameProperties.setReflectObjects(chbReflectObjects.isSelected());
-
-            com.raven.engine2d.GameEngine.Launch(game);
+            GameEngine.Launch(game);
             winMain.setVisible(false);
         });
 

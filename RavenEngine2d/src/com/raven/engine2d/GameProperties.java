@@ -6,8 +6,8 @@ package com.raven.engine2d;
  * Created by cookedbird on 11/15/17.
  */
 public class GameProperties {
-    private static int multiSample = 0, waterQuality = 1;
-    private static boolean reflectTerrain, reflectObjects, supportsOpenGL4 = true;
+    private static boolean supportsOpenGL4 = true;
+    private static int scaling = 2;
 
     public static int getScreenWidth() {
         return 1920;
@@ -17,39 +17,14 @@ public class GameProperties {
         return 1080;
     }
 
+    public static int getScaling() { return scaling; }
+
+    public static void setScaling(int scaling) {
+        GameProperties.scaling = scaling;
+    }
+
     public static String getMainDirectory() {
         return GameEngine.getEngine().getGame().getMainDirectory();
-    }
-
-    public static void setMultisampleCount(int multiSample) {
-        GameProperties.multiSample = multiSample;
-    }
-
-    public static int getMultisampleCount() {
-        return multiSample;
-    }
-
-    public static void setWaterQuality(int waterQuality) {
-        GameProperties.waterQuality = waterQuality;
-    }
-    public static int getWaterQuality() {
-        return waterQuality;
-    }
-
-    public static void setReflectTerrain(boolean reflectTerrain) {
-        GameProperties.reflectTerrain = reflectTerrain;
-    }
-
-    public static boolean getReflectTerrain() {
-        return reflectTerrain;
-    }
-
-    public static void setReflectObjects(boolean reflectObjects) {
-        GameProperties.reflectObjects = reflectObjects;
-    }
-
-    public static boolean getReflectObjects() {
-        return reflectObjects;
     }
 
     public static void setSupportsOpenGL4(boolean supportsOpenGL4) {
@@ -61,5 +36,4 @@ public class GameProperties {
     }
 
     private GameProperties() {}
-
 }

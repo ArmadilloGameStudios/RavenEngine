@@ -146,7 +146,7 @@ public abstract class Shader {
     private final Map<String, String> getGLSLVariableMap() {
         Map<String, String> map = new HashMap<>();
 
-        map.put("NUM_SAMPLES", Integer.toString(GameProperties.getMultisampleCount()));
+//        map.put("NUM_SAMPLES", Integer.toString(GameProperties.getMultisampleCount()));
 
         return map;
     }
