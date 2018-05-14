@@ -4,36 +4,29 @@ import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.GameWindow;
-import com.raven.engine2d.graphics2d.sprite.SpriteAnimation;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
-import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.input.Mouse;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.worldobject.Highlight;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import sun.java2d.pipe.SpanClipRenderer;
 
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL14.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT2;
-import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT3;
 import static org.lwjgl.opengl.GL32.glFramebufferTexture;
 import static org.lwjgl.opengl.GL40.glBlendFuncSeparatei;
 
 public class MainShader extends Shader {
 
     public static final int
-            COLOR = getNextTexture(),
-            ID = getNextTexture(),
-            DEPTH = getNextTexture();
+            COLOR = getNextTextureID(),
+            ID = getNextTextureID(),
+            DEPTH = getNextTextureID();
 
     private GameWindow window;
 

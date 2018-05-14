@@ -12,7 +12,7 @@ in vec2 coords;
 
 void main() {
     vec4 sprite = texture(spriteSheet, coords);
-    gl_FragDepth = mix(1, z, sprite.a - coords.y / 1000);
+    gl_FragDepth = mix(1, z, sprite.a - coords.y / 1000); // TODO get world coords and don't use alpha
 
     float part = min(1, dot(sprite.xyz, vec3(.4)));
 

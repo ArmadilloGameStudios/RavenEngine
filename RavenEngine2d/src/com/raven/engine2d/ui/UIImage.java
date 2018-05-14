@@ -1,10 +1,7 @@
 package com.raven.engine2d.ui;
 
-import com.raven.engine2d.graphics2d.GameWindow;
-import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
-import com.raven.engine2d.scene.Scene;
 import org.lwjgl.BufferUtils;
 
 import java.awt.image.BufferedImage;
@@ -52,7 +49,7 @@ public class UIImage
 
         // Set Texture
         if (textureActiveLocation == 0)
-            textureActiveLocation = Shader.getNextTexture();
+            textureActiveLocation = Shader.getNextTextureID();
 
         glActiveTexture(GL_TEXTURE0 + textureActiveLocation);
 

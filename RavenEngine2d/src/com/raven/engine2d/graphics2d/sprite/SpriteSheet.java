@@ -54,7 +54,7 @@ public class SpriteSheet extends ShaderTexture {
             buffer.flip();
 
             // Set Texture
-            textureActiveLocation = Shader.getNextTexture();
+            textureActiveLocation = Shader.getNextTextureID();
 
             glActiveTexture(GL_TEXTURE0 + textureActiveLocation);
             textureName = glGenTextures();

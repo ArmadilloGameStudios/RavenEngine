@@ -1,8 +1,9 @@
 {
-    name: "prison cell",
+    name: "prison cell 2",
     a: [{ name: "cell 1", entrance: "a", terminal: true },
         { name: "cell 2", entrance: "a", terminal: true },
         { name: "cell 3", entrance: "a", terminal: true },
+        { name: "cell 3", entrance: "a", terminal: false },
         { name: "cell 4", entrance: "a", terminal: true },],
     b: [{ name: "short hall a", entrance: "a" },
         { name: "short hall a", entrance: "b" },
@@ -15,14 +16,21 @@
         { name: "corner c", entrance: "a" },
         { name: "corner c", entrance: "b" },
         { name: "corner d", entrance: "a" },
-        { name: "corner d", entrance: "b" },]
+        { name: "corner d", entrance: "b" },
+        { name: "room 1", entrance: "a" },
+        { name: "room 3", entrance: "b" },
+        { name: "room 4", entrance: "c" },
+        { name: "room 4", entrance: "d" },]
 },
 {
     name: "prison hall",
     a: [{ name: "short hall a", entrance: "a" },
         { name: "short hall a", entrance: "b" },
         { name: "short hall b", entrance: "a" },
-        { name: "short hall b", entrance: "b" },],
+        { name: "short hall b", entrance: "b" },
+        { name: "room 1", entrance: "a" },
+        { name: "room 3", entrance: "b" },
+        { name: "room 4", entrance: "c" },],
     b: [{ name: "corner a", entrance: "a" },
         { name: "corner a", entrance: "b" },
         { name: "corner b", entrance: "a" },
@@ -35,4 +43,14 @@
         { name: "split", entrance: "b" },
         { name: "split", entrance: "c" },
         { name: "split", entrance: "d" },]
+},
+{
+    name: "prison room",
+    a: [{ name: "room 1", entrance: "b" },
+        { name: "room 3", entrance: "a" },],
+    b: [
+        { name: "room 4", entrance: "a" },
+        { name: "room 4", entrance: "b" },
+        { name: "room 2", entrance: "a" },
+        { name: "room 2", entrance: "b" },],
 }

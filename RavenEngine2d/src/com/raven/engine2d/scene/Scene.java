@@ -6,6 +6,7 @@ import com.raven.engine2d.Game;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.ScreenQuad;
 import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.ui.UIObject;
 import com.raven.engine2d.util.math.Vector2f;
@@ -129,6 +130,8 @@ public abstract class Scene<G extends Game> {
         for (SpriteSheet sheet : getSpriteSheets()) {
             sheet.release();
         }
+
+        Shader.clearTextureID();
     }
 
     abstract public void onExitScene();
