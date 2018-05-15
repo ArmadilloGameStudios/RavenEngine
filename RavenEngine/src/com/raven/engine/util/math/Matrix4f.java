@@ -276,6 +276,7 @@ public class Matrix4f {
      * @return Scaling matrix
      */
     public Matrix4f scale(float x, float y, float z, Matrix4f out) {
+
         tempMat.identity();
 
         tempMat.m00 = x;

@@ -48,8 +48,7 @@
     name: "prison room",
     a: [{ name: "room 1", entrance: "b" },
         { name: "room 3", entrance: "a" },],
-    b: [
-        { name: "room 4", entrance: "a" },
+    b: [{ name: "room 4", entrance: "a" },
         { name: "room 4", entrance: "b" },
         { name: "room 2", entrance: "a" },
         { name: "room 2", entrance: "b" },],

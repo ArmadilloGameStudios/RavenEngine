@@ -255,7 +255,6 @@
         { type: "floor", x: 0, y: 2,
             wall: [ "red light", "north" ] },
 
-        { type: "floor", x: 1, y: 2 },
         { type: "floor", x: 1, y: 3,
             wall: [ "red light", "west" ] },
 

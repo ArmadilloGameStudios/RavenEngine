@@ -29,7 +29,7 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
             startGeneration();
         }
 
-        System.out.println(tries);
+        System.out.println(tries + ", " + size);
 
         // show all connections
 

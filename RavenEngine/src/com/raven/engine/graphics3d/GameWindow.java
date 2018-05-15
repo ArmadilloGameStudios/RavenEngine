@@ -150,10 +150,10 @@ public class GameWindow {
                 // Shaders
                 worldMSShader = new WorldMSShader();
                 hudmsShader = new HUDMSShader();
-//                waterRefractionShader = new WaterRefractionShader();
-//                waterReflectionShader = new WaterReflectionShader();
-//                worldWaterShader = new WorldWaterShader(worldMSShader);
-//                bloomShader = new BloomShader();
+                waterRefractionShader = new WaterRefractionShader();
+                waterReflectionShader = new WaterReflectionShader();
+                worldWaterShader = new WorldWaterShader(worldMSShader);
+                bloomShader = new BloomShader();
                 idShader = new IDShader();
 
                 // Enable multisample
