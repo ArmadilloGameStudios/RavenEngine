@@ -6,26 +6,30 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import java.io.File;
 import java.util.*;
 
+import com.raven.engine2d.audio.AudioSource;
 import com.raven.engine2d.database.GameDataTable;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.ScreenQuad;
-import com.raven.engine2d.graphics2d.sprite.AnimationImporter;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimation;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.input.Keyboard;
 import com.raven.engine2d.input.Mouse;
 import com.raven.engine2d.worldobject.GameObject;
 
-public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.SourceDataLine;
+
+public class GameEngine<G extends Game> implements Runnable {
     private static GameEngine engine;
 
-    public static <G extends com.raven.engine2d.Game> GameEngine Launch(G game) {
+    public static <G extends Game> GameEngine Launch(G game) {
         GameEngine<G> engine = new GameEngine<>(game);
 
         GameEngine.engine = engine;
 
-        engine.window = new com.raven.engine2d.graphics2d.GameWindow(engine);
+        engine.window = new GameWindow(engine);
 
         engine.thread = new Thread(engine);
         engine.thread.start();
@@ -93,12 +97,15 @@ public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
         game.breakdown();
     }
 
-    int frame = 0;
-    float framesdt = 0;
+    private int frame = 0;
+    private float framesdt = 0;
 
     @Override
     public void run() {
         System.out.println("Started Run");
+
+        AudioSource a = new AudioSource("zapsplat_horror_suspense_strings_001.wav");
+        a.getAudioClip();
 
         System.out.println("Starting OpenGL");
         window.create();
@@ -239,8 +246,17 @@ public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
         }
     }
 
+    private String fixPath(String path) {
+        String fixed;
+
+        fixed = path.replace('\\', File.separatorChar);
+        fixed = fixed.replace('/', File.separatorChar);
+
+        return fixed;
+    }
+
     public SpriteSheet getSpriteSheet(String spriteSrc) {
-        SpriteSheet sheet = spriteSheetsMap.get(game.getMainDirectory() + File.separator + spriteSrc);
+        SpriteSheet sheet = spriteSheetsMap.get(game.getMainDirectory() + File.separator + fixPath(spriteSrc));
 
         if (sheet == null) {
             throw new NoSuchElementException();

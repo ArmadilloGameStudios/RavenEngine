@@ -1,8 +1,12 @@
 package com.raven.engine2d.scene;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.raven.engine2d.Game;
+import com.raven.engine2d.audio.AudioSource;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.ScreenQuad;
 import com.raven.engine2d.graphics2d.shader.MainShader;
@@ -15,10 +19,14 @@ import com.raven.engine2d.ui.UIContainer;
 import com.raven.engine2d.worldobject.GameObject;
 import com.raven.engine2d.worldobject.WorldObject;
 
+import javax.sound.sampled.Clip;
+
 public abstract class Scene<G extends Game> {
     private Layer<WorldObject> layerTerrain = new Layer<>(Layer.Destination.Terrain);
     private Layer<WorldObject> layerDetails = new Layer<>(Layer.Destination.Details);
     private Layer<UIContainer> layerUI = new Layer<>(Layer.Destination.UI);
+
+    private Map<String, AudioSource> audioSources = new HashMap<>();
 
     private Vector3f backgroundColor = new Vector3f();
     private Vector2f worldOffset = new Vector2f();
@@ -98,6 +106,8 @@ public abstract class Scene<G extends Game> {
 
     abstract public List<SpriteSheet> getSpriteSheets();
 
+//    abstract public List<String> getAudioSourcesNames();
+
     public Vector2f getWorldOffset() {
         return worldOffset;
     }
@@ -106,6 +116,10 @@ public abstract class Scene<G extends Game> {
         for (SpriteSheet sheet : getSpriteSheets()) {
             sheet.load();
         }
+
+//        for (String audioName : getAudioSourcesNames()) {
+//            audioSources.put(audioName, new AudioSource(audioName));
+//        }
 
         onEnterScene();
     }
@@ -155,5 +169,9 @@ public abstract class Scene<G extends Game> {
     }
 
     public abstract void inputKey(int key, int action, int mods);
+
+    public Clip getClip(String name) {
+        return null;
+    }
 
 }
