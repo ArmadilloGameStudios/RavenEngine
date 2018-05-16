@@ -1,7 +1,6 @@
 package com.raven.engine2d.graphics2d.shader;
 
 import com.raven.engine2d.GameEngine;
-import com.raven.engine2d.GameProperties;
 import org.lwjgl.BufferUtils;
 
 import java.io.File;
@@ -20,13 +19,15 @@ import static org.lwjgl.opengl.GL20.*;
  */
 public abstract class Shader {
 
-    public static final int TEXTURE = getNextTexture();
-
     private static int nextTexture = 0;
 
-    public static int getNextTexture() {
+    public static int getNextTextureID() {
         nextTexture++;
         return nextTexture;
+    }
+
+    public static void clearTextureID() {
+        nextTexture = 0;
     }
 
     int vertex_handel, fragment_handel, program_handel;
@@ -146,7 +147,7 @@ public abstract class Shader {
     private final Map<String, String> getGLSLVariableMap() {
         Map<String, String> map = new HashMap<>();
 
-        map.put("NUM_SAMPLES", Integer.toString(GameProperties.getMultisampleCount()));
+//        map.put("NUM_SAMPLES", Integer.toString(GameProperties.getMultisampleCount()));
 
         return map;
     }

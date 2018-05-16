@@ -32,7 +32,7 @@ public abstract class Game<G extends Game> {
 	}
 
 	final public void renderWorld4fw(GameWindow window) {
-		currentScene.draw4fw(window);
+		currentScene.draw4(window);
 	}
 
     final public void renderWorld4(GameWindow window) {

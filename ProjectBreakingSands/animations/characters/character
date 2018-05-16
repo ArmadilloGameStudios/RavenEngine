@@ -1,0 +1,55 @@
+{
+    name: "idle",
+    width: 32,
+    height: 32,
+    frames: [{ time: 500, x: 0 },
+             { time: 500, x: 32 }]
+},
+{
+    name: "walking up",
+    width: 32,
+    height: 32,
+    y: 32,
+    frames: [{ time: 100, x: 0 },
+             { time: 100, x: 32 },
+             { time: 100, x: 64 },
+             { time: 100, x: 96 }]
+},
+{
+    name: "walking down",
+    width: 32,
+    height: 32,
+    y: 64,
+    frames: [{ time: 100, x: 0 },
+             { time: 100, x: 32 },
+             { time: 100, x: 64 },
+             { time: 100, x: 96 }]
+},
+{
+    name: "attack up start",
+    width: 32,
+    height: 32,
+    frames: [{ time: 300, x: 0, y: 96 },
+             { time: 200, x: 32, y: 96, xoffset: -5, yoffset: 16 },
+             { time: 500, x: 64, y: 96, xoffset: -10, yoffset: 10 }]
+},
+{
+    name: "attack up end",
+    width: 32,
+    height: 32,
+    frames: [{ time: 200, x: 0, y: 0 }]
+},
+{
+    name: "attack down start",
+    width: 32,
+    height: 32,
+    frames: [{ time: 300, x: 0, y: 96 },
+             { time: 200, x: 32, y: 96, xoffset: -5, yoffset: 2 },
+             { time: 500, x: 64, y: 96, xoffset: -10, yoffset: -10 }]
+},
+{
+    name: "attack down end",
+    width: 32,
+    height: 32,
+    frames: [{ time: 200, x: 0, y: 0 }]
+}

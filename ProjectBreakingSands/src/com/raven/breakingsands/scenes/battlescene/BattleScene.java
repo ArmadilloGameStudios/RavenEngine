@@ -2,6 +2,8 @@ package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.character.Character;
+import com.raven.breakingsands.character.Effect;
+import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.ai.AI;
 import com.raven.breakingsands.scenes.battlescene.decal.Wall;
 import com.raven.breakingsands.scenes.battlescene.map.Map;
@@ -11,6 +13,9 @@ import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
+import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.Range;
@@ -61,6 +66,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     private List<Pawn> pawns = new ArrayList<>();
     private Pawn activePawn;
+    private Pawn targetPawn;
 
     private List<Character> canLevelUp = new ArrayList<>();
 
@@ -82,21 +88,62 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         models.addAll(Terrain.getSpriteSheets());
         models.addAll(Wall.getSpriteSheets());
         models.addAll(Pawn.getSpriteSheets());
+        models.addAll(Effect.getSpriteSheets());
+        models.addAll(Weapon.getSpriteSheets());
 
         return models;
     }
 
+
+    private boolean isDownKey = false;
+    private boolean isUpKey = false;
+    private boolean isRightKey = false;
+    private boolean isLeftKey = false;
+
     @Override
     public void inputKey(int key, int action, int mods) {
-        if (GLFW.GLFW_KEY_ESCAPE == key && GLFW.GLFW_PRESS == action) {
-            if (isPaused()) {
-                menu.setVisibility(false);
-                setPaused(false);
-            } else {
-                menu.setVisibility(true);
-                setPaused(true);
-            }
+        switch (key) {
+            case GLFW.GLFW_KEY_ESCAPE:
+                if (action == GLFW.GLFW_PRESS) {
+                    if (isPaused()) {
+                        menu.setVisibility(false);
+                        setPaused(false);
+                    } else {
+                        menu.setVisibility(true);
+                        setPaused(true);
+                    }
+                }
+                break;
+            case GLFW.GLFW_KEY_DOWN:
+                if (action == GLFW.GLFW_PRESS) {
+                    isDownKey = true;
+                } else if (action == GLFW.GLFW_RELEASE) {
+                    isDownKey = false;
+                }
+                break;
+            case GLFW.GLFW_KEY_UP:
+                if (action == GLFW.GLFW_PRESS) {
+                    isUpKey = true;
+                } else if (action == GLFW.GLFW_RELEASE) {
+                    isUpKey = false;
+                }
+                break;
+            case GLFW.GLFW_KEY_RIGHT:
+                if (action == GLFW.GLFW_PRESS) {
+                    isRightKey = true;
+                } else if (action == GLFW.GLFW_RELEASE) {
+                    isRightKey = false;
+                }
+                break;
+            case GLFW.GLFW_KEY_LEFT:
+                if (action == GLFW.GLFW_PRESS) {
+                    isLeftKey = true;
+                } else if (action == GLFW.GLFW_RELEASE) {
+                    isLeftKey = false;
+                }
+                break;
         }
+
     }
 
     private Vector2f tempVec = new Vector2f();
@@ -128,10 +175,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 //        setDetailText(activePawn.getParent().getDetailText());
 
         // Menu
-//        menu = new Menu(this);
-//        menu.pack();
-//        getLayerUI().addChild(menu);
-//        menu.setVisibility(false);
+        menu = new Menu(this);
+        menu.pack();
+        getLayerUI().addChild(menu);
+        menu.setVisibility(false);
 
 //        victory();
     }
@@ -140,15 +187,29 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         List<Terrain> terrainList = map.getTerrainList();
 
         // characters
-        for (Character character : getGame().getCharacters()) {
+//        for (Character character : getGame().getCharacters()) {
+//
+//            Pawn p = new Pawn(this, character);
+//            pawns.add(p);
+//
+//            Optional<Terrain> o = terrainList.stream().filter(t -> t.getPawn() == null && t.isPassable()).findAny();
+//
+//            map.setPawn(o.get(), p);
+//        }
 
-            Pawn p = new Pawn(this, character);
+        for (int i = 0; i < 3; i++) {
+            GameData gdPawn = GameDatabase.all("pawn").stream()
+                    .filter(p -> p.getString("name").equals("Player"))
+                    .findFirst().get();
+
+            Pawn p = new Pawn(this, gdPawn);
             pawns.add(p);
 
             Optional<Terrain> o = terrainList.stream().filter(t -> t.getPawn() == null && t.isPassable()).findAny();
 
             map.setPawn(o.get(), p);
         }
+
 
         activePawn = pawns.get(0);
 
@@ -199,6 +260,25 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                 }
                 break;
         }
+
+        float smoothing = .5f;
+        Vector2f worldOffset = getWorldOffset();
+
+        if (isDownKey) {
+            worldOffset.y += smoothing * deltaTime;
+        }
+
+        if (isUpKey) {
+            worldOffset.y -= smoothing * deltaTime;
+        }
+
+        if (isRightKey) {
+            worldOffset.x -= smoothing * deltaTime;
+        }
+
+        if (isLeftKey) {
+            worldOffset.x += smoothing * deltaTime;
+        }
     }
 
     private void movePawn(float delta) {
@@ -225,7 +305,14 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
             activePawn.move(movement.scale(delta / (pathSpeed * cost), tempVec2));
 
-            activePawn.setAnimationFlip(movement.y > 0f || movement.x > 0f);
+            activePawn.setFlip(movement.y > 0f || movement.x > 0f);
+
+            SpriteAnimationState animationState = activePawn.getAnimationState();
+            if (movement.y > 0f || movement.x < 0f) {
+                animationState.setAction("walking up", false);
+            } else {
+                animationState.setAction("walking down", false);
+            }
 
             if (overflow > 0f) {
                 pathIndex += 1;
@@ -315,6 +402,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         return activePawn;
     }
 
+    public void setTargetPawn(Pawn targetPawn) {
+        this.targetPawn = targetPawn;
+    }
+
     private boolean doSpawn() {
         int a = 10 - (int) pawns.stream().filter(p -> p.getTeam() != 0).count();
         int b = random.nextInt(10);
@@ -328,33 +419,49 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         switch (state) {
             case SELECT_MOVE:
-                activePawn.setAnimationAction("idle");
+
+                // TODO change spawn
                 if (doSpawn()) {
                     spawnPawn("Service Drone");
                 }
 
                 setStateSelectMove();
                 break;
+
             case SELECT_MOVE_AI:
-                activePawn.setAnimationAction("idle");
+                activePawn.getAnimationState().setAction("idle");
                 currentPath = null;
                 map.setState(Terrain.State.UNSELECTABLE);
 
                 aiFuture = aiExecutorService.submit(ai);
                 break;
-            case MOVING:
 
-                activePawn.setAnimationAction("walking");
+            case MOVING:
+                activePawn.getAnimationState().setAction("walking up");
                 activePawn.move(currentPath.getCost());
 
                 map.setState(Terrain.State.UNSELECTABLE);
                 break;
+
             case ATTACKING:
+
+                setStateSelectAttacking();
+
                 break;
         }
     }
 
+    public void setStateSelectAttacking() {
+        map.setState(Terrain.State.UNSELECTABLE);
+
+        activePawn.runAttackAnimation(targetPawn, a -> {
+            getActivePawn().attack(targetPawn);
+            selectNextPawn();
+        });
+    }
+
     private void setStateSelectMove() {
+        activePawn.getAnimationState().setAction("idle");
 
         // clear
 

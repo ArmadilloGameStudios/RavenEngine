@@ -5,6 +5,7 @@ import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.GameObject;
 import com.raven.engine2d.worldobject.Parentable;
+import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,17 @@ public abstract class UIObject<S extends Scene, P extends Parentable<UIObject>>
         }
 
         return parentList;
+    }
+
+    public abstract Vector2f getPosition();
+
+    private Vector2f worldPos = new Vector2f();
+
+    public Vector2f getWorldPosition() {
+        if (this.parentIsUIObject) {
+            return getPosition().add(((UIObject) getParent()).getWorldPosition(), worldPos);
+        }
+        return worldPos;
     }
 
     public S getScene() {

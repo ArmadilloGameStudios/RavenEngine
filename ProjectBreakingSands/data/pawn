@@ -4,25 +4,28 @@
     animation: "character"
     team: 0,
     hp: 10,
-    movement: 80,
+    movement: 5,
     evasion: 2,
+    weapon: "Plasma Blade"
 },
 {
     name: "Service Drone",
     sprite: "sprites/enemy.png",
-    animation: "character"
+    animation: "guarddrone"
     team: 1,
     hp: 5,
     movement: 3,
     evasion: 1,
+    weapon: "Guard Disk"
 },
 {
     name: "Guard Drone",
     sprite: "sprites/enemy.png",
-    animation: "character"
+    animation: "guarddrone"
     team: 1,
     hp: 15,
     resistance: 1,
     movement: 2,
     evasion: 0,
+    weapon: "Guard Disk"
 }

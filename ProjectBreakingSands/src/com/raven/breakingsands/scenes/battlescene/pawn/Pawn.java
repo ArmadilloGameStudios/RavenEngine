@@ -3,6 +3,7 @@ package com.raven.breakingsands.scenes.battlescene.pawn;
 import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.character.Armor;
 import com.raven.breakingsands.character.Character;
+import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
@@ -11,7 +12,9 @@ import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDataQuery;
 import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
+import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
 import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
@@ -49,8 +52,41 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         totalMovement = gameData.getInteger("movement");
         evasion = gameData.getInteger("evasion");
 
-        weapon = new Weapon(GameDatabase.all("weapon").getRandom());
-        armor = new Armor(GameDatabase.all("armor").getRandom());
+        // weapon
+        if (gameData.has("weapon")) {
+            GameData gdWeapon = gameData.getData("weapon");
+
+            if (gdWeapon.isString()) {
+                GameDatabase.all("weapon").stream()
+                        .filter(w -> w.getString("name").equals(gdWeapon.asString()))
+                        .findFirst()
+                        .ifPresent(w -> weapon = new Weapon(scene, w));
+            } else {
+                weapon = new Weapon(scene, gdWeapon);
+            }
+        } else {
+            weapon = new Weapon(scene, GameDatabase.all("weapon").getRandom());
+        }
+
+        if (weapon != null) {
+            addChild(weapon);
+        }
+
+        // armor
+        if (gameData.has("armor")) {
+            GameData gdArmor = gameData.getData("armor");
+
+            if (gdArmor.isString()) {
+                GameDatabase.all("armor").stream()
+                        .filter(a -> a.getString("name").equals(gdArmor.asString()))
+                        .findFirst()
+                        .ifPresent(a -> armor = new Armor(a));
+            } else {
+                armor = new Armor(gdArmor);
+            }
+        } else {
+            armor = new Armor(GameDatabase.all("armor").getRandom());
+        }
     }
 
     public Pawn(BattleScene scene, Character character) {
@@ -67,7 +103,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         totalMovement = character.getMovement();
         evasion = character.getEvasion();
 
-        weapon = new Weapon(GameDatabase.all("weapon").getRandom());
+        weapon = new Weapon(scene, GameDatabase.all("weapon").getRandom());
+        addChild(weapon);
+
         armor = new Armor(GameDatabase.all("armor").getRandom());
     }
 
@@ -112,6 +150,50 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         remainingMovement = Math.max(remainingMovement - amount, 0);
     }
 
+    public void runAttackAnimation(Pawn target, ActionFinishHandler onAttackDone) {
+        boolean directional = getWeapon().getDirectional();
+        boolean directionUp = target.getParent().getMapX() < getParent().getMapX() ||
+                        target.getParent().getMapY() > getParent().getMapY();
+
+        setFlip(target.getParent().getMapY() > getParent().getMapY() ||
+                target.getParent().getMapX() > getParent().getMapX());
+
+        if (directional)
+            if (directionUp)
+                getAnimationState().setAction("attack up start");
+            else
+                getAnimationState().setAction("attack down start");
+        else
+            getAnimationState().setAction("attack start");
+
+        getAnimationState().addActionFinishHandler(x -> {
+
+            if (directional)
+                if (directionUp)
+                    getAnimationState().setAction("attack up end");
+                else
+                    getAnimationState().setAction("attack down end");
+            else
+                getAnimationState().setAction("attack end");
+
+            getAnimationState().addActionFinishHandler(a -> {
+                getAnimationState().setAction("idle");
+            });
+
+
+            Effect effect = weapon.getEffect();
+            if (effect != null) {
+                target.addChild(effect);
+                effect.getAnimationState().addActionFinishHandler(a -> target.removeChild(effect));
+            }
+
+            getAnimationState().addActionFinishHandler(onAttackDone);
+        });
+
+        weapon.runAttackAnimation(directionUp);
+
+    }
+
     public void attack(Pawn pawn) {
         remainingAttacks = Math.max(totalAttacks - 1, 0);
 
@@ -149,5 +231,14 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     @Override
     public float getZ() {
         return ZLayer.PAWN.getValue();
+    }
+
+    public void setFlip(boolean flip) {
+        getAnimationState().setFlip(flip);
+
+        SpriteAnimationState weaponState = getWeapon().getAnimationState();
+        if (weaponState != null) {
+            weaponState.setFlip(flip);
+        }
     }
 }

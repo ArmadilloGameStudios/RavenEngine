@@ -11,29 +11,32 @@ public class Menu extends UICenterContainer<BattleScene> {
         super(scene);
 
         Menu menu = this;
-        MenuButton resumeButton = new MenuButton(getScene(), "Resume") {
+        MenuButton resumeButton = new MenuButton(getScene(), "resume") {
             @Override
             public void handleMouseClick() {
                 menu.setVisibility(false);
                 menu.getScene().setPaused(false);
             }
         };
+        resumeButton.load();
         addChild(resumeButton);
-        MenuButton mainMenuButton = new MenuButton(getScene(), "Main Menu") {
+        MenuButton mainMenuButton = new MenuButton(getScene(), "main menu") {
             @Override
             public void handleMouseClick() {
                 getScene().getGame().prepTransitionScene(new MainMenuScene(getScene().getGame()));
             }
         };
+        mainMenuButton.load();
         addChild(mainMenuButton);
 
-        MenuButton exitButton = new MenuButton(getScene(), "Exit") {
+        MenuButton exitButton = new MenuButton(getScene(), "exit") {
             @Override
             public void handleMouseClick() {
                 getScene().getGame().saveGame();
                 getScene().getGame().exit();
             }
         };
+        exitButton.load();
         addChild(exitButton);
 
         pack();

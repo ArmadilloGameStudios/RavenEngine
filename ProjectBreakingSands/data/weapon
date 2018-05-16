@@ -1,13 +1,20 @@
 {
-    name: "Standard Pistol",
-    damage: 4,
-    range: 4,
-    accuracy: 5,
-},
-{
     name: "Plasma Blade",
+    type: "melee",
+    sprite: "sprites/plasmablade.png",
+    animation: "plasma blade",
     damage: 3,
     piercing: 2,
     range: 1,
     accuracy: 10,
+    directional: true
+},
+{
+    name: "Guard Disk",
+    type: "ranged",
+    damage: 4,
+    range: 3,
+    piercing: 1,
+    accuracy: 6,
+    effect: "disk"
 }

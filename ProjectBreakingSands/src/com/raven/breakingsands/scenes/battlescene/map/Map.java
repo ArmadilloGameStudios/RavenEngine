@@ -17,7 +17,7 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
     private Structure firstStructure;
 
-    private int size = 100;
+    private int size = 25;
     private int i = 0;
     private int tries = 0;
 
@@ -29,7 +29,7 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
             startGeneration();
         }
 
-        System.out.println(tries);
+        System.out.println(tries + ", " + size);
 
         // show all connections
 

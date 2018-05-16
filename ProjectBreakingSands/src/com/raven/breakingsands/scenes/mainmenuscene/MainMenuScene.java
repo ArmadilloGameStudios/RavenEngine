@@ -6,6 +6,7 @@ import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Camera;
 import com.raven.engine2d.scene.Scene;
+import com.raven.engine2d.ui.UIButton;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -28,7 +29,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         List<SpriteSheet> modelDataList = new ArrayList<>();
 
         modelDataList.addAll(DisplayPawn.getSpriteSheets());
-        modelDataList.add(NewGameButton.getSpriteSheet());
+        modelDataList.add(UIButton.getSpriteSheet());
 
         return modelDataList;
     }
@@ -41,10 +42,9 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         getLayerDetails().addChild(pawn);
 
         // Background
-        setBackgroundColor(new Vector3f(0f,0f,0f));
+        setBackgroundColor(new Vector3f(0,0,0));
 
         // World Offset
-
         Vector2f wo = getWorldOffset();
 
         wo.x = GameProperties.getScreenWidth() / 2f;
@@ -63,12 +63,12 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
 //        }
 
         NewGameButton newGameBtn = new NewGameButton(this);
+        newGameBtn.load();
         container.addChild(newGameBtn);
-//        newGameBtn.updateTexture();
 
-//        ExitButton exitBtn = new ExitButton(this);
-//        container.addChild(exitBtn);
-//        exitBtn.updateTexture();
+        ExitButton exitBtn = new ExitButton(this);
+        exitBtn.load();
+        container.addChild(exitBtn);
 
         container.pack();
     }

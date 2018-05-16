@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public abstract class GameObject<GO extends GameObject, P extends Parentable, C extends GameObject>
-        implements com.raven.engine2d.worldobject.Childable<P>, Parentable<C> {
+        implements Childable<P>, Parentable<C> {
 
     private static int last_id = 0;
     private static HashMap<Integer, GameObject> gameObjectIDMap = new HashMap<>();

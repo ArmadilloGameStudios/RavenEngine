@@ -17,26 +17,38 @@ import java.awt.*;
 public abstract class UIText<S extends Scene, P extends UIContainer<S>>
         extends UIObject<S, P> {
 
-    private SpriteSheet spriteSheet;
-    private SpriteAnimationState spriteAnimationState;
+    private final String text;
+    private final String backgroundSrc;
+    private UIImage image;
 
     private Vector2f position = new Vector2f();
 
-    public UIText(S scene, GameData data) {
+    public UIText(S scene, String text) {
+        this(scene, text, null);
+    }
+
+    public UIText(S scene, String text, String backgroundSrc) {
         super(scene);
 
-        if (data.has("sprite")) {
-            spriteSheet = GameEngine.getEngine().getSpriteSheet(data.getString("sprite"));
+        this.text = text;
+        this.backgroundSrc = backgroundSrc;
+    }
 
-            if (data.has("animation")) {
-                String animationName = data.getString("animation");
-                spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation(animationName));
-            }
-        }
+    public void load() {
+        image = new UIImage(100, 64);
+
+        UITextWriter textWriter = new UITextWriter(image);
+
+        if (backgroundSrc != null)
+            textWriter.drawBackground(backgroundSrc);
+
+        textWriter.write(text);
+
+        image.load();
     }
 
     public void draw(MainShader shader) {
-        shader.draw(spriteSheet, spriteAnimationState, position, getScene().getWorldOffset(), getID(), getZ(), null, DrawStyle.UI);
+        shader.draw(image, getSpriteAnimationState(), getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), null, DrawStyle.UI);
 
         for (UIObject o : this.getChildren()) {
             if (o.getVisibility())
@@ -45,19 +57,42 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
     }
 
     public void setAnimationAction(String action) {
-        this.spriteAnimationState.setAction(action);
+        this.getSpriteAnimationState().setAction(action);
     }
 
-    public SpriteAnimationState getSpriteAnimationState() {
-        return spriteAnimationState;
+    public abstract SpriteAnimationState getSpriteAnimationState();
+
+    @Override
+    public final float getYOffset() {
+        return position.y;
+    }
+
+    @Override
+    public final void setYOffset(float y) {
+        position.y = y;
+    }
+
+    @Override
+    public final float getXOffset() {
+        return position.x;
+    }
+
+    @Override
+    public final void setXOffset(float x) {
+        position.x = x;
+    }
+
+    @Override
+    public final Vector2f getPosition() {
+        return position;
     }
 
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
 
-        if (spriteAnimationState != null) {
-            spriteAnimationState.update(deltaTime);
+        if (getSpriteAnimationState() != null) {
+            getSpriteAnimationState().update(deltaTime);
         }
 
         for (UIObject o : this.getChildren()) {

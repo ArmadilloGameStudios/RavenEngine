@@ -13,26 +13,6 @@ public abstract class UILeftContainer<S extends Scene>
     }
 
     @Override
-    public float getXOffset() {
-        return getWidth() / 2f + x;
-    }
-
-    @Override
-    public void setXOffset(float x) {
-        this.x = x;
-    }
-
-    @Override
-    public float getYOffset() {
-        return y;
-    }
-
-    @Override
-    public void setYOffset(float y) {
-        this.y = y;
-    }
-
-    @Override
     public int getStyle() {
         return 2;
     }

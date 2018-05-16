@@ -101,23 +101,24 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     @Override
     public void handleMouseClick() {
-        switch (getScene().getState()) {
-            case SELECT_MOVE:
-                if (pawn == getScene().getActivePawn()) {
-                    getScene().selectNextPawn();
-                } else
-                    switch (state) {
-                        case MOVE:
-                            getScene().clearAllPaths();
-                            getScene().setState(BattleScene.State.MOVING);
-                            break;
-                        case ATTACK:
-                            getScene().getActivePawn().attack(getPawn());
-                            getScene().selectNextPawn();
-                            break;
-                    }
-                break;
-        }
+        if (!getScene().isPaused())
+            switch (getScene().getState()) {
+                case SELECT_MOVE:
+                    if (pawn == getScene().getActivePawn()) {
+                        getScene().selectNextPawn();
+                    } else
+                        switch (state) {
+                            case MOVE:
+                                getScene().clearAllPaths();
+                                getScene().setState(BattleScene.State.MOVING);
+                                break;
+                            case ATTACK:
+                                getScene().setTargetPawn(getPawn());
+                                getScene().setState(BattleScene.State.ATTACKING);
+                                break;
+                        }
+                    break;
+            }
     }
 
     @Override
@@ -259,6 +260,13 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             case MOVEABLE:
                 if (this.pawn == getScene().getActivePawn()) {
                     this.state = State.UNSELECTABLE;
+                } else if (this.isMouseHovering()) {
+                    getScene().selectPath(this);
+                }
+                break;
+            case ATTACKABLE:
+                if (this.isMouseHovering()) {
+                    setState(State.ATTACK);
                 }
                 break;
         }
@@ -309,6 +317,9 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                 }
                 break;
             case SELECT_MOVE_AI:
+                setHighlight(BattleScene.OFF);
+                break;
+            case ATTACKING:
                 setHighlight(BattleScene.OFF);
                 break;
         }
