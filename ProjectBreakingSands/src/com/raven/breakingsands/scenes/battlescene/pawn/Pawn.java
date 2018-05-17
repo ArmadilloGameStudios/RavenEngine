@@ -17,6 +17,7 @@ import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
 import com.raven.engine2d.worldobject.WorldObject;
 
+import javax.sound.sampled.Clip;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -154,6 +155,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         boolean directional = getWeapon().getDirectional();
         boolean directionUp = target.getParent().getMapX() < getParent().getMapX() ||
                         target.getParent().getMapY() > getParent().getMapY();
+
+        weapon.playClip("attack");
 
         setFlip(target.getParent().getMapY() > getParent().getMapY() ||
                 target.getParent().getMapX() > getParent().getMapX());

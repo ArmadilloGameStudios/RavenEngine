@@ -9,8 +9,11 @@ import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 
+import javax.sound.sampled.Clip;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class WorldObject<
@@ -18,6 +21,8 @@ public abstract class WorldObject<
         P extends Parentable<WorldObject>,
         C extends WorldObject>
         extends GameObject<WorldObject, P, C> {
+
+    private Map<String, Clip> audioMap = new HashMap<>();
 
     private List<WorldObject> parentList = new ArrayList<>();
     private S scene;
@@ -43,6 +48,16 @@ public abstract class WorldObject<
             if (data.has("animation")) {
                 String animationName = data.getString("animation");
                 spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation(animationName));
+            }
+        }
+
+        if (data.has("audio")) {
+            Map<String, GameData> audioData = data.getData("audio").asMap();
+
+            for (String audioKey : audioData.keySet()) {
+
+                audioMap.put(audioKey,
+                        GameEngine.getEngine().getAudioClip(audioData.get(audioKey).asString()));
             }
         }
     }
@@ -106,6 +121,25 @@ public abstract class WorldObject<
         return scene;
     }
 
+    public void playClip(String name) {
+        Clip clip = audioMap.get(name);
+
+        System.out.println(clip);
+        System.out.println(clip.getFramePosition());
+        System.out.println(clip.isActive());
+        System.out.println(clip.isRunning());
+
+        if (clip != null) {
+            clip.setFramePosition(0);
+            clip.start();
+        }
+
+
+//            attackAudio.stop();
+//            attackAudio.setFramePosition(0);
+//            attackAudio.start();
+    }
+
     public void setHighlight(Highlight h) {
         highlight = h;
 
@@ -117,7 +151,6 @@ public abstract class WorldObject<
     public Highlight getHighlight() {
         return highlight;
     }
-
 
     public SpriteAnimationState getAnimationState() {
         return spriteAnimationState;

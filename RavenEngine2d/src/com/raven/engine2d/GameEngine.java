@@ -6,7 +6,6 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import java.io.File;
 import java.util.*;
 
-import com.raven.engine2d.audio.AudioSource;
 import com.raven.engine2d.database.GameDataTable;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.GameWindow;
@@ -17,6 +16,7 @@ import com.raven.engine2d.input.Keyboard;
 import com.raven.engine2d.input.Mouse;
 import com.raven.engine2d.worldobject.GameObject;
 
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.SourceDataLine;
@@ -48,6 +48,7 @@ public class GameEngine<G extends Game> implements Runnable {
     private GameDatabase gdb;
     private Map<String, SpriteSheet> spriteSheetsMap = new HashMap<>();
     private Map<String, SpriteAnimation> animationMap = new HashMap<>();
+    private Map<String, Clip> audioMap = new HashMap<>();
     private float deltaTime;
     private long systemTime;
     private Mouse mouse = new Mouse();
@@ -103,9 +104,6 @@ public class GameEngine<G extends Game> implements Runnable {
     @Override
     public void run() {
         System.out.println("Started Run");
-
-        AudioSource a = new AudioSource("zapsplat_horror_suspense_strings_001.wav");
-        a.getAudioClip();
 
         System.out.println("Starting OpenGL");
         window.create();
@@ -282,6 +280,33 @@ public class GameEngine<G extends Game> implements Runnable {
         }
 
         return animation;
+    }
+
+    public Clip getAudioClip(String audioName) {
+
+        if (audioMap.containsKey(audioName)) {
+            return audioMap.get(audioName);
+        } else {
+
+            try {
+                File f = new File(GameProperties.getMainDirectory() + File.separator + "audio" + File.separator + audioName);
+
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(f);
+
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioInputStream);
+
+                audioMap.put(audioName, clip);
+
+                return clip;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
+
+        return null;
     }
 
     // input

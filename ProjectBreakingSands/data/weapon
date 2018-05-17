@@ -3,6 +3,11 @@
     type: "melee",
     sprite: "sprites/plasmablade.png",
     animation: "plasma blade",
+
+    audio: {
+        attack: "plasma_blade_sound.wav"
+    }
+
     damage: 3,
     piercing: 2,
     range: 1,
@@ -12,6 +17,11 @@
 {
     name: "Guard Disk",
     type: "ranged",
+
+    audio: {
+        attack: "plasma_blade_sound.wav"
+    }
+
     damage: 4,
     range: 3,
     piercing: 1,

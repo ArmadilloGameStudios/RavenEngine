@@ -45,7 +45,7 @@ public class GameData implements GameDatable {
 
     public boolean has(String prop) {
         if (isData()) {
-            return asData().containsKey(prop);
+            return asMap().containsKey(prop);
         } else {
             return false;
         }
@@ -55,13 +55,13 @@ public class GameData implements GameDatable {
         return dataType == DataType.DATA;
     }
 
-    private Map<String, GameData> asData() {
+    public Map<String, GameData> asMap() {
         return ((Map<String, GameData>) value);
     }
 
     public GameData getData(String prop) {
         if (isData())
-            return asData().get(prop.toLowerCase());
+            return asMap().get(prop.toLowerCase());
         return null;
     }
 
@@ -78,7 +78,7 @@ public class GameData implements GameDatable {
     }
 
     public void addList(String prop, GameDataList value) {
-        asData().put(prop, new GameData(value));
+        asMap().put(prop, new GameData(value));
     }
 
     public boolean isString() {
