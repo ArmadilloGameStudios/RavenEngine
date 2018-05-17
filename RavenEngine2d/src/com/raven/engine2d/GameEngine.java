@@ -16,10 +16,7 @@ import com.raven.engine2d.input.Keyboard;
 import com.raven.engine2d.input.Mouse;
 import com.raven.engine2d.worldobject.GameObject;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.*;
 
 public class GameEngine<G extends Game> implements Runnable {
     private static GameEngine engine;
@@ -103,6 +100,9 @@ public class GameEngine<G extends Game> implements Runnable {
 
     @Override
     public void run() {
+        Clip c = getAudioClip("guard_drone_attack.wav");
+        c.start();
+
         System.out.println("Started Run");
 
         System.out.println("Starting OpenGL");
@@ -292,9 +292,16 @@ public class GameEngine<G extends Game> implements Runnable {
                 File f = new File(GameProperties.getMainDirectory() + File.separator + "audio" + File.separator + audioName);
 
                 AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(f);
+                AudioFormat af = audioInputStream.getFormat();
+                int size = (int)(audioInputStream.getFrameLength() * af.getFrameSize());
+                byte[] audioBytes = new byte[size];
+                audioInputStream.read(audioBytes, 0, size);
+                Clip clip = (Clip) AudioSystem.getLine(new DataLine.Info(Clip.class, af, size));
 
-                Clip clip = AudioSystem.getClip();
-                clip.open(audioInputStream);
+                System.out.println(audioName);
+                System.out.println(audioInputStream.getFrameLength());
+
+                clip.open(af, audioBytes, 0, size);
 
                 audioMap.put(audioName, clip);
 

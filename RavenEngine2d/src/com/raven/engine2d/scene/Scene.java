@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.raven.engine2d.Game;
-import com.raven.engine2d.audio.AudioSource;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.ScreenQuad;
 import com.raven.engine2d.graphics2d.shader.MainShader;
@@ -25,8 +24,6 @@ public abstract class Scene<G extends Game> {
     private Layer<WorldObject> layerTerrain = new Layer<>(Layer.Destination.Terrain);
     private Layer<WorldObject> layerDetails = new Layer<>(Layer.Destination.Details);
     private Layer<UIContainer> layerUI = new Layer<>(Layer.Destination.UI);
-
-    private Map<String, AudioSource> audioSources = new HashMap<>();
 
     private Vector3f backgroundColor = new Vector3f();
     private Vector2f worldOffset = new Vector2f();

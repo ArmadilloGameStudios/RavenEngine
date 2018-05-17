@@ -205,10 +205,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         int totalRange = pawn.evasion + target;
         int rolled = getScene().getRandom().nextInt(totalRange);
 
-        System.out.println("Accuracy: " + target);
-        System.out.println("Evasion: " + pawn.evasion);
-        System.out.println("Total Range: " + totalRange);
-        System.out.println("Rolled: " + rolled);
+//        System.out.println("Accuracy: " + target);
+//        System.out.println("Evasion: " + pawn.evasion);
+//        System.out.println("Total Range: " + totalRange);
+//        System.out.println("Rolled: " + rolled);
 
         if (rolled < target) {
             int remainingResistance = Math.max(pawn.armor.getResistance() - weapon.getPiercing(), 0);
@@ -221,7 +221,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
             pawn.getParent().updateText();
         } else {
-            System.out.println("MISS");
+//            System.out.println("MISS");
         }
     }
 

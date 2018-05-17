@@ -10,6 +10,7 @@ import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.Control;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -124,20 +125,13 @@ public abstract class WorldObject<
     public void playClip(String name) {
         Clip clip = audioMap.get(name);
 
-        System.out.println(clip);
-        System.out.println(clip.getFramePosition());
-        System.out.println(clip.isActive());
-        System.out.println(clip.isRunning());
-
         if (clip != null) {
+            // Doesn't always work, work around is keep audio shorter than the animation
+            clip.stop();
             clip.setFramePosition(0);
+            clip.setMicrosecondPosition(0);
             clip.start();
         }
-
-
-//            attackAudio.stop();
-//            attackAudio.setFramePosition(0);
-//            attackAudio.start();
     }
 
     public void setHighlight(Highlight h) {

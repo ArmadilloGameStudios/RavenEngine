@@ -19,7 +19,7 @@
     type: "ranged",
 
     audio: {
-        attack: "plasma_blade_sound.wav"
+        attack: "guard_drone_attack.wav"
     }
 
     damage: 4,

@@ -229,8 +229,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         List<Terrain> terrainList = map.getTerrainList();
         List<Terrain> validTerrainList = terrainList.stream().filter(t -> t.getPawn() == null && t.isPassable()).collect(Collectors.toList());
 
-        System.out.println(terrainList);
-        System.out.println(validTerrainList);
+//        System.out.println(terrainList);
+//        System.out.println(validTerrainList);
 
         int r = random.nextInt(validTerrainList.size());
 
@@ -415,7 +415,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public void setState(State state) {
         this.state = state;
-        System.out.println("State: " + state);
+//        System.out.println("State: " + state);
 
         switch (state) {
             case SELECT_MOVE:
