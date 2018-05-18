@@ -22,7 +22,7 @@
         attack: "guard_drone_attack.wav"
     }
 
-    damage: 4,
+    damage: 2,
     range: 3,
     piercing: 1,
     accuracy: 6,

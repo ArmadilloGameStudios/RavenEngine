@@ -100,9 +100,6 @@ public class GameEngine<G extends Game> implements Runnable {
 
     @Override
     public void run() {
-        Clip c = getAudioClip("guard_drone_attack.wav");
-        c.start();
-
         System.out.println("Started Run");
 
         System.out.println("Starting OpenGL");

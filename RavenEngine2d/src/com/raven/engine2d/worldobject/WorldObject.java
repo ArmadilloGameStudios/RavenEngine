@@ -126,7 +126,10 @@ public abstract class WorldObject<
         Clip clip = audioMap.get(name);
 
         if (clip != null) {
-            // Doesn't always work, work around is keep audio shorter than the animation
+            // Doesn't always work,
+            // work around is keep audio shorter than the animation,
+            // which also doesn't seem to always work
+
             clip.stop();
             clip.setFramePosition(0);
             clip.setMicrosecondPosition(0);
