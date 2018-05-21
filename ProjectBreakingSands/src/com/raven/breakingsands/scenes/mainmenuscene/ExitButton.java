@@ -8,7 +8,7 @@ public class ExitButton
         extends UIButton<MainMenuScene, UIContainer<MainMenuScene>> {
 
     public ExitButton(MainMenuScene scene) {
-        super(scene, "quit");
+        super(scene, "how do you do?");
     }
 
     @Override

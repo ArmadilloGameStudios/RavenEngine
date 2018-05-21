@@ -42,7 +42,7 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
         if (backgroundSrc != null)
             textWriter.drawBackground(backgroundSrc);
 
-        textWriter.write(text);
+        textWriter.write(text, true);
 
         image.load();
     }
