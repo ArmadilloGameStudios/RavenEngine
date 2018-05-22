@@ -1,11 +1,9 @@
 package com.raven.engine2d.ui;
 
-import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
-import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -36,30 +34,27 @@ public class UITextWriter {
 
     private BufferedImage img;
     private Graphics2D imgGraphics;
+    private UIFont font;
+    private UITexture uiImage;
 
-    public UITextWriter(UIImage image) {
+    public UITextWriter(UITexture image, UIFont font) {
+        uiImage = image;
         img = image.getImage();
+        this.font = font;
     }
 
     // Will overwrite any text on the image
     public void drawBackground(String src) {
-        SpriteSheet background = GameEngine.getEngine().getSpriteSheet(src);
-
-        imgGraphics = img.createGraphics();
-        imgGraphics.setComposite(
-                AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
-
-        imgGraphics.drawImage(background.getImage(), 0, 0, null);
+        uiImage.drawImage(src);
     }
 
 
-    public void write(String text, boolean small) {
-        imgGraphics = img.createGraphics();
-//        imgGraphics.setComposite(
-//                AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+    public void write(String text) {
+        if (imgGraphics == null)
+            imgGraphics = img.createGraphics();
 
         GameDataList alphabetLocation;
-        if (small)
+        if (font.isSmall())
             alphabetLocation = GameDatabase.all("text").stream()
                     .filter(d -> d.getString("name").equals("alphabet small"))
                     .findFirst()
@@ -73,7 +68,7 @@ public class UITextWriter {
                     .get();
 
         for (Character c : text.toCharArray()) {
-            writeChar(c, alphabetLocation, small);
+            writeChar(c, alphabetLocation, font.isSmall());
         }
 
     }

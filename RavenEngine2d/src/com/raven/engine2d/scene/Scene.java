@@ -45,7 +45,7 @@ public abstract class Scene<G extends Game> {
         mainShader.clear(backgroundColor);
 
 
-        // draw
+        // drawImage
         for (WorldObject o : layerTerrain.getChildren()) {
             if (o.getVisibility())
                 o.draw(mainShader);
@@ -103,8 +103,6 @@ public abstract class Scene<G extends Game> {
 
     abstract public List<SpriteSheet> getSpriteSheets();
 
-//    abstract public List<String> getAudioSourcesNames();
-
     public Vector2f getWorldOffset() {
         return worldOffset;
     }
@@ -113,10 +111,6 @@ public abstract class Scene<G extends Game> {
         for (SpriteSheet sheet : getSpriteSheets()) {
             sheet.load();
         }
-
-//        for (String audioName : getAudioSourcesNames()) {
-//            audioSources.put(audioName, new AudioSource(audioName));
-//        }
 
         onEnterScene();
     }

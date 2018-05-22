@@ -1,10 +1,9 @@
 package com.raven.breakingsands.scenes.mainmenuscene;
 
 import com.raven.breakingsands.BreakingSandsGame;
-import com.raven.breakingsands.scenes.hud.UIBottomContainer;
+import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
-import com.raven.engine2d.scene.Camera;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.ui.UIButton;
 import com.raven.engine2d.util.math.Vector2f;
@@ -51,7 +50,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         wo.y = GameProperties.getScreenHeight() / 2f;
 
         // UI
-        UIBottomContainer container = new UIBottomContainer(this);
+        UIBottomLeftContainer<MainMenuScene> container = new UIBottomLeftContainer<>(this);
         getLayerUI().addChild(container);
 
         Path charPath = Paths.get(getGame().getMainDirectory(), "save");

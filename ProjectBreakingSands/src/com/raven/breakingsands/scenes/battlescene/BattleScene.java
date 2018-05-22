@@ -11,6 +11,7 @@ import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
+import com.raven.breakingsands.scenes.hud.UIBottomRightContainer;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
@@ -164,13 +165,14 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         // TODOq
         // Bottom UI
-//        UIBottomContainer<BattleScene> bottomContainer = new UIBottomContainer<>(this);
-//        getLayerUI().addChild(bottomContainer);
-//
-//        hudDetailText = new UIDetailText(this);
-//
-//        bottomContainer.addChild(hudDetailText);
-//        bottomContainer.pack();
+        UIBottomRightContainer<BattleScene> bottomContainer = new UIBottomRightContainer<>(this);
+        getLayerUI().addChild(bottomContainer);
+        hudDetailText = new UIDetailText(this);
+
+//        hudDetailText.load();
+
+        bottomContainer.addChild(hudDetailText);
+        bottomContainer.pack();
 
 //        setDetailText(activePawn.getParent().getDetailText());
 

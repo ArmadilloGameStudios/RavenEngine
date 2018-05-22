@@ -98,6 +98,10 @@ public class SpriteSheet extends ShaderTexture {
     }
 
     public BufferedImage getImage() {
+        if (img == null) {
+            load();
+        }
+
         return img;
     }
 }

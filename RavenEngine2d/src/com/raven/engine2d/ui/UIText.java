@@ -1,25 +1,19 @@
 package com.raven.engine2d.ui;
 
-import com.raven.engine2d.GameEngine;
-import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.graphics2d.DrawStyle;
-import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.shader.MainShader;
-import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
-import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.awt.*;
 
 public abstract class UIText<S extends Scene, P extends UIContainer<S>>
         extends UIObject<S, P> {
 
     private final String text;
     private final String backgroundSrc;
-    private UIImage image;
+    private UITexture image;
+
+    private UIFont font = new UIFont();
 
     private Vector2f position = new Vector2f();
 
@@ -34,15 +28,22 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
         this.backgroundSrc = backgroundSrc;
     }
 
-    public void load() {
-        image = new UIImage(100, 64);
+    public UIFont getFont() {
+        return font;
+    }
 
-        UITextWriter textWriter = new UITextWriter(image);
+    public void load() {
+        if (font.isHighlight())
+            image = new UITexture((int) getWidth(), (int) getHeight() * 2);
+        else
+            image = new UITexture((int) getWidth(), (int) getHeight());
+
+        UITextWriter textWriter = new UITextWriter(image, font);
 
         if (backgroundSrc != null)
             textWriter.drawBackground(backgroundSrc);
 
-        textWriter.write(text, true);
+        textWriter.write(text);
 
         image.load();
     }
@@ -63,22 +64,32 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
     public abstract SpriteAnimationState getSpriteAnimationState();
 
     @Override
-    public final float getYOffset() {
+    public float getHeight() {
+        return 64;
+    }
+
+    @Override
+    public float getWidth() {
+        return 100;
+    }
+
+    @Override
+    public final float getY() {
         return position.y;
     }
 
     @Override
-    public final void setYOffset(float y) {
+    public final void setY(float y) {
         position.y = y;
     }
 
     @Override
-    public final float getXOffset() {
+    public final float getX() {
         return position.x;
     }
 
     @Override
-    public final void setXOffset(float x) {
+    public final void setX(float x) {
         position.x = x;
     }
 

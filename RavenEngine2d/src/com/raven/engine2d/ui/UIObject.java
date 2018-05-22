@@ -98,11 +98,11 @@ public abstract class UIObject<S extends Scene, P extends Parentable<UIObject>>
 
     public abstract float getWidth();
 
-    public abstract float getYOffset();
+    public abstract float getY();
 
-    public abstract void setYOffset(float y);
+    public abstract void setY(float y);
 
-    public abstract float getXOffset();
+    public abstract float getX();
 
-    public abstract void setXOffset(float x);
+    public abstract void setX(float x);
 }
