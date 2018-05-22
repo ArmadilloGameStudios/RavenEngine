@@ -2,6 +2,7 @@ package com.raven.breakingsands.scenes.battlescene.map;
 
 import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
+import com.raven.breakingsands.scenes.battlescene.SelectionDetails;
 import com.raven.breakingsands.scenes.battlescene.decal.Wall;
 import com.raven.breakingsands.scenes.battlescene.decal.WallFactory;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
@@ -53,7 +54,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     private int x, y;
 
     private boolean passable = true;
-
+    private SelectionDetails details = new SelectionDetails();
     private Wall wall;
     private Pawn pawn;
 
@@ -123,6 +124,9 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     @Override
     public void handleMouseEnter() {
+
+        getScene().setDetailText(details);
+
         if (!getScene().isPaused()) {
             switch (getScene().getState()) {
                 case SELECT_MOVE:
@@ -335,6 +339,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         }
 
         if (pawn != null) {
+            details.name = pawn.getName();
+
             text += "\n" + pawn.getName();
             text += "\nHP: " + pawn.getHitPoints();
             text += "\nMovement: " + pawn.getTotalMovement();
@@ -348,11 +354,9 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
             text += "\nArmor:";
             text += "\n" + pawn.getArmor().getName() + ", " + pawn.getArmor().getResistance();
+        } else {
+            details.name = "floor";
         }
-
-        // TODO
-//        details.setText(text);
-//        details.updateTexture();
     }
 
     public boolean isPassable() {

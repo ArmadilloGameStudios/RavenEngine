@@ -11,8 +11,8 @@ import com.raven.engine2d.util.math.Vector4f;
 import com.raven.engine2d.worldobject.MouseHandler;
 import com.sun.org.glassfish.gmbal.ManagedObject;
 
-public abstract class UIButton<S extends Scene, C extends UIContainer<S>>
-        extends UIText<S, C>
+public abstract class UIButton<S extends Scene>
+        extends UIText<S>
         implements MouseHandler {
 
     private static final String btnImgSrc = "sprites/button.png";

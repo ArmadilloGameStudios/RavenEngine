@@ -4,11 +4,10 @@ import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
-import com.raven.engine2d.ui.UIImage;
-import com.raven.engine2d.ui.UITexture;
-import com.raven.engine2d.ui.UIObject;
+import com.raven.engine2d.ui.*;
 import com.raven.engine2d.util.math.Vector2f;
-import com.raven.engine2d.ui.UIContainer;
+
+import java.rmi.server.UID;
 
 public class UIDetailText
         extends UIObject<BattleScene, UIContainer<BattleScene>> {
@@ -19,8 +18,11 @@ public class UIDetailText
         return GameEngine.getEngine().getSpriteSheet(bcgImgSrc);
     }
 
-    private UIImage<BattleScene> backgroundImg;
     private Vector2f position = new Vector2f();
+
+    private UIImage<BattleScene> backgroundImg;
+    private SelectionDetails details;
+    private UILabel<BattleScene> uiName;
 
     public UIDetailText(BattleScene scene) {
         super(scene);
@@ -30,6 +32,19 @@ public class UIDetailText
                 bcgImgSrc);
 
         addChild(backgroundImg);
+
+        uiName = new UILabel<>(getScene(), "-", 128, 128);
+
+        UIFont font = uiName.getFont();
+        font.setSmall(true);
+        font.setHighlight(false);
+
+        uiName.setX(325);
+        uiName.setY(-105);
+
+        uiName.load();
+
+        addChild(uiName);
 
 //        getFont().setSmall(true);
 //        getFont().setHighlight(false);
@@ -73,5 +88,13 @@ public class UIDetailText
     @Override
     public final void setX(float x) {
         position.x = x;
+    }
+
+    public void setDetails(SelectionDetails details) {
+        this.details = details;
+
+        uiName.setText(details.name);
+        uiName.load();
+
     }
 }

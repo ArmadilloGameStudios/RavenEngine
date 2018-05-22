@@ -5,11 +5,12 @@ import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
+import com.raven.engine2d.worldobject.Parentable;
 
-public abstract class UIText<S extends Scene, P extends UIContainer<S>>
-        extends UIObject<S, P> {
+public abstract class UIText<S extends Scene>
+        extends UIObject<S, UIObject<S, Parentable<UIObject>>> {
 
-    private final String text;
+    private String text;
     private final String backgroundSrc;
     private UITexture image;
 
@@ -33,15 +34,18 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
     }
 
     public void load() {
-        if (font.isHighlight())
-            image = new UITexture((int) getWidth(), (int) getHeight() * 2);
-        else
-            image = new UITexture((int) getWidth(), (int) getHeight());
+        if (image == null)
+            if (font.isHighlight())
+                image = new UITexture((int) getWidth(), (int) getHeight() * 2);
+            else
+                image = new UITexture((int) getWidth(), (int) getHeight());
 
         UITextWriter textWriter = new UITextWriter(image, font);
 
         if (backgroundSrc != null)
             textWriter.drawBackground(backgroundSrc);
+        else
+            textWriter.clear();
 
         textWriter.write(text);
 
@@ -114,5 +118,9 @@ public abstract class UIText<S extends Scene, P extends UIContainer<S>>
     @Override
     public void release() {
         super.release();
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

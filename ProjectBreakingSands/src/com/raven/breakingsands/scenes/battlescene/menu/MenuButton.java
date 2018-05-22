@@ -4,7 +4,7 @@ import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.engine2d.ui.UIButton;
 import com.raven.engine2d.database.GameData;
 
-public abstract class MenuButton extends UIButton<BattleScene, Menu> {
+public abstract class MenuButton extends UIButton<BattleScene> {
 
     public MenuButton(BattleScene scene, String text) {
         super(scene, text);

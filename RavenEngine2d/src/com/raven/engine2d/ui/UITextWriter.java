@@ -67,7 +67,7 @@ public class UITextWriter {
                     .map(d -> d.getList("chars"))
                     .get();
 
-        for (Character c : text.toCharArray()) {
+        for (Character c : text.toLowerCase().toCharArray()) {
             writeChar(c, alphabetLocation, font.isSmall());
         }
 
@@ -111,11 +111,6 @@ public class UITextWriter {
                     } else {
                         imgGraphics.drawImage(alphabetSmallImage,
                                 x, y, x + cw, y + 8,
-                                cx, 0, cx + cw, 8,
-                                null);
-
-                        imgGraphics.drawImage(alphabetSmallImage,
-                                x, y + 32, x + cw, y + 32 + 8,
                                 cx, 8, cx + cw, 16,
                                 null);
 
@@ -127,4 +122,13 @@ public class UITextWriter {
 
     }
 
+    public void clear() {
+        if (imgGraphics == null)
+            imgGraphics = img.createGraphics();
+
+        System.out.println("clear");
+
+        imgGraphics.setBackground(new Color(255, 255, 255, 0));
+        imgGraphics.clearRect(0, 0, img.getWidth(), img.getHeight());
+    }
 }

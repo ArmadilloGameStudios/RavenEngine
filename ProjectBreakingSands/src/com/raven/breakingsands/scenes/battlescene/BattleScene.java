@@ -47,7 +47,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             GREEN_CHANGING = new Highlight(.3f, 1f, .2f, .5f);
 
     private Menu menu;
-    private UIDetailText hudDetailText;
+    private UIDetailText uiDetailText;
 
     public enum State {
         MOVING, ATTACKING, SELECT_MOVE_AI, SELECT_MOVE,
@@ -167,11 +167,11 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         // Bottom UI
         UIBottomRightContainer<BattleScene> bottomContainer = new UIBottomRightContainer<>(this);
         getLayerUI().addChild(bottomContainer);
-        hudDetailText = new UIDetailText(this);
+        uiDetailText = new UIDetailText(this);
 
-//        hudDetailText.load();
+//        uiDetailText.load();
 
-        bottomContainer.addChild(hudDetailText);
+        bottomContainer.addChild(uiDetailText);
         bottomContainer.pack();
 
 //        setDetailText(activePawn.getParent().getDetailText());
@@ -659,7 +659,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         return canLevelUp;
     }
 
-    public void setDetailText() {
-        // TODO
+    public void setDetailText(SelectionDetails details) {
+        if (uiDetailText != null)
+            uiDetailText.setDetails(details);
+
+
     }
 }

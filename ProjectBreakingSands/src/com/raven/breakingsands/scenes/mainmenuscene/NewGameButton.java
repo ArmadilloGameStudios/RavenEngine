@@ -10,7 +10,7 @@ import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.ui.UIContainer;
 
 public class NewGameButton
-        extends UIButton<MainMenuScene, UIContainer<MainMenuScene>> {
+        extends UIButton<MainMenuScene> {
 
     public static SpriteSheet getSpriteSheet() {
          return GameEngine.getEngine().getSpriteSheet(GameEngine.getEngine().getGameDatabase().getTable("buttons").queryFirst(
