@@ -4,12 +4,14 @@ import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
+import org.lwjgl.system.CallbackI;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 
 public class UITextWriter {
@@ -36,6 +38,9 @@ public class UITextWriter {
     private Graphics2D imgGraphics;
     private UIFont font;
     private UITexture uiImage;
+
+    private int x = 0; // 8
+    private int y = 0; // 10
 
     public UITextWriter(UITexture image, UIFont font) {
         uiImage = image;
@@ -67,14 +72,21 @@ public class UITextWriter {
                     .map(d -> d.getList("chars"))
                     .get();
 
-        for (Character c : text.toLowerCase().toCharArray()) {
-            writeChar(c, alphabetLocation, font.isSmall());
+        x = font.getX();
+        y = font.getY();
+
+        if (font.getSide() == UIFont.Side.LEFT) {
+            for (Character c : text.toLowerCase().toCharArray()) {
+                writeChar(c, alphabetLocation, font.isSmall());
+            }
+        } else {
+            x = img.getWidth() - 1;
+
+            for (Character c : new StringBuilder(text.toLowerCase()).reverse().toString().toCharArray()) {
+                writeChar(c, alphabetLocation, font.isSmall());
+            }
         }
-
     }
-
-    private int x = 8;
-    private int y = 10;
 
     private void writeChar(Character c, GameDataList alphabetLocation, boolean small) {
 
@@ -109,12 +121,22 @@ public class UITextWriter {
 
                         x += cw;
                     } else {
-                        imgGraphics.drawImage(alphabetSmallImage,
-                                x, y, x + cw, y + 8,
-                                cx, 8, cx + cw, 16,
-                                null);
+                        if (font.getSide() == UIFont.Side.LEFT) {
+                            imgGraphics.drawImage(alphabetSmallImage,
+                                    x, y, x + cw, y + 8,
+                                    cx, 8, cx + cw, 16,
+                                    null);
 
-                        x += cw - 1;
+                            x += cw - 1;
+                        } else {
+                            x -= cw - 1;
+
+                            imgGraphics.drawImage(alphabetSmallImage,
+                                    x, y, x + cw, y + 8,
+                                    cx, 8, cx + cw, 16,
+                                    null);
+
+                        }
                     }
                 }
                 break;
@@ -125,8 +147,6 @@ public class UITextWriter {
     public void clear() {
         if (imgGraphics == null)
             imgGraphics = img.createGraphics();
-
-        System.out.println("clear");
 
         imgGraphics.setBackground(new Color(255, 255, 255, 0));
         imgGraphics.clearRect(0, 0, img.getWidth(), img.getHeight());

@@ -365,6 +365,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         activePawn.ready();
 
+        activePawn.getParent().updateText();
+        setDetailText(activePawn.getParent().getDetails());
+
         Vector2f pos = pawn.getWorldPosition();
         // TODO focus on pawn
 

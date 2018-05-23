@@ -125,8 +125,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     @Override
     public void handleMouseEnter() {
 
-        getScene().setDetailText(details);
-
         if (!getScene().isPaused()) {
             switch (getScene().getState()) {
                 case SELECT_MOVE:
@@ -340,6 +338,21 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
         if (pawn != null) {
             details.name = pawn.getName();
+            details.hp = pawn.getRemainingHitPoints() + "/" + pawn.getHitPoints();
+
+            if (pawn == getScene().getActivePawn())
+                details.movement = pawn.getRemainingMovement() + "/" + pawn.getTotalMovement();
+            else
+                details.movement = Integer.toString(pawn.getTotalMovement());
+
+            details.resistance = Integer.toString(pawn.getArmor().getResistance());
+            details.evasion = Integer.toString(pawn.getEvasion());
+
+            details.weapon = pawn.getWeapon().getName();
+            details.damage = Integer.toString(pawn.getWeapon().getDamage());
+            details.piercing  = Integer.toString(pawn.getWeapon().getPiercing());
+            details.range  = Integer.toString(pawn.getWeapon().getRange());
+            details.accuracy  = Integer.toString(pawn.getWeapon().getAccuracy());
 
             text += "\n" + pawn.getName();
             text += "\nHP: " + pawn.getHitPoints();
@@ -356,7 +369,21 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             text += "\n" + pawn.getArmor().getName() + ", " + pawn.getArmor().getResistance();
         } else {
             details.name = "floor";
+            details.hp = "-";
+            details.movement = "-";
+            details.resistance = "-";
+            details.evasion = "-";
+            details.weapon = "-";
+            details.damage = "-";
+            details.range = "-";
+            details.piercing = "-";
+            details.accuracy = "-";
+
         }
+    }
+
+    public SelectionDetails getDetails() {
+        return details;
     }
 
     public boolean isPassable() {

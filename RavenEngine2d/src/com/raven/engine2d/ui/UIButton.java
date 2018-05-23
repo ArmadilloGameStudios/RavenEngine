@@ -27,6 +27,9 @@ public abstract class UIButton<S extends Scene>
     public UIButton(S scene, String text) {
         super(scene, text, btnImgSrc);
 
+        getFont().setX(8);
+        getFont().setY(10);
+
         spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation("newgamebutton"));
 
         this.addMouseHandler(this);

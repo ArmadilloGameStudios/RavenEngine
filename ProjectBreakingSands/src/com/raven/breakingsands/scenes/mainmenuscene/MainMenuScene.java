@@ -72,7 +72,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         container.pack();
 
         // Music
-        getGame().playSong("Chapter 50.wav");
+//        getGame().playSong("Chapter 50.wav");
     }
 
     @Override

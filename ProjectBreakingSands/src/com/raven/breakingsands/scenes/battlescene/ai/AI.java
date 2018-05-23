@@ -44,11 +44,17 @@ public class AI implements Runnable {
             HashMap<Terrain, Float> rangeMap = scene.filterRange(scene.getActivePawn().getParent(), inRange);
 
             if (inRange.size() > 0) {
-                Optional<Terrain> optionalTerrain = inRange.stream().filter(Objects::nonNull).max((a, b) -> (int) (rangeMap.get(a) - rangeMap.get(b) * 100));
+                Optional<Terrain> optionalTerrain;
 
-                if (optionalTerrain.isPresent()) {
-                    attack = optionalTerrain.get();
-                    return;
+                if (inRange.size() > 1) {
+                    optionalTerrain = inRange.stream().filter(Objects::nonNull).max((a, b) -> (int) (rangeMap.get(a) - rangeMap.get(b) * 100));
+
+                    if (optionalTerrain.isPresent()) {
+                        attack = optionalTerrain.get();
+                        return;
+                    }
+                } else {
+                    attack = inRange.get(0);
                 }
             }
 

@@ -42,14 +42,14 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     private Weapon weapon;
     private Armor armor;
     private String name = "";
-    private int team, hitPoints, totalMovement, remainingMovement, evasion, totalAttacks = 1, remainingAttacks;
+    private int team, hitPoints, remainingHitPoints, totalMovement, remainingMovement, evasion, totalAttacks = 1, remainingAttacks;
 
     public Pawn(BattleScene scene, GameData gameData) {
         super(scene, gameData);
 
         name = gameData.getString("name");
         team = gameData.getInteger("team");
-        hitPoints = gameData.getInteger("hp");
+        remainingHitPoints = hitPoints = gameData.getInteger("hp");
         totalMovement = gameData.getInteger("movement");
         evasion = gameData.getInteger("evasion");
 
@@ -101,6 +101,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         name = character.getTitle() + " " + character.getName();
         team = 0;
         hitPoints = character.getHitPoints();
+        remainingHitPoints = character.getHitPoints();
         totalMovement = character.getMovement();
         evasion = character.getEvasion();
 
@@ -120,6 +121,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public int getHitPoints() {
         return hitPoints;
+    }
+
+    public int getRemainingHitPoints() {
+        return remainingHitPoints;
     }
 
     public int getTotalMovement() {
@@ -213,9 +218,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         if (rolled < target) {
             int remainingResistance = Math.max(pawn.armor.getResistance() - weapon.getPiercing(), 0);
             int dealtDamage = Math.max(weapon.getDamage() - remainingResistance, 0);
-            pawn.hitPoints = Math.max(pawn.hitPoints - dealtDamage, 0);
+            pawn.remainingHitPoints = Math.max(pawn.remainingHitPoints - dealtDamage, 0);
 
-            if (pawn.hitPoints == 0) {
+            if (pawn.remainingHitPoints == 0) {
                 pawn.die();
             }
 
@@ -243,5 +248,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         if (weaponState != null) {
             weaponState.setFlip(flip);
         }
+    }
+
+    public int getEvasion() {
+        return evasion;
     }
 }

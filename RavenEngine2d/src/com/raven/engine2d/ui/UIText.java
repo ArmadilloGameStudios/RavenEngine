@@ -13,6 +13,7 @@ public abstract class UIText<S extends Scene>
     private String text;
     private final String backgroundSrc;
     private UITexture image;
+    private UITextWriter textWriter;
 
     private UIFont font = new UIFont();
 
@@ -40,7 +41,8 @@ public abstract class UIText<S extends Scene>
             else
                 image = new UITexture((int) getWidth(), (int) getHeight());
 
-        UITextWriter textWriter = new UITextWriter(image, font);
+        // TODO don't remake each time
+        textWriter = new UITextWriter(image, font);
 
         if (backgroundSrc != null)
             textWriter.drawBackground(backgroundSrc);
