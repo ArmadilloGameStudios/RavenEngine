@@ -43,6 +43,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     private Armor armor;
     private String name = "";
     private int team, hitPoints, remainingHitPoints, totalMovement, remainingMovement, evasion, totalAttacks = 1, remainingAttacks;
+    private boolean ready = true;
 
     public Pawn(BattleScene scene, GameData gameData) {
         super(scene, gameData);
@@ -148,18 +149,23 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     }
 
     public void ready() {
+        ready = true;
         remainingMovement = totalMovement;
         remainingAttacks = totalAttacks;
     }
 
     public void move(int amount) {
         remainingMovement = Math.max(remainingMovement - amount, 0);
+
+        if (remainingMovement == 0 && remainingAttacks == 0) {
+            ready = false;
+        }
     }
 
     public void runAttackAnimation(Pawn target, ActionFinishHandler onAttackDone) {
         boolean directional = getWeapon().getDirectional();
         boolean directionUp = target.getParent().getMapX() < getParent().getMapX() ||
-                        target.getParent().getMapY() > getParent().getMapY();
+                target.getParent().getMapY() > getParent().getMapY();
 
         weapon.playClip("attack");
 
@@ -204,6 +210,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public void attack(Pawn pawn) {
         remainingAttacks = Math.max(totalAttacks - 1, 0);
+
+        if (remainingAttacks == 0) {
+            ready = false;
+        }
 
         // Check if hit
         int target = pawn.getWeapon().getAccuracy();
@@ -252,5 +262,30 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public int getEvasion() {
         return evasion;
+    }
+
+    public boolean isReady() {
+        return ready;
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
+    }
+
+    public boolean checkReady(boolean noOptions) {
+        if (remainingAttacks == 0) {
+            ready = false;
+        } else if (remainingMovement == 0 && noOptions) {
+            ready = false;
+        } else {
+            ready = true;
+        }
+
+        return ready;
+    }
+
+    public void setReadyIsMoved(boolean readyIsMoved) {
+        if (remainingMovement != totalMovement || remainingAttacks != totalAttacks)
+            this.ready = readyIsMoved;
     }
 }
