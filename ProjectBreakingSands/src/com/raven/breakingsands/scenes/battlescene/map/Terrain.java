@@ -110,7 +110,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                                     getScene().setActivePawn(null);
                                 } else if (pawn.getTeam() == getScene().getActiveTeam()) {
                                     if (getScene().getActivePawn() != null)
-                                    getScene().getActivePawn().setReadyIsMoved(false);
+                                        getScene().getActivePawn().setReadyIsMoved(false);
                                     getScene().setActivePawn(pawn);
                                 }
                             }
@@ -146,19 +146,26 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                     }
                     break;
             }
+
+            selectHighlight();
         }
     }
 
     @Override
     public void handleMouseLeave() {
-        switch (getScene().getState()) {
-            case SELECT_MOVE:
-                getScene().clearPath();
+        if (!getScene().isPaused()) {
+            switch (getScene().getState()) {
+                case SELECT_MOVE:
+                    getScene().clearPath();
 
-                if (state == State.ATTACK) {
-                    setState(State.ATTACKABLE);
-                }
-                break;
+                    if (state == State.ATTACK) {
+                        setState(State.ATTACKABLE);
+                    }
+                    break;
+            }
+
+
+            selectHighlight();
         }
     }
 
@@ -301,9 +308,16 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                     switch (state) {
                         case SELECTABLE:
                             if (pawn != null && pawn == getScene().getActivePawn()) {
-                                setHighlight(BattleScene.GREEN_CHANGING);
+
+                                if (isMouseHovering())
+                                    setHighlight(BattleScene.YELLOW_CHANGING);
+                                else
+                                    setHighlight(BattleScene.YELLOW);
                             } else {
-                                setHighlight(BattleScene.GREEN);
+                                if (isMouseHovering())
+                                    setHighlight(BattleScene.GREEN_CHANGING);
+                                else
+                                    setHighlight(BattleScene.GREEN);
                             }
                             break;
                         case UNSELECTABLE:
