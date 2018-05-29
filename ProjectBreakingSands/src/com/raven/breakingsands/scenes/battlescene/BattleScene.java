@@ -10,6 +10,7 @@ import com.raven.breakingsands.scenes.battlescene.map.Map;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
+import com.raven.breakingsands.scenes.battlescene.pawn.PawnDamage;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
 import com.raven.breakingsands.scenes.hud.UIBottomRightContainer;
@@ -84,6 +85,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private List<Pawn> pawns = new ArrayList<>();
     private Pawn activePawn;
     private Pawn targetPawn;
+
+    private PawnDamage textDamage;
+    private float damageShowTime;
 
     private List<Character> canLevelUp = new ArrayList<>();
 
@@ -175,6 +179,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         map = new Map(this);
         getLayerTerrain().addChild(map);
 
+        textDamage = new PawnDamage(this);
+        getLayerDetails().addChild(textDamage);
+
         addPawns();
 
         setActiveTeam(0);
@@ -209,6 +216,16 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         menu.setVisibility(false);
 
 //        victory();
+    }
+
+    public void showDamage(Pawn pawn, String damage) {
+        textDamage.setText(damage);
+        Vector2f pos = pawn.getWorldPosition();
+        pos.x -= .9;
+        pos.y += 1.3;
+        textDamage.setPosition(pos);
+
+        damageShowTime = 0;
     }
 
     private void addPawns() {
@@ -288,6 +305,13 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                         ai.resolve();
                     }
                 break;
+        }
+
+        damageShowTime += deltaTime;
+        if (damageShowTime < 750) {
+            textDamage.setVisibility(true);
+        } else {
+            textDamage.setVisibility(false);
         }
 
         float smoothing = .5f;
@@ -465,7 +489,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         map.setState(Terrain.State.UNSELECTABLE);
 
         activePawn.runAttackAnimation(targetPawn, a -> {
-            getActivePawn().attack(targetPawn);
             setState(State.SELECT_MOVE);
         });
     }

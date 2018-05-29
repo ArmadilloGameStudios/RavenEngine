@@ -4,6 +4,7 @@ import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
@@ -34,7 +35,7 @@ public abstract class WorldObject<
 
     private List<C> children = new CopyOnWriteArrayList<>();
 
-    private SpriteSheet spriteSheet;
+    ShaderTexture spriteSheet;
     private SpriteAnimationState spriteAnimationState;
 
     P parent;
@@ -146,6 +147,10 @@ public abstract class WorldObject<
     }
 
     public Highlight getHighlight() {
+        if (highlight == null && parentIsWorldObject) {
+            return ((WorldObject)parent).getHighlight();
+        }
+
         return highlight;
     }
 

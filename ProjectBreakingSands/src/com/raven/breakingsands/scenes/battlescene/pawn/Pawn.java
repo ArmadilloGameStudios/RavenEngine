@@ -16,6 +16,7 @@ import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
 import com.raven.engine2d.worldobject.WorldObject;
+import com.raven.engine2d.worldobject.WorldTextObject;
 
 import javax.sound.sampled.Clip;
 import java.util.ArrayList;
@@ -91,27 +92,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         }
     }
 
-    public Pawn(BattleScene scene, Character character) {
-        super(scene, dataList.queryRandom(new GameDataQuery() {
-            @Override
-            public boolean matches(GameData row) {
-                return row.getString("name").equals("Player");
-            }
-        }));
-
-        name = character.getTitle() + " " + character.getName();
-        team = 0;
-        hitPoints = character.getHitPoints();
-        remainingHitPoints = character.getHitPoints();
-        totalMovement = character.getMovement();
-        evasion = character.getEvasion();
-
-        weapon = new Weapon(scene, GameDatabase.all("weapon").getRandom());
-        addChild(weapon);
-
-        armor = new Armor(GameDatabase.all("armor").getRandom());
-    }
-
     public String getName() {
         return name;
     }
@@ -182,6 +162,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
         getAnimationState().addActionFinishHandler(x -> {
 
+            attack(target);
+
             if (directional)
                 if (directionUp)
                     getAnimationState().setAction("attack up end");
@@ -219,12 +201,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         int target = pawn.getWeapon().getAccuracy();
         int totalRange = pawn.evasion + target;
         int rolled = getScene().getRandom().nextInt(totalRange);
-
 //        System.out.println("Accuracy: " + target);
 //        System.out.println("Evasion: " + pawn.evasion);
 //        System.out.println("Total Range: " + totalRange);
 //        System.out.println("Rolled: " + rolled);
-
         if (rolled < target) {
             int remainingResistance = Math.max(pawn.armor.getResistance() - weapon.getPiercing(), 0);
             int dealtDamage = Math.max(weapon.getDamage() - remainingResistance, 0);
@@ -235,9 +215,15 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
             }
 
             pawn.getParent().updateText();
+
+            pawn.showDamage(Integer.toString(dealtDamage));
         } else {
-//            System.out.println("MISS");
+            pawn.showDamage("miss");
         }
+    }
+
+    private void showDamage(String damage) {
+        getScene().showDamage(this, damage);
     }
 
     public void die() {
