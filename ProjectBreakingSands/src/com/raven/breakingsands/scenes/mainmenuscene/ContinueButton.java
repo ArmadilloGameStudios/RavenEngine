@@ -5,7 +5,7 @@ import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.ui.UIContainer;
 
 public class ContinueButton
-        extends UIButton<MainMenuScene, UIContainer<MainMenuScene>> {
+        extends UIButton<MainMenuScene> {
 
 
     public ContinueButton(MainMenuScene scene) {

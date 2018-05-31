@@ -6,11 +6,12 @@ import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector2i;
 import com.raven.engine2d.util.math.Vector4f;
+import com.raven.engine2d.worldobject.Parentable;
 
 import java.awt.*;
 
-public class UILabel<S extends Scene, P extends UIContainer<S>>
-        extends UIText<S, P> {
+public class UILabel<S extends Scene>
+        extends UIText<S> {
 
     private int width, height;
 

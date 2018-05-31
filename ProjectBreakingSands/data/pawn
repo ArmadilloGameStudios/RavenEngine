@@ -26,6 +26,6 @@
     hp: 15,
     resistance: 1,
     movement: 2,
-    evasion: 0,
+    evasion: 200,
     weapon: "Guard Disk"
 }

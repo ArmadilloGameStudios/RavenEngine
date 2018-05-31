@@ -10,7 +10,10 @@ import com.raven.breakingsands.scenes.battlescene.map.Map;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
+import com.raven.breakingsands.scenes.battlescene.pawn.PawnDamage;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
+import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
+import com.raven.breakingsands.scenes.hud.UIBottomRightContainer;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
@@ -46,10 +49,25 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             GREEN_CHANGING = new Highlight(.3f, 1f, .2f, .5f);
 
     private Menu menu;
-    private UIDetailText hudDetailText;
+    private UIDetailText uiActiveDetailText;
+    private UIDetailText uiSelectedDetailText;
+
+    public int getActiveTeam() {
+        return activeTeam;
+    }
+
+    public void setActiveTeam(int team) {
+        this.activeTeam = team;
+
+        pawns.stream()
+                .filter(p -> p.getTeam() == activeTeam)
+                .forEach(Pawn::ready);
+
+        setState(SELECT_MOVE);
+    }
 
     public enum State {
-        MOVING, ATTACKING, SELECT_MOVE_AI, SELECT_MOVE,
+        MOVING, ATTACKING, SELECT_MOVE,
     }
 
     private Random random = new Random();
@@ -68,6 +86,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private Pawn activePawn;
     private Pawn targetPawn;
 
+    private PawnDamage textDamage;
+    private float damageShowTime;
+
     private List<Character> canLevelUp = new ArrayList<>();
 
     private State state = SELECT_MOVE;
@@ -75,6 +96,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private ExecutorService aiExecutorService = Executors.newSingleThreadExecutor();
     private AI ai = new AI(this);
     private Future aiFuture;
+
+    private int activeTeam = 0;
 
     public BattleScene(BreakingSandsGame game) {
         super(game);
@@ -156,7 +179,12 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         map = new Map(this);
         getLayerTerrain().addChild(map);
 
+        textDamage = new PawnDamage(this);
+        getLayerDetails().addChild(textDamage);
+
         addPawns();
+
+        setActiveTeam(0);
 
         Vector2f wo = this.getWorldOffset();
         wo.x = GameProperties.getScreenWidth() / 2f;
@@ -164,15 +192,22 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         // TODOq
         // Bottom UI
-//        UIBottomContainer<BattleScene> bottomContainer = new UIBottomContainer<>(this);
-//        getLayerUI().addChild(bottomContainer);
-//
-//        hudDetailText = new UIDetailText(this);
-//
-//        bottomContainer.addChild(hudDetailText);
-//        bottomContainer.pack();
+        UIBottomRightContainer<BattleScene> bottomRightContainer = new UIBottomRightContainer<>(this);
+        getLayerUI().addChild(bottomRightContainer);
+        uiActiveDetailText = new UIDetailText(this, bottomRightContainer.getStyle());
+        bottomRightContainer.addChild(uiActiveDetailText);
+        bottomRightContainer.pack();
 
-//        setDetailText(activePawn.getParent().getDetailText());
+
+        UIBottomLeftContainer<BattleScene> bottomLeftContainer = new UIBottomLeftContainer<>(this);
+        getLayerUI().addChild(bottomLeftContainer);
+        uiSelectedDetailText = new UIDetailText(this, bottomLeftContainer.getStyle());
+        bottomLeftContainer.addChild(uiSelectedDetailText);
+        bottomLeftContainer.pack();
+
+//        uiActiveDetailText.load();
+
+//        setActiveDetailText(activePawn.getParent().getDetailText());
 
         // Menu
         menu = new Menu(this);
@@ -181,6 +216,16 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         menu.setVisibility(false);
 
 //        victory();
+    }
+
+    public void showDamage(Pawn pawn, String damage) {
+        textDamage.setText(damage);
+        Vector2f pos = pawn.getWorldPosition();
+        pos.x -= .9;
+        pos.y += 1.3;
+        textDamage.setPosition(pos);
+
+        damageShowTime = 0;
     }
 
     private void addPawns() {
@@ -229,8 +274,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         List<Terrain> terrainList = map.getTerrainList();
         List<Terrain> validTerrainList = terrainList.stream().filter(t -> t.getPawn() == null && t.isPassable()).collect(Collectors.toList());
 
-        System.out.println(terrainList);
-        System.out.println(validTerrainList);
+//        System.out.println(terrainList);
+//        System.out.println(validTerrainList);
 
         int r = random.nextInt(validTerrainList.size());
 
@@ -246,7 +291,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     @Override
     public void onUpdate(float deltaTime) {
-        float a = (float) (Math.cos(GameEngine.getEngine().getSystemTime() * .004) * .075 + .4);
+        float a = (float) (Math.cos(GameEngine.getEngine().getSystemTime() * .005) * .15 + .4);
 
         BLUE_CHANGING.a = RED_CHANGING.a = GREEN_CHANGING.a = YELLOW_CHANGING.a = a;
 
@@ -254,11 +299,19 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             case MOVING:
                 movePawn(deltaTime);
                 break;
-            case SELECT_MOVE_AI:
-                if (aiFuture.isDone()) {
-                    ai.resolve();
-                }
+            case SELECT_MOVE:
+                if (activeTeam != 0)
+                    if (aiFuture.isDone()) {
+                        ai.resolve();
+                    }
                 break;
+        }
+
+        damageShowTime += deltaTime;
+        if (damageShowTime < 750) {
+            textDamage.setVisibility(true);
+        } else {
+            textDamage.setVisibility(false);
         }
 
         float smoothing = .5f;
@@ -325,14 +378,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             activePawn.setPosition(0, 0);
             current.setPawn(activePawn);
 
-            if (activePawn.getRemainingMovement() > 0 ||
-                    activePawn.getRemainingAttacks() > 0) {
-                if (activePawn.getTeam() == 0)
-                    setState(State.SELECT_MOVE);
-                else
-                    setState(State.SELECT_MOVE_AI);
-            } else
-                selectNextPawn();
+            setState(State.SELECT_MOVE);
         }
     }
 
@@ -340,62 +386,24 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         pawns.remove(pawn);
     }
 
-    public Pawn getNextPawn() {
-        int i = pawns.indexOf(activePawn) + 1;
-
-        if (i == pawns.size()) {
-            i = 0;
-        }
-
-        return pawns.get(i);
-    }
-
     public Map getTerrainMap() {
         return map;
-    }
-
-    public void selectNextPawn() {
-        setActivePawn(getNextPawn());
     }
 
     public void setActivePawn(Pawn pawn) {
         this.activePawn = pawn;
 
-        activePawn.ready();
+//        activePawn.ready();
 
-        Vector2f pos = pawn.getWorldPosition();
-        // TODO focus on pawn
+        if (activePawn != null) {
+            activePawn.getParent().updateText();
+            setActiveDetailText(activePawn.getParent().getDetails());
 
-        switch (state) {
-            case MOVING:
-                if (activePawn.getTeam() == 0) {
-                    setState(State.SELECT_MOVE);
-                } else {
-                    setState(State.SELECT_MOVE_AI);
-                }
-                break;
-            case SELECT_MOVE:
-                if (activePawn.getTeam() == 0) {
-                    setState(SELECT_MOVE);
-                } else {
-                    setState(State.SELECT_MOVE_AI);
-                }
-                break;
-            case SELECT_MOVE_AI:
-                if (activePawn.getTeam() == 0) {
-                    setState(SELECT_MOVE);
-                } else {
-                    setState(State.SELECT_MOVE_AI);
-                }
-                break;
-            case ATTACKING:
-                if (activePawn.getTeam() == 0) {
-                    setState(SELECT_MOVE);
-                } else {
-                    setState(State.SELECT_MOVE_AI);
-                }
-                break;
+            Vector2f pos = pawn.getWorldPosition();
+            // TODO focus on pawn
         }
+
+        setState(SELECT_MOVE);
     }
 
     public Pawn getActivePawn() {
@@ -415,27 +423,36 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public void setState(State state) {
         this.state = state;
-        System.out.println("State: " + state);
+//        System.out.println("State: " + state);
 
         switch (state) {
             case SELECT_MOVE:
+                if (activeTeam == 0) {
+                    // TODO change spawn
+                    if (doSpawn()) {
+                        spawnPawn("Service Drone");
+                    }
 
-                // TODO change spawn
-                if (doSpawn()) {
-                    spawnPawn("Service Drone");
+                    // clean
+                    map.setState(Terrain.State.UNSELECTABLE);
+                    currentPath = null;
+
+                    if (activePawn != null)
+                        setStateSelectMove();
+                    else {
+                        setSelectablePawn();
+                    }
+                } else {
+                    if (activePawn != null) {
+                        activePawn.getAnimationState().setAction("idle");
+                    }
+
+                    currentPath = null;
+                    map.setState(Terrain.State.UNSELECTABLE);
+
+                    aiFuture = aiExecutorService.submit(ai);
                 }
-
-                setStateSelectMove();
                 break;
-
-            case SELECT_MOVE_AI:
-                activePawn.getAnimationState().setAction("idle");
-                currentPath = null;
-                map.setState(Terrain.State.UNSELECTABLE);
-
-                aiFuture = aiExecutorService.submit(ai);
-                break;
-
             case MOVING:
                 activePawn.getAnimationState().setAction("walking up");
                 activePawn.move(currentPath.getCost());
@@ -444,30 +461,40 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                 break;
 
             case ATTACKING:
-
                 setStateSelectAttacking();
-
                 break;
         }
+    }
+
+    private void setSelectablePawn() {
+
+        if (pawns.stream().noneMatch(p -> p.getTeam() == 0 && p.isReady())) {
+            if (activeTeam == 0) {
+                setActiveTeam(1);
+            } else {
+                setActiveTeam(0);
+            }
+        } else {
+            // selectable pawns
+            for (Pawn pawn : pawns) {
+                if (pawn.getTeam() == 0 && pawn.isReady()) {
+                    pawn.getParent().setState(Terrain.State.SELECTABLE);
+                }
+            }
+        }
+
     }
 
     public void setStateSelectAttacking() {
         map.setState(Terrain.State.UNSELECTABLE);
 
         activePawn.runAttackAnimation(targetPawn, a -> {
-            getActivePawn().attack(targetPawn);
-            selectNextPawn();
+            setState(State.SELECT_MOVE);
         });
     }
 
     private void setStateSelectMove() {
         activePawn.getAnimationState().setAction("idle");
-
-        // clear
-
-        map.setState(Terrain.State.UNSELECTABLE);
-        currentPath = null;
-        boolean noOptions = false;
 
         // find movement
         Terrain parentTerrain = activePawn.getParent();
@@ -480,15 +507,14 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             for (Terrain t : pathMap.keySet()) {
                 t.setState(Terrain.State.MOVEABLE);
             }
-        } else {
-            noOptions = true;
-//            selectNextPawn();
         }
 
         // find attack
         List<Terrain> inRange = selectRange(activePawn.getWeapon().getRange(), parentTerrain);
 
         rangeMap = filterRange(parentTerrain, inRange);
+
+        boolean noOptions = true;
 
         if (rangeMap.size() > 0) {
             for (Terrain n : rangeMap.keySet()) {
@@ -503,8 +529,12 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             }
         }
 
-        if (noOptions) {
-            selectNextPawn();
+        if (!activePawn.checkReady(noOptions)) {
+            activePawn = null;
+
+            setState(SELECT_MOVE);
+        } else {
+            setSelectablePawn();
         }
     }
 
@@ -657,7 +687,13 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         return canLevelUp;
     }
 
-    public void setDetailText() {
-        // TODO
+    public void setActiveDetailText(SelectionDetails details) {
+        if (uiActiveDetailText != null)
+            uiActiveDetailText.setDetails(details);
+    }
+
+    public void setSelectedDetailText(SelectionDetails details) {
+        if (uiSelectedDetailText != null)
+            uiSelectedDetailText.setDetails(details);
     }
 }

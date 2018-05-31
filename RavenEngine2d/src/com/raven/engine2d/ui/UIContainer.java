@@ -10,7 +10,7 @@ import java.util.List;
 public abstract class UIContainer<S extends Scene>
         extends UIObject<S, Layer<UIObject>> {
 
-    public static final int CENTER = 0, BOTTOM = 1;
+    public static final int CENTER = 0, BOTTOM_LEFT = 1, BOTTOM = 2, BOTTOM_RIGHT = 3;
 
     protected float width, height;
     private Vector2f position = new Vector2f();
@@ -36,22 +36,22 @@ public abstract class UIContainer<S extends Scene>
 
 
     @Override
-    public final float getYOffset() {
+    public final float getY() {
         return position.y;
     }
 
     @Override
-    public final void setYOffset(float y) {
+    public final void setY(float y) {
         position.y = y;
     }
 
     @Override
-    public final float getXOffset() {
+    public final float getX() {
         return position.x;
     }
 
     @Override
-    public final void setXOffset(float x) {
+    public final void setX(float x) {
         position.x = x;
     }
 
@@ -62,7 +62,7 @@ public abstract class UIContainer<S extends Scene>
 
     public void pack() {
         switch (getStyle()) {
-            case BOTTOM: // bottom
+            case BOTTOM:
                 width = 0;
                 height = 0f;
 
@@ -79,9 +79,53 @@ public abstract class UIContainer<S extends Scene>
                 for (int i = 0; i < children.size(); i++) {
                     UIObject obj = children.get(i);
 
-                    obj.setXOffset(offset);
+                    obj.setX(offset);
 
                     offset += obj.getWidth() * 2f;
+                }
+                break;
+            case BOTTOM_LEFT:
+                width = 0;
+                height = 0f;
+
+                children = this.getChildren();
+
+                for (UIObject obj : children) {
+                    height = Math.max(obj.getHeight(), height);
+                    width += obj.getWidth();
+                }
+
+                // Get Offset
+                offset = 0f;
+
+                for (int i = 0; i < children.size(); i++) {
+                    UIObject obj = children.get(i);
+
+                    obj.setX(offset);
+
+                    offset += obj.getWidth() * 2f;
+                }
+                break;
+            case BOTTOM_RIGHT:
+                width = 0;
+                height = 0f;
+
+                children = this.getChildren();
+
+                for (UIObject obj : children) {
+                    height = Math.max(obj.getHeight(), height);
+                    width += obj.getWidth();
+                }
+
+                // Get Offset
+                offset = GameProperties.getScreenWidth() * 2f / GameProperties.getScaling();
+
+                for (int i = 0; i < children.size(); i++) {
+                    UIObject obj = children.get(i);
+
+                    offset -= obj.getWidth() * 2f;
+
+                    obj.setX(offset);
                 }
                 break;
             case CENTER: // center
@@ -104,8 +148,8 @@ public abstract class UIContainer<S extends Scene>
 
                     offset += obj.getHeight() * .5f;
 
-                    obj.setYOffset(height * .5f - offset + GameProperties.getScreenHeight() / GameProperties.getScaling());
-                    obj.setXOffset(GameProperties.getScreenWidth() / GameProperties.getScaling() - obj.getWidth() / 2f);
+                    obj.setY(height * .5f - offset + GameProperties.getScreenHeight() / GameProperties.getScaling());
+                    obj.setX(GameProperties.getScreenWidth() / GameProperties.getScaling() - obj.getWidth() / 2f);
 
                     offset += obj.getHeight() * .5f;
                 }

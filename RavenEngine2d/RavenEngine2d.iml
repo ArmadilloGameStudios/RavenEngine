@@ -53,5 +53,18 @@
         <jarDirectory url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-opengl" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-openal" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-openal" />
+        </SOURCES>
+        <jarDirectory url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-openal" recursive="false" />
+        <jarDirectory url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-openal" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
   </component>
 </module>

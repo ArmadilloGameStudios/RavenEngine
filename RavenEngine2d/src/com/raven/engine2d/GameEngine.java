@@ -10,22 +10,23 @@ import com.raven.engine2d.database.GameDataTable;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.ScreenQuad;
-import com.raven.engine2d.graphics2d.sprite.AnimationImporter;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimation;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.input.Keyboard;
 import com.raven.engine2d.input.Mouse;
 import com.raven.engine2d.worldobject.GameObject;
 
-public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
+import javax.sound.sampled.*;
+
+public class GameEngine<G extends Game> implements Runnable {
     private static GameEngine engine;
 
-    public static <G extends com.raven.engine2d.Game> GameEngine Launch(G game) {
+    public static <G extends Game> GameEngine Launch(G game) {
         GameEngine<G> engine = new GameEngine<>(game);
 
         GameEngine.engine = engine;
 
-        engine.window = new com.raven.engine2d.graphics2d.GameWindow(engine);
+        engine.window = new GameWindow(engine);
 
         engine.thread = new Thread(engine);
         engine.thread.start();
@@ -44,6 +45,7 @@ public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
     private GameDatabase gdb;
     private Map<String, SpriteSheet> spriteSheetsMap = new HashMap<>();
     private Map<String, SpriteAnimation> animationMap = new HashMap<>();
+    private Map<String, Clip> audioMap = new HashMap<>();
     private float deltaTime;
     private long systemTime;
     private Mouse mouse = new Mouse();
@@ -93,8 +95,8 @@ public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
         game.breakdown();
     }
 
-    int frame = 0;
-    float framesdt = 0;
+    private int frame = 0;
+    private float framesdt = 0;
 
     @Override
     public void run() {
@@ -239,8 +241,17 @@ public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
         }
     }
 
+    private String fixPath(String path) {
+        String fixed;
+
+        fixed = path.replace('\\', File.separatorChar);
+        fixed = fixed.replace('/', File.separatorChar);
+
+        return fixed;
+    }
+
     public SpriteSheet getSpriteSheet(String spriteSrc) {
-        SpriteSheet sheet = spriteSheetsMap.get(game.getMainDirectory() + File.separator + spriteSrc);
+        SpriteSheet sheet = spriteSheetsMap.get(game.getMainDirectory() + File.separator + fixPath(spriteSrc));
 
         if (sheet == null) {
             throw new NoSuchElementException();
@@ -266,6 +277,40 @@ public class GameEngine<G extends com.raven.engine2d.Game> implements Runnable {
         }
 
         return animation;
+    }
+
+    public Clip getAudioClip(String audioName) {
+
+        if (audioMap.containsKey(audioName)) {
+            return audioMap.get(audioName);
+        } else {
+
+            try {
+                File f = new File(GameProperties.getMainDirectory() + File.separator + "audio" + File.separator + audioName);
+
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(f);
+                AudioFormat af = audioInputStream.getFormat();
+                int size = (int)(audioInputStream.getFrameLength() * af.getFrameSize());
+                byte[] audioBytes = new byte[size];
+                audioInputStream.read(audioBytes, 0, size);
+                Clip clip = (Clip) AudioSystem.getLine(new DataLine.Info(Clip.class, af, size));
+
+                System.out.println(audioName);
+                System.out.println(audioInputStream.getFrameLength());
+
+                clip.open(af, audioBytes, 0, size);
+
+                audioMap.put(audioName, clip);
+
+                return clip;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
+
+        return null;
     }
 
     // input

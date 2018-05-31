@@ -16,7 +16,9 @@ import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
 import com.raven.engine2d.worldobject.WorldObject;
+import com.raven.engine2d.worldobject.WorldTextObject;
 
+import javax.sound.sampled.Clip;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,14 +43,15 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     private Weapon weapon;
     private Armor armor;
     private String name = "";
-    private int team, hitPoints, totalMovement, remainingMovement, evasion, totalAttacks = 1, remainingAttacks;
+    private int team, hitPoints, remainingHitPoints, totalMovement, remainingMovement, evasion, totalAttacks = 1, remainingAttacks;
+    private boolean ready = true;
 
     public Pawn(BattleScene scene, GameData gameData) {
         super(scene, gameData);
 
         name = gameData.getString("name");
         team = gameData.getInteger("team");
-        hitPoints = gameData.getInteger("hp");
+        remainingHitPoints = hitPoints = gameData.getInteger("hp");
         totalMovement = gameData.getInteger("movement");
         evasion = gameData.getInteger("evasion");
 
@@ -89,26 +92,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         }
     }
 
-    public Pawn(BattleScene scene, Character character) {
-        super(scene, dataList.queryRandom(new GameDataQuery() {
-            @Override
-            public boolean matches(GameData row) {
-                return row.getString("name").equals("Player");
-            }
-        }));
-
-        name = character.getTitle() + " " + character.getName();
-        team = 0;
-        hitPoints = character.getHitPoints();
-        totalMovement = character.getMovement();
-        evasion = character.getEvasion();
-
-        weapon = new Weapon(scene, GameDatabase.all("weapon").getRandom());
-        addChild(weapon);
-
-        armor = new Armor(GameDatabase.all("armor").getRandom());
-    }
-
     public String getName() {
         return name;
     }
@@ -119,6 +102,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public int getHitPoints() {
         return hitPoints;
+    }
+
+    public int getRemainingHitPoints() {
+        return remainingHitPoints;
     }
 
     public int getTotalMovement() {
@@ -142,18 +129,25 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     }
 
     public void ready() {
+        ready = true;
         remainingMovement = totalMovement;
         remainingAttacks = totalAttacks;
     }
 
     public void move(int amount) {
         remainingMovement = Math.max(remainingMovement - amount, 0);
+
+        if (remainingMovement == 0 && remainingAttacks == 0) {
+            ready = false;
+        }
     }
 
     public void runAttackAnimation(Pawn target, ActionFinishHandler onAttackDone) {
         boolean directional = getWeapon().getDirectional();
         boolean directionUp = target.getParent().getMapX() < getParent().getMapX() ||
-                        target.getParent().getMapY() > getParent().getMapY();
+                target.getParent().getMapY() > getParent().getMapY();
+
+        weapon.playClip("attack");
 
         setFlip(target.getParent().getMapY() > getParent().getMapY() ||
                 target.getParent().getMapX() > getParent().getMapX());
@@ -167,6 +161,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
             getAnimationState().setAction("attack start");
 
         getAnimationState().addActionFinishHandler(x -> {
+
+            attack(target);
 
             if (directional)
                 if (directionUp)
@@ -197,29 +193,37 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     public void attack(Pawn pawn) {
         remainingAttacks = Math.max(totalAttacks - 1, 0);
 
+        if (remainingAttacks == 0) {
+            ready = false;
+        }
+
         // Check if hit
         int target = pawn.getWeapon().getAccuracy();
         int totalRange = pawn.evasion + target;
         int rolled = getScene().getRandom().nextInt(totalRange);
-
-        System.out.println("Accuracy: " + target);
-        System.out.println("Evasion: " + pawn.evasion);
-        System.out.println("Total Range: " + totalRange);
-        System.out.println("Rolled: " + rolled);
-
+//        System.out.println("Accuracy: " + target);
+//        System.out.println("Evasion: " + pawn.evasion);
+//        System.out.println("Total Range: " + totalRange);
+//        System.out.println("Rolled: " + rolled);
         if (rolled < target) {
             int remainingResistance = Math.max(pawn.armor.getResistance() - weapon.getPiercing(), 0);
             int dealtDamage = Math.max(weapon.getDamage() - remainingResistance, 0);
-            pawn.hitPoints = Math.max(pawn.hitPoints - dealtDamage, 0);
+            pawn.remainingHitPoints = Math.max(pawn.remainingHitPoints - dealtDamage, 0);
 
-            if (pawn.hitPoints == 0) {
+            if (pawn.remainingHitPoints == 0) {
                 pawn.die();
             }
 
             pawn.getParent().updateText();
+
+            pawn.showDamage(Integer.toString(dealtDamage));
         } else {
-            System.out.println("MISS");
+            pawn.showDamage("miss");
         }
+    }
+
+    private void showDamage(String damage) {
+        getScene().showDamage(this, damage);
     }
 
     public void die() {
@@ -240,5 +244,34 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         if (weaponState != null) {
             weaponState.setFlip(flip);
         }
+    }
+
+    public int getEvasion() {
+        return evasion;
+    }
+
+    public boolean isReady() {
+        return ready;
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
+    }
+
+    public boolean checkReady(boolean noOptions) {
+        if (remainingAttacks == 0) {
+            ready = false;
+        } else if (remainingMovement == 0 && noOptions) {
+            ready = false;
+        } else {
+            ready = true;
+        }
+
+        return ready;
+    }
+
+    public void setReadyIsMoved(boolean readyIsMoved) {
+        if (remainingMovement != totalMovement || remainingAttacks != totalAttacks)
+            this.ready = readyIsMoved;
     }
 }

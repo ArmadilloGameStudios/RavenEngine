@@ -31,12 +31,8 @@ public class GameWindow {
 
     private MainShader mainShader;
 
-    private int sun_light_buffer_handel, matrices_buffer_handel, animation_buffer_handel;
-
     private GameEngine engine;
 
-    private Map<Integer, Boolean> keyboard = new HashMap<>();
-    private Map<Integer, Boolean> mouse = new HashMap<>();
     private Shader activeShader;
 
     public GameWindow(GameEngine engine) {
@@ -130,18 +126,6 @@ public class GameWindow {
 
     public MainShader getMainShader() {
         return mainShader;
-    }
-
-    public int getLightHandel() {
-        return sun_light_buffer_handel;
-    }
-
-    public int getMatricesHandel() {
-        return matrices_buffer_handel;
-    }
-
-    public int getAnimationHandel() {
-        return animation_buffer_handel;
     }
 
     public void drawQuad() {

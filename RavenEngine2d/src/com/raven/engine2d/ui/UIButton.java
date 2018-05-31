@@ -11,8 +11,8 @@ import com.raven.engine2d.util.math.Vector4f;
 import com.raven.engine2d.worldobject.MouseHandler;
 import com.sun.org.glassfish.gmbal.ManagedObject;
 
-public abstract class UIButton<S extends Scene, C extends UIContainer<S>>
-        extends UIText<S, C>
+public abstract class UIButton<S extends Scene>
+        extends UIText<S>
         implements MouseHandler {
 
     private static final String btnImgSrc = "sprites/button.png";
@@ -26,6 +26,9 @@ public abstract class UIButton<S extends Scene, C extends UIContainer<S>>
 
     public UIButton(S scene, String text) {
         super(scene, text, btnImgSrc);
+
+        getFont().setX(8);
+        getFont().setY(10);
 
         spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation("newgamebutton"));
 

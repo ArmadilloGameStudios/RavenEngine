@@ -1,6 +1,9 @@
 package com.raven.engine2d.scene;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.raven.engine2d.Game;
 import com.raven.engine2d.graphics2d.GameWindow;
@@ -14,6 +17,8 @@ import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.ui.UIContainer;
 import com.raven.engine2d.worldobject.GameObject;
 import com.raven.engine2d.worldobject.WorldObject;
+
+import javax.sound.sampled.Clip;
 
 public abstract class Scene<G extends Game> {
     private Layer<WorldObject> layerTerrain = new Layer<>(Layer.Destination.Terrain);
@@ -40,7 +45,7 @@ public abstract class Scene<G extends Game> {
         mainShader.clear(backgroundColor);
 
 
-        // draw
+        // drawImage
         for (WorldObject o : layerTerrain.getChildren()) {
             if (o.getVisibility())
                 o.draw(mainShader);
@@ -155,5 +160,9 @@ public abstract class Scene<G extends Game> {
     }
 
     public abstract void inputKey(int key, int action, int mods);
+
+    public Clip getClip(String name) {
+        return null;
+    }
 
 }

@@ -4,13 +4,18 @@ import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.Control;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class WorldObject<
@@ -18,6 +23,8 @@ public abstract class WorldObject<
         P extends Parentable<WorldObject>,
         C extends WorldObject>
         extends GameObject<WorldObject, P, C> {
+
+    private Map<String, Clip> audioMap = new HashMap<>();
 
     private List<WorldObject> parentList = new ArrayList<>();
     private S scene;
@@ -28,7 +35,7 @@ public abstract class WorldObject<
 
     private List<C> children = new CopyOnWriteArrayList<>();
 
-    private SpriteSheet spriteSheet;
+    ShaderTexture spriteSheet;
     private SpriteAnimationState spriteAnimationState;
 
     P parent;
@@ -43,6 +50,16 @@ public abstract class WorldObject<
             if (data.has("animation")) {
                 String animationName = data.getString("animation");
                 spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation(animationName));
+            }
+        }
+
+        if (data.has("audio")) {
+            Map<String, GameData> audioData = data.getData("audio").asMap();
+
+            for (String audioKey : audioData.keySet()) {
+
+                audioMap.put(audioKey,
+                        GameEngine.getEngine().getAudioClip(audioData.get(audioKey).asString()));
             }
         }
     }
@@ -106,6 +123,21 @@ public abstract class WorldObject<
         return scene;
     }
 
+    public void playClip(String name) {
+        Clip clip = audioMap.get(name);
+
+        if (clip != null) {
+            // Doesn't always work,
+            // work around is keep audio shorter than the animation,
+            // which also doesn't seem to always work
+
+            clip.stop();
+            clip.setFramePosition(0);
+            clip.setMicrosecondPosition(0);
+            clip.start();
+        }
+    }
+
     public void setHighlight(Highlight h) {
         highlight = h;
 
@@ -115,9 +147,12 @@ public abstract class WorldObject<
     }
 
     public Highlight getHighlight() {
+        if (highlight == null && parentIsWorldObject) {
+            return ((WorldObject)parent).getHighlight();
+        }
+
         return highlight;
     }
-
 
     public SpriteAnimationState getAnimationState() {
         return spriteAnimationState;
