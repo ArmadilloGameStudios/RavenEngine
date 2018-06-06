@@ -30,11 +30,7 @@ public class UITexture
         this.height = height;
     }
 
-    public UITexture(int width, int height, String src) {
-        this.img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-        this.width = width;
-        this.height = height;
+    public UITexture(String src) {
 
         drawImage(src);
     }
@@ -42,6 +38,17 @@ public class UITexture
     public void drawImage(String src) {
         System.out.println(src);
         SpriteSheet background = GameEngine.getEngine().getSpriteSheet(src);
+
+        if (this.img == null) {
+            this.img = new BufferedImage(
+                    background.getWidth(),
+                    background.getHeight(),
+                    BufferedImage.TYPE_INT_ARGB);
+
+            this.width = background.getWidth();
+            this.height = background.getHeight();
+        }
+
 
         if (imgGraphics == null)
             imgGraphics = img.createGraphics();

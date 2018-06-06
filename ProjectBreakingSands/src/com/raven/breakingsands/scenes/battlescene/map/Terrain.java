@@ -106,8 +106,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                         case SELECTABLE:
                             if (pawn != null) {
                                 if (pawn == getScene().getActivePawn()) {
-                                    pawn.setReady(false);
-                                    getScene().setActivePawn(null);
+                                    getScene().pawnWait();
                                 } else if (pawn.getTeam() == getScene().getActiveTeam()) {
                                     if (getScene().getActivePawn() != null)
                                         getScene().getActivePawn().setReadyIsMoved(false);
@@ -116,8 +115,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                             }
                             break;
                         case MOVE:
-                            getScene().clearAllPaths();
-                            getScene().setState(BattleScene.State.MOVING);
+                            getScene().pawnMove();
                             break;
                         case ATTACK:
                             getScene().setTargetPawn(getPawn());

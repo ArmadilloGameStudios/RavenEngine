@@ -20,6 +20,7 @@ public class Menu extends UICenterContainer<BattleScene> {
         };
         resumeButton.load();
         addChild(resumeButton);
+
         MenuButton mainMenuButton = new MenuButton(getScene(), "main menu") {
             @Override
             public void handleMouseClick() {

@@ -8,33 +8,13 @@ import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataQuery;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.ui.UIContainer;
+import com.raven.engine2d.ui.UITextButton;
 
 public class NewGameButton
-        extends UIButton<MainMenuScene> {
-
-    public static SpriteSheet getSpriteSheet() {
-         return GameEngine.getEngine().getSpriteSheet(GameEngine.getEngine().getGameDatabase().getTable("buttons").queryFirst(
-                new GameDataQuery() {
-                    @Override
-                    public boolean matches(GameData row) {
-                        return row.getString("name").equals("new game");
-                    }
-                }
-        ).getString("sprite"));
-    }
+        extends UITextButton<MainMenuScene> {
 
     public NewGameButton(MainMenuScene scene) {
-        super(scene, "new game");
-    }
-
-    @Override
-    public float getHeight() {
-        return getSpriteAnimationState().getHeight();
-    }
-
-    @Override
-    public float getWidth() {
-        return getSpriteAnimationState().getWidth();
+        super(scene, "new game", "sprites/button.png", "mainbutton");
     }
 
     @Override

@@ -1,24 +1,12 @@
 package com.raven.breakingsands.scenes.mainmenuscene;
 
-import com.raven.engine2d.ui.UIButton;
-import com.raven.engine2d.database.GameData;
-import com.raven.engine2d.ui.UIContainer;
+import com.raven.engine2d.ui.UITextButton;
 
 public class ExitButton
-        extends UIButton<MainMenuScene> {
+        extends UITextButton<MainMenuScene> {
 
     public ExitButton(MainMenuScene scene) {
-        super(scene, "quit");
-    }
-
-    @Override
-    public float getHeight() {
-        return getSpriteAnimationState().getHeight();
-    }
-
-    @Override
-    public float getWidth() {
-        return getSpriteAnimationState().getWidth();
+        super(scene, "exit", "sprites/button.png", "mainbutton");
     }
 
     @Override

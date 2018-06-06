@@ -10,7 +10,7 @@ import java.util.List;
 public abstract class UIContainer<S extends Scene>
         extends UIObject<S, Layer<UIObject>> {
 
-    public static final int CENTER = 0, BOTTOM_LEFT = 1, BOTTOM = 2, BOTTOM_RIGHT = 3;
+    public static final int CENTER = 0, BOTTOM_LEFT = 1, BOTTOM = 2, BOTTOM_RIGHT = 3, RIGHT = 4;
 
     protected float width, height;
     private Vector2f position = new Vector2f();
@@ -153,7 +153,31 @@ public abstract class UIContainer<S extends Scene>
 
                     offset += obj.getHeight() * .5f;
                 }
+                break;
+            case RIGHT:
+                width = 0f;
+                height = 0;
 
+                children = this.getChildren();
+
+                for (UIObject obj : children) {
+                    width = Math.max(obj.getWidth(), width);
+                    height += obj.getHeight();
+                }
+
+                // Get Offset
+                offset = 0f;
+
+                for (int i = 0; i < children.size(); i++) {
+                    UIObject obj = children.get(i);
+
+                    offset += obj.getHeight() * .5f;
+
+                    obj.setY(height * .5f - offset + GameProperties.getScreenHeight() / GameProperties.getScaling());
+                    obj.setX(GameProperties.getScreenWidth() / GameProperties.getScaling() * 2f - obj.getWidth() * 2f);
+
+                    offset += obj.getHeight() * .5f;
+                }
                 break;
         }
     }
