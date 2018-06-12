@@ -1,5 +1,6 @@
 package com.raven.breakingsands.scenes.battlescene;
 
+import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.hud.UIRightContainer;
 import com.raven.engine2d.ui.UIButton;
 
@@ -17,7 +18,13 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
 
             @Override
             public void handleMouseClick() {
-
+                if (isActive()) {
+                    btnMove.setActive(false);
+                    scene.setState(BattleScene.State.SELECT_DEFAULT);
+                } else {
+                    btnMove.setActive(true);
+                    scene.setState(BattleScene.State.SELECT_MOVE);
+                }
             }
         };
         addChild(btnMove);
@@ -62,12 +69,24 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
         pack();
     }
 
-    public void setDisable(boolean disable) {
-        this.disable = disable;
+    public void setPawn(Pawn pawn) {
+        if (pawn == null) {
+            this.disable = true;
 
-        btnAttack.setDisable(disable);
-        btnCancel.setDisable(disable);
-        btnMove.setDisable(disable);
-        btnSkip.setDisable(disable);
+            btnAttack.setDisable(disable);
+            btnAttack.setActive(false);
+            btnCancel.setDisable(disable);
+            btnCancel.setActive(false);
+            btnMove.setDisable(disable);
+            btnMove.setActive(false);
+            btnSkip.setDisable(disable);
+            btnSkip.setActive(false);
+        } else {
+            btnCancel.setDisable(!(pawn.getTotalMovement() == pawn.getRemainingMovement()));
+
+            btnAttack.setDisable(false);
+            btnMove.setDisable(false);
+            btnSkip.setDisable(false);
+        }
     }
 }

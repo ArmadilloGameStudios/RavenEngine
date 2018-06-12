@@ -33,7 +33,7 @@ public class MainShader extends Shader {
     private int framebuffer_handle;
     private int color_texture, id_texture, depth_texture;
 
-    private int sprite_sheet_location, rect_location, id_location, highlight_location, z_location;
+    private int sprite_sheet_location, standing_location, position_location, rect_location, id_location, highlight_location, z_location;
 
     private IntBuffer buffers;
 
@@ -50,6 +50,8 @@ public class MainShader extends Shader {
         z_location = glGetUniformLocation(getProgramHandel(), "z");
         sprite_sheet_location = glGetUniformLocation(getProgramHandel(), "spriteSheet");
         rect_location = glGetUniformLocation(getProgramHandel(), "rect");
+        position_location = glGetUniformLocation(getProgramHandel(), "position");
+        standing_location = glGetUniformLocation(getProgramHandel(), "standing");
 
         int bfs[] = {
                 GL_COLOR_ATTACHMENT0, // Color
@@ -162,9 +164,10 @@ public class MainShader extends Shader {
         glDisable(GL_BLEND);
     }
 
-    public void draw(ShaderTexture texture, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset, int id, float z, Highlight highlight, DrawStyle style) {
+    public void draw(ShaderTexture texture, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset, int id, float z, boolean standing, Highlight highlight, DrawStyle style) {
         setWorldObjectID(id);
 
+        glUniform1i(standing_location, standing ? 1 : 0);
         glUniform1f(z_location, z);
 
         if (highlight != null)
@@ -188,6 +191,10 @@ public class MainShader extends Shader {
 
         float x = position.y * isoWidth + position.x * isoWidth + offset.x;
         float y = position.y * isoHeight - position.x * isoHeight + offset.y;
+
+        glUniform2f(position_location,
+                x / GameProperties.getScreenWidth() / GameProperties.getScaling() + .5f,
+                y / GameProperties.getScreenHeight() / GameProperties.getScaling() + .5f);
 
         glUniform1i(sprite_sheet_location, texture.getTextureActiveLocation());
 
@@ -237,6 +244,10 @@ public class MainShader extends Shader {
 
         float x = position.x;
         float y = position.y;
+
+        glUniform2f(position_location,
+                x / GameProperties.getScreenWidth() / GameProperties.getScaling() + .5f,
+                y / GameProperties.getScreenHeight() / GameProperties.getScaling() + .5f);
 
         if (spriteAnimation != null) {
             glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), spriteAnimation.getWidth(), spriteAnimation.getHeight());

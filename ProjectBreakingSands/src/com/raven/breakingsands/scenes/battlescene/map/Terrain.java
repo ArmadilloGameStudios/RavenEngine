@@ -17,7 +17,6 @@ import com.raven.engine2d.worldobject.MouseHandler;
 import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -102,11 +101,12 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         if (!getScene().isPaused())
             switch (getScene().getState()) {
                 case SELECT_MOVE:
+                case SELECT_DEFAULT:
                     switch (state) {
                         case SELECTABLE:
                             if (pawn != null) {
                                 if (pawn == getScene().getActivePawn()) {
-                                    getScene().pawnWait();
+
                                 } else if (pawn.getTeam() == getScene().getActiveTeam()) {
                                     if (getScene().getActivePawn() != null)
                                         getScene().getActivePawn().setReadyIsMoved(false);
@@ -134,6 +134,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         if (!getScene().isPaused()) {
             switch (getScene().getState()) {
                 case SELECT_MOVE:
+                case SELECT_DEFAULT:
                     switch (state) {
                         case MOVEABLE:
                             getScene().selectPath(this);
@@ -154,6 +155,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         if (!getScene().isPaused()) {
             switch (getScene().getState()) {
                 case SELECT_MOVE:
+                case SELECT_DEFAULT:
                     getScene().clearPath();
 
                     if (state == State.ATTACK) {
@@ -175,6 +177,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     @Override
     public List<PathAdjacentNode<Terrain>> getAdjacentNodes() {
         switch (getScene().getState()) {
+            case SELECT_DEFAULT:
             case SELECT_MOVE:
                 return getMovementNodes();
         }
@@ -302,6 +305,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                 setHighlight(BattleScene.OFF);
                 break;
             case SELECT_MOVE:
+            case SELECT_ATTACK:
+            case SELECT_DEFAULT:
                 if (getScene().getActiveTeam() == 0)
                     switch (state) {
                         case SELECTABLE:

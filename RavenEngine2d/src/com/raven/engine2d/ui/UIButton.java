@@ -20,7 +20,7 @@ public abstract class UIButton<S extends Scene>
     private Vector2f position = new Vector2f();
     private SpriteAnimationState spriteAnimationState;
     private UIImage<S> image;
-    private boolean disable;
+    private boolean disable, active;
 
     public UIButton(S scene, String btnImgSrc, String animation) {
         super(scene);
@@ -40,6 +40,8 @@ public abstract class UIButton<S extends Scene>
 
         if (disable) {
             spriteAnimationState.setAction("disable");
+        } else if (active) {
+            spriteAnimationState.setAction("active");
         } else if (isMouseHovering()) {
             spriteAnimationState.setAction("hover");
         } else {
@@ -47,6 +49,23 @@ public abstract class UIButton<S extends Scene>
         }
     }
 
+    public boolean isDisabled() {
+        return disable;
+    }
+
+    public void setActive(boolean active) {
+        if (!disable) {
+            this.active = active;
+
+            spriteAnimationState.setAction("active");
+        } else if (!active) {
+            this.active = false;
+        }
+    }
+
+    public boolean isActive() {
+        return active;
+    }
 
     @Override
     public void release() {
@@ -104,15 +123,12 @@ public abstract class UIButton<S extends Scene>
 
     @Override
     public void handleMouseEnter() {
-        if (!disable) spriteAnimationState.setAction("hover");
+        if (!disable && !active) spriteAnimationState.setAction("hover");
     }
 
     @Override
     public void handleMouseLeave() {
-        if (!disable) spriteAnimationState.setAction("idle");
+        if (!disable && !active) spriteAnimationState.setAction("idle");
     }
 
-    public boolean isDisabled() {
-        return disable;
-    }
 }

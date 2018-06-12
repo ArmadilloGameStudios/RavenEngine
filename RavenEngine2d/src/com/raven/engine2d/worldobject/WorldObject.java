@@ -30,6 +30,7 @@ public abstract class WorldObject<
     private S scene;
 
     private Vector2f position = new Vector2f();
+    private boolean standing;
 
     private Highlight highlight = new Highlight();
 
@@ -43,6 +44,10 @@ public abstract class WorldObject<
 
     public WorldObject(S scene, GameData data) {
         this.scene = scene;
+
+        if (data.has("standing")) {
+            standing = true;
+        }
 
         if (data.has("sprite")) {
             spriteSheet = GameEngine.getEngine().getSpriteSheet(data.getString("sprite"));
@@ -160,7 +165,7 @@ public abstract class WorldObject<
 
     public void draw(MainShader shader) {
         if (spriteSheet != null)
-            shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), getHighlight(), DrawStyle.ISOMETRIC);
+            shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), standing, getHighlight(), DrawStyle.ISOMETRIC);
 
         for (C child : children) {
             child.draw(shader);

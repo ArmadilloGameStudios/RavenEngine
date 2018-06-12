@@ -14,7 +14,6 @@ import com.raven.breakingsands.scenes.battlescene.pawn.PawnDamage;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
 import com.raven.breakingsands.scenes.hud.UIBottomRightContainer;
-import com.raven.breakingsands.scenes.hud.UIRightContainer;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
@@ -22,7 +21,6 @@ import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
-import com.raven.engine2d.ui.UIButton;
 import com.raven.engine2d.util.Range;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
@@ -36,7 +34,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_MOVE;
+import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_DEFAULT;
 
 public class BattleScene extends Scene<BreakingSandsGame> {
     public static Highlight
@@ -56,7 +54,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private UIDetailText uiSelectedDetailText;
 
     public enum State {
-        MOVING, ATTACKING, SELECT_MOVE,
+        MOVING, ATTACKING, SELECT_DEFAULT, SELECT_MOVE, SELECT_ATTACK
     }
 
     private Random random = new Random();
@@ -80,7 +78,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     private List<Character> canLevelUp = new ArrayList<>();
 
-    private State state = SELECT_MOVE;
+    private State state = SELECT_DEFAULT;
 
     private ExecutorService aiExecutorService = Executors.newSingleThreadExecutor();
     private AI ai = new AI(this);
@@ -243,7 +241,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         }
 
         setActivePawn(null);
-        setState(SELECT_MOVE);
+        setState(SELECT_DEFAULT);
     }
 
     public List<Pawn> getPawns() {
@@ -284,7 +282,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             case MOVING:
                 movePawn(deltaTime);
                 break;
-            case SELECT_MOVE:
+            case SELECT_DEFAULT:
                 if (activeTeam != 0)
                     if (aiFuture.isDone()) {
                         ai.resolve();
@@ -363,7 +361,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             activePawn.setPosition(0, 0);
             current.setPawn(activePawn);
 
-            setState(State.SELECT_MOVE);
+            setState(State.SELECT_DEFAULT);
         }
     }
 
@@ -388,7 +386,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             // TODO focus on pawn
         }
 
-        setState(SELECT_MOVE);
+        setState(SELECT_DEFAULT);
     }
 
     public Pawn getActivePawn() {
@@ -406,7 +404,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                 .filter(p -> p.getTeam() == activeTeam)
                 .forEach(Pawn::ready);
 
-        setState(SELECT_MOVE);
+        setState(SELECT_DEFAULT);
     }
 
     public void setTargetPawn(Pawn targetPawn) {
@@ -422,10 +420,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public void setState(State state) {
         this.state = state;
-//        System.out.println("State: " + state);
+        System.out.println("State: " + state);
 
         switch (state) {
-            case SELECT_MOVE:
+            case SELECT_DEFAULT:
                 if (activeTeam == 0) {
                     // TODO change spawn
                     if (doSpawn()) {
@@ -437,10 +435,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                     currentPath = null;
 
                     if (activePawn != null) {
-                        actionSelect.setDisable(false);
-                        setStateSelectMove();
+                        actionSelect.setPawn(activePawn);
+                        setStateSelectDefault();
                     } else {
-                        actionSelect.setDisable(true);
+                        actionSelect.setPawn(null);
                         setSelectablePawn();
                     }
                 } else {
@@ -454,8 +452,20 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                     aiFuture = aiExecutorService.submit(ai);
                 }
                 break;
+            case SELECT_MOVE:
+                if (activeTeam == 0) {
+
+                    // clean
+                    map.setState(Terrain.State.UNSELECTABLE);
+                    currentPath = null;
+
+                    if (activePawn != null) {
+                        setStateSelectMove();
+                    }
+                }
+                break;
             case MOVING:
-                actionSelect.setDisable(true);
+                actionSelect.setPawn(null);
 
                 clearAllPaths();
                 activePawn.getAnimationState().setAction("walking up");
@@ -465,7 +475,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                 break;
 
             case ATTACKING:
-                actionSelect.setDisable(true);
+                actionSelect.setPawn(null);
                 setStateSelectAttacking();
                 break;
         }
@@ -494,12 +504,12 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         map.setState(Terrain.State.UNSELECTABLE);
 
         activePawn.runAttackAnimation(targetPawn, a -> {
-            setState(State.SELECT_MOVE);
+            setState(State.SELECT_DEFAULT);
         });
     }
 
-    private void setStateSelectMove() {
-        activePawn.getAnimationState().setAction("idle");
+    private void setStateSelectDefault() {
+        activePawn.getAnimationState().setAction("idle", false);
 
         // find movement
         Terrain parentTerrain = activePawn.getParent();
@@ -535,12 +545,30 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         }
 
         if (!activePawn.checkReady(noOptions)) {
-            activePawn = null;
-
-            setState(SELECT_MOVE);
+            setActivePawn(null);
         } else {
             setSelectablePawn();
         }
+    }
+
+    private void setStateSelectMove() {
+        activePawn.getAnimationState().setAction("idle", false);
+
+        // find movement
+        Terrain parentTerrain = activePawn.getParent();
+
+        PathFinder<Terrain> pf = new PathFinder<>();
+
+        pathMap = pf.findDistance(parentTerrain, activePawn.getRemainingMovement());
+
+        if (pathMap.size() > 0) {
+            for (Terrain t : pathMap.keySet()) {
+                t.setState(Terrain.State.MOVEABLE);
+            }
+        }
+
+        activePawn.setReady(true);
+        setSelectablePawn();
     }
 
     public State getState() {

@@ -11,6 +11,12 @@
     frames: [{ time: 1000, y: 37 }]
 },
 {
+    name: "active",
+    width: 36,
+    height: 38,
+    frames: [{ time: 1000, y: 37 }]
+},
+{
     name: "disable",
     width: 36,
     height: 38,

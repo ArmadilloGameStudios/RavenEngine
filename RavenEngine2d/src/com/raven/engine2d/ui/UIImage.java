@@ -68,7 +68,7 @@ public final class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObj
 
     @Override
     public void draw(MainShader shader) {
-        shader.draw(texture, spriteAnimation, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), null, DrawStyle.UI);
+        shader.draw(texture, spriteAnimation, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), true, null, DrawStyle.UI);
     }
 
     public void setSpriteAnimation(SpriteAnimationState spriteAnimation) {
