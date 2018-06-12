@@ -101,6 +101,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         if (!getScene().isPaused())
             switch (getScene().getState()) {
                 case SELECT_MOVE:
+                case SELECT_ATTACK:
                 case SELECT_DEFAULT:
                     switch (state) {
                         case SELECTABLE:
@@ -134,6 +135,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         if (!getScene().isPaused()) {
             switch (getScene().getState()) {
                 case SELECT_MOVE:
+                case SELECT_ATTACK:
                 case SELECT_DEFAULT:
                     switch (state) {
                         case MOVEABLE:
@@ -155,6 +157,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         if (!getScene().isPaused()) {
             switch (getScene().getState()) {
                 case SELECT_MOVE:
+                case SELECT_ATTACK:
                 case SELECT_DEFAULT:
                     getScene().clearPath();
 
@@ -178,6 +181,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     public List<PathAdjacentNode<Terrain>> getAdjacentNodes() {
         switch (getScene().getState()) {
             case SELECT_DEFAULT:
+                case SELECT_ATTACK:
             case SELECT_MOVE:
                 return getMovementNodes();
         }

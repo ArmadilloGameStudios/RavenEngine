@@ -57,7 +57,15 @@ public abstract class UIButton<S extends Scene>
         if (!disable) {
             this.active = active;
 
-            spriteAnimationState.setAction("active");
+            if (active)
+                spriteAnimationState.setAction("active");
+            else {
+                if (isMouseHovering()) {
+                    spriteAnimationState.setAction("hover");
+                } else {
+                    spriteAnimationState.setAction("idle");
+                }
+            }
         } else if (!active) {
             this.active = false;
         }

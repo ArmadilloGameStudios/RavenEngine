@@ -18,13 +18,15 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
 
             @Override
             public void handleMouseClick() {
-                if (isActive()) {
-                    btnMove.setActive(false);
-                    scene.setState(BattleScene.State.SELECT_DEFAULT);
-                } else {
-                    btnMove.setActive(true);
-                    scene.setState(BattleScene.State.SELECT_MOVE);
-                }
+                if (!isDisabled())
+                    if (isActive()) {
+                        btnMove.setActive(false);
+                        scene.setState(BattleScene.State.SELECT_DEFAULT);
+                    } else {
+                        btnMove.setActive(true);
+                        btnAttack.setActive(false);
+                        scene.setState(BattleScene.State.SELECT_MOVE);
+                    }
             }
         };
         addChild(btnMove);
@@ -35,7 +37,15 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
 
             @Override
             public void handleMouseClick() {
-
+                if (!isDisabled())
+                    if (isActive()) {
+                        btnAttack.setActive(false);
+                        scene.setState(BattleScene.State.SELECT_DEFAULT);
+                    } else {
+                        btnMove.setActive(false);
+                        btnAttack.setActive(true);
+                        scene.setState(BattleScene.State.SELECT_ATTACK);
+                    }
             }
         };
         addChild(btnAttack);

@@ -464,6 +464,18 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                     }
                 }
                 break;
+            case SELECT_ATTACK:
+                if (activeTeam == 0) {
+
+                    // clean
+                    map.setState(Terrain.State.UNSELECTABLE);
+                    currentPath = null;
+
+                    if (activePawn != null) {
+                        setStateSelectAttack();
+                    }
+                }
+                break;
             case MOVING:
                 actionSelect.setPawn(null);
 
@@ -476,7 +488,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
             case ATTACKING:
                 actionSelect.setPawn(null);
-                setStateSelectAttacking();
+                setStateAttacking();
                 break;
         }
     }
@@ -500,7 +512,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     }
 
-    public void setStateSelectAttacking() {
+    public void setStateAttacking() {
         map.setState(Terrain.State.UNSELECTABLE);
 
         activePawn.runAttackAnimation(targetPawn, a -> {
@@ -569,6 +581,38 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         activePawn.setReady(true);
         setSelectablePawn();
+    }
+
+    private void setStateSelectAttack() {
+        activePawn.getAnimationState().setAction("idle", false);
+
+        // find attack
+        Terrain parentTerrain = activePawn.getParent();
+
+        List<Terrain> inRange = selectRange(activePawn.getWeapon().getRange(), parentTerrain);
+
+        rangeMap = filterRange(parentTerrain, inRange);
+
+        boolean noOptions = true;
+
+        if (rangeMap.size() > 0) {
+            for (Terrain n : rangeMap.keySet()) {
+                if (n.getPawn() != null && n.getPawn().getTeam() != activePawn.getTeam()) {
+
+                    n.cover = rangeMap.get(n);
+                    n.setState(Terrain.State.ATTACKABLE);
+                    n.updateText();
+
+                    noOptions = false;
+                }
+            }
+        }
+
+        if (!activePawn.checkReady(noOptions)) {
+            setActivePawn(null);
+        } else {
+            setSelectablePawn();
+        }
     }
 
     public State getState() {
