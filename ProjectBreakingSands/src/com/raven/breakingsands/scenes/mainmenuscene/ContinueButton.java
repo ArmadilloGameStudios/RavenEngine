@@ -3,23 +3,14 @@ package com.raven.breakingsands.scenes.mainmenuscene;
 import com.raven.engine2d.ui.UIButton;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.ui.UIContainer;
+import com.raven.engine2d.ui.UITextButton;
 
 public class ContinueButton
-        extends UIButton<MainMenuScene> {
+        extends UITextButton<MainMenuScene> {
 
 
     public ContinueButton(MainMenuScene scene) {
-        super(scene, "Continue");
-    }
-
-    @Override
-    public float getHeight() {
-        return 75f;
-    }
-
-    @Override
-    public float getWidth() {
-        return 200f;
+        super(scene, "Continue", "sprites/button.png", "mainbutton");
     }
 
     @Override

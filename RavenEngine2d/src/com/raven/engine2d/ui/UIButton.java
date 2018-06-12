@@ -7,34 +7,73 @@ import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.ui.UIContainer;
 import com.raven.engine2d.ui.UIText;
+import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector4f;
 import com.raven.engine2d.worldobject.MouseHandler;
+import com.raven.engine2d.worldobject.Parentable;
 import com.sun.org.glassfish.gmbal.ManagedObject;
 
 public abstract class UIButton<S extends Scene>
-        extends UIText<S>
+        extends UIObject<S, UIObject<S, Parentable<UIObject>>>
         implements MouseHandler {
 
-    private static final String btnImgSrc = "sprites/button.png";
-
-    public static SpriteSheet getSpriteSheet() {
-        return GameEngine.getEngine().getSpriteSheet(btnImgSrc);
-    }
-
-    private float x, y;
+    private Vector2f position = new Vector2f();
     private SpriteAnimationState spriteAnimationState;
+    private UIImage<S> image;
+    private boolean disable, active;
 
-    public UIButton(S scene, String text) {
-        super(scene, text, btnImgSrc);
+    public UIButton(S scene, String btnImgSrc, String animation) {
+        super(scene);
 
-        getFont().setX(8);
-        getFont().setY(10);
+        spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation(animation));
 
-        spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation("newgamebutton"));
+        image = new UIImage<>(scene, (int) getWidth(), (int) getHeight(), btnImgSrc);
+
+        image.setSpriteAnimation(spriteAnimationState);
+        addChild(image);
 
         this.addMouseHandler(this);
     }
 
+    public void setDisable(boolean disable) {
+        this.disable = disable;
+
+        if (disable) {
+            spriteAnimationState.setAction("disable");
+        } else if (active) {
+            spriteAnimationState.setAction("active");
+        } else if (isMouseHovering()) {
+            spriteAnimationState.setAction("hover");
+        } else {
+            spriteAnimationState.setAction("idle");
+        }
+    }
+
+    public boolean isDisabled() {
+        return disable;
+    }
+
+    public void setActive(boolean active) {
+        if (!disable) {
+            this.active = active;
+
+            if (active)
+                spriteAnimationState.setAction("active");
+            else {
+                if (isMouseHovering()) {
+                    spriteAnimationState.setAction("hover");
+                } else {
+                    spriteAnimationState.setAction("idle");
+                }
+            }
+        } else if (!active) {
+            this.active = false;
+        }
+    }
+
+    public boolean isActive() {
+        return active;
+    }
 
     @Override
     public void release() {
@@ -47,22 +86,57 @@ public abstract class UIButton<S extends Scene>
     }
 
     @Override
-    public void handleMouseEnter() {
-        this.setAnimationAction("hover");
-    }
-
-    @Override
-    public void handleMouseLeave() {
-        this.setAnimationAction("idle");
-    }
-
-    @Override
     public void handleMouseHover(float delta) {
 
     }
 
     @Override
+    public float getHeight() {
+        return spriteAnimationState.getHeight() * 2;
+    }
+
+    @Override
+    public float getWidth() {
+        return spriteAnimationState.getWidth();
+    }
+
+    @Override
+    public final float getY() {
+        return position.y;
+    }
+
+    @Override
+    public final void setY(float y) {
+        position.y = y;
+    }
+
+    @Override
+    public final float getX() {
+        return position.x;
+    }
+
+    @Override
+    public final void setX(float x) {
+        position.x = x;
+    }
+
+    @Override
+    public final Vector2f getPosition() {
+        return position;
+    }
+
     public SpriteAnimationState getSpriteAnimationState() {
         return spriteAnimationState;
     }
+
+    @Override
+    public void handleMouseEnter() {
+        if (!disable && !active) spriteAnimationState.setAction("hover");
+    }
+
+    @Override
+    public void handleMouseLeave() {
+        if (!disable && !active) spriteAnimationState.setAction("idle");
+    }
+
 }

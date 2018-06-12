@@ -26,6 +26,18 @@ public class SpriteSheet extends ShaderTexture {
 
     public SpriteSheet(File f) {
         filePath = f.getPath();
+
+        try {
+            img = ImageIO.read(new File(filePath));
+
+            this.width = img.getWidth();
+            this.height = img.getHeight();
+
+            img = null;
+        } catch (Exception e) {
+
+        }
+
     }
 
     public void load() {
@@ -88,8 +100,7 @@ public class SpriteSheet extends ShaderTexture {
         return textureName;
     }
 
-    public int getHeight()
-    {
+    public int getHeight() {
         return height;
     }
 

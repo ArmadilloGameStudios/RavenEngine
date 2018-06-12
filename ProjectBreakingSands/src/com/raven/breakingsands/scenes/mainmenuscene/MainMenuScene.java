@@ -1,6 +1,7 @@
 package com.raven.breakingsands.scenes.mainmenuscene;
 
 import com.raven.breakingsands.BreakingSandsGame;
+import com.raven.breakingsands.scenes.battlescene.menu.MenuButton;
 import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
@@ -28,7 +29,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         List<SpriteSheet> modelDataList = new ArrayList<>();
 
         modelDataList.addAll(DisplayPawn.getSpriteSheets());
-        modelDataList.add(UIButton.getSpriteSheet());
+//        modelDataList.add(MenuButton.getSpriteSheet());
 
         return modelDataList;
     }

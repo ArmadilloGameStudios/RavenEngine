@@ -12,8 +12,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_MOVE;
-
 public class AI implements Runnable {
 
     private static int comparePaths(Path<Terrain> a, Path<Terrain> b) {

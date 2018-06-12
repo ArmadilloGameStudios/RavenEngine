@@ -8,11 +8,40 @@ uniform vec3 id;
 uniform float z;
 uniform vec4 highlight;
 
-in vec2 coords;
+uniform vec2 position;
+
+uniform bool standing;
+
+in vec2 texture_coords;
+in float depth;
 
 void main() {
-    vec4 sprite = texture(spriteSheet, coords);
-    gl_FragDepth = mix(1, z, sprite.a - coords.y / 1000); // TODO get world coords and don't use alpha
+//    vec4 sprite = texture(spriteSheet, texture_coords);
+//
+//    float d;
+//
+//    if (sprite.a <= 0) {
+//        discard;
+//    } else if (standing) {
+//        // TODO get world coords and don't use alpha
+//        d = position.y;
+//    } else {
+//        d = position.y - depth;
+//    }
+//
+//    gl_FragDepth = d;
+////    frag_color = vec4(vec3(d), 1);
+//
+//    float part = min(1, dot(sprite.xyz, vec3(.4)));
+//
+//    vec3 color = mix(sprite.rgb, highlight.xyz, highlight.a * part);
+//
+//    frag_color = vec4(color, sprite.a);
+//    frag_id = id;
+
+
+    vec4 sprite = texture(spriteSheet, texture_coords);
+    gl_FragDepth = mix(1, z, sprite.a - texture_coords.y / 1000); // TODO get world coords
 
     float part = min(1, dot(sprite.xyz, vec3(.4)));
 
