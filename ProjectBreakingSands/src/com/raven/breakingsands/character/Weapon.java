@@ -34,7 +34,7 @@ public class Weapon
     }
 
     private GameData gameData;
-    private int damage, piercing = 0, range, accuracy;
+    private int damage, piercing = 0, range, rangeMin;
     private boolean directional;
     private String name;
     private Effect effect;
@@ -46,7 +46,6 @@ public class Weapon
 
         damage = gameData.getInteger("damage");
         range = gameData.getInteger("range");
-        accuracy = gameData.getInteger("accuracy");
 
         if (gameData.has("directional")) {
             directional = gameData.getBoolean("directional");
@@ -112,10 +111,6 @@ public class Weapon
 
     public int getRange() {
         return range;
-    }
-
-    public int getAccuracy() {
-        return accuracy;
     }
 
     public String getName() {

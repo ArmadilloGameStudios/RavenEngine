@@ -142,6 +142,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                             getScene().selectPath(this);
                             break;
                         case ATTACKABLE:
+                            if (pawn != null && pawn.getTeam() != getScene().getActivePawn().getTeam())
                             setState(State.ATTACK);
                             break;
                     }
@@ -368,13 +369,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     }
 
     public void updateText() {
-        String text = "" + x + ", " + y + "\n" + cover + "\n";
-
-        if (wall != null) {
-            text += "Terrain:\n" + wall.getName();
-        } else {
-            text += "Terrain:\nSand";
-        }
 
         if (pawn != null) {
             details.name = pawn.getName();
@@ -385,40 +379,21 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             else
                 details.movement = Integer.toString(pawn.getTotalMovement());
 
-            details.resistance = Integer.toString(pawn.getArmor().getResistance());
-            details.evasion = Integer.toString(pawn.getEvasion());
+            details.resistance = Integer.toString(pawn.getResistance());
 
             details.weapon = pawn.getWeapon().getName();
             details.damage = Integer.toString(pawn.getWeapon().getDamage());
             details.piercing = Integer.toString(pawn.getWeapon().getPiercing());
             details.range = Integer.toString(pawn.getWeapon().getRange());
-            details.accuracy = Integer.toString(pawn.getWeapon().getAccuracy());
-
-            text += "\n" + pawn.getName();
-            text += "\nHP: " + pawn.getHitPoints();
-            text += "\nMovement: " + pawn.getTotalMovement();
-
-            text += "\nWeapon:";
-            text += "\nName: " + pawn.getWeapon().getName() +
-                    "\nDamage: " + pawn.getWeapon().getDamage() +
-                    ", Range: " + pawn.getWeapon().getRange() +
-                    "\nPiercing: " + pawn.getWeapon().getPiercing() +
-                    ", Accuracy: " + pawn.getWeapon().getAccuracy();
-
-            text += "\nArmor:";
-            text += "\n" + pawn.getArmor().getName() + ", " + pawn.getArmor().getResistance();
         } else {
             details.name = "floor";
             details.hp = "-";
             details.movement = "-";
             details.resistance = "-";
-            details.evasion = "-";
             details.weapon = "-";
             details.damage = "-";
             details.range = "-";
             details.piercing = "-";
-            details.accuracy = "-";
-
         }
     }
 

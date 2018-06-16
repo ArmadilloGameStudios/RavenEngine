@@ -14,9 +14,8 @@ public class Character implements GameDatable {
     private int level = 0;
     private int hitPoints = 10;
     private int movement = 4;
-    private int evasion = 3;
+    private int resistance;
     private Weapon weapon;
-    private Armor armor;
     private List<Augmentation> augmentations = new ArrayList<>();
 
     public Character() {
@@ -29,7 +28,6 @@ public class Character implements GameDatable {
         exp = gameData.getInteger("exp");
         level = gameData.getInteger("level");
         movement = gameData.getInteger("movement");
-        evasion = gameData.getInteger("evasion");
     }
 
     public void setName(String name) {
@@ -54,10 +52,6 @@ public class Character implements GameDatable {
 
     public void setMovement(int movement) {
         this.movement = movement;
-    }
-
-    public void setEvasion(int evasion) {
-        this.evasion = evasion;
     }
 
     public String getName() {
@@ -88,10 +82,6 @@ public class Character implements GameDatable {
         return movement + augmentations.stream().mapToInt(Augmentation::getMovement).sum();
     }
 
-    public int getEvasion() {
-        return evasion + augmentations.stream().mapToInt(Augmentation::getEvasion).sum();
-    }
-
     public boolean canLevelUp() {
         return exp >= 1;
     }
@@ -106,7 +96,6 @@ public class Character implements GameDatable {
         data.put("level", new GameData(level));
         data.put("hitPoints", new GameData(hitPoints));
         data.put("movement", new GameData(movement));
-        data.put("evasion", new GameData(evasion));
 //        data.put("weapon", weapon.toGameData());
 //        data.put("armor", armor.toGameData());
 

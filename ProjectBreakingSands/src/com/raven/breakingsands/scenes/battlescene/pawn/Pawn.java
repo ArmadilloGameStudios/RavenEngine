@@ -1,7 +1,6 @@
 package com.raven.breakingsands.scenes.battlescene.pawn;
 
 import com.raven.breakingsands.ZLayer;
-import com.raven.breakingsands.character.Armor;
 import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.character.Weapon;
@@ -41,9 +40,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     // instance
     private Weapon weapon;
-    private Armor armor;
     private String name = "";
-    private int team, hitPoints, remainingHitPoints, totalMovement, remainingMovement, evasion, totalAttacks = 1, remainingAttacks;
+    private int team, hitPoints, remainingHitPoints, totalMovement, remainingMovement, resistance, totalAttacks = 1, remainingAttacks;
     private boolean ready = true;
 
     public Pawn(BattleScene scene, GameData gameData) {
@@ -53,7 +51,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         team = gameData.getInteger("team");
         remainingHitPoints = hitPoints = gameData.getInteger("hp");
         totalMovement = gameData.getInteger("movement");
-        evasion = gameData.getInteger("evasion");
 
         // weapon
         if (gameData.has("weapon")) {
@@ -73,22 +70,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
         if (weapon != null) {
             addChild(weapon);
-        }
-
-        // armor
-        if (gameData.has("armor")) {
-            GameData gdArmor = gameData.getData("armor");
-
-            if (gdArmor.isString()) {
-                GameDatabase.all("armor").stream()
-                        .filter(a -> a.getString("name").equals(gdArmor.asString()))
-                        .findFirst()
-                        .ifPresent(a -> armor = new Armor(a));
-            } else {
-                armor = new Armor(gdArmor);
-            }
-        } else {
-            armor = new Armor(GameDatabase.all("armor").getRandom());
         }
     }
 
@@ -122,10 +103,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public Weapon getWeapon() {
         return weapon;
-    }
-
-    public Armor getArmor() {
-        return armor;
     }
 
     public void ready() {
@@ -197,29 +174,18 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
             ready = false;
         }
 
-        // Check if hit
-        int target = pawn.getWeapon().getAccuracy();
-        int totalRange = pawn.evasion + target;
-        int rolled = getScene().getRandom().nextInt(totalRange);
-//        System.out.println("Accuracy: " + target);
-//        System.out.println("Evasion: " + pawn.evasion);
-//        System.out.println("Total Range: " + totalRange);
-//        System.out.println("Rolled: " + rolled);
-        if (rolled < target) {
-            int remainingResistance = Math.max(pawn.armor.getResistance() - weapon.getPiercing(), 0);
-            int dealtDamage = Math.max(weapon.getDamage() - remainingResistance, 0);
-            pawn.remainingHitPoints = Math.max(pawn.remainingHitPoints - dealtDamage, 0);
+        int remainingResistance = Math.max(pawn.resistance - weapon.getPiercing(), 0);
+        int dealtDamage = Math.max(weapon.getDamage() - remainingResistance, 0);
+        pawn.remainingHitPoints = Math.max(pawn.remainingHitPoints - dealtDamage, 0);
 
-            if (pawn.remainingHitPoints == 0) {
-                pawn.die();
-            }
-
-            pawn.getParent().updateText();
-
-            pawn.showDamage(Integer.toString(dealtDamage));
-        } else {
-            pawn.showDamage("miss");
+        if (pawn.remainingHitPoints == 0) {
+            pawn.die();
         }
+
+        pawn.getParent().updateText();
+
+        pawn.showDamage(Integer.toString(dealtDamage));
+
     }
 
     private void showDamage(String damage) {
@@ -246,10 +212,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         }
     }
 
-    public int getEvasion() {
-        return evasion;
-    }
-
     public boolean isReady() {
         return ready;
     }
@@ -273,5 +235,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     public void setReadyIsMoved(boolean readyIsMoved) {
         if (remainingMovement != totalMovement || remainingAttacks != totalAttacks)
             this.ready = readyIsMoved;
+    }
+
+    public int getResistance() {
+        return resistance;
     }
 }

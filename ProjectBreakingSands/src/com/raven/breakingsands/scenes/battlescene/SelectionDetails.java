@@ -5,10 +5,8 @@ public class SelectionDetails {
     public String hp;
     public String movement;
     public String resistance;
-    public String evasion;
     public String weapon;
     public String damage;
     public String piercing;
     public String range;
-    public String accuracy;
 }

@@ -494,7 +494,7 @@ public class UIDetailText
         uiRes.setText(details.resistance);
         uiRes.load();
 
-        uiEva.setText(details.evasion);
+        uiEva.setText("-");
         uiEva.load();
 
         uiWeapon.setText(details.weapon);
@@ -509,7 +509,7 @@ public class UIDetailText
         uiRng.setText(details.range);
         uiRng.load();
 
-        uiAcc.setText(details.accuracy);
+        uiAcc.setText("-");
         uiAcc.load();
     }
 }

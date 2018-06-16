@@ -27,12 +27,7 @@ public class DisplayPawn extends WorldObject<Scene, Terrain, WorldObject> {
     }
 
     public DisplayPawn(Scene scene) {
-        super(scene, dataList.queryRandom(new GameDataQuery() {
-            @Override
-            public boolean matches(GameData row) {
-                return row.getString("name").matches("Player");
-            }
-        }));
+        super(scene, dataList.getRandom());
     }
 
     @Override

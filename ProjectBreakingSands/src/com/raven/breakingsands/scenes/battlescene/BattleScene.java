@@ -227,9 +227,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 //            map.setPawn(o.get(), p);
 //        }
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             GameData gdPawn = GameDatabase.all("pawn").stream()
-                    .filter(p -> p.getString("name").equals("Player"))
+                    .filter(p -> p.getString("name").equals("Recruit"))
                     .findFirst().get();
 
             Pawn p = new Pawn(this, gdPawn);
@@ -597,14 +597,14 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         if (rangeMap.size() > 0) {
             for (Terrain n : rangeMap.keySet()) {
-                if (n.getPawn() != null && n.getPawn().getTeam() != activePawn.getTeam()) {
+//                if (n.getPawn() == null || n.getPawn().getTeam() != activePawn.getTeam()) {
 
                     n.cover = rangeMap.get(n);
                     n.setState(Terrain.State.ATTACKABLE);
                     n.updateText();
 
                     noOptions = false;
-                }
+//                }
             }
         }
 
@@ -674,11 +674,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                  j++) {
 
                 Optional<Terrain> o = map.get(x + i, y + j);
-                if (o.isPresent() &&
-                        o.get().getPawn() != null &&
-                        o.get().getPawn().getTeam() != activePawn.getTeam()) {
-                    withinRange.add(o.get());
-                }
+//                if (o.isPresent() &&
+//                        o.get().getPawn() != null &&
+//                        o.get().getPawn().getTeam() != activePawn.getTeam()) {
+                o.ifPresent(withinRange::add);
             }
         }
 

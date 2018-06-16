@@ -1,13 +1,14 @@
 {
-    name: "Player",
+    name: "Recruit",
     sprite: "sprites/character.png",
     animation: "character",
     standing: true,
     team: 0,
     hp: 10,
-    movement: 5,
-    evasion: 2,
-    weapon: "Plasma Blade"
+    shield: 5
+    resistance: 0,
+    movement: 4,
+    weapon: "Std. Pistol"
 },
 {
     name: "Service Drone",
@@ -17,7 +18,6 @@
     team: 1,
     hp: 5,
     movement: 3,
-    evasion: 1,
     weapon: "Guard Disk"
 },
 {
@@ -29,6 +29,5 @@
     hp: 15,
     resistance: 1,
     movement: 2,
-    evasion: 200,
     weapon: "Guard Disk"
 }
