@@ -6,7 +6,7 @@
 
     audio: {
         attack: "plasma_blade_sound.wav"
-    }
+    },
 
     damage: 3,
     piercing: 1,
@@ -23,7 +23,7 @@
 
     audio: {
         attack: "plasma_blade_sound.wav"
-    }
+    },
 
     damage: 4,
     piercing: 2,
@@ -40,7 +40,7 @@
 
     audio: {
         attack: "plasma_blade_sound.wav"
-    }
+    },
 
     damage: 4,
     piercing: 1,
@@ -57,7 +57,7 @@
 
     audio: {
         attack: "plasma_blade_sound.wav"
-    }
+    },
 
     damage: 3,
     piercing: 3,
@@ -74,7 +74,7 @@
 
     audio: {
         attack: "plasma_blade_sound.wav"
-    }
+    },
 
     damage: 4,
     piercing: 2,
@@ -91,7 +91,7 @@
 
     audio: {
         attack: "plasma_blade_sound.wav"
-    }
+    },
 
     damage: 2,
     piercing: 0,
@@ -110,7 +110,7 @@
 
     audio: {
         attack: "plasma_blade_sound.wav"
-    }
+    },
 
     damage: 2,
     piercing: 1,
@@ -127,7 +127,7 @@
 
     audio: {
         attack: "guard_drone_attack.wav"
-    }
+    },
 
     damage: 2,
     range: 3,

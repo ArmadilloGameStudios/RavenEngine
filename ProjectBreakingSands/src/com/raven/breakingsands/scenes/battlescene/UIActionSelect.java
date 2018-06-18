@@ -6,7 +6,7 @@ import com.raven.engine2d.ui.UIButton;
 
 public class UIActionSelect extends UIRightContainer<BattleScene> {
 
-    private UIButton<BattleScene> btnMove, btnAttack, btnSkip, btnCancel, btnLevel;
+    private UIButton<BattleScene> btnMove, btnAttack, btnSkip, btnCancel, btnLevel, btnEnd;
     private boolean disable;
 
     public UIActionSelect(BattleScene scene) {
@@ -77,17 +77,31 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
         addChild(btnCancel);
 
         btnLevel = new UIButton<BattleScene>(scene,
-                "sprites/move icon.png",
+                "sprites/icon level up.png",
                 "iconbutton") {
 
             @Override
             public void handleMouseClick() {
-                if (!btnCancel.isDisabled()) {
+                if (!btnLevel.isDisabled()) {
                     getScene().pawnLevel();
                 }
             }
         };
         addChild(btnLevel);
+
+        btnEnd = new UIButton<BattleScene>(scene,
+                "sprites/icon end turn.png",
+                "iconbutton") {
+
+            @Override
+            public void handleMouseClick() {
+                if (!btnEnd.isDisabled()) {
+                    getScene().pawnEnd();
+                }
+
+            }
+        };
+        addChild(btnEnd);
 
         pack();
     }

@@ -790,6 +790,13 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         setActivePawn(null);
     }
 
+    public void pawnEnd() {
+        pawns.stream()
+                .filter(p -> p.getTeam() == 0)
+                .forEach(p -> p.setReady(false));
+        setActiveTeam(1);
+    }
+
     public void pawnDeselect() {
         setActivePawn(null);
     }

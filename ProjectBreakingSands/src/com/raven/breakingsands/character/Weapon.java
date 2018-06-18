@@ -25,9 +25,8 @@ public class Weapon
         List<SpriteSheet> data = new ArrayList<>();
 
         for (GameData gameData : dataList) {
-            if (gameData.has("sprite"))
-                data.add(GameEngine.getEngine().getSpriteSheet(
-                        gameData.getString("sprite")));
+            gameData.ifHas("sprite", gd ->
+                    data.add(GameEngine.getEngine().getSpriteSheet(gd.asString())));
         }
 
         return data;
@@ -61,15 +60,7 @@ public class Weapon
 
         gameData.ifHas("piercing", gd -> piercing = gd.asInteger());
 
-//        if (gameData.has("piercing")) {
-//            piercing = gameData.getInteger("piercing");
-//        }
-
         gameData.ifHas("shots", gd -> shots = gd.asInteger(), gd -> shots = 1);
-
-//        if (gameData.has("shots")) {
-//            shots = gameData.getInteger("shots");
-//        }
 
         if (gameData.has("effect")) {
             GameData gdEffect = gameData.getData("effect");
@@ -89,8 +80,6 @@ public class Weapon
 
     public void runAttackAnimation(boolean directionUp) {
         if (getAnimationState() != null) {
-
-//            setVisibility(true);
 
             if (directional)
                 if (directionUp)

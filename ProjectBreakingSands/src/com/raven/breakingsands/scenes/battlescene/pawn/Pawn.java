@@ -157,6 +157,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public void setWeapon(Weapon weapon) {
         this.weapon = weapon;
+
+        if (weapon != null) {
+            addChild(weapon);
+        }
     }
 
     public void ready() {
