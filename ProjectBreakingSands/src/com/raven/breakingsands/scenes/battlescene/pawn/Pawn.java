@@ -41,7 +41,11 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     // instance
     private Weapon weapon;
     private String name = "", charClass = "recruit";
-    private int level = 0, team, hitPoints, remainingHitPoints, totalMovement, remainingMovement, resistance, totalAttacks = 1, remainingAttacks;
+    private int level = 0, team,
+            hitPoints, remainingHitPoints,
+            totalShield, remainingShield,
+            totalMovement, remainingMovement,
+            resistance, totalAttacks = 1, remainingAttacks;
     private boolean ready = true;
 
     public Pawn(BattleScene scene, GameData gameData) {
@@ -50,6 +54,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         name = gameData.getString("name");
         team = gameData.getInteger("team");
         remainingHitPoints = hitPoints = gameData.getInteger("hp");
+        gameData.ifHas("shield",
+                gd -> remainingShield = totalShield = gd.asInteger());
         totalMovement = gameData.getInteger("movement");
 
         // weapon
@@ -89,6 +95,14 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         return remainingHitPoints;
     }
 
+    public int getTotalShield() {
+        return totalShield;
+    }
+
+    public int getRemainingShield() {
+        return remainingShield;
+    }
+
     public int getTotalMovement() {
         return totalMovement;
     }
@@ -114,20 +128,19 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
         GameData bonus = newCharClass.getData("bonus");
 
-        if (bonus.has("hp")) {
-            hitPoints += bonus.getInteger("hp");
-            remainingHitPoints += bonus.getInteger("hp");
-        }
-        if (bonus.has("shield")) {
-            // shield += bonus.getInteger("shield");
-        }
-        if (bonus.has("resistance")) {
-            resistance += bonus.getInteger("resistance");
-        }
-        if (bonus.has("movement")) {
-            totalMovement += bonus.getInteger("movement");
-            remainingMovement += bonus.getInteger("movement");
-        }
+        bonus.ifHas("hp", gd -> {
+            hitPoints += gd.asInteger();
+            remainingHitPoints += gd.asInteger();
+        });
+        bonus.ifHas("shield", gd -> {
+            totalShield += gd.asInteger();
+            remainingShield += gd.asInteger();
+        });
+        bonus.ifHas("resistance", gd -> resistance += gd.asInteger());
+        bonus.ifHas("movement", gd -> {
+            totalMovement += gd.asInteger();
+            remainingMovement += gd.asInteger();
+        });
     }
 
     public int getLevel() {
@@ -218,7 +231,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         int remainingResistance = Math.max(pawn.resistance - weapon.getPiercing(), 0);
         int dealtDamage = Math.max(weapon.getDamage() - remainingResistance, 0) * weapon.getShots();
 
-        pawn.remainingHitPoints = Math.max(pawn.remainingHitPoints - dealtDamage, 0);
+        int rolloverDamage = -Math.min(pawn.remainingShield - dealtDamage, 0);
+        pawn.remainingShield = Math.max(pawn.remainingShield - dealtDamage, 0);
+
+        pawn.remainingHitPoints = Math.max(pawn.remainingHitPoints - rolloverDamage, 0);
 
         if (pawn.remainingHitPoints == 0) {
             pawn.die();
@@ -226,7 +242,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
         pawn.getParent().updateText();
 
-        pawn.showDamage(Integer.toString(dealtDamage));
+        pawn.showDamage("-" + Integer.toString(dealtDamage));
 
     }
 

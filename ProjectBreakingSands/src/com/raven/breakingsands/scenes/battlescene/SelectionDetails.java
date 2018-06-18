@@ -5,6 +5,7 @@ public class SelectionDetails {
     public String hp;
     public String movement;
     public String resistance;
+    public String shield;
     public String weapon;
     public String damage;
     public String piercing;
@@ -16,6 +17,7 @@ public class SelectionDetails {
         hp = "-";
         movement = "-";
         resistance = "-";
+        shield = "-";
         weapon = "-";
         damage = "-";
         piercing = "-";

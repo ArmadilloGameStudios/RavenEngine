@@ -373,6 +373,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         if (pawn != null) {
             details.name = pawn.getName();
             details.hp = pawn.getRemainingHitPoints() + "/" + pawn.getHitPoints();
+            details.shield = pawn.getRemainingShield() + "/" + pawn.getTotalShield();
 
             if (pawn == getScene().getActivePawn())
                 details.movement = pawn.getRemainingMovement() + "/" + pawn.getTotalMovement();

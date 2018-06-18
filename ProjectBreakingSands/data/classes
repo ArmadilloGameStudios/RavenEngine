@@ -12,8 +12,7 @@
     name: "hacker",
 
     bonus: {
-        hp: 2,
-        shield: 3,
+        shield: 2,
         movement: 1,
         ability: "hack",
     }

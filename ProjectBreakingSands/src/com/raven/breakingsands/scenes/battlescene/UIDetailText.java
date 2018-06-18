@@ -18,7 +18,7 @@ public class UIDetailText
             uiHP, uiLblHP,
             uiMov, uiLblMov,
             uiRes, uiLblRes,
-            uiEva, uiLblEva,
+            uiSld, uiLblSld,
             uiDmg, uiLblDmg,
             uiPir, uiLblPir,
             uiRng, uiLblRng,
@@ -114,26 +114,26 @@ public class UIDetailText
 
         addChild(uiLblRes);
 
-        uiEva = new UILabel<>(getScene(), "-", 30, 10);
-        font = uiEva.getFont();
+        uiSld = new UILabel<>(getScene(), "-", 30, 10);
+        font = uiSld.getFont();
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiEva.setX(480);
-        uiEva.setY(74);
-        uiEva.load();
+        uiSld.setX(480);
+        uiSld.setY(74);
+        uiSld.load();
 
-        addChild(uiEva);
+        addChild(uiSld);
 
-        uiLblEva = new UILabel<>(getScene(), "eva:", 30, 10);
-        font = uiLblEva.getFont();
+        uiLblSld = new UILabel<>(getScene(), "sld:", 30, 10);
+        font = uiLblSld.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblEva.setX(450);
-        uiLblEva.setY(74);
-        uiLblEva.load();
+        uiLblSld.setX(450);
+        uiLblSld.setY(74);
+        uiLblSld.load();
 
-        addChild(uiLblEva);
+        addChild(uiLblSld);
 
         // Weapon
         uiWeapon = new UILabel<>(getScene(), "-", 128, 10);
@@ -316,26 +316,26 @@ public class UIDetailText
 
         addChild(uiLblRes);
 
-        uiEva = new UILabel<>(getScene(), "-", 30, 10);
-        font = uiEva.getFont();
+        uiSld = new UILabel<>(getScene(), "-", 30, 10);
+        font = uiSld.getFont();
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiEva.setX(480-334);
-        uiEva.setY(74);
-        uiEva.load();
+        uiSld.setX(480-334);
+        uiSld.setY(74);
+        uiSld.load();
 
-        addChild(uiEva);
+        addChild(uiSld);
 
-        uiLblEva = new UILabel<>(getScene(), "eva:", 30, 10);
-        font = uiLblEva.getFont();
+        uiLblSld = new UILabel<>(getScene(), "eva:", 30, 10);
+        font = uiLblSld.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblEva.setX(450-334);
-        uiLblEva.setY(74);
-        uiLblEva.load();
+        uiLblSld.setX(450-334);
+        uiLblSld.setY(74);
+        uiLblSld.load();
 
-        addChild(uiLblEva);
+        addChild(uiLblSld);
 
         // Weapon
         uiWeapon = new UILabel<>(getScene(), "-", 128, 10);
@@ -492,8 +492,8 @@ public class UIDetailText
         uiRes.setText(details.resistance);
         uiRes.load();
 
-        uiEva.setText("-");
-        uiEva.load();
+        uiSld.setText(details.shield);
+        uiSld.load();
 
         uiWeapon.setText(details.weapon);
         uiWeapon.load();
