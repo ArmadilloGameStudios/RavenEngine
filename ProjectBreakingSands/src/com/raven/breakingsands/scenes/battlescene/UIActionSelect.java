@@ -6,7 +6,7 @@ import com.raven.engine2d.ui.UIButton;
 
 public class UIActionSelect extends UIRightContainer<BattleScene> {
 
-    private UIButton<BattleScene> btnMove, btnAttack, btnSkip, btnCancel;
+    private UIButton<BattleScene> btnMove, btnAttack, btnSkip, btnCancel, btnLevel;
     private boolean disable;
 
     public UIActionSelect(BattleScene scene) {
@@ -76,6 +76,19 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
         };
         addChild(btnCancel);
 
+        btnLevel = new UIButton<BattleScene>(scene,
+                "sprites/move icon.png",
+                "iconbutton") {
+
+            @Override
+            public void handleMouseClick() {
+                if (!btnCancel.isDisabled()) {
+                    getScene().pawnLevel();
+                }
+            }
+        };
+        addChild(btnLevel);
+
         pack();
     }
 
@@ -91,12 +104,15 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             btnMove.setActive(false);
             btnSkip.setDisable(disable);
             btnSkip.setActive(false);
+            btnLevel.setDisable(disable);
+            btnLevel.setActive(false);
         } else {
             btnCancel.setDisable(!(pawn.getTotalMovement() == pawn.getRemainingMovement()));
 
             btnAttack.setDisable(false);
             btnMove.setDisable(false);
             btnSkip.setDisable(false);
+            btnLevel.setDisable(false);
         }
     }
 }

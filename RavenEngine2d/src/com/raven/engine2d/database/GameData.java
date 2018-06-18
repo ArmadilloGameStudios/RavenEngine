@@ -2,6 +2,7 @@ package com.raven.engine2d.database;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class GameData implements GameDatable {
 
@@ -48,6 +49,20 @@ public class GameData implements GameDatable {
             return asMap().containsKey(prop);
         } else {
             return false;
+        }
+    }
+
+    public void ifHas(String prop, Consumer<GameData> consumer) {
+        if (has(prop)) {
+            consumer.accept(getData(prop));
+        }
+    }
+
+    public void ifHas(String prop, Consumer<GameData> consumer, Consumer<GameData> elseConsumer) {
+        if (has(prop)) {
+            consumer.accept(getData(prop));
+        } else {
+            elseConsumer.accept(null);
         }
     }
 

@@ -1,0 +1,8 @@
+{
+    class: "recruit",
+
+    level: [
+        { level: 1, bonus: { type: "weapon", tag: "common" }},
+        { level: 2, bonus: { type: "class" }},
+    ]
+}

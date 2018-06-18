@@ -17,53 +17,28 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-glfw" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl.jar!/" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-opengl.jar!/" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-opengl-natives-macos.jar!/" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-opengl-natives-linux.jar!/" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-opengl-natives-windows.jar!/" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-glfw.jar!/" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-glfw-natives-macos.jar!/" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-glfw-natives-windows.jar!/" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-glfw-natives-linux.jar!/" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-natives-windows.jar!/" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-natives-macos.jar!/" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-natives-linux.jar!/" />
         </CLASSES>
-        <JAVADOC />
+        <JAVADOC>
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-opengl-javadoc.jar!/" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-glfw-javadoc.jar!/" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-javadoc.jar!/" />
+        </JAVADOC>
         <SOURCES>
-          <root url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-glfw" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-opengl-sources.jar!/" />
+          <root url="jar://$USER_HOME$/Java/LWJGL 3/lwjgl-glfw-sources.jar!/" />
         </SOURCES>
-        <jarDirectory url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-glfw" recursive="false" />
-        <jarDirectory url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-glfw" recursive="false" type="SOURCES" />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="file://$USER_HOME$/Java/LWJGL 3/lwjgl" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$USER_HOME$/Java/LWJGL 3/lwjgl" />
-        </SOURCES>
-        <jarDirectory url="file://$USER_HOME$/Java/LWJGL 3/lwjgl" recursive="false" />
-        <jarDirectory url="file://$USER_HOME$/Java/LWJGL 3/lwjgl" recursive="false" type="SOURCES" />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-opengl" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-opengl" />
-        </SOURCES>
-        <jarDirectory url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-opengl" recursive="false" />
-        <jarDirectory url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-opengl" recursive="false" type="SOURCES" />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-openal" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-openal" />
-        </SOURCES>
-        <jarDirectory url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-openal" recursive="false" />
-        <jarDirectory url="file://$USER_HOME$/Java/LWJGL 3/lwjgl-openal" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
   </component>

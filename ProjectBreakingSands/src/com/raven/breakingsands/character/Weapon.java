@@ -34,7 +34,7 @@ public class Weapon
     }
 
     private GameData gameData;
-    private int damage, piercing = 0, range, rangeMin;
+    private int damage, piercing = 0, range, rangeMin, shots;
     private boolean directional;
     private String name;
     private Effect effect;
@@ -45,15 +45,31 @@ public class Weapon
         name = gameData.getString("name");
 
         damage = gameData.getInteger("damage");
-        range = gameData.getInteger("range");
+
+        if (gameData.getData("range").isInteger()) {
+            range = gameData.getInteger("range");
+            rangeMin = 1;
+        } else {
+            List<GameData> ranges = gameData.getList("range");
+            range = ranges.get(1).asInteger();
+            rangeMin = ranges.get(0).asInteger();
+        }
 
         if (gameData.has("directional")) {
             directional = gameData.getBoolean("directional");
         }
 
-        if (gameData.has("piercing")) {
-            piercing = gameData.getInteger("piercing");
-        }
+        gameData.ifHas("piercing", gd -> piercing = gd.asInteger());
+
+//        if (gameData.has("piercing")) {
+//            piercing = gameData.getInteger("piercing");
+//        }
+
+        gameData.ifHas("shots", gd -> shots = gd.asInteger(), gd -> shots = 1);
+
+//        if (gameData.has("shots")) {
+//            shots = gameData.getInteger("shots");
+//        }
 
         if (gameData.has("effect")) {
             GameData gdEffect = gameData.getData("effect");
@@ -113,6 +129,14 @@ public class Weapon
         return range;
     }
 
+    public int getRangeMin() {
+        return rangeMin;
+    }
+
+    public int getShots() {
+        return shots;
+    }
+
     public String getName() {
         return name;
     }
@@ -134,4 +158,5 @@ public class Weapon
     public boolean getDirectional() {
         return directional;
     }
+
 }

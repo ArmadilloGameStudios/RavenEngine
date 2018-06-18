@@ -9,4 +9,17 @@ public class SelectionDetails {
     public String damage;
     public String piercing;
     public String range;
+    public String shots;
+
+    public void clear() {
+        name = "-";
+        hp = "-";
+        movement = "-";
+        resistance = "-";
+        weapon = "-";
+        damage = "-";
+        piercing = "-";
+        range = "-";
+        shots = "-";
+    }
 }

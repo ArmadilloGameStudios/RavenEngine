@@ -50,6 +50,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     private Menu menu;
     private UIActionSelect actionSelect;
+    private UILevelUp uiLevelUp;
     private UIDetailText uiActiveDetailText;
     private UIDetailText uiSelectedDetailText;
 
@@ -189,6 +190,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         // Action Select
         actionSelect = new UIActionSelect(this);
         getLayerUI().addChild(actionSelect);
+
+        // Level UP
+        uiLevelUp = new UILevelUp(this);
+        uiLevelUp.setVisibility(false);
 
         // Menu
         menu = new Menu(this);
@@ -785,5 +790,12 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public void pawnMove() {
         setState(BattleScene.State.MOVING);
+    }
+
+    public void pawnLevel() {
+        this.setPaused(true);
+        uiLevelUp.setVisibility(true);
+        uiLevelUp.setPawn(getActivePawn());
+
     }
 }

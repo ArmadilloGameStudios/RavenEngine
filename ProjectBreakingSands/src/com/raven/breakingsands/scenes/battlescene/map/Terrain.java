@@ -384,16 +384,18 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             details.weapon = pawn.getWeapon().getName();
             details.damage = Integer.toString(pawn.getWeapon().getDamage());
             details.piercing = Integer.toString(pawn.getWeapon().getPiercing());
-            details.range = Integer.toString(pawn.getWeapon().getRange());
+            if (pawn.getWeapon().getRange() != pawn.getWeapon().getRangeMin()) {
+                details.range =
+                        Integer.toString(pawn.getWeapon().getRangeMin()) +
+                        "-"  +
+                        Integer.toString(pawn.getWeapon().getRange());
+            } else {
+                details.range = Integer.toString(pawn.getWeapon().getRange());
+            }
+            details.shots = Integer.toString(pawn.getWeapon().getShots());
         } else {
+            details.clear();
             details.name = "floor";
-            details.hp = "-";
-            details.movement = "-";
-            details.resistance = "-";
-            details.weapon = "-";
-            details.damage = "-";
-            details.range = "-";
-            details.piercing = "-";
         }
     }
 

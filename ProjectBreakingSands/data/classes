@@ -1,0 +1,20 @@
+{
+    name: "tank",
+
+    bonus: {
+        hp: 2,
+        shield: 5,
+        resistance: 2,
+        movement: -1,
+    }
+},
+{
+    name: "hacker",
+
+    bonus: {
+        hp: 2,
+        shield: 3,
+        movement: 1,
+        ability: "hack",
+    }
+}

@@ -1,7 +1,5 @@
 package com.raven.breakingsands.scenes.battlescene;
 
-import com.raven.engine2d.GameEngine;
-import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.ui.*;
 import com.raven.engine2d.util.math.Vector2f;
 
@@ -24,7 +22,7 @@ public class UIDetailText
             uiDmg, uiLblDmg,
             uiPir, uiLblPir,
             uiRng, uiLblRng,
-            uiAcc, uiLblAcc;
+            uiShots, uiLblShots;
 
     public UIDetailText(BattleScene scene, int style) {
         super(scene);
@@ -214,27 +212,27 @@ public class UIDetailText
 
         addChild(uiLblRng);
 
-        // Accuracy
-        uiAcc = new UILabel<>(getScene(), "-", 30, 10);
-        font = uiAcc.getFont();
+        // Shots
+        uiShots = new UILabel<>(getScene(), "-", 30, 10);
+        font = uiShots.getFont();
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiAcc.setX(480);
-        uiAcc.setY(-2);
-        uiAcc.load();
+        uiShots.setX(480);
+        uiShots.setY(-2);
+        uiShots.load();
 
-        addChild(uiAcc);
+        addChild(uiShots);
 
-        uiLblAcc = new UILabel<>(getScene(), "acc:", 30, 10);
-        font = uiLblAcc.getFont();
+        uiLblShots = new UILabel<>(getScene(), "shots:", 30, 10);
+        font = uiLblShots.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblAcc.setX(450);
-        uiLblAcc.setY(-2);
-        uiLblAcc.load();
+        uiLblShots.setX(450);
+        uiLblShots.setY(-2);
+        uiLblShots.load();
 
-        addChild(uiLblAcc);
+        addChild(uiLblShots);
     }
 
     private void initLeft() {
@@ -417,26 +415,26 @@ public class UIDetailText
         addChild(uiLblRng);
 
         // Accuracy
-        uiAcc = new UILabel<>(getScene(), "-", 30, 10);
-        font = uiAcc.getFont();
+        uiShots = new UILabel<>(getScene(), "-", 30, 10);
+        font = uiShots.getFont();
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiAcc.setX(480-334);
-        uiAcc.setY(-2);
-        uiAcc.load();
+        uiShots.setX(480-334);
+        uiShots.setY(-2);
+        uiShots.load();
 
-        addChild(uiAcc);
+        addChild(uiShots);
 
-        uiLblAcc = new UILabel<>(getScene(), "acc:", 30, 10);
-        font = uiLblAcc.getFont();
+        uiLblShots = new UILabel<>(getScene(), "acc:", 30, 10);
+        font = uiLblShots.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblAcc.setX(450-334);
-        uiLblAcc.setY(-2);
-        uiLblAcc.load();
+        uiLblShots.setX(450-334);
+        uiLblShots.setY(-2);
+        uiLblShots.load();
 
-        addChild(uiLblAcc);
+        addChild(uiLblShots);
     }
 
     @Override
@@ -509,7 +507,7 @@ public class UIDetailText
         uiRng.setText(details.range);
         uiRng.load();
 
-        uiAcc.setText("-");
-        uiAcc.load();
+        uiShots.setText(details.shots);
+        uiShots.load();
     }
 }
