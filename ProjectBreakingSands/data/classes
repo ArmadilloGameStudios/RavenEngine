@@ -6,7 +6,17 @@
         shield: 5,
         resistance: 2,
         movement: -1,
-    }
+    },
+
+    abilities: [
+        {
+            name: "Impenetrable",
+
+            hp: 3,
+            shield: 5,
+            resistance: 1,
+        },
+    ]
 },
 {
     name: "hacker",

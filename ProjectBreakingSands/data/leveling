@@ -5,4 +5,11 @@
         { level: 1, bonus: { type: "weapon", tag: "common" }},
         { level: 2, bonus: { type: "class" }},
     ]
+},
+{
+    class: "tank",
+    level: [
+        { level: 3, bonus: { type: "ability" }},
+        { level: 4, bonus: { type: "ability" }},
+    ]
 }

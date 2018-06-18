@@ -60,7 +60,26 @@ public class UILevelUp extends UICenterContainer<BattleScene> {
                             GameData newCharClass = classes.get(r.nextInt(classes.size()));
 
                             pawn.setCharacterClass(newCharClass);
+                            pawn.setLevel(lvl);
+                            break;
+                        case "ability":
+                            GameDatabase.all("classes").stream()
+                                    .filter(c -> c.getString("name").equals(pawn.getCharacterClass()))
+                                    .findFirst()
+                                    .ifPresent(c -> {
+                                        List<GameData> abilities = c.getList("abilities").stream()
+                                                .filter(a -> !pawn.getAbilities().contains(a.getString("name")))
+                                                .collect(Collectors.toList());
 
+                                        if (abilities.size() > 0) {
+                                            Random rand = new Random();
+                                            GameData ability = abilities.get(rand.nextInt(abilities.size()));
+
+                                            pawn.addAbility(ability);
+                                        }
+                                    });
+
+                            pawn.setLevel(lvl);
                             break;
                     }
                 }));

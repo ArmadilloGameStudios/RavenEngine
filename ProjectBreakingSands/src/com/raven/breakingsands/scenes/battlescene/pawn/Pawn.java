@@ -19,6 +19,7 @@ import com.raven.engine2d.worldobject.WorldTextObject;
 
 import javax.sound.sampled.Clip;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
@@ -47,6 +48,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
             totalMovement, remainingMovement,
             resistance, totalAttacks = 1, remainingAttacks;
     private boolean ready = true;
+    private List<String> abilities = new ArrayList<>();
 
     public Pawn(BattleScene scene, GameData gameData) {
         super(scene, gameData);
@@ -141,6 +143,28 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
             totalMovement += gd.asInteger();
             remainingMovement += gd.asInteger();
         });
+    }
+
+    public void addAbility(GameData ability) {
+        abilities.add(ability.getString("name"));
+
+        ability.ifHas("hp", gd -> {
+            hitPoints += gd.asInteger();
+            remainingHitPoints += gd.asInteger();
+        });
+        ability.ifHas("shield", gd -> {
+            totalShield += gd.asInteger();
+            remainingShield += gd.asInteger();
+        });
+        ability.ifHas("movement", gd -> {
+            totalMovement += gd.asInteger();
+            remainingMovement += gd.asInteger();
+        });
+        ability.ifHas("resistance", gd -> resistance += gd.asInteger());
+    }
+
+    public List<String> getAbilities() {
+        return abilities;
     }
 
     public int getLevel() {
