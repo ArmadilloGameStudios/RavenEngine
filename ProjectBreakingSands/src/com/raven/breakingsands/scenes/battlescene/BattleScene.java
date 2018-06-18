@@ -542,7 +542,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         }
 
         // find attack
-        List<Terrain> inRange = selectRange(activePawn.getWeapon().getRange(), parentTerrain);
+        List<Terrain> inRange = selectRange(activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange(), parentTerrain);
 
         rangeMap = filterRange(parentTerrain, inRange);
 
@@ -594,7 +594,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         // find attack
         Terrain parentTerrain = activePawn.getParent();
 
-        List<Terrain> inRange = selectRange(activePawn.getWeapon().getRange(), parentTerrain);
+        List<Terrain> inRange = selectRange(activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange(), parentTerrain);
 
         rangeMap = filterRange(parentTerrain, inRange);
 
@@ -662,27 +662,33 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         this.currentPath = currentPath;
     }
 
-    public List<Terrain> selectRange(int range, Terrain start) {
+    public List<Terrain> selectRange(int rangeMax, Terrain start) {
+        return selectRange(1, rangeMax, start);
+    }
+
+    public List<Terrain> selectRange(int rangeMin, int rangeMax, Terrain start) {
         int x = start.getMapX();
         int y = start.getMapY();
 
         List<Terrain> withinRange = new ArrayList<>();
 
-        for (int i = -range;
-             i <= range;
+        for (int i = -rangeMax;
+             i <= rangeMax;
              i++) {
 
-            int heightRange = range - Math.abs(i);
+            int heightRange = rangeMax - Math.abs(i);
 
             for (int j = -heightRange;
                  j <= heightRange;
                  j++) {
 
-                Optional<Terrain> o = map.get(x + i, y + j);
+                if (Math.abs(i) + Math.abs(j) > rangeMin - 1) {
+                    Optional<Terrain> o = map.get(x + i, y + j);
 //                if (o.isPresent() &&
 //                        o.get().getPawn() != null &&
 //                        o.get().getPawn().getTeam() != activePawn.getTeam()) {
-                o.ifPresent(withinRange::add);
+                    o.ifPresent(withinRange::add);
+                }
             }
         }
 
