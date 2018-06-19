@@ -1,0 +1,56 @@
+package com.raven.breakingsands.character;
+
+import com.raven.engine2d.database.GameData;
+
+public class Ability {
+
+    public enum Type {SELF, AURORA}
+
+    public enum Target {ALL, SELF, ALLY, ENEMY}
+
+    public String name;
+    public Type type;
+    public Target target;
+
+    public Integer size;
+    public Integer hp, shield, movement, resistance;
+
+    public Ability(GameData gameData) {
+        name = gameData.getString("name");
+
+        switch (gameData.getString("type")) {
+            default:
+            case "self":
+                type = Type.SELF;
+                break;
+            case "aurora":
+                type = Type.AURORA;
+                break;
+        }
+
+        gameData.ifHas("target",
+                t -> {
+                    switch (t.asString()) {
+                        case "all":
+                            target = Target.ALL;
+                            break;
+                        case "self":
+                            target = Target.SELF;
+                            break;
+                        case "ally":
+                            target = Target.ALLY;
+                            break;
+                        case "enemy":
+                            target = Target.ENEMY;
+                            break;
+                    }
+                },
+                t -> target = Target.ALL);
+
+        gameData.ifHas("size", s -> size = s.asInteger());
+        gameData.ifHas("hp", h -> hp = h.asInteger());
+        gameData.ifHas("shield", s -> shield = s.asInteger());
+        gameData.ifHas("movement", m -> movement = m.asInteger());
+        gameData.ifHas("resistance", r -> resistance = r.asInteger());
+    }
+}

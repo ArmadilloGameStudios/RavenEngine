@@ -11,11 +11,21 @@
     abilities: [
         {
             name: "Impenetrable",
+            type: "self",
 
             hp: 3,
             shield: 5,
             resistance: 1,
         },
+        {
+            name: "Protector",
+            type: "aurora",
+            target: "ally",
+
+            size: 2,
+            shield: 2,
+            resistance: 1,
+        }
     ]
 },
 {

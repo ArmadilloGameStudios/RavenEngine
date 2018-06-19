@@ -1,5 +1,6 @@
 package com.raven.breakingsands.scenes.battlescene;
 
+import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.character.CharacterClass;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
@@ -8,6 +9,7 @@ import com.raven.breakingsands.scenes.hud.UIRightContainer;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDatabase;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -68,14 +70,15 @@ public class UILevelUp extends UICenterContainer<BattleScene> {
                                     .findFirst()
                                     .ifPresent(c -> {
                                         List<GameData> abilities = c.getList("abilities").stream()
-                                                .filter(a -> !pawn.getAbilities().contains(a.getString("name")))
+                                                .filter(a -> !pawn.getAbilities().stream().map(ab -> ab.name).collect(Collectors.toList())
+                                                        .contains(a.getString("name")))
                                                 .collect(Collectors.toList());
 
                                         if (abilities.size() > 0) {
                                             Random rand = new Random();
                                             GameData ability = abilities.get(rand.nextInt(abilities.size()));
 
-                                            pawn.addAbility(ability);
+                                            pawn.addAbility(new Ability(ability));
                                         }
                                     });
 

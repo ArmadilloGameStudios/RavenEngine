@@ -21,7 +21,6 @@ import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
-import com.raven.engine2d.util.Range;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.util.pathfinding.Path;
@@ -389,6 +388,11 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
             Vector2f pos = pawn.getWorldPosition();
             // TODO focus on pawn
+
+            System.out.println("Pawn -");
+            pawn.getAbilities().forEach(a -> System.out.println(a.name));
+            System.out.println("Terrain -");
+            pawn.getParent().getAbilities().forEach(a -> System.out.println(a.name));
         }
 
         setState(SELECT_DEFAULT);
@@ -542,9 +546,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         }
 
         // find attack
-        List<Terrain> inRange = selectRange(activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange(), parentTerrain);
-
-        rangeMap = filterRange(parentTerrain, inRange);
+        List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
+        rangeMap = parentTerrain.filterCoverRange(inRange);
 
         boolean noOptions = true;
 
@@ -594,9 +597,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         // find attack
         Terrain parentTerrain = activePawn.getParent();
 
-        List<Terrain> inRange = selectRange(activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange(), parentTerrain);
-
-        rangeMap = filterRange(parentTerrain, inRange);
+        List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
+        rangeMap = parentTerrain.filterCoverRange(inRange);
 
         boolean noOptions = true;
 
@@ -660,89 +662,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public void setCurrentPath(Path<Terrain> currentPath) {
         this.currentPath = currentPath;
-    }
-
-    public List<Terrain> selectRange(int rangeMax, Terrain start) {
-        return selectRange(1, rangeMax, start);
-    }
-
-    public List<Terrain> selectRange(int rangeMin, int rangeMax, Terrain start) {
-        int x = start.getMapX();
-        int y = start.getMapY();
-
-        List<Terrain> withinRange = new ArrayList<>();
-
-        for (int i = -rangeMax;
-             i <= rangeMax;
-             i++) {
-
-            int heightRange = rangeMax - Math.abs(i);
-
-            for (int j = -heightRange;
-                 j <= heightRange;
-                 j++) {
-
-                if (Math.abs(i) + Math.abs(j) > rangeMin - 1) {
-                    Optional<Terrain> o = map.get(x + i, y + j);
-//                if (o.isPresent() &&
-//                        o.get().getPawn() != null &&
-//                        o.get().getPawn().getTeam() != activePawn.getTeam()) {
-                    o.ifPresent(withinRange::add);
-                }
-            }
-        }
-
-        return withinRange;
-    }
-
-    public HashMap<Terrain, Float> filterRange(Terrain start, List<Terrain> inRange) {
-        HashMap<Terrain, Float> map = new HashMap<>();
-
-        int startX = start.getMapX();
-        int startY = start.getMapY();
-
-        for (Terrain end : inRange) {
-            int endX = end.getMapX();
-            int endY = end.getMapY();
-
-            float a = -(endY - startY);
-            float b = endX - startX;
-            float c = -(a * startX + b * startY);
-
-            float leftCoverage = 0f, rightCoverage = 0f;
-
-            for (int x : new Range(endX, startX)) {
-                for (int y : new Range(endY, startY)) {
-
-                    Optional<Terrain> o = this.map.get(x, y);
-                    if (!o.isPresent() || !o.get().isPassable()) {
-
-                        float cover = linePointDist(a, b, c, x, y);
-
-                        if (cover >= 0f) {
-                            cover = Math.max(1f - cover, 0f);
-                            leftCoverage = Math.max(leftCoverage, Math.min(cover, 1f));
-                        } else if (cover < 0f) {
-                            cover = -cover;
-                            cover = Math.max(1f - cover, 0f);
-                            rightCoverage = Math.max(rightCoverage, Math.min(cover, 1f));
-                        }
-                    }
-                }
-            }
-
-            float coverage = Math.min(leftCoverage + rightCoverage, 1f);
-
-            if (coverage <= .75f) {
-                this.map.get(endX, endY).ifPresent(terrain -> map.put(terrain, coverage));
-            }
-        }
-
-        return map;
-    }
-
-    private float linePointDist(float a, float b, float c, float x, float y) {
-        return ((a * x + b * y + c) / (Math.abs(a) + Math.abs(b)));
     }
 
     public void checkVictory() {

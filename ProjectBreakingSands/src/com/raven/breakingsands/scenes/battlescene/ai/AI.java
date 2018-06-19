@@ -65,12 +65,12 @@ public class AI implements Runnable {
     private void selectMove() {
 
         // check if can attack
-        List<Terrain> inRange = scene.selectRange(scene.getActivePawn().getWeapon().getRange(), scene.getActivePawn().getParent());
+        List<Terrain> inRange = scene.getActivePawn().getParent().selectRange(scene.getActivePawn().getWeapon().getRange());
         inRange = inRange.stream()
                 .filter(t -> t.getPawn() != null &&
                         t.getPawn().getTeam() != scene.getActiveTeam())
                 .collect(Collectors.toList());
-        HashMap<Terrain, Float> rangeMap = scene.filterRange(scene.getActivePawn().getParent(), inRange);
+        HashMap<Terrain, Float> rangeMap = scene.getActivePawn().getParent().filterCoverRange(inRange);
 
         if (inRange.size() > 0) {
             Optional<Terrain> optionalTerrain;
