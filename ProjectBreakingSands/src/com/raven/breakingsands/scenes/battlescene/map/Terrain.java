@@ -292,14 +292,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         if (pawn != null) {
             pawn.getAbilities().stream()
                     .filter(a -> a.type == Ability.Type.AURORA)
-                    .forEach(a -> {
-                        List<Terrain> inRange = selectRange(a.size);
-                        HashMap<Terrain, Float> rangeMap = filterCoverRange(inRange);
-
-                        for (Terrain n : rangeMap.keySet()) {
-                            n.removeAbility(a);
-                        }
-                    });
+                    .forEach(this::removePawnAbility);
 
             abilities.forEach(a -> pawn.removeAbilityAffect(a));
         }
@@ -308,6 +301,15 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         this.pawn = null;
 
         updateText();
+    }
+
+    public void removePawnAbility(Ability a) {
+        List<Terrain> inRange = selectRange(a.size);
+        HashMap<Terrain, Float> rangeMap = filterCoverRange(inRange);
+
+        for (Terrain n : rangeMap.keySet()) {
+            n.removeAbility(a);
+        }
     }
 
     private void addAbility(Ability a) {

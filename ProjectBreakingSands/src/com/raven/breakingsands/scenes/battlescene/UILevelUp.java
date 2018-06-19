@@ -70,8 +70,21 @@ public class UILevelUp extends UICenterContainer<BattleScene> {
                                     .findFirst()
                                     .ifPresent(c -> {
                                         List<GameData> abilities = c.getList("abilities").stream()
-                                                .filter(a -> !pawn.getAbilities().stream().map(ab -> ab.name).collect(Collectors.toList())
-                                                        .contains(a.getString("name")))
+                                                .filter(a -> {
+                                                    List<String> existing = pawn.getAbilities().stream().map(ab -> ab.name).collect(Collectors.toList());
+
+                                                    boolean valid = !existing.contains(a.getString("name"));
+
+                                                    if (a.has("requiresnot")) {
+                                                        valid &= !existing.contains(a.getString("requiresnot"));
+                                                    }
+
+                                                    if (a.has("replace")) {
+                                                        valid &= existing.contains(a.getString("replace"));
+                                                    }
+
+                                                    return valid;
+                                                })
                                                 .collect(Collectors.toList());
 
                                         if (abilities.size() > 0) {

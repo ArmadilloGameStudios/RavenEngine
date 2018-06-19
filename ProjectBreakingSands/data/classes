@@ -30,8 +30,18 @@
             name: "Taunt",
             type: "aurora",
             target: "enemy",
+            requiresnot: "Ext. Taunt",
 
             size: 4,
+            taunt: true
+        },
+        {
+            name: "Ext. Taunt",
+            type: "aurora",
+            target: "enemy",
+            replace: "Taunt",
+
+            size: 7,
             taunt: true
         }
     ]
@@ -40,8 +50,8 @@
     name: "hacker",
 
     bonus: {
-        shield: 2,
         movement: 1,
+
         ability: "hack",
     }
 }

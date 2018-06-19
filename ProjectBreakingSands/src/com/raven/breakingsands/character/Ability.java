@@ -14,6 +14,7 @@ public class Ability {
     public String name;
     public Type type;
     public Target target;
+    public String replace;
 
     public Integer size;
     public Integer hp, shield, movement, resistance;
@@ -51,6 +52,7 @@ public class Ability {
                 },
                 t -> target = Target.ALL);
 
+        gameData.ifHas("replace", r -> replace = r.asString());
         gameData.ifHas("size", s -> size = s.asInteger());
         gameData.ifHas("hp", h -> hp = h.asInteger());
         gameData.ifHas("shield", s -> shield = s.asInteger());

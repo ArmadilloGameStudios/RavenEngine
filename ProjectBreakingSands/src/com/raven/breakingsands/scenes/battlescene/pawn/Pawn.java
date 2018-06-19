@@ -157,6 +157,13 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public void addAbility(Ability ability) {
         ability.owner = this;
+
+        if (ability.replace != null) {
+            abilities.stream()
+                    .filter(a -> a.name.equals(ability.replace))
+                    .findFirst()
+                    .ifPresent(this::removeAbility);
+        }
         abilities.add(ability);
 
         if (ability.type == Ability.Type.SELF) {
@@ -178,6 +185,11 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         }
 
         getParent().setPawn(this); // Shitty way of making sure the aurora effect is there
+    }
+
+    public void removeAbility(Ability a) {
+        abilities.remove(a);
+        getParent().removePawnAbility(a);
     }
 
     public List<Ability> getAbilities() {
