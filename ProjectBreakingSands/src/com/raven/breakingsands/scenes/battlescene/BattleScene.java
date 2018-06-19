@@ -606,11 +606,11 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             for (Terrain n : rangeMap.keySet()) {
 //                if (n.getPawn() == null || n.getPawn().getTeam() != activePawn.getTeam()) {
 
-                    n.cover = rangeMap.get(n);
-                    n.setState(Terrain.State.ATTACKABLE);
-                    n.updateText();
+                n.cover = rangeMap.get(n);
+                n.setState(Terrain.State.ATTACKABLE);
+                n.updateText();
 
-                    noOptions = false;
+                noOptions = false;
 //                }
             }
         }
@@ -653,11 +653,13 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     public void clearAllPaths() {
-        for (Terrain t : pathMap.keySet()) {
-            t.setState(Terrain.State.UNSELECTABLE);
-        }
+        if (pathMap != null) {
+            for (Terrain t : pathMap.keySet()) {
+                t.setState(Terrain.State.UNSELECTABLE);
+            }
 
-        pathMap.clear();
+            pathMap.clear();
+        }
     }
 
     public void setCurrentPath(Path<Terrain> currentPath) {

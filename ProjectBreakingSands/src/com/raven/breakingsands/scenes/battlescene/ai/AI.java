@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class AI implements Runnable {
@@ -64,12 +65,28 @@ public class AI implements Runnable {
 
     private void selectMove() {
 
+        // check if taunted
+        List<Pawn> taunters = scene.getActivePawn().getAbilityAffects().stream()
+                .filter(a -> a.taunt)
+                .map(a -> a.owner)
+                .collect(Collectors.toList());
+
+        System.out.println("Ts");
+        System.out.println(taunters.size());
+
         // check if can attack
         List<Terrain> inRange = scene.getActivePawn().getParent().selectRange(scene.getActivePawn().getWeapon().getRange());
         inRange = inRange.stream()
                 .filter(t -> t.getPawn() != null &&
                         t.getPawn().getTeam() != scene.getActiveTeam())
                 .collect(Collectors.toList());
+
+        if (taunters.size() > 0) {
+            inRange = inRange.stream()
+                    .filter(t -> taunters.contains(t.getPawn()))
+                    .collect(Collectors.toList());
+        }
+
         HashMap<Terrain, Float> rangeMap = scene.getActivePawn().getParent().filterCoverRange(inRange);
 
         if (inRange.size() > 0) {
@@ -84,16 +101,25 @@ public class AI implements Runnable {
                 }
             } else {
                 attack = inRange.get(0);
+                return;
             }
         }
 
         // find the closest pawn
         PathFinder<Terrain> pf = new PathFinder<>();
+        Optional<Path<Terrain>> oPath;
 
-        Optional<Path<Terrain>> oPath = scene.getPawns().stream().filter(p -> p.getTeam() == 0).map(p ->
-                pf.findTarget(scene.getActivePawn().getParent(), p.getParent()))
-                .filter(Objects::nonNull)
-                .min(AI::comparePaths);
+        if (taunters.size() > 0) {
+            oPath = taunters.stream().filter(p -> p.getTeam() == 0).map(p ->
+                    pf.findTarget(scene.getActivePawn().getParent(), p.getParent()))
+                    .filter(Objects::nonNull)
+                    .min(AI::comparePaths);
+        } else {
+            oPath = scene.getPawns().stream().filter(p -> p.getTeam() == 0).map(p ->
+                    pf.findTarget(scene.getActivePawn().getParent(), p.getParent()))
+                    .filter(Objects::nonNull)
+                    .min(AI::comparePaths);
+        }
 
         if (!oPath.isPresent()) {
             System.out.println("No Path");
@@ -101,6 +127,7 @@ public class AI implements Runnable {
         }
 
         // find the furthest it can go
+        // TODO change to it goes as close while remaining its range
         Path<Terrain> closestPath = oPath.get();
         HashMap<Terrain, Path<Terrain>> pathMap = pf.findDistance(scene.getActivePawn().getParent(), scene.getActivePawn().getRemainingMovement());
 

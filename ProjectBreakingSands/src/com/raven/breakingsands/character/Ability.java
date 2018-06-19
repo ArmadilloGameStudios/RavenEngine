@@ -1,8 +1,11 @@
 package com.raven.breakingsands.character;
 
+import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.database.GameData;
 
 public class Ability {
+
+    public Pawn owner;
 
     public enum Type {SELF, AURORA}
 
@@ -14,6 +17,7 @@ public class Ability {
 
     public Integer size;
     public Integer hp, shield, movement, resistance;
+    public boolean taunt = false;
 
     public Ability(GameData gameData) {
         name = gameData.getString("name");
@@ -52,5 +56,6 @@ public class Ability {
         gameData.ifHas("shield", s -> shield = s.asInteger());
         gameData.ifHas("movement", m -> movement = m.asInteger());
         gameData.ifHas("resistance", r -> resistance = r.asInteger());
+        gameData.ifHas("taunt", t -> taunt = t.asBoolean());
     }
 }

@@ -156,6 +156,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     }
 
     public void addAbility(Ability ability) {
+        ability.owner = this;
         abilities.add(ability);
 
         if (ability.type == Ability.Type.SELF) {
@@ -213,6 +214,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
             getParent().updateText();
         }
+    }
+
+    public List<Ability> getAbilityAffects() {
+        return abilityAffects;
     }
 
     public int getLevel() {

@@ -25,6 +25,14 @@
             size: 2,
             shield: 2,
             resistance: 1,
+        },
+        {
+            name: "Taunt",
+            type: "aurora",
+            target: "enemy",
+
+            size: 4,
+            taunt: true
         }
     ]
 },
