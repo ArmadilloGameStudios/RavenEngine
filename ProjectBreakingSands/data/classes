@@ -45,12 +45,12 @@
             taunt: true
         },
         {
-            name: "Gravity Pull",
+            name: "Push Blast",
             type: "aurora",
             target: "enemy",
 
-            size: 3,
-            gravity_pull: true,
+            size: 2,
+            push_blast: true,
         },
     ]
 },

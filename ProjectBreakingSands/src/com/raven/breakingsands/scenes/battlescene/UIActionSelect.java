@@ -20,7 +20,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             @Override
             public void handleMouseClick() {
                 if (!isDisabled()) {
-                    getScene().pawnGravityPull();
+                    getScene().pawnPushBlast();
                 }
             }
         };
@@ -193,7 +193,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             btnSkip.setActive(false);
             btnLevel.setDisable(pawn.getLevel() >= 40); // TODO
 
-            if (pawn.getAbilities().stream().anyMatch(a -> a.gravity_pull)) {
+            if (pawn.getAbilities().stream().anyMatch(a -> a.push_blast)) {
                 btnGravityPull.setVisibility(true);
                 btnGravityPull.setDisable(false);
             } else {

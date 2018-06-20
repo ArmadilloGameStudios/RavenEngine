@@ -33,8 +33,17 @@ public class Vector2f {
         return out;
     }
 
+    public double length() {
+        return Math.sqrt(length2());
+    }
+
+    public float length2() {
+        return x*x + y*y;
+    }
+
     @Override
     public String toString() {
         return "" + x + " " + y;
     }
+
 }

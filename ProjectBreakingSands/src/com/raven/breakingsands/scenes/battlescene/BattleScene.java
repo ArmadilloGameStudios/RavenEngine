@@ -735,17 +735,28 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     }
 
-    public void pawnGravityPull() {
+    public void pawnPushBlast() {
         List<Pawn> pawns = this.pawns.stream()
                 .filter(p ->
                         p.getAbilityAffects().stream()
                                 .anyMatch(a ->
-                                        a.gravity_pull &&
+                                        a.push_blast &&
                                                 a.owner == activePawn))
                 .collect(Collectors.toList());
 
-        // order the pawns
+        // push
+        pawns.forEach(p -> {
+            int x = Integer.signum(p.getParent().getMapX() - activePawn.getParent().getMapX());
+            int y = Integer.signum(p.getParent().getMapY() - activePawn.getParent().getMapY());
 
-        // move to closes open space
+            map.get(p.getParent().getMapX() + x, p.getParent().getMapY() + y).ifPresent(t -> {
+                if (t.isPassable() && t.getPawn() == null) {
+                    t.setPawn(p);
+                }
+            });
+        });
+
+        activePawn.reduceAttacks();
+        setState(State.SELECT_DEFAULT);
     }
 }

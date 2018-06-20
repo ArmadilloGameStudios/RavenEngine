@@ -315,11 +315,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     }
 
     public void attack(Pawn pawn) {
-        remainingAttacks = Math.max(totalAttacks - 1, 0);
-
-        if (remainingAttacks == 0) {
-            ready = false;
-        }
+        reduceAttacks();
 
         int remainingResistance = Math.max(pawn.resistance - weapon.getPiercing(), 0);
         int dealtDamage = Math.max(weapon.getDamage() - remainingResistance, 0) * weapon.getShots();
@@ -351,6 +347,14 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         pawn.getParent().updateText();
 
         pawn.showDamage("-" + Integer.toString(dealtDamage));
+    }
+
+    public void reduceAttacks() {
+        remainingAttacks = Math.max(totalAttacks - 1, 0);
+
+        if (remainingAttacks == 0) {
+            ready = false;
+        }
     }
 
     private void showDamage(String damage) {
