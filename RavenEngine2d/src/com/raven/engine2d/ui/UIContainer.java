@@ -4,8 +4,10 @@ import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
+import com.raven.engine2d.worldobject.GameObject;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class UIContainer<S extends Scene>
         extends UIObject<S, Layer<UIObject>> {
@@ -66,7 +68,7 @@ public abstract class UIContainer<S extends Scene>
                 width = 0;
                 height = 0f;
 
-                List<UIObject> children = this.getChildren();
+                List<UIObject> children = this.getChildren().stream().filter(GameObject::getVisibility).collect(Collectors.toList());
 
                 for (UIObject obj : children) {
                     height = Math.max(obj.getHeight(), height);
@@ -88,7 +90,7 @@ public abstract class UIContainer<S extends Scene>
                 width = 0;
                 height = 0f;
 
-                children = this.getChildren();
+                children = this.getChildren().stream().filter(GameObject::getVisibility).collect(Collectors.toList());
 
                 for (UIObject obj : children) {
                     height = Math.max(obj.getHeight(), height);
@@ -110,7 +112,7 @@ public abstract class UIContainer<S extends Scene>
                 width = 0;
                 height = 0f;
 
-                children = this.getChildren();
+                children = this.getChildren().stream().filter(GameObject::getVisibility).collect(Collectors.toList());
 
                 for (UIObject obj : children) {
                     height = Math.max(obj.getHeight(), height);
@@ -133,7 +135,7 @@ public abstract class UIContainer<S extends Scene>
                 width = 0f;
                 height = 0;
 
-                children = this.getChildren();
+                children = this.getChildren().stream().filter(GameObject::getVisibility).collect(Collectors.toList());
 
                 for (UIObject obj : children) {
                     width = Math.max(obj.getWidth(), width);
@@ -158,7 +160,7 @@ public abstract class UIContainer<S extends Scene>
                 width = 0f;
                 height = 0;
 
-                children = this.getChildren();
+                children = this.getChildren().stream().filter(GameObject::getVisibility).collect(Collectors.toList());
 
                 for (UIObject obj : children) {
                     width = Math.max(obj.getWidth(), width);

@@ -75,8 +75,8 @@ public class UILevelUp extends UICenterContainer<BattleScene> {
 
                                                     boolean valid = !existing.contains(a.getString("name"));
 
-                                                    if (a.has("requiresnot")) {
-                                                        valid &= !existing.contains(a.getString("requiresnot"));
+                                                    if (a.has("requires_not")) {
+                                                        valid &= !existing.contains(a.getString("requires_not"));
                                                     }
 
                                                     if (a.has("replace")) {

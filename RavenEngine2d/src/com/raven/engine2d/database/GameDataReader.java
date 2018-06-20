@@ -80,7 +80,7 @@ public class GameDataReader {
 				}
 				break;
 			case ReadProperty:
-				if (!Character.isAlphabetic(chars[i]) || chars[i] == ':') {
+				if (!(Character.isAlphabetic(chars[i]) || chars[i] == '_') || chars[i] == ':') {
 					state = ReadDataState.FindValue;
 				} else {
 					prop += chars[i];

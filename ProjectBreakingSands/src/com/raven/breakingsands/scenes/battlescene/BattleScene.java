@@ -407,6 +407,13 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     public void setActiveTeam(int team) {
+        // TODO change spawn
+        if (team == 0 && this.activeTeam == 1) {
+            if (doSpawn()) {
+                spawnPawn("Service Drone");
+            }
+        }
+
         this.activeTeam = team;
 
         pawns.stream()
@@ -424,7 +431,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         int a = 10 - (int) pawns.stream().filter(p -> p.getTeam() != 0).count();
         int b = random.nextInt(10);
 
-        return a > b;
+        return a > b || true;
     }
 
     public void setState(State state) {
@@ -434,11 +441,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         switch (state) {
             case SELECT_DEFAULT:
                 if (activeTeam == 0) {
-                    // TODO change spawn
-                    if (doSpawn()) {
-                        spawnPawn("Service Drone");
-                    }
-
                     // clean
                     map.setState(Terrain.State.UNSELECTABLE);
                     currentPath = null;
@@ -731,5 +733,19 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         uiLevelUp.setVisibility(true);
         uiLevelUp.setPawn(getActivePawn());
 
+    }
+
+    public void pawnGravityPull() {
+        List<Pawn> pawns = this.pawns.stream()
+                .filter(p ->
+                        p.getAbilityAffects().stream()
+                                .anyMatch(a ->
+                                        a.gravity_pull &&
+                                                a.owner == activePawn))
+                .collect(Collectors.toList());
+
+        // order the pawns
+
+        // move to closes open space
     }
 }

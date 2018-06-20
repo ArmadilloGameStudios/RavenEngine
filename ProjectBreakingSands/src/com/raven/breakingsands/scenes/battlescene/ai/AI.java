@@ -71,9 +71,6 @@ public class AI implements Runnable {
                 .map(a -> a.owner)
                 .collect(Collectors.toList());
 
-        System.out.println("Ts");
-        System.out.println(taunters.size());
-
         // check if can attack
         List<Terrain> inRange = scene.getActivePawn().getParent().selectRange(scene.getActivePawn().getWeapon().getRange());
         inRange = inRange.stream()
@@ -89,18 +86,20 @@ public class AI implements Runnable {
 
         HashMap<Terrain, Float> rangeMap = scene.getActivePawn().getParent().filterCoverRange(inRange);
 
-        if (inRange.size() > 0) {
+        if (rangeMap.size() > 0) {
             Optional<Terrain> optionalTerrain;
 
-            if (inRange.size() > 1) {
-                optionalTerrain = inRange.stream().filter(Objects::nonNull).max((a, b) -> (int) (rangeMap.get(a) - rangeMap.get(b) * 100));
+            if (rangeMap.size() > 1) {
+                optionalTerrain = rangeMap.keySet().stream()
+                        .filter(Objects::nonNull)
+                        .max((a, b) -> (int) (rangeMap.get(a) - rangeMap.get(b)));
 
                 if (optionalTerrain.isPresent()) {
                     attack = optionalTerrain.get();
                     return;
                 }
             } else {
-                attack = inRange.get(0);
+                attack = rangeMap.keySet().stream().findFirst().get();
                 return;
             }
         }

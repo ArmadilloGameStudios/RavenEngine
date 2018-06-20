@@ -6,11 +6,26 @@ import com.raven.engine2d.ui.UIButton;
 
 public class UIActionSelect extends UIRightContainer<BattleScene> {
 
-    private UIButton<BattleScene> btnMove, btnAttack, btnSkip, btnCancel, btnLevel, btnEnd;
+    private UIButton<BattleScene> btnGravityPull, btnMove, btnAttack, btnSkip, btnCancel, btnLevel, btnEnd;
     private boolean disable;
+    private BattleScene.State oldState;
 
     public UIActionSelect(BattleScene scene) {
         super(scene);
+
+        btnGravityPull = new UIButton<BattleScene>(scene,
+                "sprites/move icon.png",
+                "iconbutton") {
+
+            @Override
+            public void handleMouseClick() {
+                if (!isDisabled()) {
+                    getScene().pawnGravityPull();
+                }
+            }
+        };
+        btnGravityPull.setVisibility(false);
+        addChild(btnGravityPull);
 
         btnMove = new UIButton<BattleScene>(scene,
                 "sprites/move icon.png",
@@ -21,12 +36,34 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
                 if (!isDisabled())
                     if (isActive()) {
                         btnMove.setActive(false);
-                        scene.setState(BattleScene.State.SELECT_DEFAULT);
+                        scene.setState(oldState = BattleScene.State.SELECT_DEFAULT);
                     } else {
                         btnMove.setActive(true);
                         btnAttack.setActive(false);
+                        scene.setState(oldState = BattleScene.State.SELECT_MOVE);
+                    }
+            }
+
+            @Override
+            public void handleMouseEnter() {
+                super.handleMouseEnter();
+
+                if (!isDisabled())
+                    if (!isActive()) {
+                        oldState = scene.getState();
                         scene.setState(BattleScene.State.SELECT_MOVE);
                     }
+
+            }
+
+            @Override
+            public void handleMouseLeave() {
+                super.handleMouseLeave();
+
+                if (!isDisabled())
+                    if (!isActive())
+                        scene.setState(oldState);
+
             }
         };
         addChild(btnMove);
@@ -40,12 +77,34 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
                 if (!isDisabled())
                     if (isActive()) {
                         btnAttack.setActive(false);
-                        scene.setState(BattleScene.State.SELECT_DEFAULT);
+                        scene.setState(oldState = BattleScene.State.SELECT_DEFAULT);
                     } else {
                         btnMove.setActive(false);
                         btnAttack.setActive(true);
+                        scene.setState(oldState = BattleScene.State.SELECT_ATTACK);
+                    }
+            }
+
+            @Override
+            public void handleMouseEnter() {
+                super.handleMouseEnter();
+
+                if (!isDisabled())
+                    if (!isActive()) {
+                        oldState = scene.getState();
                         scene.setState(BattleScene.State.SELECT_ATTACK);
                     }
+
+            }
+
+            @Override
+            public void handleMouseLeave() {
+                super.handleMouseLeave();
+
+                if (!isDisabled())
+                    if (!isActive())
+                        scene.setState(oldState);
+
             }
         };
         addChild(btnAttack);
@@ -56,7 +115,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
 
             @Override
             public void handleMouseClick() {
-                if (!btnSkip.isDisabled()) {
+                if (!isDisabled()) {
                     getScene().pawnWait();
                 }
             }
@@ -69,7 +128,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
 
             @Override
             public void handleMouseClick() {
-                if (!btnCancel.isDisabled()) {
+                if (!isDisabled()) {
                     getScene().pawnDeselect();
                 }
             }
@@ -95,7 +154,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
 
             @Override
             public void handleMouseClick() {
-                if (!btnEnd.isDisabled()) {
+                if (!isDisabled()) {
                     getScene().pawnEnd();
                 }
 
@@ -120,13 +179,30 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             btnSkip.setActive(false);
             btnLevel.setDisable(disable);
             btnLevel.setActive(false);
+            btnGravityPull.setDisable(disable);
+            btnGravityPull.setActive(false);
+            btnGravityPull.setVisibility(false);
         } else {
             btnCancel.setDisable(!(pawn.getTotalMovement() == pawn.getRemainingMovement()));
 
             btnAttack.setDisable(false);
+            btnAttack.setActive(false);
             btnMove.setDisable(false);
+            btnMove.setActive(false);
             btnSkip.setDisable(false);
-            btnLevel.setDisable(false);
+            btnSkip.setActive(false);
+            btnLevel.setDisable(pawn.getLevel() >= 40); // TODO
+
+            if (pawn.getAbilities().stream().anyMatch(a -> a.gravity_pull)) {
+                btnGravityPull.setVisibility(true);
+                btnGravityPull.setDisable(false);
+            } else {
+                btnGravityPull.setVisibility(false);
+            }
         }
+
+        btnEnd.setDisable(getScene().getActiveTeam() != 0);
+
+        pack();
     }
 }

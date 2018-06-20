@@ -30,7 +30,7 @@
             name: "Taunt",
             type: "aurora",
             target: "enemy",
-            requiresnot: "Ext. Taunt",
+            requires_not: "Ext. Taunt",
 
             size: 4,
             taunt: true
@@ -43,7 +43,15 @@
 
             size: 7,
             taunt: true
-        }
+        },
+        {
+            name: "Gravity Pull",
+            type: "aurora",
+            target: "enemy",
+
+            size: 3,
+            gravity_pull: true,
+        },
     ]
 },
 {

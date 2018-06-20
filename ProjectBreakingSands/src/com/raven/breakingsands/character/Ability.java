@@ -18,7 +18,7 @@ public class Ability {
 
     public Integer size;
     public Integer hp, shield, movement, resistance;
-    public boolean taunt = false;
+    public boolean taunt = false, gravity_pull = false;
 
     public Ability(GameData gameData) {
         name = gameData.getString("name");
@@ -59,5 +59,6 @@ public class Ability {
         gameData.ifHas("movement", m -> movement = m.asInteger());
         gameData.ifHas("resistance", r -> resistance = r.asInteger());
         gameData.ifHas("taunt", t -> taunt = t.asBoolean());
+        gameData.ifHas("gravity_pull", g -> gravity_pull = g.asBoolean());
     }
 }

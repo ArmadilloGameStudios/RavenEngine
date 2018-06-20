@@ -14,5 +14,6 @@
         { level: 5, bonus: { type: "ability" }},
         { level: 6, bonus: { type: "ability" }},
         { level: 7, bonus: { type: "ability" }},
+        { level: 8, bonus: { type: "ability" }},
     ]
 }
