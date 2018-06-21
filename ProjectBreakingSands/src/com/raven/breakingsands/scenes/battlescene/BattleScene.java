@@ -73,7 +73,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     private HashMap<Terrain, Float> rangeMap;
 
-    private List<Pawn> pawns = new ArrayList<>();
+    private List<Pawn> pawns = new CopyOnWriteArrayList<>();
     private Pawn activePawn;
     private Pawn targetPawn;
 
@@ -426,10 +426,13 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         if (team != activeTeam) {
             pawns.forEach(pawn -> {
                 Hack hack = pawn.getHack();
-                if (hack != null) {
+                if (hack != null && hack.getTeam() == activeTeam) {
                     hack.tick();
 
-                    if (hack.getRemaingingTurns() <= 0) {
+                    if (hack.getRemainingTurnsTurns() <= 0) {
+                        if (hack.getSelfDestruct() > 0) {
+                            pawn.damage(5);
+                        }
                         pawn.hack(null);
                     }
                 }
@@ -810,7 +813,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         if (activeAbility.hook_pull) {
             Terrain base = activePawn.getParent();
             Terrain from = pawn.getParent();
-            Optional<Terrain> to = null;
+            Optional<Terrain> to = Optional.empty();
 
             if (base.getMapX() > from.getMapX()) {
                 to = map.get(base.getMapX() - 1, base.getMapY());
@@ -825,14 +828,17 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                 to = map.get(base.getMapX(), base.getMapY() + 1);
             }
 
-            Objects.requireNonNull(to).ifPresent(t -> t.setPawn(pawn));
+            to.ifPresent(t -> t.setPawn(pawn));
 
             setActivePawn(activePawn);
         } else if (activeAbility.hack) {
-            pawn.hack(new Hack(0, 1));
+            pawn.hack(new Hack(0, activeAbility.turns, activeAbility.damage != null ? activeAbility.damage : 0));
             pawn.ready();
-            activePawn.setReady(false);
-            setActivePawn(pawn);
+            activePawn.setReady(activeAbility.remain);
+            if (activePawn.isReady())
+                setActivePawn(activePawn);
+            else
+                setActivePawn(null);
         }
     }
 

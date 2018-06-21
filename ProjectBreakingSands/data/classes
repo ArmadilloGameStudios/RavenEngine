@@ -77,6 +77,7 @@
             type: "target",
             target: "enemy",
 
+            turns: 1,
             size: 1,
             style: "diamond",
             hack: true,
@@ -87,6 +88,27 @@
             upgrade: "Hack",
 
             size: 3,
+        },
+        {
+            name: "Self Destruct",
+            type: "self",
+            upgrade: "Hack",
+
+            damage: 5,
+        },
+        {
+            name: "Quick Hack",
+            type: "self",
+            upgrade: "Hack",
+
+            remain: true,
+        },
+        {
+            name: "Extended Hack",
+            type: "self",
+            upgrade: "Hack",
+
+            turns: 1,
         }
     ]
 }

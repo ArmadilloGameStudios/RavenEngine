@@ -49,6 +49,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
             totalMovement, remainingMovement,
             resistance, totalAttacks = 1, remainingAttacks;
     private Hack hack;
+    private boolean unmoved = true;
     private boolean ready = true;
     private List<Ability> abilities = new ArrayList<>();
     private List<Ability> abilityAffects = new ArrayList<>();
@@ -214,8 +215,24 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
                         .filter(a -> a.name.equals(ability.upgrade))
                         .forEach(a -> {
                             if (ability.size != null) {
-                                a.size += ability.size;
+                                if (a.size == null)
+                                    a.size = ability.size;
+                                else
+                                    a.size += ability.size;
                             }
+                            if (ability.damage != null) {
+                                if (a.damage == null)
+                                    a.damage = ability.damage;
+                                else
+                                    a.damage += ability.damage;
+                            }
+                            if (ability.turns != null) {
+                                if (a.turns == null)
+                                    a.turns = ability.turns;
+                                else
+                                    a.turns += ability.turns;
+                            }
+                            a.remain |= ability.remain;
                         });
             }
         }
@@ -356,33 +373,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         int remainingResistance = Math.max(pawn.resistance - weapon.getPiercing(), 0);
         int dealtDamage = Math.max(weapon.getDamage() - remainingResistance, 0) * weapon.getShots();
 
-        if (dealtDamage <= 0) {
-            dealtDamage = 1;
-        }
-
-        int rolloverBonusShieldDamage = dealtDamage;
-        if (pawn.bonusShield > 0) {
-            rolloverBonusShieldDamage = -Math.min(pawn.bonusShield - dealtDamage, 0);
-            pawn.bonusShield = Math.max(pawn.bonusShield - dealtDamage, 0);
-        }
-
-        int rolloverShieldDamage = -Math.min(pawn.remainingShield - rolloverBonusShieldDamage, 0);
-        pawn.remainingShield = Math.max(pawn.remainingShield - rolloverBonusShieldDamage, 0);
-
-        int rolloverBonusHp = rolloverShieldDamage;
-        if (pawn.bonusHp > 0) {
-            rolloverBonusHp = -Math.min(pawn.bonusHp - rolloverShieldDamage, 0);
-            pawn.bonusHp = Math.max(pawn.bonusHp - rolloverShieldDamage, 0);
-        }
-        pawn.remainingHitPoints = Math.max(pawn.remainingHitPoints - rolloverBonusHp, 0);
-
-        if (pawn.remainingHitPoints == 0) {
-            pawn.die();
-        }
-
-        pawn.getParent().updateText();
-
-        pawn.showDamage("-" + Integer.toString(dealtDamage));
+        pawn.damage(dealtDamage);
     }
 
     public void reduceAttacks() {
@@ -391,6 +382,36 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         if (remainingAttacks == 0) {
             setReady(false);
         }
+    }
+
+    public void damage(int dealtDamage) {
+        if (dealtDamage <= 0) {
+            dealtDamage = 1;
+        }
+
+        int rolloverBonusShieldDamage = dealtDamage;
+        if (this.bonusShield > 0) {
+            rolloverBonusShieldDamage = -Math.min(this.bonusShield - dealtDamage, 0);
+            this.bonusShield = Math.max(this.bonusShield - dealtDamage, 0);
+        }
+
+        int rolloverShieldDamage = -Math.min(this.remainingShield - rolloverBonusShieldDamage, 0);
+        this.remainingShield = Math.max(this.remainingShield - rolloverBonusShieldDamage, 0);
+
+        int rolloverBonusHp = rolloverShieldDamage;
+        if (this.bonusHp > 0) {
+            rolloverBonusHp = -Math.min(this.bonusHp - rolloverShieldDamage, 0);
+            this.bonusHp = Math.max(this.bonusHp - rolloverShieldDamage, 0);
+        }
+        this.remainingHitPoints = Math.max(this.remainingHitPoints - rolloverBonusHp, 0);
+
+        if (this.remainingHitPoints == 0) {
+            this.die();
+        }
+
+        this.getParent().updateText();
+
+        this.showDamage("-" + Integer.toString(dealtDamage));
     }
 
     private void showDamage(String damage) {

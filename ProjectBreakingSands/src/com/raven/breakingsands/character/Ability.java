@@ -17,9 +17,9 @@ public class Ability {
     public RangeStyle style;
     public String replace;
 
-    public Integer size;
+    public Integer size, damage, turns;
     public Integer hp, shield, movement, resistance;
-    public boolean taunt, push_blast, hook_pull, hack;
+    public boolean taunt, push_blast, hook_pull, hack, remain;
 
     public Ability(GameData gameData) {
         name = gameData.getString("name");
@@ -72,10 +72,13 @@ public class Ability {
         gameData.ifHas("replace", r -> replace = r.asString());
         gameData.ifHas("upgrade", u -> upgrade = u.asString());
         gameData.ifHas("size", s -> size = s.asInteger());
+        gameData.ifHas("damage", d -> damage = d.asInteger());
         gameData.ifHas("hp", h -> hp = h.asInteger());
         gameData.ifHas("shield", s -> shield = s.asInteger());
         gameData.ifHas("movement", m -> movement = m.asInteger());
         gameData.ifHas("resistance", r -> resistance = r.asInteger());
+        gameData.ifHas("turns", t -> turns = t.asInteger());
+        gameData.ifHas("remain", c -> remain = c.asBoolean() );
         gameData.ifHas("taunt", t -> taunt = t.asBoolean());
         gameData.ifHas("push_blast", p -> push_blast = p.asBoolean());
         gameData.ifHas("hook_pull", h -> hook_pull = h.asBoolean());
