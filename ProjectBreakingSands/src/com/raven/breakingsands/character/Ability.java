@@ -11,7 +11,7 @@ public class Ability {
 
     public enum Target {ALL, SELF, ALLY, ENEMY}
 
-    public String name;
+    public String name, upgrade;
     public Type type;
     public Target target;
     public RangeStyle style;
@@ -37,41 +37,40 @@ public class Ability {
                 break;
         }
 
-        gameData.ifHas("target",
-                t -> {
-                    switch (t.asString()) {
-                        case "all":
-                            target = Target.ALL;
-                            break;
-                        case "self":
-                            target = Target.SELF;
-                            break;
-                        case "ally":
-                            target = Target.ALLY;
-                            break;
-                        case "enemy":
-                            target = Target.ENEMY;
-                            break;
-                    }
-                }, () -> target = Target.ALL);
+        gameData.ifHas("target", t -> {
+            switch (t.asString()) {
+                case "all":
+                    target = Target.ALL;
+                    break;
+                case "self":
+                    target = Target.SELF;
+                    break;
+                case "ally":
+                    target = Target.ALLY;
+                    break;
+                case "enemy":
+                    target = Target.ENEMY;
+                    break;
+            }
+        }, () -> target = Target.ALL);
 
-        gameData.ifHas("style",
-                s -> {
-                    switch (s.asString()) {
-                        case "straight":
-                            style = RangeStyle.STRAIGHT;
-                            break;
-                        case "square":
-                            style = RangeStyle.SQUARE;
-                            break;
-                        case "diamond":
-                            style = RangeStyle.DIAMOND;
-                            break;
-                    }
-                },
-                () -> style = RangeStyle.DIAMOND);
+        gameData.ifHas("style", s -> {
+            switch (s.asString()) {
+                case "straight":
+                    style = RangeStyle.STRAIGHT;
+                    break;
+                case "square":
+                    style = RangeStyle.SQUARE;
+                    break;
+                case "diamond":
+                    style = RangeStyle.DIAMOND;
+                    break;
+            }
+        }, () -> style = RangeStyle.DIAMOND);
+
 
         gameData.ifHas("replace", r -> replace = r.asString());
+        gameData.ifHas("upgrade", u -> upgrade = u.asString());
         gameData.ifHas("size", s -> size = s.asInteger());
         gameData.ifHas("hp", h -> hp = h.asInteger());
         gameData.ifHas("shield", s -> shield = s.asInteger());

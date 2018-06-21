@@ -7,7 +7,18 @@
     ]
 },
 {
-    class: "tank",
+     class: "tank",
+     level: [
+         { level: 3, bonus: { type: "ability" }},
+         { level: 4, bonus: { type: "ability" }},
+         { level: 5, bonus: { type: "ability" }},
+         { level: 6, bonus: { type: "ability" }},
+         { level: 7, bonus: { type: "ability" }},
+         { level: 8, bonus: { type: "ability" }},
+     ]
+},
+{
+    class: "hacker",
     level: [
         { level: 3, bonus: { type: "ability" }},
         { level: 4, bonus: { type: "ability" }},

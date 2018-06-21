@@ -80,6 +80,13 @@
             size: 1,
             style: "diamond",
             hack: true,
+        },
+        {
+            name: "Remote Hack",
+            type: "self",
+            upgrade: "Hack",
+
+            size: 3,
         }
     ]
 }

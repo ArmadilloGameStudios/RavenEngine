@@ -193,20 +193,30 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         abilities.add(ability);
 
         if (ability.type == Ability.Type.SELF) {
-            if (ability.hp != null) {
-                hitPoints += ability.hp;
-                remainingHitPoints += ability.hp;
-            }
-            if (ability.shield != null) {
-                totalShield += ability.shield;
-                remainingShield += ability.shield;
-            }
-            if (ability.movement != null) {
-                totalMovement += ability.movement;
-                remainingMovement += ability.movement;
-            }
-            if (ability.resistance != null) {
-                resistance += ability.resistance;
+            if (ability.upgrade == null) {
+                if (ability.hp != null) {
+                    hitPoints += ability.hp;
+                    remainingHitPoints += ability.hp;
+                }
+                if (ability.shield != null) {
+                    totalShield += ability.shield;
+                    remainingShield += ability.shield;
+                }
+                if (ability.movement != null) {
+                    totalMovement += ability.movement;
+                    remainingMovement += ability.movement;
+                }
+                if (ability.resistance != null) {
+                    resistance += ability.resistance;
+                }
+            } else { // upgrade existing ability
+                abilities.stream()
+                        .filter(a -> a.name.equals(ability.upgrade))
+                        .forEach(a -> {
+                            if (ability.size != null) {
+                                a.size += ability.size;
+                            }
+                        });
             }
         }
 
