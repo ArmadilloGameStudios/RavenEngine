@@ -387,9 +387,11 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     public void setActivePawn(Pawn pawn) {
-        this.activePawn = pawn;
+        if (activePawn != null && activePawn != pawn) {
+            activePawn.setReadyIfUnmoved();
+        }
 
-//        activePawn.ready();
+        this.activePawn = pawn;
 
         if (activePawn != null) {
             activePawn.getParent().updateText();
@@ -402,6 +404,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             pawn.getAbilities().forEach(a -> System.out.println(a.name));
             System.out.println("Terrain -");
             pawn.getParent().getAbilities().forEach(a -> System.out.println(a.name));
+
         }
 
         setState(SELECT_DEFAULT);
@@ -469,7 +472,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public void setState(State state) {
         this.state = state;
-        System.out.println("State: " + state);
+//        System.out.println("State: " + state);
 
         switch (state) {
             case SELECT_DEFAULT:
@@ -579,125 +582,104 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private void setStateSelectDefault() {
         activePawn.getAnimationState().setAction("idle", false);
 
-        // find movement
         Terrain parentTerrain = activePawn.getParent();
 
-        PathFinder<Terrain> pf = new PathFinder<>();
+        if (activePawn.canMove()) {
+            // find movement
+            PathFinder<Terrain> pf = new PathFinder<>();
 
-        pathMap = pf.findDistance(parentTerrain, activePawn.getRemainingMovement());
+            pathMap = pf.findDistance(parentTerrain, activePawn.getRemainingMovement());
 
-        if (pathMap.size() > 0) {
-            for (Terrain t : pathMap.keySet()) {
-                t.setState(Terrain.State.MOVEABLE);
-            }
-        }
-
-        // find attack
-        List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
-        rangeMap = parentTerrain.filterCoverRange(inRange);
-
-        boolean noOptions = true;
-
-        if (rangeMap.size() > 0) {
-            for (Terrain n : rangeMap.keySet()) {
-                if (n.getPawn() != null && n.getPawn().getTeam() != activePawn.getTeam()) {
-
-//                    n.cover = rangeMap.get(n);
-                    n.setState(Terrain.State.ATTACKABLE);
-                    n.updateText();
-
-                    noOptions = false;
+            if (pathMap.size() > 0) {
+                for (Terrain t : pathMap.keySet()) {
+                    t.setState(Terrain.State.MOVEABLE);
                 }
             }
         }
 
-        if (!activePawn.checkReady(noOptions)) {
-            setActivePawn(null);
-        } else {
-            setSelectablePawn();
+        if (activePawn.canAttack()) {
+            // find attack
+            List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
+            rangeMap = parentTerrain.filterCoverRange(inRange);
+
+            if (rangeMap.size() > 0) {
+                for (Terrain n : rangeMap.keySet()) {
+                    if (n.getPawn() != null && n.getPawn().getTeam() != activePawn.getTeam()) {
+
+//                    n.cover = rangeMap.get(n);
+                        n.setState(Terrain.State.ATTACKABLE);
+                        n.updateText();
+                    }
+                }
+            }
         }
+
+        setSelectablePawn();
     }
 
     private void setStateSelectMove() {
         activePawn.getAnimationState().setAction("idle", false);
 
-        // find movement
-        Terrain parentTerrain = activePawn.getParent();
+        if (activePawn.canMove()) {  // TODO add ability
+            // find movement
+            Terrain parentTerrain = activePawn.getParent();
 
-        PathFinder<Terrain> pf = new PathFinder<>();
+            PathFinder<Terrain> pf = new PathFinder<>();
 
-        pathMap = pf.findDistance(parentTerrain, activePawn.getRemainingMovement());
+            pathMap = pf.findDistance(parentTerrain, activePawn.getRemainingMovement());
 
-        if (pathMap.size() > 0) {
-            for (Terrain t : pathMap.keySet()) {
-                t.setState(Terrain.State.MOVEABLE);
+            if (pathMap.size() > 0) {
+                for (Terrain t : pathMap.keySet()) {
+                    t.setState(Terrain.State.MOVEABLE);
+                }
             }
         }
 
-        activePawn.setReady(true);
         setSelectablePawn();
     }
 
     private void setStateSelectAttack() {
         activePawn.getAnimationState().setAction("idle", false);
 
-        // find attack
-        Terrain parentTerrain = activePawn.getParent();
+        if (activePawn.canAttack()) {
+            // find attack
+            Terrain parentTerrain = activePawn.getParent();
 
-        List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
-        rangeMap = parentTerrain.filterCoverRange(inRange);
+            List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
+            rangeMap = parentTerrain.filterCoverRange(inRange);
 
-        boolean noOptions = true;
-
-        if (rangeMap.size() > 0) {
-            for (Terrain n : rangeMap.keySet()) {
-//                if (n.getPawn() == null || n.getPawn().getTeam() != activePawn.getTeam()) {
-
-//                n.cover = rangeMap.get(n);
-                n.setState(Terrain.State.ATTACKABLE);
-                n.updateText();
-
-                noOptions = false;
-//                }
+            if (rangeMap.size() > 0) {
+                for (Terrain n : rangeMap.keySet()) {
+                    n.setState(Terrain.State.ATTACKABLE);
+                    n.updateText();
+                }
             }
         }
 
-        if (!activePawn.checkReady(noOptions)) {
-            setActivePawn(null);
-        } else {
-            setSelectablePawn();
-        }
+        setSelectablePawn();
     }
 
     private void setStateSelectAbility() {
         activePawn.getAnimationState().setAction("idle", false);
 
-        // find target
-        Terrain parentTerrain = activePawn.getParent();
+        if (activePawn.canAbility(activeAbility)) {
+            // find target
+            Terrain parentTerrain = activePawn.getParent();
 
-        List<Terrain> inRange = parentTerrain.selectRange(activeAbility.style, activeAbility.size);
-        rangeMap = parentTerrain.filterCoverRange(inRange);
+            List<Terrain> inRange = parentTerrain.selectRange(activeAbility.style, activeAbility.size);
+            rangeMap = parentTerrain.filterCoverRange(inRange);
 
-        boolean noOptions = true;
-
-        if (rangeMap.size() > 0) {
-            for (Terrain n : rangeMap.keySet()) {
-                if (n.getPawn() == null || n.getPawn().getTeam() != activePawn.getTeam()) {
-//                    n.cover = rangeMap.get(n);
-                    n.setState(Terrain.State.ABILITYABLE);
-                    n.updateText();
-
-                    noOptions = false;
+            if (rangeMap.size() > 0) {
+                for (Terrain n : rangeMap.keySet()) {
+                    if (n.getPawn() == null || n.getPawn().getTeam() != activePawn.getTeam()) {
+                        n.setState(Terrain.State.ABILITYABLE);
+                        n.updateText();
+                    }
                 }
             }
         }
 
-        if (!activePawn.checkReady(noOptions)) {
-            setActivePawn(null);
-        } else {
-            setSelectablePawn();
-        }
-
+        setSelectablePawn();
     }
 
     public State getState() {
@@ -810,6 +792,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     public void pawnAbility(Pawn pawn) {
+        if (activeAbility.uses != null) {
+            activeAbility.remainingUses--;
+        }
+
         if (activeAbility.hook_pull) {
             Terrain base = activePawn.getParent();
             Terrain from = pawn.getParent();
@@ -834,7 +820,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         } else if (activeAbility.hack) {
             pawn.hack(new Hack(0, activeAbility.turns, activeAbility.damage != null ? activeAbility.damage : 0));
             pawn.ready();
-            activePawn.setReady(activeAbility.remain);
+            activePawn.setUnmoved(activeAbility.remain);
             if (activePawn.isReady())
                 setActivePawn(activePawn);
             else

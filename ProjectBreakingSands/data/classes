@@ -77,6 +77,7 @@
             type: "target",
             target: "enemy",
 
+            uses: 1
             turns: 1,
             size: 1,
             style: "diamond",
@@ -109,6 +110,13 @@
             upgrade: "Hack",
 
             turns: 1,
+        },
+        {
+            name: "Double Hack",
+            type: "self",
+            upgrade: "Hack",
+
+            uses: 1,
         }
     ]
 }

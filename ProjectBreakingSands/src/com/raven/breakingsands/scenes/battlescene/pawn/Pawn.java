@@ -132,6 +132,46 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         return bonusShield;
     }
 
+    public boolean canMove() {
+        boolean canMove = true;
+
+        canMove &= remainingAttacks == totalAttacks;
+
+        for (Ability a : abilities) {
+            canMove &= a.uses == null || (a.remainingUses == a.uses || a.remain);
+        }
+
+        return canMove;
+    }
+
+    public boolean canAttack() {
+        boolean canMove = true;
+
+        canMove &= remainingAttacks == totalAttacks;
+
+        for (Ability a : abilities) {
+            canMove &= a.uses == null || (a.remainingUses == a.uses || a.remain);
+        }
+
+        return canMove;
+    }
+
+    public boolean canAbility(Ability ability) {
+        boolean canMove = true;
+
+        canMove &= remainingAttacks == totalAttacks;
+
+        for (Ability a : abilities) {
+            if (a == ability)
+                canMove &= a.uses == null || (a.remainingUses > 0);
+            else
+                canMove &= a.uses == null || (a.remainingUses == a.uses || a.remain);
+
+        }
+
+        return canMove;
+    }
+
     public int getTotalMovement() {
         return totalMovement;
     }
@@ -232,6 +272,16 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
                                 else
                                     a.turns += ability.turns;
                             }
+                            if (ability.uses != null) {
+                                if (a.uses == null) {
+                                    a.uses = ability.uses;
+                                    a.remainingUses = ability.uses;
+                                }
+                                else {
+                                    a.uses += ability.uses;
+                                    a.remainingUses += ability.uses;
+                                }
+                            }
                             a.remain |= ability.remain;
                         });
             }
@@ -306,17 +356,19 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     }
 
     public void ready() {
-        ready = true;
+        setReady(true);
         remainingMovement = totalMovement;
         remainingAttacks = totalAttacks;
+
+        abilities.forEach(a -> {
+            if (a.uses != null) a.remainingUses = a.uses;
+        });
     }
 
     public void move(int amount) {
         remainingMovement = Math.max(remainingMovement - amount, 0);
 
-        if (remainingMovement == 0 && remainingAttacks == 0) {
-            setReady(false);
-        }
+        setUnmoved(false);
     }
 
     public void runAttackAnimation(Pawn target, ActionFinishHandler onAttackDone) {
@@ -373,6 +425,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         int remainingResistance = Math.max(pawn.resistance - weapon.getPiercing(), 0);
         int dealtDamage = Math.max(weapon.getDamage() - remainingResistance, 0) * weapon.getShots();
 
+        setUnmoved(false);
+
         pawn.damage(dealtDamage);
     }
 
@@ -380,7 +434,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         remainingAttacks = Math.max(totalAttacks - 1, 0);
 
         if (remainingAttacks == 0) {
-            setReady(false);
+            setUnmoved(false);
         }
     }
 
@@ -444,22 +498,14 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public void setReady(boolean ready) {
         this.ready = ready;
+        this.unmoved = ready;
     }
 
-    public boolean checkReady(boolean noOptions) {
-        if (remainingAttacks == 0) {
-            setReady(false);
-        } else if (remainingMovement == 0 && noOptions) {
-            setReady(false);
-        } else {
-            setReady(true);
-        }
-
-        return ready;
+    public void setUnmoved(boolean unmoved) {
+        this.unmoved &= unmoved;
     }
 
-    public void setReadyIsMoved(boolean readyIsMoved) {
-        if (remainingMovement != totalMovement || remainingAttacks != totalAttacks)
-            setReady(readyIsMoved);
+    public void setReadyIfUnmoved() {
+        ready = unmoved;
     }
 }

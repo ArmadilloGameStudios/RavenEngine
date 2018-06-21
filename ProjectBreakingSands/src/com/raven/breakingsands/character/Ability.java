@@ -17,7 +17,8 @@ public class Ability {
     public RangeStyle style;
     public String replace;
 
-    public Integer size, damage, turns;
+    public Integer size, damage, turns, uses;
+    public int remainingUses;
     public Integer hp, shield, movement, resistance;
     public boolean taunt, push_blast, hook_pull, hack, remain;
 
@@ -78,6 +79,7 @@ public class Ability {
         gameData.ifHas("movement", m -> movement = m.asInteger());
         gameData.ifHas("resistance", r -> resistance = r.asInteger());
         gameData.ifHas("turns", t -> turns = t.asInteger());
+        gameData.ifHas("uses", u -> remainingUses = uses = u.asInteger());
         gameData.ifHas("remain", c -> remain = c.asBoolean() );
         gameData.ifHas("taunt", t -> taunt = t.asBoolean());
         gameData.ifHas("push_blast", p -> push_blast = p.asBoolean());

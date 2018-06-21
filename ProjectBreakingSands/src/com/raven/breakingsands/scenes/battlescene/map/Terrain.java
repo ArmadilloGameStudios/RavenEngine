@@ -119,8 +119,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                                 if (pawn == getScene().getActivePawn()) {
 
                                 } else if (pawn.getTeam() == getScene().getActiveTeam()) {
-                                    if (getScene().getActivePawn() != null)
-                                        getScene().getActivePawn().setReadyIsMoved(false);
+//                                    if (getScene().getActivePawn() != null)
+//                                        getScene().getActivePawn().setReadyIsMoved(false);
                                     getScene().setActivePawn(pawn);
                                 }
                             }
