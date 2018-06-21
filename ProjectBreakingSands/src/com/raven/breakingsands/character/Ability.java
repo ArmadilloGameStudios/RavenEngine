@@ -19,7 +19,7 @@ public class Ability {
 
     public Integer size;
     public Integer hp, shield, movement, resistance;
-    public boolean taunt, push_blast, hook_pull;
+    public boolean taunt, push_blast, hook_pull, hack;
 
     public Ability(GameData gameData) {
         name = gameData.getString("name");
@@ -80,5 +80,6 @@ public class Ability {
         gameData.ifHas("taunt", t -> taunt = t.asBoolean());
         gameData.ifHas("push_blast", p -> push_blast = p.asBoolean());
         gameData.ifHas("hook_pull", h -> hook_pull = h.asBoolean());
+        gameData.ifHas("hack", h -> hack = h.asBoolean());
     }
 }

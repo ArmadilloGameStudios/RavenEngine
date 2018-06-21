@@ -68,6 +68,18 @@
     name: "hacker",
 
     bonus: {
-        ability: "hack",
+        ability: "Hack",
     }
+
+    abilities: [
+        {
+            name: "Hack",
+            type: "target",
+            target: "enemy",
+
+            size: 1,
+            style: "diamond",
+            hack: true,
+        }
+    ]
 }

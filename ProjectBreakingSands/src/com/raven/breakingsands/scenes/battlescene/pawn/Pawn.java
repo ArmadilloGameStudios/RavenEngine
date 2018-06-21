@@ -48,6 +48,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
             totalShield, remainingShield, bonusShield,
             totalMovement, remainingMovement,
             resistance, totalAttacks = 1, remainingAttacks;
+    private Hack hack;
     private boolean ready = true;
     private List<Ability> abilities = new ArrayList<>();
     private List<Ability> abilityAffects = new ArrayList<>();
@@ -88,7 +89,22 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     }
 
     public int getTeam() {
-        return team;
+        if (hack == null)
+            return team;
+        else
+            return hack.getTeam();
+    }
+
+    public void setTeam(int i) {
+        team = i;
+    }
+
+    public void hack(Hack hack) {
+        this.hack = hack;
+    }
+
+    public Hack getHack() {
+        return hack;
     }
 
     public int getHitPoints() {
@@ -153,6 +169,16 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
             totalMovement += gd.asInteger();
             remainingMovement += gd.asInteger();
         });
+
+        // add ability to the pawn if it is part of the class upgrade
+        bonus.ifHas("ability", a -> {
+            GameDatabase.all("classes").stream()
+                    .filter(c -> c.getString("name").equals(this.charClass))
+                    .map(c -> c.getList("abilities"))
+                    .findFirst()
+                    .map(aa -> aa.stream().filter(ab -> ab.getString("name").equals(a.asString())).findFirst())
+                    .ifPresent(x -> x.ifPresent(ability -> addAbility(new Ability(ability))));
+        });
     }
 
     public void addAbility(Ability ability) {
@@ -198,8 +224,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public void addAbilityAffect(Ability a) {
         if (a.target == Ability.Target.ALL ||
-                (a.target == Ability.Target.ALLY && team == 0) ||
-                (a.target == Ability.Target.ENEMY && team == 1)) {
+                (a.target == Ability.Target.ALLY && getTeam() == 0) ||
+                (a.target == Ability.Target.ENEMY && getTeam() == 1)) {
 
             abilityAffects.add(a);
 
@@ -262,7 +288,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         remainingMovement = Math.max(remainingMovement - amount, 0);
 
         if (remainingMovement == 0 && remainingAttacks == 0) {
-            ready = false;
+            setReady(false);
         }
     }
 
@@ -353,7 +379,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         remainingAttacks = Math.max(totalAttacks - 1, 0);
 
         if (remainingAttacks == 0) {
-            ready = false;
+            setReady(false);
         }
     }
 
@@ -391,11 +417,11 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public boolean checkReady(boolean noOptions) {
         if (remainingAttacks == 0) {
-            ready = false;
+            setReady(false);
         } else if (remainingMovement == 0 && noOptions) {
-            ready = false;
+            setReady(false);
         } else {
-            ready = true;
+            setReady(true);
         }
 
         return ready;
@@ -403,6 +429,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public void setReadyIsMoved(boolean readyIsMoved) {
         if (remainingMovement != totalMovement || remainingAttacks != totalAttacks)
-            this.ready = readyIsMoved;
+            setReady(readyIsMoved);
     }
 }

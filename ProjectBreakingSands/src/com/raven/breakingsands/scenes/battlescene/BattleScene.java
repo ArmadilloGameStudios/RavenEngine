@@ -10,6 +10,7 @@ import com.raven.breakingsands.scenes.battlescene.decal.Wall;
 import com.raven.breakingsands.scenes.battlescene.map.Map;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
+import com.raven.breakingsands.scenes.battlescene.pawn.Hack;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnDamage;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
@@ -243,7 +244,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             Pawn p = new Pawn(this, gdPawn);
             pawns.add(p);
 
-            Optional<Terrain> o = terrainList.stream().filter(t -> t.getPawn() == null && t.isPassable()).findAny();
+            Optional<Terrain> o = terrainList.stream().filter(Terrain::isPassable).findAny();
 
             map.setPawn(o.get(), p);
         }
@@ -267,7 +268,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         pawns.add(p);
 
         List<Terrain> terrainList = map.getTerrainList();
-        List<Terrain> validTerrainList = terrainList.stream().filter(t -> t.getPawn() == null && t.isPassable()).collect(Collectors.toList());
+        List<Terrain> validTerrainList = terrainList.stream().filter(Terrain::isPassable).collect(Collectors.toList());
 
 //        System.out.println(terrainList);
 //        System.out.println(validTerrainList);
@@ -420,6 +421,19 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             if (doSpawn()) {
                 spawnPawn("Service Drone");
             }
+        }
+
+        if (team != activeTeam) {
+            pawns.forEach(pawn -> {
+                Hack hack = pawn.getHack();
+                if (hack != null) {
+                    hack.tick();
+
+                    if (hack.getRemaingingTurns() <= 0) {
+                        pawn.hack(null);
+                    }
+                }
+            });
         }
 
         this.activeTeam = team;
@@ -814,6 +828,11 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             Objects.requireNonNull(to).ifPresent(t -> t.setPawn(pawn));
 
             setActivePawn(activePawn);
+        } else if (activeAbility.hack) {
+            pawn.hack(new Hack(0, 1));
+            pawn.ready();
+            activePawn.setReady(false);
+            setActivePawn(pawn);
         }
     }
 
@@ -838,7 +857,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             int y = Integer.signum(p.getParent().getMapY() - activePawn.getParent().getMapY());
 
             map.get(p.getParent().getMapX() + x, p.getParent().getMapY() + y).ifPresent(t -> {
-                if (t.isPassable() && t.getPawn() == null) {
+                if (t.isPassable()) {
                     t.setPawn(p);
                 }
             });

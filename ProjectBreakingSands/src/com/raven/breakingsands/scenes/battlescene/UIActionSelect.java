@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class UIActionSelect extends UIRightContainer<BattleScene> {
 
-    private UIAbilityButton btnPushBlast, btnHookPull;
+    private UIAbilityButton btnPushBlast, btnHookPull, btnHack;
     private UIButton<BattleScene> btnMove, btnAttack, btnSkip, btnCancel, btnLevel, btnEnd;
     private List<UIButton<BattleScene>> btns = new ArrayList<>();
     private boolean disable;
@@ -110,6 +110,56 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
         btnHookPull.setVisibility(false);
         addChild(btnHookPull);
         btns.add(btnHookPull);
+
+        btnHack = new UIAbilityButton(scene,
+                "sprites/icon hook.png",
+                "iconbutton") {
+
+            @Override
+            public void handleMouseClick() {
+                if (!isDisabled()) {
+                    if (isActive()) {
+                        setActive(false);
+                        getScene().setActiveAbility(null);
+                        scene.setState(oldState = BattleScene.State.SELECT_DEFAULT);
+                    } else {
+                        btns.forEach(b -> b.setActive(false));
+                        setActive(true);
+                        getScene().setActiveAbility(getAbility());
+                        scene.setState(oldState = BattleScene.State.SELECT_ABILITY);
+                    }
+
+                }
+            }
+
+            @Override
+            public void handleMouseEnter() {
+                super.handleMouseEnter();
+
+                if (!isDisabled())
+                    if (!isActive()) {;
+                        oldAbility = scene.getActiveAbility();
+                        scene.setActiveAbility(getAbility());
+                        oldState = scene.getState();
+                        scene.setState(BattleScene.State.SELECT_ABILITY);
+                    }
+
+            }
+
+            @Override
+            public void handleMouseLeave() {
+                super.handleMouseLeave();
+
+                if (!isDisabled())
+                    if (!isActive())
+                        scene.setActiveAbility(oldAbility);
+                scene.setState(oldState);
+
+            }
+        };
+        btnHack.setVisibility(false);
+        addChild(btnHack);
+        btns.add(btnHack);
 
         btnMove = new UIButton<BattleScene>(scene,
                 "sprites/move icon.png",
@@ -275,6 +325,9 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             btnHookPull.setDisable(disable);
             btnHookPull.setActive(false);
             btnHookPull.setVisibility(false);
+            btnHack.setDisable(disable);
+            btnHack.setActive(false);
+            btnHack.setVisibility(false);
         } else {
             btnCancel.setDisable(!(pawn.getTotalMovement() == pawn.getRemainingMovement()));
 
@@ -304,6 +357,16 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
                 btnHookPull.setAbility(ability.get());
             } else {
                 btnHookPull.setVisibility(false);
+            }
+
+            ability = pawn.getAbilities().stream().filter(a -> a.hack).findFirst();
+            if (ability.isPresent()) {
+                btnHack.setVisibility(true);
+                btnHack.setDisable(false);
+                btnHack.setActive(false);
+                btnHack.setAbility(ability.get());
+            } else {
+                btnHack.setVisibility(false);
             }
         }
 
