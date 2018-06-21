@@ -209,7 +209,7 @@ public abstract class WorldObject<
         children.clear();
     }
 
-    public void removeChild(WorldObject child) {
+    public void removeChild(C child) {
         children.remove(child);
     }
 

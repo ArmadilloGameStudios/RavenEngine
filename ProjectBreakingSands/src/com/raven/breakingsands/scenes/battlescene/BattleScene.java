@@ -46,7 +46,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             YELLOW = new Highlight(1f, .8f, .2f, .75f),
             YELLOW_CHANGING = new Highlight(1f, .8f, .2f, .5f),
             GREEN = new Highlight(.3f, 1f, .2f, .75f),
-            GREEN_CHANGING = new Highlight(.3f, 1f, .2f, .5f);
+            GREEN_CHANGING = new Highlight(.3f, 1f, .2f, .5f),
+            PURPLE = new Highlight(.5f, .1f, .8f, .75f),
+            PURPLE_CHANGING = new Highlight(.5f, .1f, .8f, .75f);
 
     private Menu menu;
     private UIActionSelect actionSelect;
@@ -87,7 +89,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private ExecutorService aiExecutorService = Executors.newSingleThreadExecutor();
     private AI ai = new AI(this);
     private Future aiFuture;
-
 
     public BattleScene(BreakingSandsGame game) {
         super(game);
@@ -247,6 +248,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             map.setPawn(o.get(), p);
         }
 
+        for (int i = 0; i < 10; i++) {
+            spawnPawn("Service Drone");
+        }
+
         setActivePawn(null);
         setState(SELECT_DEFAULT);
     }
@@ -283,7 +288,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     public void onUpdate(float deltaTime) {
         float a = (float) (Math.cos(GameEngine.getEngine().getSystemTime() * .005) * .15 + .4);
 
-        BLUE_CHANGING.a = RED_CHANGING.a = GREEN_CHANGING.a = YELLOW_CHANGING.a = a;
+        PURPLE_CHANGING.a = BLUE_CHANGING.a = RED_CHANGING.a = GREEN_CHANGING.a = YELLOW_CHANGING.a = a;
 
         switch (state) {
             case MOVING:
@@ -571,7 +576,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         }
 
         // find attack
-        List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
+        List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
         rangeMap = parentTerrain.filterCoverRange(inRange);
 
         boolean noOptions = true;
@@ -580,7 +585,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             for (Terrain n : rangeMap.keySet()) {
                 if (n.getPawn() != null && n.getPawn().getTeam() != activePawn.getTeam()) {
 
-                    n.cover = rangeMap.get(n);
+//                    n.cover = rangeMap.get(n);
                     n.setState(Terrain.State.ATTACKABLE);
                     n.updateText();
 
@@ -622,7 +627,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         // find attack
         Terrain parentTerrain = activePawn.getParent();
 
-        List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
+        List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
         rangeMap = parentTerrain.filterCoverRange(inRange);
 
         boolean noOptions = true;
@@ -631,7 +636,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             for (Terrain n : rangeMap.keySet()) {
 //                if (n.getPawn() == null || n.getPawn().getTeam() != activePawn.getTeam()) {
 
-                n.cover = rangeMap.get(n);
+//                n.cover = rangeMap.get(n);
                 n.setState(Terrain.State.ATTACKABLE);
                 n.updateText();
 
@@ -650,6 +655,31 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private void setStateSelectAbility() {
         activePawn.getAnimationState().setAction("idle", false);
 
+        // find target
+        Terrain parentTerrain = activePawn.getParent();
+
+        List<Terrain> inRange = parentTerrain.selectRange(activeAbility.style, activeAbility.size);
+        rangeMap = parentTerrain.filterCoverRange(inRange);
+
+        boolean noOptions = true;
+
+        if (rangeMap.size() > 0) {
+            for (Terrain n : rangeMap.keySet()) {
+                if (n.getPawn() == null || n.getPawn().getTeam() != activePawn.getTeam()) {
+//                    n.cover = rangeMap.get(n);
+                    n.setState(Terrain.State.ABILITYABLE);
+                    n.updateText();
+
+                    noOptions = false;
+                }
+            }
+        }
+
+        if (!activePawn.checkReady(noOptions)) {
+            setActivePawn(null);
+        } else {
+            setSelectablePawn();
+        }
 
     }
 
@@ -755,6 +785,36 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public void pawnMove() {
         setState(BattleScene.State.MOVING);
+    }
+
+    public void pawnAttack(Pawn pawn) {
+        setTargetPawn(pawn);
+        setState(BattleScene.State.ATTACKING);
+    }
+
+    public void pawnAbility(Pawn pawn) {
+        if (activeAbility.hook_pull) {
+            Terrain base = activePawn.getParent();
+            Terrain from = pawn.getParent();
+            Optional<Terrain> to = null;
+
+            if (base.getMapX() > from.getMapX()) {
+                to = map.get(base.getMapX() - 1, base.getMapY());
+            }
+            if (base.getMapX() < from.getMapX()) {
+                to = map.get(base.getMapX() + 1, base.getMapY());
+            }
+            if (base.getMapY() > from.getMapY()) {
+                to = map.get(base.getMapX(), base.getMapY() - 1);
+            }
+            if (base.getMapY() < from.getMapY()) {
+                to = map.get(base.getMapX(), base.getMapY() + 1);
+            }
+
+            Objects.requireNonNull(to).ifPresent(t -> t.setPawn(pawn));
+
+            setActivePawn(activePawn);
+        }
     }
 
     public void pawnLevel() {

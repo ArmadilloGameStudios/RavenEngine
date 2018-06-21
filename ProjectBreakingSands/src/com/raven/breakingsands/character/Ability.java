@@ -14,6 +14,7 @@ public class Ability {
     public String name;
     public Type type;
     public Target target;
+    public RangeStyle style;
     public String replace;
 
     public Integer size;
@@ -52,8 +53,23 @@ public class Ability {
                             target = Target.ENEMY;
                             break;
                     }
+                }, () -> target = Target.ALL);
+
+        gameData.ifHas("style",
+                s -> {
+                    switch (s.asString()) {
+                        case "straight":
+                            style = RangeStyle.STRAIGHT;
+                            break;
+                        case "square":
+                            style = RangeStyle.SQUARE;
+                            break;
+                        case "diamond":
+                            style = RangeStyle.DIAMOND;
+                            break;
+                    }
                 },
-                t -> target = Target.ALL);
+                () -> style = RangeStyle.DIAMOND);
 
         gameData.ifHas("replace", r -> replace = r.asString());
         gameData.ifHas("size", s -> size = s.asInteger());

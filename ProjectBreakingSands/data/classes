@@ -49,7 +49,8 @@
             type: "aurora",
             target: "enemy",
 
-            size: 2,
+            style: "square"
+            size: 1,
             push_blast: true,
         },
         {
@@ -58,6 +59,7 @@
             target: "enemy",
 
             size: 5,
+            style: "straight",
             hook_pull: true,
         }
     ]
@@ -66,8 +68,6 @@
     name: "hacker",
 
     bonus: {
-        movement: 1,
-
         ability: "hack",
     }
 }

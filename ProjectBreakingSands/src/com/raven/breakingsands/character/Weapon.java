@@ -35,6 +35,7 @@ public class Weapon
     private GameData gameData;
     private int damage, piercing = 0, range, rangeMin, shots;
     private boolean directional;
+    private RangeStyle style;
     private String name;
     private Effect effect;
 
@@ -44,6 +45,22 @@ public class Weapon
         name = gameData.getString("name");
 
         damage = gameData.getInteger("damage");
+
+        gameData.ifHas("style",
+                s -> {
+                    switch (s.asString()) {
+                        case "straight":
+                            style = RangeStyle.STRAIGHT;
+                            break;
+                        case "square":
+                            style = RangeStyle.SQUARE;
+                            break;
+                        case "diamond":
+                            style = RangeStyle.DIAMOND;
+                            break;
+                    }
+                },
+                () -> style = RangeStyle.DIAMOND);
 
         if (gameData.getData("range").isInteger()) {
             range = gameData.getInteger("range");
@@ -60,7 +77,7 @@ public class Weapon
 
         gameData.ifHas("piercing", gd -> piercing = gd.asInteger());
 
-        gameData.ifHas("shots", gd -> shots = gd.asInteger(), gd -> shots = 1);
+        gameData.ifHas("shots", gd -> shots = gd.asInteger(), () -> shots = 1);
 
         if (gameData.has("effect")) {
             GameData gdEffect = gameData.getData("effect");
@@ -124,6 +141,10 @@ public class Weapon
 
     public int getShots() {
         return shots;
+    }
+
+    public RangeStyle getStyle() {
+        return style;
     }
 
     public String getName() {

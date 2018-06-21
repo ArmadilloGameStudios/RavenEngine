@@ -12,6 +12,7 @@
     piercing: 1,
     range: 3,
     directional: true,
+    style: "straight",
 
     tags: [ "start" ]
 },
@@ -46,6 +47,7 @@
     piercing: 1,
     range: [ 2, 4 ],
     directional: true,
+    style: "straight",
 
     tags: [ "common" ]
 },
@@ -54,6 +56,7 @@
     type: "range",
     sprite: "sprites/plasmablade.png",
     animation: "plasma blade",
+    style: "straight",
 
     audio: {
         attack: "plasma_blade_sound.wav"
@@ -63,6 +66,7 @@
     piercing: 3,
     range: 3,
     directional: true,
+    style: "straight",
 
     tags: [ "common" ]
 },
@@ -80,6 +84,7 @@
     piercing: 2,
     range: [ 3, 6 ],
     directional: true,
+    style: "straight",
 
     tags: [ "common" ]
 },
@@ -97,8 +102,8 @@
     piercing: 0,
     range: 3,
     shots: 3,
-
     directional: true,
+    style: "straight",
 
     tags: [ "common" ]
 },
@@ -132,6 +137,7 @@
     damage: 2,
     range: 3,
     piercing: 1,
+    style: "diamond",
     effect: "disk",
 
     tags: [ ],

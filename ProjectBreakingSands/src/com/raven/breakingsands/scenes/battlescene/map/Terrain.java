@@ -2,6 +2,8 @@ package com.raven.breakingsands.scenes.battlescene.map;
 
 import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.character.Ability;
+import com.raven.breakingsands.character.RangeStyle;
+import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.SelectionDetails;
 import com.raven.breakingsands.scenes.battlescene.decal.Wall;
@@ -45,12 +47,13 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         MOVEABLE,
         MOVE,
         ATTACKABLE,
-        ATTACK
+        ATTACK,
+        ABILITYABLE,
+        ABILITY,
     }
 
     private State state;
 
-    public float cover = 0f;
     private int x, y;
 
     private boolean passable = true;
@@ -126,8 +129,10 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                             getScene().pawnMove();
                             break;
                         case ATTACK:
-                            getScene().setTargetPawn(getPawn());
-                            getScene().setState(BattleScene.State.ATTACKING);
+                            getScene().pawnAttack(getPawn());
+                            break;
+                        case ABILITY:
+                            getScene().pawnAbility(getPawn());
                             break;
                         default:
                             getScene().setSelectedDetailText(getDetails());
@@ -153,6 +158,10 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                             if (pawn != null && pawn.getTeam() != getScene().getActivePawn().getTeam())
                                 setState(State.ATTACK);
                             break;
+                        case ABILITYABLE:
+                            if (pawn != null && pawn.getTeam() != getScene().getActivePawn().getTeam())
+                                setState(State.ABILITY);
+                            break;
                     }
                     break;
             }
@@ -173,6 +182,9 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
                     if (state == State.ATTACK) {
                         setState(State.ATTACKABLE);
+                    }
+                    if (state == State.ABILITY) {
+                        setState(State.ABILITYABLE);
                     }
                     break;
             }
@@ -263,7 +275,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             removeChild(this.pawn);
         }
 
-        if (pawn.getParent() != null)
+        if (pawn.getParent() != null && pawn.getParent().getPawn() == pawn)
             pawn.getParent().removePawn();
 
         this.pawn = pawn;
@@ -274,7 +286,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         pawn.getAbilities().stream()
                 .filter(a -> a.type == Ability.Type.AURORA)
                 .forEach(a -> {
-                    List<Terrain> inRange = selectRange(a.size);
+                    List<Terrain> inRange = selectRange(a.style, a.size);
                     HashMap<Terrain, Float> rangeMap = filterCoverRange(inRange);
 
                     for (Terrain n : rangeMap.keySet()) {
@@ -286,7 +298,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
         updateText();
     }
-
 
     public Pawn getPawn() {
         return pawn;
@@ -308,7 +319,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     }
 
     public void removePawnAbility(Ability a) {
-        List<Terrain> inRange = selectRange(a.size);
+        List<Terrain> inRange = selectRange(a.style, a.size);
         HashMap<Terrain, Float> rangeMap = filterCoverRange(inRange);
 
         for (Terrain n : rangeMap.keySet()) {
@@ -336,7 +347,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         return abilities;
     }
 
-
     public void setState(State state) {
         this.state = state;
 
@@ -360,6 +370,11 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             case ATTACKABLE:
                 if (this.isMouseHovering()) {
                     setState(State.ATTACK);
+                }
+                break;
+            case ABILITYABLE:
+                if (this.isMouseHovering()) {
+                    setState(State.ABILITY);
                 }
                 break;
         }
@@ -421,6 +436,12 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                         case ATTACK:
                             setHighlight(BattleScene.RED_CHANGING);
                             break;
+                        case ABILITYABLE:
+                            setHighlight(BattleScene.PURPLE);
+                            break;
+                        case ABILITY:
+                            setHighlight(BattleScene.PURPLE_CHANGING);
+                            break;
                     }
                 else {
                     setHighlight(BattleScene.OFF);
@@ -476,14 +497,26 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     }
 
     public boolean isPassable() {
-        return passable;
+        return passable && getPawn() == null;
     }
 
-    public List<Terrain> selectRange(int rangeMax) {
-        return selectRange(1, rangeMax);
+    public List<Terrain> selectRange(RangeStyle style, int rangeMax) {
+        return selectRange(style, 1, rangeMax);
     }
 
-    public List<Terrain> selectRange(int rangeMin, int rangeMax) {
+    public List<Terrain> selectRange(RangeStyle style, int rangeMin, int rangeMax) {
+        switch (style) {
+            case SQUARE:
+                return selectRangeSquare(rangeMin, rangeMax);
+            case STRAIGHT:
+                return selectRangeStraight(rangeMin, rangeMax);
+            case DIAMOND:
+            default:
+                return selectRangeDiamond(rangeMin, rangeMax);
+        }
+    }
+
+    private List<Terrain> selectRangeDiamond(int rangeMin, int rangeMax) {
         int x = this.getMapX();
         int y = this.getMapY();
 
@@ -501,11 +534,59 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
                 if (Math.abs(i) + Math.abs(j) > rangeMin - 1) {
                     Optional<Terrain> o = getScene().getTerrainMap().get(x + i, y + j);
-//                if (o.isPresent() &&
-//                        o.get().getPawn() != null &&
-//                        o.get().getPawn().getTeam() != activePawn.getTeam()) {
                     o.ifPresent(withinRange::add);
                 }
+            }
+        }
+
+        return withinRange;
+    }
+
+    private List<Terrain> selectRangeSquare(int rangeMin, int rangeMax) {
+        int x = this.getMapX();
+        int y = this.getMapY();
+
+        List<Terrain> withinRange = new ArrayList<>();
+
+        for (int i = -rangeMax;
+             i <= rangeMax;
+             i++) {
+            for (int j = -rangeMax;
+                 j <= rangeMax;
+                 j++) {
+
+                if (Math.abs(i) + Math.abs(j) > rangeMin - 1) {
+                    Optional<Terrain> o = getScene().getTerrainMap().get(x + i, y + j);
+                    o.ifPresent(withinRange::add);
+                }
+            }
+        }
+
+        return withinRange;
+    }
+
+    private List<Terrain> selectRangeStraight(int rangeMin, int rangeMax) {
+        int x = this.getMapX();
+        int y = this.getMapY();
+
+        List<Terrain> withinRange = new ArrayList<>();
+
+        for (int i = -rangeMax;
+             i <= rangeMax;
+             i++) {
+            if (Math.abs(i) + Math.abs(0) > rangeMin - 1) {
+                Optional<Terrain> o = getScene().getTerrainMap().get(x + i, y);
+                o.ifPresent(withinRange::add);
+            }
+        }
+
+        for (int j = -rangeMax;
+             j <= rangeMax;
+             j++) {
+
+            if (Math.abs(0) + Math.abs(j) > rangeMin - 1) {
+                Optional<Terrain> o = getScene().getTerrainMap().get(x, y + j);
+                o.ifPresent(withinRange::add);
             }
         }
 
@@ -534,19 +615,21 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
             for (int x : new Range(endX, startX)) {
                 for (int y : new Range(endY, startY)) {
+                    if (!((x == startX && y == startY) || (x == endX && y == endY))) {
 
-                    Optional<Terrain> o = getScene().getTerrainMap().get(x, y);
-                    if (!o.isPresent() || !o.get().isPassable()) {
+                        Optional<Terrain> o = getScene().getTerrainMap().get(x, y);
+                        if (!o.isPresent() || !o.get().isPassable()) {
 
-                        float cover = linePointDist(a, b, c, x, y);
+                            float cover = linePointDist(a, b, c, x, y);
 
-                        if (cover >= 0f) {
-                            cover = Math.max(1f - cover, 0f);
-                            leftCoverage = Math.max(leftCoverage, Math.min(cover, 1f));
-                        } else if (cover < 0f) {
-                            cover = -cover;
-                            cover = Math.max(1f - cover, 0f);
-                            rightCoverage = Math.max(rightCoverage, Math.min(cover, 1f));
+                            if (cover >= 0f) {
+                                cover = Math.max(1f - cover, 0f);
+                                leftCoverage = Math.max(leftCoverage, Math.min(cover, 1f));
+                            } else if (cover < 0f) {
+                                cover = -cover;
+                                cover = Math.max(1f - cover, 0f);
+                                rightCoverage = Math.max(rightCoverage, Math.min(cover, 1f));
+                            }
                         }
                     }
                 }

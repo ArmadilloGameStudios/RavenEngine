@@ -72,7 +72,9 @@ public class AI implements Runnable {
                 .collect(Collectors.toList());
 
         // check if can attack
-        List<Terrain> inRange = scene.getActivePawn().getParent().selectRange(scene.getActivePawn().getWeapon().getRange());
+        List<Terrain> inRange = scene.getActivePawn().getParent().selectRange(
+                scene.getActivePawn().getWeapon().getStyle(),
+                scene.getActivePawn().getWeapon().getRange());
         inRange = inRange.stream()
                 .filter(t -> t.getPawn() != null &&
                         t.getPawn().getTeam() != scene.getActiveTeam())

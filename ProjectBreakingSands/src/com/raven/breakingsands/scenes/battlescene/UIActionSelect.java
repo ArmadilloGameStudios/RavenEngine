@@ -31,6 +31,31 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
                     getScene().pawnPushBlast(getAbility());
                 }
             }
+
+            @Override
+            public void handleMouseEnter() {
+                super.handleMouseEnter();
+
+                if (!isDisabled())
+                    if (!isActive()) {;
+                        oldAbility = scene.getActiveAbility();
+                        scene.setActiveAbility(getAbility());
+                        oldState = scene.getState();
+                        scene.setState(BattleScene.State.SELECT_ABILITY);
+                    }
+
+            }
+
+            @Override
+            public void handleMouseLeave() {
+                super.handleMouseLeave();
+
+                if (!isDisabled())
+                    if (!isActive())
+                        scene.setActiveAbility(oldAbility);
+                scene.setState(oldState);
+
+            }
         };
         btnPushBlast.setVisibility(false);
         addChild(btnPushBlast);
@@ -265,6 +290,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             if (ability.isPresent()) {
                 btnPushBlast.setVisibility(true);
                 btnPushBlast.setDisable(false);
+                btnPushBlast.setActive(false);
                 btnPushBlast.setAbility(ability.get());
             } else {
                 btnPushBlast.setVisibility(false);
@@ -274,6 +300,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             if (ability.isPresent()) {
                 btnHookPull.setVisibility(true);
                 btnHookPull.setDisable(false);
+                btnHookPull.setActive(false);
                 btnHookPull.setAbility(ability.get());
             } else {
                 btnHookPull.setVisibility(false);
