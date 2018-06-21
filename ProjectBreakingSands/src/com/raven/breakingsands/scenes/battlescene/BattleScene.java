@@ -1,6 +1,7 @@
 package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.BreakingSandsGame;
+import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.character.Weapon;
@@ -54,7 +55,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private UIDetailText uiSelectedDetailText;
 
     public enum State {
-        MOVING, ATTACKING, SELECT_DEFAULT, SELECT_MOVE, SELECT_ATTACK
+        MOVING, ATTACKING, SELECT_DEFAULT, SELECT_MOVE, SELECT_ATTACK, SELECT_ABILITY
     }
 
     private Random random = new Random();
@@ -73,6 +74,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private Pawn activePawn;
     private Pawn targetPawn;
 
+    private int activeTeam = 0;
+    private Ability activeAbility;
+
     private PawnDamage textDamage;
     private float damageShowTime;
 
@@ -84,7 +88,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private AI ai = new AI(this);
     private Future aiFuture;
 
-    private int activeTeam = 0;
 
     public BattleScene(BreakingSandsGame game) {
         super(game);
@@ -423,6 +426,14 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         setState(SELECT_DEFAULT);
     }
 
+    public Ability getActiveAbility() {
+        return activeAbility;
+    }
+
+    public void setActiveAbility(Ability ability) {
+        this.activeAbility = ability;
+    }
+
     public void setTargetPawn(Pawn targetPawn) {
         this.targetPawn = targetPawn;
     }
@@ -484,6 +495,18 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
                     if (activePawn != null) {
                         setStateSelectAttack();
+                    }
+                }
+                break;
+            case SELECT_ABILITY:
+                if (activeTeam == 0) {
+
+                    // clean
+                    map.setState(Terrain.State.UNSELECTABLE);
+                    currentPath = null;
+
+                    if (activePawn != null) {
+                        setStateSelectAbility();
                     }
                 }
                 break;
@@ -624,6 +647,12 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         }
     }
 
+    private void setStateSelectAbility() {
+        activePawn.getAnimationState().setAction("idle", false);
+
+
+    }
+
     public State getState() {
         return state;
     }
@@ -735,13 +764,12 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     }
 
-    public void pawnPushBlast() {
+    public void pawnPushBlast(Ability blast) {
         List<Pawn> pawns = this.pawns.stream()
                 .filter(p ->
                         p.getAbilityAffects().stream()
-                                .anyMatch(a ->
-                                        a.push_blast &&
-                                                a.owner == activePawn))
+//                                .anyMatch(a -> a.push_blast && a.owner == activePawn))
+                                .anyMatch(a -> a == blast))
                 .collect(Collectors.toList());
 
         // push

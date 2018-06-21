@@ -7,7 +7,7 @@ public class Ability {
 
     public Pawn owner;
 
-    public enum Type {SELF, AURORA}
+    public enum Type {SELF, AURORA, TARGET}
 
     public enum Target {ALL, SELF, ALLY, ENEMY}
 
@@ -18,7 +18,7 @@ public class Ability {
 
     public Integer size;
     public Integer hp, shield, movement, resistance;
-    public boolean taunt = false, push_blast = false;
+    public boolean taunt, push_blast, hook_pull;
 
     public Ability(GameData gameData) {
         name = gameData.getString("name");
@@ -30,6 +30,9 @@ public class Ability {
                 break;
             case "aurora":
                 type = Type.AURORA;
+                break;
+            case "target":
+                type = Type.TARGET;
                 break;
         }
 
@@ -59,6 +62,7 @@ public class Ability {
         gameData.ifHas("movement", m -> movement = m.asInteger());
         gameData.ifHas("resistance", r -> resistance = r.asInteger());
         gameData.ifHas("taunt", t -> taunt = t.asBoolean());
-        gameData.ifHas("push_blast", g -> push_blast = g.asBoolean());
+        gameData.ifHas("push_blast", p -> push_blast = p.asBoolean());
+        gameData.ifHas("hook_pull", h -> hook_pull = h.asBoolean());
     }
 }

@@ -108,6 +108,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             switch (getScene().getState()) {
                 case SELECT_MOVE:
                 case SELECT_ATTACK:
+                case SELECT_ABILITY:
                 case SELECT_DEFAULT:
                     switch (state) {
                         case SELECTABLE:
@@ -142,6 +143,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             switch (getScene().getState()) {
                 case SELECT_MOVE:
                 case SELECT_ATTACK:
+                case SELECT_ABILITY:
                 case SELECT_DEFAULT:
                     switch (state) {
                         case MOVEABLE:
@@ -165,6 +167,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             switch (getScene().getState()) {
                 case SELECT_MOVE:
                 case SELECT_ATTACK:
+                case SELECT_ABILITY:
                 case SELECT_DEFAULT:
                     getScene().clearPath();
 
@@ -190,6 +193,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             case SELECT_DEFAULT:
             case SELECT_ATTACK:
             case SELECT_MOVE:
+            case SELECT_ABILITY:
                 return getMovementNodes();
         }
 
@@ -370,6 +374,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                 break;
             case SELECT_MOVE:
             case SELECT_ATTACK:
+            case SELECT_ABILITY:
             case SELECT_DEFAULT:
                 if (getScene().getActiveTeam() == 0)
                     switch (state) {

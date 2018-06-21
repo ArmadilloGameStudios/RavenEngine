@@ -52,6 +52,14 @@
             size: 2,
             push_blast: true,
         },
+        {
+            name: "Hook",
+            type: "target",
+            target: "enemy",
+
+            size: 5,
+            hook_pull: true,
+        }
     ]
 },
 {
