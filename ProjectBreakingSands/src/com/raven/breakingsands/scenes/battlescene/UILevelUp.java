@@ -1,25 +1,116 @@
 package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.character.Ability;
-import com.raven.breakingsands.character.CharacterClass;
-import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
-import com.raven.breakingsands.scenes.hud.UICenterContainer;
-import com.raven.breakingsands.scenes.hud.UIRightContainer;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.ui.*;
+import com.raven.engine2d.util.math.Vector2f;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class UILevelUp extends UICenterContainer<BattleScene> {
+public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
+
+    public enum RewardType {
+        WEAPON, CLASS, ABILITY
+    }
+
+    private Vector2f position = new Vector2f();
 
     private Pawn pawn;
 
+    private UIImage<BattleScene> background;
+    private UILabel<BattleScene> lblLevelUp;
+    private UILevelUpButton btnA, btnB, btnC;
+    private List<UILevelUpButton> levelUpButtons = new ArrayList<>();
+
     public UILevelUp(BattleScene scene) {
         super(scene);
+
+        background = new UIImage<>(scene, 256, 256, "sprites/level up.png");
+        this.addChild(background);
+
+        lblLevelUp = new UILabel<>(getScene(), "level up!", 256, 14);
+        lblLevelUp.setX(100);
+        lblLevelUp.setY(472);
+        UIFont font = lblLevelUp.getFont();
+        font.setSmall(false);
+        font.setHighlight(true);
+        lblLevelUp.load();
+        addChild(lblLevelUp);
+
+        btnA = new UILevelUpButton(getScene(), "-");
+        btnA.load();
+        addChild(btnA);
+        levelUpButtons.add(btnA);
+
+        btnB = new UILevelUpButton(getScene(), "-");
+        btnB.setY(64);
+        btnB.load();
+        addChild(btnB);
+        levelUpButtons.add(btnB);
+
+        btnC = new UILevelUpButton(getScene(), "-");
+        btnC.setY(64 * 2);
+        btnC.load();
+        addChild(btnC);
+        levelUpButtons.add(btnC);
+    }
+
+    @Override
+    public Vector2f getPosition() {
+        return position;
+    }
+
+    @Override
+    public int getStyle() {
+        return getParent().getStyle();
+    }
+
+    @Override
+    public final float getY() {
+        return position.y;
+    }
+
+    @Override
+    public final void setY(float y) {
+        position.y = y;
+    }
+
+    @Override
+    public final float getX() {
+        return position.x;
+    }
+
+    @Override
+    public final void setX(float x) {
+        position.x = x;
+    }
+
+    @Override
+    public float getHeight() {
+        return 256;
+    }
+
+    @Override
+    public float getWidth() {
+        return 256;
+    }
+
+    public void levelUp() {
+        setVisibility(true);
+        getScene().setPaused(true);
+//        getParent().pack();
+//        getScene().setActivePawn(pawn);
+    }
+
+    public void close() {
+        setVisibility(false);
+        getScene().setPaused(false);
+        getScene().setActivePawn(pawn);
     }
 
     public void setPawn(Pawn pawn) {
@@ -49,30 +140,34 @@ public class UILevelUp extends UICenterContainer<BattleScene> {
 
                             // TODO
                             // select at most 3
-                            Random r = new Random();
-                            GameData weapon = weapons.get(r.nextInt(weapons.size()));
+//                            Random r = new Random();
+//                            GameData weapon = weapons.get(r.nextInt(weapons.size()));
+//                            btnA.setReward(pawn, RewardType.WEAPON, weapon);
 
-                            pawn.setWeapon(new Weapon(getScene(), weapon));
-                            pawn.setLevel(lvl);
+                            select3(weapons, RewardType.WEAPON);
                             break;
                         case "class":
-                            List<GameData> classes = GameDatabase.all("classes");
+                            List<GameData> classes = new ArrayList<>(GameDatabase.all("classes"));
+//                            r = new Random();
+//                            GameData newCharClass = classes.get(r.nextInt(classes.size()));
+//
+//                            btnA.setReward(pawn, RewardType.CLASS, newCharClass);
 
-                            r = new Random();
-                            GameData newCharClass = classes.get(r.nextInt(classes.size()));
-
-                            pawn.setCharacterClass(newCharClass);
-                            pawn.setLevel(lvl);
+                            System.out.println("Class");
+                            select3(classes, RewardType.CLASS);
                             break;
                         case "ability":
+                            System.out.println("ability");
                             GameDatabase.all("classes").stream()
                                     .filter(c -> c.getString("name").equals(pawn.getCharacterClass()))
                                     .findFirst()
                                     .ifPresent(c -> {
+                                        System.out.println("rawr 2");
                                         List<GameData> abilities = c.getList("abilities").stream()
                                                 .filter(a -> {
                                                     List<String> existing = pawn.getAbilities().stream().map(ab -> ab.name).collect(Collectors.toList());
 
+                                                    System.out.println("rawr 3");
                                                     boolean valid = !existing.contains(a.getString("name"));
 
                                                     if (a.has("requires_not")) {
@@ -88,20 +183,36 @@ public class UILevelUp extends UICenterContainer<BattleScene> {
                                                 .collect(Collectors.toList());
 
                                         if (abilities.size() > 0) {
-                                            Random rand = new Random();
-                                            GameData ability = abilities.get(rand.nextInt(abilities.size()));
 
-                                            pawn.addAbility(new Ability(ability));
+                                            System.out.println("rawr");
+//                                            Random rand = new Random();
+//                                            GameData ability = abilities.get(rand.nextInt(abilities.size()));
+//
+//                                            btnA.setReward(pawn, RewardType.ABILITY, ability);
+
                                         }
-                                    });
+                                        System.out.println("rawr?");
 
-                            pawn.setLevel(lvl);
+                                        select3(abilities, RewardType.ABILITY);
+                                    });
                             break;
                     }
                 }));
+    }
 
-        setVisibility(false);
-        getScene().setPaused(false);
-        getScene().setActivePawn(pawn);
+    private void select3(List<GameData> choices, RewardType type) {
+        Random r = new Random();
+
+        for (int i = 0; i < levelUpButtons.size(); i++) {
+
+            if (choices.size() > 0) {
+                GameData choice = choices.get(r.nextInt(choices.size()));
+                choices.remove(choice);
+
+                levelUpButtons.get(i).setReward(pawn, type, choice);
+            } else {
+                levelUpButtons.get(i).clear();
+            }
+        }
     }
 }

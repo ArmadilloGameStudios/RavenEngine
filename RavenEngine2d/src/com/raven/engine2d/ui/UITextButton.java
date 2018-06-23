@@ -25,10 +25,19 @@ public abstract class UITextButton<S extends Scene>
 
         uiText.getFont().setX(8);
         uiText.getFont().setY(10);
+        uiText.getFont().setButton(true);
         addChild(uiText);
     }
 
     public void load() {
         uiText.load();
+    }
+
+    public void setText(String text) {
+        uiText.setText(text);
+    }
+
+    public UIFont getFont() {
+        return uiText.getFont();
     }
 }

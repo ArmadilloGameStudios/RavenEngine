@@ -1,11 +1,15 @@
 package com.raven.engine2d.ui;
 
 
+import com.raven.engine2d.util.math.Vector2i;
+
 import static com.raven.engine2d.ui.UIFont.Side.LEFT;
 
 public class UIFont {
     private boolean highlight = true;
     private boolean small = false;
+    private boolean button = false;
+    private Vector2i buttonOffset = new Vector2i(0, 32);
 
     private int x, y;
 
@@ -28,8 +32,8 @@ public class UIFont {
     }
 
     public enum Side {
-        RIGHT, LEFT
-    };
+        RIGHT, LEFT,
+    }
 
     public void setHighlight(boolean highlight) {
         this.highlight = highlight;
@@ -45,6 +49,18 @@ public class UIFont {
 
     public boolean isSmall() {
         return small;
+    }
+
+    public void setButton(boolean button) {
+        this.button = button;
+    }
+
+    public boolean isButton() {
+        return button;
+    }
+
+    public Vector2i getButtonOffset() {
+        return buttonOffset;
     }
 
     public void setSide(Side side) {

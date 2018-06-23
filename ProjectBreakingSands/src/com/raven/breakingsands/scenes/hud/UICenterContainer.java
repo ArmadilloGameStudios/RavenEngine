@@ -4,7 +4,7 @@ import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.ui.UIContainer;
 import com.raven.engine2d.util.math.Vector2f;
 
-public abstract class UICenterContainer<S extends Scene>
+public class UICenterContainer<S extends Scene>
         extends UIContainer<S> {
 
 
@@ -14,6 +14,6 @@ public abstract class UICenterContainer<S extends Scene>
 
     @Override
     public int getStyle() {
-        return 0;
+        return UIContainer.CENTER;
     }
 }

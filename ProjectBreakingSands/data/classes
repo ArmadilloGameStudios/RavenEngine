@@ -49,6 +49,8 @@
             type: "aurora",
             target: "enemy",
 
+
+            uses: 1,
             style: "square"
             size: 1,
             push_blast: true,
@@ -58,6 +60,8 @@
             type: "target",
             target: "enemy",
 
+
+            uses: 1,
             size: 5,
             style: "straight",
             hook_pull: true,

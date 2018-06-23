@@ -9,13 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_DEFAULT;
+
 public class UIActionSelect extends UIRightContainer<BattleScene> {
 
     private UIAbilityButton btnPushBlast, btnHookPull, btnHack;
     private UIButton<BattleScene> btnMove, btnAttack, btnSkip, btnCancel, btnLevel, btnEnd;
     private List<UIButton<BattleScene>> btns = new ArrayList<>();
     private boolean disable;
-    private BattleScene.State oldState;
+    private BattleScene.State oldState = SELECT_DEFAULT;
     private Ability oldAbility;
 
     public UIActionSelect(BattleScene scene) {
@@ -71,7 +73,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
                     if (isActive()) {
                         setActive(false);
                         getScene().setActiveAbility(null);
-                        scene.setState(oldState = BattleScene.State.SELECT_DEFAULT);
+                        scene.setState(oldState = SELECT_DEFAULT);
                     } else {
                         btns.forEach(b -> b.setActive(false));
                         setActive(true);
@@ -112,7 +114,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
         btns.add(btnHookPull);
 
         btnHack = new UIAbilityButton(scene,
-                "sprites/icon hook.png",
+                "sprites/icon hack.png",
                 "iconbutton") {
 
             @Override
@@ -121,7 +123,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
                     if (isActive()) {
                         setActive(false);
                         getScene().setActiveAbility(null);
-                        scene.setState(oldState = BattleScene.State.SELECT_DEFAULT);
+                        scene.setState(oldState = SELECT_DEFAULT);
                     } else {
                         btns.forEach(b -> b.setActive(false));
                         setActive(true);
@@ -170,7 +172,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
                 if (!isDisabled())
                     if (isActive()) {
                         setActive(false);
-                        scene.setState(oldState = BattleScene.State.SELECT_DEFAULT);
+                        scene.setState(oldState = SELECT_DEFAULT);
                     } else {
                         btns.forEach(b -> b.setActive(false));
                         btnMove.setActive(true);
@@ -212,7 +214,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
                 if (!isDisabled())
                     if (isActive()) {
                         setActive(false);
-                        scene.setState(oldState = BattleScene.State.SELECT_DEFAULT);
+                        scene.setState(oldState = SELECT_DEFAULT);
                     } else {
                         btns.forEach(b -> b.setActive(false));
                         btnAttack.setActive(true);

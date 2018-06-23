@@ -16,6 +16,7 @@ import com.raven.breakingsands.scenes.battlescene.pawn.PawnDamage;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
 import com.raven.breakingsands.scenes.hud.UIBottomRightContainer;
+import com.raven.breakingsands.scenes.hud.UICenterContainer;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
@@ -184,7 +185,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         bottomRightContainer.addChild(uiActiveDetailText);
         bottomRightContainer.pack();
 
-
         UIBottomLeftContainer<BattleScene> bottomLeftContainer = new UIBottomLeftContainer<>(this);
         getLayerUI().addChild(bottomLeftContainer);
         uiSelectedDetailText = new UIDetailText(this, bottomLeftContainer.getStyle());
@@ -196,7 +196,11 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         getLayerUI().addChild(actionSelect);
 
         // Level UP
+        UICenterContainer<BattleScene> centerContainer = new UICenterContainer<>(this);
+        getLayerUI().addChild(centerContainer);
         uiLevelUp = new UILevelUp(this);
+        centerContainer.addChild(uiLevelUp);
+        centerContainer.pack();
         uiLevelUp.setVisibility(false);
 
         // Menu
@@ -380,6 +384,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public void removePawn(Pawn pawn) {
         pawns.remove(pawn);
+    }
+
+    public UILevelUp getUILevelUp() {
+        return uiLevelUp;
     }
 
     public Map getTerrainMap() {

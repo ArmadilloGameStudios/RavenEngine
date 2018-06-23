@@ -27,7 +27,7 @@ public abstract class UIButton<S extends Scene>
 
         spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation(animation));
 
-        image = new UIImage<>(scene, (int) getWidth(), (int) getHeight(), btnImgSrc);
+        image = new UIImage<>(scene, (int) getWidth(), (int) getHeight() * 2, btnImgSrc);
 
         image.setSpriteAnimation(spriteAnimationState);
         addChild(image);
@@ -92,7 +92,7 @@ public abstract class UIButton<S extends Scene>
 
     @Override
     public float getHeight() {
-        return spriteAnimationState.getHeight() * 2;
+        return spriteAnimationState.getHeight();
     }
 
     @Override

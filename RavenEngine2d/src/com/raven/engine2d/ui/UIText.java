@@ -36,7 +36,7 @@ public abstract class UIText<S extends Scene>
 
     public void load() {
         if (image == null)
-            if (font.isHighlight())
+            if (font.isButton())
                 image = new UITexture((int) getWidth(), (int) getHeight() * 2);
             else
                 image = new UITexture((int) getWidth(), (int) getHeight());

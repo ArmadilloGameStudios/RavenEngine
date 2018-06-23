@@ -4,6 +4,7 @@ import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.util.math.Vector2i;
 import org.lwjgl.system.CallbackI;
 
 import javax.imageio.ImageIO;
@@ -77,25 +78,32 @@ public class UITextWriter {
 
         if (font.getSide() == UIFont.Side.LEFT) {
             for (Character c : text.toLowerCase().toCharArray()) {
-                writeChar(c, alphabetLocation, font.isSmall());
+                writeChar(c, alphabetLocation);
             }
         } else {
             x = img.getWidth() - 1;
 
             for (Character c : new StringBuilder(text.toLowerCase()).reverse().toString().toCharArray()) {
-                writeChar(c, alphabetLocation, font.isSmall());
+                writeChar(c, alphabetLocation);
             }
         }
     }
 
-    private void writeChar(Character c, GameDataList alphabetLocation, boolean small) {
+    private void writeChar(Character c, GameDataList alphabetLocation) {
 
         switch (c) {
             case ' ':
-                if (small)
-                    x += 3;
-                else
-                    x += 6;
+                if (font.isSmall())
+                    if (font.getSide() == UIFont.Side.RIGHT)
+                        x -= 3;
+                    else
+                        x += 3;
+                else {
+                    if (font.getSide() == UIFont.Side.RIGHT)
+                        x -= 6;
+                    else
+                        x += 6;
+                }
                 break;
             default:
                 Optional<GameData> optionalgdChar = alphabetLocation.stream()
@@ -108,34 +116,66 @@ public class UITextWriter {
                     int cx = gdChar.getInteger("x");
                     int cw = gdChar.getInteger("width");
 
-                    if (!small) {
-                        imgGraphics.drawImage(alphabetImage,
-                                x, y, x + cw, y + 14,
-                                cx, 0, cx + cw, 14,
-                                null);
+                    if (!font.isSmall()) {
+                        if (font.getSide() == UIFont.Side.RIGHT) {
+                            x -= cw;
+                        }
 
-                        imgGraphics.drawImage(alphabetImage,
-                                x, y + 32, x + cw, y + 32 + 14,
-                                cx, 14, cx + cw, 28,
-                                null);
-
-                        x += cw;
-                    } else {
-                        if (font.getSide() == UIFont.Side.LEFT) {
-                            imgGraphics.drawImage(alphabetSmallImage,
-                                    x, y, x + cw, y + 8,
-                                    cx, 8, cx + cw, 16,
+                        if (font.isButton()) {
+                            imgGraphics.drawImage(alphabetImage,
+                                    x, y, x + cw, y + 14,
+                                    cx, 0, cx + cw, 14,
                                     null);
 
-                            x += cw - 1;
+                            Vector2i o = font.getButtonOffset();
+
+                            imgGraphics.drawImage(alphabetImage,
+                                    x + o.x, y + o.y, x + cw + o.x, y + o.y + 14,
+                                    cx, 14, cx + cw, 28,
+                                    null);
                         } else {
-                            x -= cw - 1;
+                            if (font.isHighlight()) {
+                                imgGraphics.drawImage(alphabetImage,
+                                        x, y, x + cw, y + 14,
+                                        cx, 14, cx + cw, 28,
+                                        null);
+                            } else {
+                                imgGraphics.drawImage(alphabetImage,
+                                        x, y, x + cw, y + 14,
+                                        cx, 0, cx + cw, 14,
+                                        null);
+                            }
+                        }
 
+                        if (font.getSide() == UIFont.Side.LEFT) {
+                            x += cw;
+                        }
+                    } else {
+                        if (font.getSide() == UIFont.Side.RIGHT) {
+                            x -= cw - 1;
+                        }
+
+                        if (font.isButton()) {
                             imgGraphics.drawImage(alphabetSmallImage,
                                     x, y, x + cw, y + 8,
                                     cx, 8, cx + cw, 16,
                                     null);
 
+                            Vector2i o = font.getButtonOffset();
+
+                            imgGraphics.drawImage(alphabetSmallImage,
+                                    x + o.x, y + o.y, x + cw + o.x, y + o.y + 8,
+                                    cx, 8, cx + cw, 16,
+                                    null);
+                        } else {
+                            imgGraphics.drawImage(alphabetSmallImage,
+                                    x, y, x + cw, y + 8,
+                                    cx, 8, cx + cw, 16,
+                                    null);
+                        }
+
+                        if (font.getSide() == UIFont.Side.LEFT) {
+                            x += cw - 1;
                         }
                     }
                 }

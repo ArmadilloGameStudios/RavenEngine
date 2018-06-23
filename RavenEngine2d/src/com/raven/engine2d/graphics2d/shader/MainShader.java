@@ -188,6 +188,7 @@ public class MainShader extends Shader {
     private float isoHeight = 16, isoWidth = 32;
 
     private void drawIsometric(ShaderTexture texture, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset) {
+        glEnable(GL_DEPTH_TEST);
 
         float x = position.y * isoWidth + position.x * isoWidth + offset.x;
         float y = position.y * isoHeight - position.x * isoHeight + offset.y;
@@ -240,6 +241,8 @@ public class MainShader extends Shader {
     }
 
     private void drawUI(ShaderTexture texture, SpriteAnimationState spriteAnimation, Vector2f position) {
+        glDisable(GL_DEPTH_TEST);
+
         glUniform1i(sprite_sheet_location, texture.getTextureActiveLocation());
 
         float x = position.x;
