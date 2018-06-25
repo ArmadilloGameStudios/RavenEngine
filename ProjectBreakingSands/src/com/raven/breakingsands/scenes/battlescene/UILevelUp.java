@@ -153,21 +153,19 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
 //
 //                            btnA.setReward(pawn, RewardType.CLASS, newCharClass);
 
-                            System.out.println("Class");
+//                            System.out.println("Class");
                             select3(classes, RewardType.CLASS);
                             break;
                         case "ability":
-                            System.out.println("ability");
+//                            System.out.println("ability");
                             GameDatabase.all("classes").stream()
                                     .filter(c -> c.getString("name").equals(pawn.getCharacterClass()))
                                     .findFirst()
                                     .ifPresent(c -> {
-                                        System.out.println("rawr 2");
                                         List<GameData> abilities = c.getList("abilities").stream()
                                                 .filter(a -> {
                                                     List<String> existing = pawn.getAbilities().stream().map(ab -> ab.name).collect(Collectors.toList());
 
-                                                    System.out.println("rawr 3");
                                                     boolean valid = !existing.contains(a.getString("name"));
 
                                                     if (a.has("requires_not")) {
@@ -183,17 +181,8 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
                                                 .collect(Collectors.toList());
 
                                         if (abilities.size() > 0) {
-
-                                            System.out.println("rawr");
-//                                            Random rand = new Random();
-//                                            GameData ability = abilities.get(rand.nextInt(abilities.size()));
-//
-//                                            btnA.setReward(pawn, RewardType.ABILITY, ability);
-
+                                            select3(abilities, RewardType.ABILITY);
                                         }
-                                        System.out.println("rawr?");
-
-                                        select3(abilities, RewardType.ABILITY);
                                     });
                             break;
                     }

@@ -232,7 +232,7 @@ public class GameEngine<G extends Game> implements Runnable {
     private void loadSprites(File base) {
         for (File f : base.listFiles()) {
             if (f.isFile()) {
-                System.out.println(f.getPath());
+//                System.out.println(f.getPath());
 
                 spriteSheetsMap.put(f.getPath(), new SpriteSheet(f));
             } else if (f.isDirectory()) {
@@ -295,8 +295,8 @@ public class GameEngine<G extends Game> implements Runnable {
                 audioInputStream.read(audioBytes, 0, size);
                 Clip clip = (Clip) AudioSystem.getLine(new DataLine.Info(Clip.class, af, size));
 
-                System.out.println(audioName);
-                System.out.println(audioInputStream.getFrameLength());
+//                System.out.println(audioName);
+//                System.out.println(audioInputStream.getFrameLength());
 
                 clip.open(af, audioBytes, 0, size);
 

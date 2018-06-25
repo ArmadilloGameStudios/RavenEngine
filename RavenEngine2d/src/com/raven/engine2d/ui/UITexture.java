@@ -36,7 +36,7 @@ public class UITexture
     }
 
     public void drawImage(String src) {
-        System.out.println(src);
+//        System.out.println(src);
         SpriteSheet background = GameEngine.getEngine().getSpriteSheet(src);
 
         if (this.img == null) {

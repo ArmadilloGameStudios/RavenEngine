@@ -34,7 +34,7 @@ public class Effect extends WorldObject<BattleScene, Terrain, WorldObject> {
         super(scene, gameData);
 
         name = gameData.getString("name");
-        System.out.println(gameData);
+//        System.out.println(gameData);
     }
 
     @Override

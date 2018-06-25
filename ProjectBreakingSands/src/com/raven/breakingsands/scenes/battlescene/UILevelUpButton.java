@@ -29,7 +29,6 @@ public class UILevelUpButton extends UITextButton<BattleScene> {
                     pawn.setWeapon(new Weapon(getScene(), reward));
                     break;
                 case CLASS:
-                    System.out.println(reward);
                     pawn.setCharacterClass(reward);
                     break;
                 case ABILITY:
@@ -38,7 +37,6 @@ public class UILevelUpButton extends UITextButton<BattleScene> {
             }
 
             pawn.setLevel(pawn.getLevel() + 1);
-            System.out.println(pawn.getLevel());
 
             getScene().getUILevelUp().close();
         }
@@ -52,7 +50,6 @@ public class UILevelUpButton extends UITextButton<BattleScene> {
         setVisibility(true);
         setDisable(false);
 
-        System.out.println(reward.getString("name"));
         setText(reward.getString("name"));
         load();
     }

@@ -35,9 +35,9 @@ public class GameDataReader {
 				data.add(d);
 		}
 
-		for (GameData d : data) {
-			System.out.println(d);
-		}
+//		for (GameData d : data) {
+//			System.out.println(d);
+//		}
 
 		return data;
 	}

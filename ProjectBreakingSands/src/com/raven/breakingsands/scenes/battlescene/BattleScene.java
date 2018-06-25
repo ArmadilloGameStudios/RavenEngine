@@ -248,7 +248,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             Pawn p = new Pawn(this, gdPawn);
             pawns.add(p);
 
-            Optional<Terrain> o = terrainList.stream().filter(Terrain::isPassable).findAny();
+            Optional<Terrain> o = map.getFirstStructure().getTerrainList().stream().filter(Terrain::isPassable).findAny();
 
             map.setPawn(o.get(), p);
         }
@@ -408,10 +408,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             Vector2f pos = pawn.getWorldPosition();
             // TODO focus on pawn
 
-            System.out.println("Pawn -");
-            pawn.getAbilities().forEach(a -> System.out.println(a.name));
-            System.out.println("Terrain -");
-            pawn.getParent().getAbilities().forEach(a -> System.out.println(a.name));
+//            System.out.println("Pawn -");
+//            pawn.getAbilities().forEach(a -> System.out.println(a.name));
+//            System.out.println("Terrain -");
+//            pawn.getParent().getAbilities().forEach(a -> System.out.println(a.name));
 
         }
 
@@ -427,12 +427,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     public void setActiveTeam(int team) {
-        // TODO change spawn
-        if (team == 0 && this.activeTeam == 1) {
-            if (doSpawn()) {
-                spawnPawn("Service Drone");
-            }
-        }
 
         if (team != activeTeam) {
             pawns.forEach(pawn -> {

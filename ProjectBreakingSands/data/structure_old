@@ -1,0 +1,544 @@
+{
+    name: "cell 1",
+
+    tags: [ "prison", "cell" ],
+
+    width: 2,
+    height: 3,
+
+    entrance: [{ side: 0, location: 0, length: 2, name: "a" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 1, y: 0 },
+
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 1, y: 1 },
+
+        { type: "floor", x: 0, y: 2 },
+    ]
+},
+{
+    name: "cell 2",
+
+    tags: [ "prison", "cell" ],
+
+    width: 2,
+    height: 3,
+
+    entrance: [{ side: 2, location: 0, length: 2, name: "a" }],
+
+    terrain: [
+        { type: "floor", x: 1, y: 0 },
+
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 1, y: 1 },
+
+        { type: "floor", x: 0, y: 2 },
+        { type: "floor", x: 1, y: 2 },
+    ]
+},
+{
+    name: "cell 3",
+
+    tags: [ "prison", "cell" ],
+
+    width: 3,
+    height: 2,
+
+    entrance: [{ side: 1, location: 0, length: 1, name: "a" }],
+
+    terrain: [
+        { type: "floor", x: 2, y: 1,
+            wall: [ "red light", "north" ] },
+
+        { type: "floor", x: 0, y: 1,
+            wall: [ "corner", "in" ] },
+        { type: "floor", x: 1, y: 1,
+            wall: [ "red light", "north" ] },
+
+        { type: "floor", x: 0, y: 0,
+            wall: [ "red light", "west" ] },
+
+        { type: "floor", x: 1, y: 0 },
+    ]
+},
+{
+    name: "cell 4",
+
+    tags: [ "prison", "cell" ],
+
+    width: 3,
+    height: 2,
+
+    entrance: [{ side: 3, location: 0, length: 2, name: "a" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0 },
+
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+    ]
+},
+{
+    name: "short hall a",
+
+    tags: [ "prison", "hall" ],
+
+    width: 3,
+    height: 2,
+
+    entrance: [{ side: 0, location: 1, length: 2, name: "a" },
+               { side: 2, location: 0, length: 2, name: "b" }],
+
+    terrain: [
+        { type: "floor", x: 1, y: 1,
+            wall: [ "red light", "west" ]
+        },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 1, y: 0,
+            wall: [ "red light", "west" ]
+        },
+        { type: "floor", x: 2, y: 0 },
+    ]
+},
+{
+    name: "short hall b",
+
+    tags: [ "prison", "hall" ],
+
+    width: 2,
+    height: 3,
+
+    entrance: [{ side: 1, location: 1, length: 2, name: "a" },
+               { side: 3, location: 0, length: 2, name: "b" }],
+
+    terrain: [
+        { type: "floor", x: 1, y: 1,
+            wall: [ "red light", "north" ]
+        },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 0, y: 1,
+            wall: [ "red light", "north" ]
+        },
+        { type: "floor", x: 0, y: 0 },
+    ]
+},
+{
+    name: "corner a",
+
+    tags: [ "prison", "corner" ],
+
+    width: 4,
+    height: 3,
+
+    entrance: [{ side: 0, location: 1, length: 2, name: "a" },
+               { side: 1, location: 1, length: 2, name: "b" }],
+
+    terrain: [
+        { type: "floor", x: 1, y: 0,
+            wall: [ "red light", "west" ]
+        },
+        { type: "floor", x: 1, y: 1,
+            wall: [ "red light", "west" ]
+        },
+        { type: "floor", x: 1, y: 2,
+            wall: [ "red light", "west" ]
+        },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 2, y: 2 },
+        { type: "floor", x: 3, y: 0 },
+        { type: "floor", x: 3, y: 1,
+            wall: [ "corner", "north" ] },
+    ]
+},
+{
+    name: "corner b",
+
+
+    tags: [ "prison", "corner" ],
+
+    width: 3,
+    height: 3,
+
+    entrance: [{ side: 1, location: 1, length: 2, name: "a" },
+               { side: 2, location: 0, length: 2, name: "b" }],
+
+    terrain: [
+        { type: "floor", x: 1, y: 0,
+            wall: [ "red light", "west" ]
+        },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 1, y: 1,
+            wall: [ "corner", "in" ]
+        },
+        { type: "floor", x: 2, y: 1,
+            wall: [ "red light", "north" ]
+ },
+    ]
+},
+{
+    name: "corner c",
+
+
+    tags: [ "prison", "corner" ],
+
+    width: 3,
+    height: 4,
+
+    entrance: [{ side: 2, location: 0, length: 2, name: "a" },
+               { side: 3, location: 1, length: 2, name: "b" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2,
+            wall: [ "red light", "north" ]
+        },
+        { type: "floor", x: 1, y: 2,
+            wall: [ "red light", "north" ]
+        },
+        { type: "floor", x: 2, y: 2,
+            wall: [ "red light", "north" ]
+        },
+
+        { type: "floor", x: 1, y: 0,
+            wall: [ "corner", "west" ]
+        },
+        { type: "floor", x: 2, y: 0, },
+    ]
+},
+{
+    name: "corner d",
+
+    tags: [ "prison", "corner" ],
+
+    width: 2,
+    height: 2,
+
+    entrance: [{ side: 3, location: 0, length: 2, name: "a" },
+               { side: 0, location: 0, length: 2, name: "b" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0, },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 0, y: 1,
+            wall: [ "corner", "out" ]
+        },
+        { type: "floor", x: 1, y: 1, },
+    ]
+},
+{
+    name: "split",
+
+    tags: [ "prison", "split" ],
+
+    width: 4,
+    height: 4,
+
+    entrance: [{ side: 0, location: 1, length: 2, name: "a" },
+               { side: 1, location: 1, length: 2, name: "b" },
+               { side: 2, location: 1, length: 2, name: "c" },
+               { side: 3, location: 1, length: 2, name: "d" }],
+
+    terrain: [
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 1, y: 2,
+            wall: [ "corner", "out" ] },
+
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 0, y: 2,
+            wall: [ "red light", "north" ] },
+
+        { type: "floor", x: 1, y: 3,
+            wall: [ "red light", "west" ] },
+
+        { type: "floor", x: 3, y: 1 },
+        { type: "floor", x: 3, y: 2,
+            wall: [ "corner", "north" ] },
+
+        { type: "floor", x: 1, y: 0,
+            wall: [ "corner", "west" ] },
+
+
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 2, y: 2 },
+        { type: "floor", x: 2, y: 3 },
+    ]
+},
+{
+    name: "room 1",
+
+    tags: [ "prison" ],
+
+    width: 7,
+    height: 7,
+
+    entrance: [{ side: 0, location: 3, length: 2, name: "a" },
+               { side: 2, location: 0, length: 6, name: "b" },],
+
+    terrain: [
+        { type: "floor", x: 1, y: 0,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 1,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 2,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 3,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 4,
+            wall: [ "red light", "west" ] },
+
+        { type: "floor", x: 1, y: 5,
+            wall: [ "corner", "in" ] },
+        { type: "floor", x: 2, y: 5,
+            wall: [ "red light", "north" ] },
+        { type: "floor", x: 3, y: 5,
+            wall: [ "corner", "out" ] },
+        { type: "floor", x: 4, y: 5 },
+        { type: "floor", x: 5, y: 5,
+            wall: [ "corner", "north" ] },
+        { type: "floor", x: 6, y: 5,
+            wall: [ "red light", "north" ] },
+
+        { type: "floor", x: 3, y: 6,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 4, y: 6 }
+
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 2, y: 2 },
+        { type: "floor", x: 2, y: 3 },
+        { type: "floor", x: 2, y: 4 },
+        { type: "floor", x: 3, y: 0 },
+        { type: "floor", x: 3, y: 1 },
+        { type: "floor", x: 3, y: 2 },
+        { type: "floor", x: 3, y: 3 },
+        { type: "floor", x: 3, y: 4 },
+        { type: "floor", x: 4, y: 0 },
+        { type: "floor", x: 4, y: 1 },
+        { type: "floor", x: 4, y: 2 },
+        { type: "floor", x: 4, y: 3 },
+        { type: "floor", x: 4, y: 4 },
+        { type: "floor", x: 5, y: 0 },
+        { type: "floor", x: 5, y: 1 },
+        { type: "floor", x: 5, y: 2 },
+        { type: "floor", x: 5, y: 3 },
+        { type: "floor", x: 5, y: 4 },
+        { type: "floor", x: 6, y: 0 },
+        { type: "floor", x: 6, y: 1 },
+        { type: "floor", x: 6, y: 2 },
+        { type: "floor", x: 6, y: 3 },
+        { type: "floor", x: 6, y: 4 },
+    ],
+},
+{
+    name: "room 2",
+
+    tags: [ "prison" ],
+
+    width: 7,
+    height: 6,
+
+    entrance: [
+        { side: 0, location: 1, length: 6, name: "a" },
+        { side: 2, location: 0, length: 6, name: "b" },
+    ],
+
+    terrain: [
+        { type: "floor", x: 1, y: 0,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 1,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 2,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 3,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 4,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 5,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 2, y: 4 },
+        { type: "floor", x: 3, y: 4 },
+        { type: "floor", x: 4, y: 4 },
+        { type: "floor", x: 5, y: 4 },
+
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 2, y: 2 },
+        { type: "floor", x: 2, y: 3 },
+        { type: "floor", x: 2, y: 4 },
+        { type: "floor", x: 2, y: 5 },
+        { type: "floor", x: 3, y: 0 },
+        { type: "floor", x: 3, y: 1 },
+        { type: "floor", x: 3, y: 2 },
+        { type: "floor", x: 3, y: 3 },
+        { type: "floor", x: 3, y: 4 },
+        { type: "floor", x: 3, y: 5 },
+        { type: "floor", x: 4, y: 0 },
+        { type: "floor", x: 4, y: 1 },
+        { type: "floor", x: 4, y: 2 },
+        { type: "floor", x: 4, y: 3 },
+        { type: "floor", x: 4, y: 4 },
+        { type: "floor", x: 4, y: 5 },
+        { type: "floor", x: 5, y: 0 },
+        { type: "floor", x: 5, y: 1 },
+        { type: "floor", x: 5, y: 2 },
+        { type: "floor", x: 5, y: 3 },
+        { type: "floor", x: 5, y: 4 },
+        { type: "floor", x: 5, y: 5 },
+        { type: "floor", x: 6, y: 0 },
+        { type: "floor", x: 6, y: 1 },
+        { type: "floor", x: 6, y: 2 },
+        { type: "floor", x: 6, y: 3 },
+        { type: "floor", x: 6, y: 4 },
+        { type: "floor", x: 6, y: 5 },
+    ],
+},
+{
+    name: "room 3",
+
+    tags: [ "prison" ],
+
+    width: 7,
+    height: 7,
+
+    entrance: [
+        { side: 0, location: 1, length: 6, name: "a" },
+        { side: 2, location: 2, length: 2, name: "b" },
+    ],
+
+    terrain: [
+        { type: "floor", x: 1, y: 1,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 2,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 3,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 4,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 5,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 6,
+            wall: [ "red light", "west" ] },
+
+        { type: "floor", x: 2, y: 5 },
+        { type: "floor", x: 3, y: 5 },
+        { type: "floor", x: 4, y: 5 },
+        { type: "floor", x: 5, y: 5 },
+
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 2, y: 2 },
+        { type: "floor", x: 2, y: 3 },
+        { type: "floor", x: 2, y: 4 },
+        { type: "floor", x: 2, y: 5 },
+        { type: "floor", x: 2, y: 6 },
+        { type: "floor", x: 3, y: 1 },
+        { type: "floor", x: 3, y: 2 },
+        { type: "floor", x: 3, y: 3 },
+        { type: "floor", x: 3, y: 4 },
+        { type: "floor", x: 3, y: 5 },
+        { type: "floor", x: 3, y: 6 },
+        { type: "floor", x: 4, y: 1 },
+        { type: "floor", x: 4, y: 2 },
+        { type: "floor", x: 4, y: 3 },
+        { type: "floor", x: 4, y: 4 },
+        { type: "floor", x: 4, y: 5 },
+        { type: "floor", x: 4, y: 6 },
+        { type: "floor", x: 5, y: 1 },
+        { type: "floor", x: 5, y: 2 },
+        { type: "floor", x: 5, y: 3 },
+        { type: "floor", x: 5, y: 4 },
+        { type: "floor", x: 5, y: 5 },
+        { type: "floor", x: 5, y: 6 },
+        { type: "floor", x: 6, y: 1 },
+        { type: "floor", x: 6, y: 2 },
+        { type: "floor", x: 6, y: 3 },
+        { type: "floor", x: 6, y: 4 },
+        { type: "floor", x: 6, y: 5 },
+        { type: "floor", x: 6, y: 6 },
+
+        { type: "floor", x: 3, y: 0,
+            wall: [ "corner", "west" ] },
+        { type: "floor", x: 4, y: 0 }
+    ],
+},
+{
+    name: "room 4",
+
+    tags: [ "prison" ],
+
+    width: 7,
+    height: 6,
+
+    entrance: [
+        { side: 0, location: 1, length: 6, name: "a" },
+        { side: 2, location: 0, length: 6, name: "b" },
+        { side: 3, location: 1, length: 1, name: "c" },
+        { side: 3, location: 4, length: 1, name: "d" },
+    ],
+
+    terrain: [
+        { type: "floor", x: 0, y: 1,
+            wall: [ "red light", "north"] },
+
+        { type: "floor", x: 0, y: 4,
+            wall: [ "red light", "north"] },
+
+        { type: "floor", x: 1, y: 0,
+            wall: [ "corner", "west" ] },
+        { type: "floor", x: 1, y: 1
+            wall: [ "corner", "out" ] },
+        { type: "floor", x: 1, y: 2,
+            wall: [ "red light", "west" ] },
+        { type: "floor", x: 1, y: 3,
+            wall: [ "corner", "west" ] },
+        { type: "floor", x: 1, y: 4
+            wall: [ "corner", "out" ] },
+        { type: "floor", x: 1, y: 5,
+            wall: [ "red light", "west" ] },
+
+
+        { type: "floor", x: 2, y: 0},
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 2, y: 2 },
+        { type: "floor", x: 2, y: 3 },
+        { type: "floor", x: 2, y: 4 },
+        { type: "floor", x: 2, y: 5 },
+        { type: "floor", x: 2, y: 6 },
+        { type: "floor", x: 3, y: 0 },
+        { type: "floor", x: 3, y: 1 },
+        { type: "floor", x: 3, y: 2 },
+        { type: "floor", x: 3, y: 3 },
+        { type: "floor", x: 3, y: 4 },
+        { type: "floor", x: 3, y: 5 },
+        { type: "floor", x: 3, y: 6 },
+        { type: "floor", x: 4, y: 0 },
+        { type: "floor", x: 4, y: 1 },
+        { type: "floor", x: 4, y: 2 },
+        { type: "floor", x: 4, y: 3 },
+        { type: "floor", x: 4, y: 4 },
+        { type: "floor", x: 4, y: 5 },
+        { type: "floor", x: 4, y: 6 },
+        { type: "floor", x: 5, y: 0 },
+        { type: "floor", x: 5, y: 1 },
+        { type: "floor", x: 5, y: 2 },
+        { type: "floor", x: 5, y: 3 },
+        { type: "floor", x: 5, y: 4 },
+        { type: "floor", x: 5, y: 5 },
+        { type: "floor", x: 5, y: 6 },
+        { type: "floor", x: 6, y: 0 },
+        { type: "floor", x: 6, y: 1 },
+        { type: "floor", x: 6, y: 2 },
+        { type: "floor", x: 6, y: 3 },
+        { type: "floor", x: 6, y: 4 },
+        { type: "floor", x: 6, y: 5 },
+        { type: "floor", x: 6, y: 6 },
+    ],
+},

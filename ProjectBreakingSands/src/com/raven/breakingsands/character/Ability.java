@@ -24,7 +24,6 @@ public class Ability {
 
     public Ability(GameData gameData) {
         name = gameData.getString("name");
-        System.out.println(name);
 
         switch (gameData.getString("type")) {
             default:

@@ -17,14 +17,14 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
     private Structure firstStructure;
 
-    private int size = 5;
+    private int size = 9;
     private int i = 0;
     private int tries = 0;
 
     public Map(BattleScene scene) {
         super(scene);
 
-        while (structures.size() == 0) {
+        while (structures.size() == 0 || !structures.contains(firstStructure)) {
             i = size;
             startGeneration();
         }
@@ -43,10 +43,10 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         Structure s = firstStructure = structureFactory.getInstance();
         addStructure(s);
 
-        while (generate(structureFactory)) {
+        do {
             i = size - structures.size();
             tries++;
-        }
+        } while (generate(structureFactory));
     }
 
     private boolean generate(StructureFactory structureFactory) {
@@ -58,7 +58,6 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         int sCount = openStructures.size();
 
         if (sCount == 0) {
-            System.out.println("Done");
             return false;
         }
 
@@ -157,8 +156,13 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         return structures;
     }
 
+    public Structure getFirstStructure() {
+        return firstStructure;
+    }
+
     @Override
     public float getZ() {
         return ZLayer.TERRAIN.getValue();
     }
+
 }
