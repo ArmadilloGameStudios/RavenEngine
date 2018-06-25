@@ -17,14 +17,14 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
     private Structure firstStructure;
 
-    private int size = 9;
+    private int size = 21;
     private int i = 0;
     private int tries = 0;
 
     public Map(BattleScene scene) {
         super(scene);
 
-        while (structures.size() == 0 || !structures.contains(firstStructure)) {
+        while (structures.size() == 0 || !structures.contains(firstStructure)) { // TODO already check for size?
             i = size;
             startGeneration();
         }
@@ -72,10 +72,6 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         } else {
             addStructure(s);
         }
-
-        // redo all connections
-        // TODO remove
-//        redoConnections();
 
         return true;
     }

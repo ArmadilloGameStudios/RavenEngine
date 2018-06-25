@@ -51,10 +51,9 @@
         { type: "floor", x: 1, y: 1 },
         { type: "floor", x: 2, y: 1 },
         { type: "floor", x: 3, y: 1 },
-        { type: "floor", x: 0, y: 2 },
-        { type: "floor", x: 1, y: 2 },
-        { type: "floor", x: 2, y: 2 },
-        { type: "floor", x: 3, y: 2 },
+        { type: "floor", x: 1, y: 2, wall: [ "wall", "north" ] },
+        { type: "floor", x: 2, y: 2, wall: [ "wall", "north" ] },
+        { type: "floor", x: 3, y: 2, wall: [ "wall", "north" ] },
     ]
 },
 {
@@ -76,13 +75,10 @@
         { type: "floor", x: 1, y: 1 },
         { type: "floor", x: 2, y: 1 },
         { type: "floor", x: 3, y: 1 },
-        { type: "floor", x: 0, y: 2,
-            wall: [ "corner", "north" ] },
-        { type: "floor", x: 1, y: 2,
-            wall: [ "corner", "out" ] },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "north" ] },
+        { type: "floor", x: 1, y: 2, wall: [ "corner", "out" ] },
         { type: "floor", x: 2, y: 2 },
-        { type: "floor", x: 3, y: 2,
-            wall: [ "corner", "north" ] },
+        { type: "floor", x: 3, y: 2, wall: [ "corner", "north" ] },
     ]
 },
 {
@@ -96,16 +92,15 @@
                { side: 2, location: 0, length: 3, name: "c" }],
 
     terrain: [
-        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 0, y: 0, wall: [ "wall", "west" ] },
         { type: "floor", x: 1, y: 0 },
         { type: "floor", x: 2, y: 0 },
-        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 0, y: 1, wall: [ "wall", "west" ] },
         { type: "floor", x: 1, y: 1 },
         { type: "floor", x: 2, y: 1 },
-        { type: "floor", x: 0, y: 2 },
+        { type: "floor", x: 0, y: 2, wall: [ "wall", "west" ] },
         { type: "floor", x: 1, y: 2 },
         { type: "floor", x: 2, y: 2 },
-        { type: "floor", x: 0, y: 3 },
         { type: "floor", x: 1, y: 3 },
         { type: "floor", x: 2, y: 3 },
     ]
@@ -121,19 +116,16 @@
                { side: 3, location: 1, length: 2, name: "d" }],
 
     terrain: [
-        { type: "floor", x: 0, y: 0,
-            wall: [ "corner", "west" ] },
+        { type: "floor", x: 0, y: 0, wall: [ "corner", "west" ] },
         { type: "floor", x: 1, y: 0 },
         { type: "floor", x: 2, y: 0 },
         { type: "floor", x: 0, y: 1 },
         { type: "floor", x: 1, y: 1 },
         { type: "floor", x: 2, y: 1 },
-        { type: "floor", x: 0, y: 2,
-            wall: [ "corner", "out" ] },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "out" ] },
         { type: "floor", x: 1, y: 2 },
         { type: "floor", x: 2, y: 2 },
-        { type: "floor", x: 0, y: 3,
-            wall: [ "corner", "west" ] },
+        { type: "floor", x: 0, y: 3, wall: [ "corner", "west" ] },
         { type: "floor", x: 1, y: 3 },
         { type: "floor", x: 2, y: 3 },
     ]
@@ -154,9 +146,9 @@
         { type: "floor", x: 0, y: 1 },
         { type: "floor", x: 1, y: 1 },
         { type: "floor", x: 2, y: 1 },
-        { type: "floor", x: 0, y: 2 },
-        { type: "floor", x: 1, y: 2 },
-        { type: "floor", x: 2, y: 2 },]
+        { type: "floor", x: 0, y: 2, wall: [ "wall", "north" ] },
+        { type: "floor", x: 1, y: 2, wall: [ "wall", "north" ] },
+        { type: "floor", x: 2, y: 2, wall: [ "wall", "north" ] },]
 },
 {
     name: "south east wall",
@@ -174,8 +166,7 @@
         { type: "floor", x: 0, y: 1 },
         { type: "floor", x: 1, y: 1 },
         { type: "floor", x: 2, y: 1 },
-        { type: "floor", x: 0, y: 2,
-            wall: [ "corner", "out" ] },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "out" ] },
         { type: "floor", x: 1, y: 2 },
         { type: "floor", x: 2, y: 2 },]
 },
@@ -190,15 +181,19 @@
                { side: 2, location: 0, length: 3, name: "c" }],
 
     terrain: [
-        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 0, y: 0, wall: [ "wall", "west" ] },
         { type: "floor", x: 1, y: 0 },
         { type: "floor", x: 2, y: 0 },
-        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 0, y: 1, wall: [ "wall", "west" ] },
         { type: "floor", x: 1, y: 1 },
         { type: "floor", x: 2, y: 1 },
-        { type: "floor", x: 0, y: 2 },
-        { type: "floor", x: 1, y: 2 },
-        { type: "floor", x: 2, y: 2 },]
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "in" ] },
+        { type: "floor", x: 1, y: 2, wall: [ "wall", "north" ] },
+        { type: "floor", x: 2, y: 2, wall: [ "wall", "north" ] },
+
+        { type: "floor", x: 0, y: -1, wall: [ "wall", "west" ] },
+        { type: "floor", x: 3, y: 2, wall: [ "wall", "north" ] },
+    ]
 },
 {
     name: "south west wall",
@@ -210,13 +205,451 @@
                { side: 1, location: 0, length: 3, name: "b" }],
 
     terrain: [
+        { type: "floor", x: 0, y: 0, wall: [ "wall", "west" ] },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1, wall: [ "wall", "west" ] },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "wall", "west" ] },
+        { type: "floor", x: 1, y: 2 },
+        { type: "floor", x: 2, y: 2 },]
+},
+{
+    name: "north door",
+
+    width: 4,
+    height: 3,
+
+    entrance: [{ side: 0, location: 1, length: 2, name: "a" },
+               { side: 1, location: 0, length: 3, name: "b" },
+               { side: 2, location: 1, length: 2, name: "c" },
+               { side: 3, location: 0, length: 3, name: "d" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 3, y: 0 },
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 3, y: 1 },
+        { type: "floor", x: 1, y: 2, wall: [ "corner", "out" ] },
+        { type: "floor", x: 2, y: 2 },
+        { type: "floor", x: 3, y: 2, wall: [ "corner", "north" ] },
+    ]
+},
+{
+    name: "south door",
+
+    width: 4,
+    height: 3,
+
+    entrance: [{ side: 0, location: 1, length: 2, name: "a" },
+               { side: 1, location: 0, length: 3, name: "b" },
+               { side: 2, location: 1, length: 2, name: "c" },
+               { side: 3, location: 0, length: 3, name: "d" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 3, y: 0 },
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 3, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "north" ] },
+        { type: "floor", x: 1, y: 2, wall: [ "corner", "out" ] },
+        { type: "floor", x: 2, y: 2 },
+        { type: "floor", x: 3, y: 2, wall: [ "corner", "north" ] },
+    ]
+},
+{
+    name: "west door",
+
+    width: 3,
+    height: 4,
+
+    entrance: [{ side: 0, location: 0, length: 3, name: "a" },
+               { side: 1, location: 1, length: 2, name: "b" },
+               { side: 2, location: 0, length: 3, name: "c" },
+               { side: 3, location: 1, length: 2, name: "d" },],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0, wall: [ "corner", "west" ] },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "out" ] },
+        { type: "floor", x: 1, y: 2 },
+        { type: "floor", x: 2, y: 2 },
+        { type: "floor", x: 1, y: 3 },
+        { type: "floor", x: 2, y: 3 },
+    ]
+},
+{
+    name: "east door",
+
+    width: 3,
+    height: 4,
+
+    entrance: [{ side: 0, location: 0, length: 3, name: "a" },
+               { side: 1, location: 1, length: 2, name: "b" },
+               { side: 2, location: 0, length: 3, name: "c" },
+               { side: 3, location: 1, length: 2, name: "d" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0, wall: [ "corner", "west" ] },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "out" ] },
+        { type: "floor", x: 1, y: 2 },
+        { type: "floor", x: 2, y: 2 },
+        { type: "floor", x: 0, y: 3, wall: [ "corner", "west" ] },
+        { type: "floor", x: 1, y: 3 },
+        { type: "floor", x: 2, y: 3 },
+    ]
+},
+{
+    name: "north east wall north door",
+
+    width: 3,
+    height: 3,
+
+    entrance: [{ side: 0, location: 0, length: 2, name: "a" },
+               { side: 2, location: 0, length: 3, name: "c" },
+               { side: 3, location: 0, length: 3, name: "d" }],
+
+    terrain: [
         { type: "floor", x: 0, y: 0 },
         { type: "floor", x: 1, y: 0 },
         { type: "floor", x: 2, y: 0 },
         { type: "floor", x: 0, y: 1 },
         { type: "floor", x: 1, y: 1 },
         { type: "floor", x: 2, y: 1 },
-        { type: "floor", x: 0, y: 2 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "out" ] },
+        { type: "floor", x: 1, y: 2 },
+        { type: "floor", x: 2, y: 2, wall: [ "corner", "north" ] }]
+},
+{
+    name: "north east wall east door",
+
+    width: 3,
+    height: 3,
+
+    entrance: [{ side: 1, location: 1, length: 2, name: "b" },
+               { side: 2, location: 0, length: 3, name: "c" },
+               { side: 3, location: 0, length: 3, name: "d" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "wall", "north" ] },
+        { type: "floor", x: 1, y: 2, wall: [ "wall", "north" ] },
+        { type: "floor", x: 2, y: 2, wall: [ "wall", "north" ] },]
+},
+{
+    name: "north east wall north and east door",
+
+    width: 3,
+    height: 3,
+
+    entrance: [{ side: 0, location: 0, length: 2, name: "a" },
+               { side: 1, location: 1, length: 2, name: "b" },
+               { side: 2, location: 0, length: 3, name: "c" },
+               { side: 3, location: 0, length: 3, name: "d" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "out" ] },
+        { type: "floor", x: 1, y: 2 },
+        { type: "floor", x: 2, y: 2, wall: [ "corner", "north" ] }]
+},
+{
+    name: "south east wall south door",
+
+    width: 3,
+    height: 3,
+
+    entrance: [{ side: 0, location: 0, length: 3, name: "a" },
+               { side: 2, location: 1, length: 2, name: "c" },
+               { side: 3, location: 0, length: 3, name: "d" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "out" ] },
         { type: "floor", x: 1, y: 2 },
         { type: "floor", x: 2, y: 2 },]
+},
+{
+    name: "south east wall east door",
+
+    width: 3,
+    height: 3,
+
+    entrance: [{ side: 0, location: 0, length: 3, name: "a" },
+               { side: 1, location: 0, length: 2, name: "b" },
+               { side: 3, location: 0, length: 3, name: "d" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "out" ] },
+        { type: "floor", x: 1, y: 2 },
+        { type: "floor", x: 2, y: 2 },]
+},
+{
+    name: "south east wall south and east door",
+
+    width: 3,
+    height: 3,
+
+    entrance: [{ side: 0, location: 0, length: 3, name: "a" },
+               { side: 1, location: 0, length: 2, name: "b" },
+               { side: 2, location: 1, length: 2, name: "c" },
+               { side: 3, location: 0, length: 3, name: "d" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "out" ] },
+        { type: "floor", x: 1, y: 2 },
+        { type: "floor", x: 2, y: 2 },]
+},
+{
+    name: "north west wall north door",
+
+    width: 3,
+    height: 3,
+
+    entrance: [{ side: 0, location: 1, length: 2, name: "a" },
+               { side: 1, location: 0, length: 3, name: "b" },
+               { side: 2, location: 0, length: 3, name: "c" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0, wall: [ "wall", "west" ] },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1, wall: [ "wall", "west" ] },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "in" ] },
+        { type: "floor", x: 1, y: 2, wall: [ "corner", "out" ] },
+        { type: "floor", x: 2, y: 2 },
+
+        { type: "floor", x: 0, y: -1, wall: [ "wall", "west" ] },
+        { type: "floor", x: 3, y: 2, wall: [ "corner", "north" ] },
+    ]
+},
+{
+    name: "north west wall west door",
+
+    width: 3,
+    height: 3,
+
+    entrance: [{ side: 1, location: 0, length: 3, name: "b" },
+               { side: 2, location: 0, length: 3, name: "c" },
+               { side: 3, location: 0, length: 2, name: "d" },],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1, wall: [ "corner", "out" ] },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "in" ] },
+        { type: "floor", x: 1, y: 2, wall: [ "wall", "north" ] },
+        { type: "floor", x: 2, y: 2, wall: [ "wall", "north" ] }
+
+        { type: "floor", x: 0, y: -1, wall: [ "corner", "west" ] },
+        { type: "floor", x: 3, y: 2, wall: [ "wall", "north" ] },
+    ]
+},
+{
+    name: "north west wall north and west door",
+
+    width: 3,
+    height: 3,
+
+    entrance: [{ side: 0, location: 1, length: 2, name: "a" },
+               { side: 1, location: 0, length: 3, name: "b" },
+               { side: 2, location: 0, length: 3, name: "c" },
+               { side: 3, location: 0, length: 2, name: "d" },],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1, wall: [ "corner", "out" ] },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "in" ] },
+        { type: "floor", x: 1, y: 2, wall: [ "corner", "out" ] },
+        { type: "floor", x: 2, y: 2 }
+
+        { type: "floor", x: 0, y: -1, wall: [ "corner", "west" ] },
+        { type: "floor", x: 3, y: 2, wall: [ "corner", "north" ] },
+    ]
+},
+{
+    name: "south west wall south door",
+
+    width: 3,
+    height: 3,
+
+    entrance: [{ side: 0, location: 0, length: 3, name: "a" },
+               { side: 1, location: 0, length: 3, name: "b" },
+               { side: 2, location: 0, length: 2, name: "c" },],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0, wall: [ "wall", "west" ] },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1, wall: [ "wall", "west" ] },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "wall", "west" ] },
+        { type: "floor", x: 1, y: 2 },
+        { type: "floor", x: 2, y: 2 },]
+},
+{
+    name: "south west wall west door",
+
+    width: 3,
+    height: 3,
+
+    entrance: [{ side: 0, location: 0, length: 3, name: "a" },
+               { side: 1, location: 0, length: 3, name: "b" },
+               { side: 3, location: 1, length: 2, name: "d" },],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0, wall: [ "corner", "west" ] },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "out" ] },
+        { type: "floor", x: 1, y: 2 },
+        { type: "floor", x: 2, y: 2 },]
+},
+{
+    name: "south west wall south and west door",
+
+    width: 3,
+    height: 3,
+
+    entrance: [{ side: 0, location: 0, length: 3, name: "a" },
+               { side: 1, location: 0, length: 3, name: "b" },
+               { side: 2, location: 0, length: 2, name: "c" },
+               { side: 3, location: 1, length: 2, name: "d" },],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0, wall: [ "corner", "west" ] },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1 },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "out" ] },
+        { type: "floor", x: 1, y: 2 },
+        { type: "floor", x: 2, y: 2 },]
+},
+{
+    name: "north room",
+
+    width: 2,
+    height: 3,
+
+    entrance: [{ side: 2, location: 0, length: 2, name: "c" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0, wall: [ "wall", "west" ] },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 0, y: 1, wall: [ "wall", "west" ] },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "in" ] },
+        { type: "floor", x: 1, y: 2, wall: [ "wall", "north" ] },
+    ]
+},
+{
+    name: "south room",
+
+    width: 2,
+    height: 3,
+
+    entrance: [{ side: 0, location: 0, length: 2, name: "a" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0, wall: [ "wall", "west" ] },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 0, y: 1, wall: [ "wall", "west" ] },
+        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "west" ] },
+        { type: "floor", x: 1, y: 2 },
+    ]
+},
+{
+    name: "west room",
+
+    width: 3,
+    height: 2,
+
+    entrance: [{ side: 1, location: 0, length: 2, name: "b" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0, wall: [ "wall", "west" ] },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1, wall: [ "corner", "in" ] },
+        { type: "floor", x: 1, y: 1, wall: [ "wall", "north" ] },
+        { type: "floor", x: 2, y: 1, wall: [ "wall", "north" ] },
+    ]
+},
+{
+    name: "east room",
+
+    width: 3,
+    height: 2,
+
+    entrance: [{ side: 3, location: 0, length: 2, name: "d" }],
+
+    terrain: [
+        { type: "floor", x: 0, y: 0 },
+        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 0, y: 1, wall: [ "corner", "north" ] },
+        { type: "floor", x: 1, y: 1, wall: [ "wall", "north" ] },
+        { type: "floor", x: 2, y: 1, wall: [ "wall", "north" ] },
+    ]
 },

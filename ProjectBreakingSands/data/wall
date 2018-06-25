@@ -3,14 +3,14 @@
     animation: "wall_west",
     sprite: "sprites/wall_a.png",
     standing: true,
-    tags: [ "red light", "west" ]
+    tags: [ "wall", "red light", "west" ]
 },
 {
     name: "Wall, Red Light",
     animation: "wall_north",
     sprite: "sprites/wall_b.png",
     standing: true,
-    tags: [ "red light", "north" ]
+    tags: [ "wall", "red light", "north" ]
 },
 {
     name: "Corner",
