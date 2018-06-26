@@ -60,6 +60,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     private SelectionDetails details = new SelectionDetails();
     private Wall wall;
     private Pawn pawn;
+    private boolean spawn = false;
+    private boolean start = false;
 
     private List<Ability> abilities = new ArrayList<>();
 
@@ -95,6 +97,17 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             Wall wall = f.getInstance();
             setWall(wall);
         }
+
+        propData.ifHas("tags", p -> p.asList().forEach(t -> {
+            switch (t.asString()) {
+                case "spawn":
+                    spawn = true;
+                    break;
+                case "start":
+                    start = true;
+                    break;
+            }
+        }));
     }
 
     public int getMapX() {
@@ -451,6 +464,14 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                 setHighlight(BattleScene.OFF);
                 break;
         }
+    }
+
+    public boolean isStart(){
+        return start;
+    }
+
+    public boolean isSpawn(){
+        return spawn;
     }
 
     public void updateText() {

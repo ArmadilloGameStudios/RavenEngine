@@ -248,14 +248,17 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             Pawn p = new Pawn(this, gdPawn);
             pawns.add(p);
 
-            Optional<Terrain> o = map.getFirstStructure().getTerrainList().stream().filter(Terrain::isPassable).findAny();
+            Optional<Terrain> o = terrainList.stream()
+                    .filter(t -> t.isPassable() && t.isStart()).findAny();
 
             map.setPawn(o.get(), p);
         }
 
-        for (int i = 0; i < 10; i++) {
-            spawnPawn("Service Drone");
-        }
+        terrainList.forEach(t -> {
+            if (t.isSpawn()) {
+                spawnPawn("Service Drone", t);
+            }
+        });
 
         setActivePawn(null);
         setState(SELECT_DEFAULT);
@@ -265,21 +268,15 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         return pawns;
     }
 
-    public void spawnPawn(String name) {
-        PawnFactory pf = new PawnFactory(this);
-        pf.setName(name);
-        Pawn p = pf.getInstance();
-        pawns.add(p);
+    public void spawnPawn(String name, Terrain terrain) {
+        if (terrain.isPassable()) {
+            PawnFactory pf = new PawnFactory(this);
+            pf.setName(name);
+            Pawn p = pf.getInstance();
 
-        List<Terrain> terrainList = map.getTerrainList();
-        List<Terrain> validTerrainList = terrainList.stream().filter(Terrain::isPassable).collect(Collectors.toList());
-
-//        System.out.println(terrainList);
-//        System.out.println(validTerrainList);
-
-        int r = random.nextInt(validTerrainList.size());
-
-        map.setPawn(validTerrainList.get(r), p);
+            pawns.add(p);
+            map.setPawn(terrain, p);
+        }
     }
 
     @Override

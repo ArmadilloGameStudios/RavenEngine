@@ -12,11 +12,11 @@
                { side: 3, location: 1, length: 2, name: "d" }],
 
     terrain: [
-        { type: "floor", x: 1, y: 1 },
-        { type: "floor", x: 2, y: 1 },
+        { type: "floor", x: 1, y: 1, tags: [ "start" ] },
+        { type: "floor", x: 2, y: 1, tags: [ "start" ] },
         { type: "floor", x: 1, y: 2,
-            wall: [ "corner", "out" ] },
-        { type: "floor", x: 2, y: 2 },
+            wall: [ "corner", "out" ], tags: [ "start" ] },
+        { type: "floor", x: 2, y: 2, tags: [ "start" ] },
 
         { type: "floor", x: 1, y: 0,
             wall: [ "corner", "west" ] },
@@ -596,10 +596,10 @@
     terrain: [
         { type: "floor", x: 0, y: 0, wall: [ "wall", "west" ] },
         { type: "floor", x: 1, y: 0 },
-        { type: "floor", x: 0, y: 1, wall: [ "wall", "west" ] },
-        { type: "floor", x: 1, y: 1 },
-        { type: "floor", x: 0, y: 2, wall: [ "corner", "in" ] },
-        { type: "floor", x: 1, y: 2, wall: [ "wall", "north" ] },
+        { type: "floor", x: 0, y: 1, wall: [ "wall", "west" ], tags: [ "spawn" ] },
+        { type: "floor", x: 1, y: 1, tags: [ "spawn" ] },
+        { type: "floor", x: 0, y: 2, wall: [ "corner", "in" ], tags: [ "spawn" ] },
+        { type: "floor", x: 1, y: 2, wall: [ "wall", "north" ], tags: [ "spawn" ] },
     ]
 },
 {
@@ -611,10 +611,10 @@
     entrance: [{ side: 0, location: 0, length: 2, name: "a" }],
 
     terrain: [
-        { type: "floor", x: 0, y: 0, wall: [ "wall", "west" ] },
-        { type: "floor", x: 1, y: 0 },
-        { type: "floor", x: 0, y: 1, wall: [ "wall", "west" ] },
-        { type: "floor", x: 1, y: 1 },
+        { type: "floor", x: 0, y: 0, wall: [ "wall", "west" ], tags: [ "spawn" ] },
+        { type: "floor", x: 1, y: 0, tags: [ "spawn" ] },
+        { type: "floor", x: 0, y: 1, wall: [ "wall", "west" ], tags: [ "spawn" ] },
+        { type: "floor", x: 1, y: 1, tags: [ "spawn" ] },
         { type: "floor", x: 0, y: 2, wall: [ "corner", "west" ] },
         { type: "floor", x: 1, y: 2 },
     ]
@@ -628,11 +628,11 @@
     entrance: [{ side: 1, location: 0, length: 2, name: "b" }],
 
     terrain: [
-        { type: "floor", x: 0, y: 0, wall: [ "wall", "west" ] },
-        { type: "floor", x: 1, y: 0 },
+        { type: "floor", x: 0, y: 0, wall: [ "wall", "west" ], tags: [ "spawn" ] },
+        { type: "floor", x: 1, y: 0, tags: [ "spawn" ] },
         { type: "floor", x: 2, y: 0 },
-        { type: "floor", x: 0, y: 1, wall: [ "corner", "in" ] },
-        { type: "floor", x: 1, y: 1, wall: [ "wall", "north" ] },
+        { type: "floor", x: 0, y: 1, wall: [ "corner", "in" ], tags: [ "spawn" ] },
+        { type: "floor", x: 1, y: 1, wall: [ "wall", "north" ], tags: [ "spawn" ] },
         { type: "floor", x: 2, y: 1, wall: [ "wall", "north" ] },
     ]
 },
@@ -646,10 +646,10 @@
 
     terrain: [
         { type: "floor", x: 0, y: 0 },
-        { type: "floor", x: 1, y: 0 },
-        { type: "floor", x: 2, y: 0 },
+        { type: "floor", x: 1, y: 0, tags: [ "spawn" ]},
+        { type: "floor", x: 2, y: 0, tags: [ "spawn" ] },
         { type: "floor", x: 0, y: 1, wall: [ "corner", "north" ] },
-        { type: "floor", x: 1, y: 1, wall: [ "wall", "north" ] },
-        { type: "floor", x: 2, y: 1, wall: [ "wall", "north" ] },
+        { type: "floor", x: 1, y: 1, wall: [ "wall", "north" ], tags: [ "spawn" ] },
+        { type: "floor", x: 2, y: 1, wall: [ "wall", "north" ], tags: [ "spawn" ] },
     ]
 },
