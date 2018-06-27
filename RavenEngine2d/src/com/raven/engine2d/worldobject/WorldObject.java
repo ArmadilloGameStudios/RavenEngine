@@ -30,7 +30,7 @@ public abstract class WorldObject<
     private Vector2f position = new Vector2f();
     private boolean standing;
 
-    private Highlight highlight = new Highlight();
+    private Highlight highlight;
 
     private List<C> children = new CopyOnWriteArrayList<>();
 
@@ -146,9 +146,9 @@ public abstract class WorldObject<
     public void setHighlight(Highlight h) {
         highlight = h;
 
-        for (C child : children) {
-            child.setHighlight(h);
-        }
+//        for (C child : children) {
+//            child.setHighlight(h);
+//        }
     }
 
     public Highlight getHighlight() {

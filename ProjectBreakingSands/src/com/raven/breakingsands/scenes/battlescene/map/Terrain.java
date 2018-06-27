@@ -85,18 +85,18 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             this.passable = terrainData.getBoolean("passable");
         }
 
-        if (propData.has("wall")) {
-            GameData wallData = propData.getData("wall");
-
-            WallFactory f = new WallFactory(scene);
-
-            for (GameData tag : wallData.asList()) {
-                f.addTypeRestriction(tag.asString());
-            }
-
-            Wall wall = f.getInstance();
-            setWall(wall);
-        }
+//        if (propData.has("wall")) {
+//            GameData wallData = propData.getData("wall");
+//
+//            WallFactory f = new WallFactory(scene);
+//
+//            for (GameData tag : wallData.asList()) {
+//                f.addTypeRestriction(tag.asString());
+//            }
+//
+//            Wall wall = f.getInstance();
+//            setWall(wall);
+//        }
 
         propData.ifHas("tags", p -> p.asList().forEach(t -> {
             switch (t.asString()) {
@@ -275,6 +275,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         }
 
         this.wall = wall;
+        this.wall.setHighlight(BattleScene.OFF);
 
         this.passable = wall.isPassable();
 

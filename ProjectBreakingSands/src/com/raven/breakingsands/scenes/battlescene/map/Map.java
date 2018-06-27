@@ -2,6 +2,7 @@ package com.raven.breakingsands.scenes.battlescene.map;
 
 import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
+import com.raven.breakingsands.scenes.battlescene.decal.WallFactory;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.worldobject.WorldObject;
@@ -17,7 +18,7 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
     private Structure firstStructure;
 
-    private int size = 21;
+    private int size = 5;
     private int i = 0;
     private int tries = 0;
 
@@ -29,7 +30,9 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
             startGeneration();
         }
 
-        System.out.println(tries + ", " + size);
+        addWalls();
+
+        System.out.println(tries + ", " + size + ", " + structures.size());
 
         // show all connections
 
@@ -117,6 +120,48 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
         structures.forEach(st -> structures.forEach(st::tryConnect));
     }
+
+    private void addWalls() {
+        WallFactory f = new WallFactory(getScene());
+        for (Terrain terrain : terrain) {
+            f.clear();
+
+            Optional<Terrain> north = get(terrain.getMapX(), terrain.getMapY() + 1);
+            Optional<Terrain> west = get(terrain.getMapX() - 1, terrain.getMapY());
+            Optional<Terrain> above = get(terrain.getMapX() - 1, terrain.getMapY() + 1);
+
+            if (!north.isPresent() && !west.isPresent()) {
+                f.addTypeRestriction("in");
+
+                terrain.setWall(f.getInstance());
+            } else if (!north.isPresent()) {
+                f.addTypeRestriction("north");
+
+                if (above.isPresent()) {
+                    f.addTypeRestriction("corner");
+                } else {
+                    f.addTypeRestriction("wall");
+                }
+
+                terrain.setWall(f.getInstance());
+            } else if (!west.isPresent()) {
+                f.addTypeRestriction("west");
+
+                if (above.isPresent()) {
+                    f.addTypeRestriction("corner");
+                } else {
+                    f.addTypeRestriction("wall");
+                }
+
+                terrain.setWall(f.getInstance());
+            } else if (!above.isPresent()) {
+                f.addTypeRestriction("out");
+
+                terrain.setWall(f.getInstance());
+            }
+        }
+    }
+
 
     public Optional<Terrain> get(int x, int y) {
         return terrain.stream()

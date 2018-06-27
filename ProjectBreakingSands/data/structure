@@ -17,13 +17,13 @@
         { type: "floor", x: 1, y: 2, wall: [ "corner", "out" ], tags: [ "start" ] },
         { type: "floor", x: 2, y: 2, tags: [ "start" ] },
 
-        { x: 1, y: 0, wall: [ "corner", "west" ] },
+        { x: 1, y: 0 },
         { x: 2, y: 0 },
         { x: 0, y: 1 },
         { x: 3, y: 1 },
-        { x: 0, y: 2 , wall: [ "corner", "north" ] },
-        { x: 3, y: 2 , wall: [ "corner", "north" ] },
-        { x: 1, y: 3, wall: [ "corner", "west" ] },
+        { x: 0, y: 2 },
+        { x: 3, y: 2 },
+        { x: 1, y: 3 },
         { x: 2, y: 3 },
     ]
 },
@@ -37,6 +37,8 @@
                { side: 2, location: 1, length: 2, name: "c" },
                { side: 3, location: 0, length: 3, name: "d" }],
 
+    terminal: true,
+
     terrain: [
         { x: 0, y: 0 },
         { x: 1, y: 0 },
@@ -46,9 +48,9 @@
         { x: 1, y: 1 },
         { x: 2, y: 1 },
         { x: 3, y: 1 },
-        { x: 1, y: 2, wall: [ "wall", "north" ] },
-        { x: 2, y: 2, wall: [ "wall", "north" ] },
-        { x: 3, y: 2, wall: [ "wall", "north" ] },
+        { x: 1, y: 2 },
+        { x: 2, y: 2 },
+        { x: 3, y: 2 },
     ]
 },
 {
@@ -61,6 +63,8 @@
                { side: 1, location: 0, length: 3, name: "b" },
                { side: 3, location: 0, length: 3, name: "d" }],
 
+    terminal: true,
+
     terrain: [
         { x: 0, y: 0 },
         { x: 1, y: 0 },
@@ -70,10 +74,10 @@
         { x: 1, y: 1 },
         { x: 2, y: 1 },
         { x: 3, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "north" ] },
-        { x: 1, y: 2, wall: [ "corner", "out" ] },
+        { x: 0, y: 2 },
+        { x: 1, y: 2 },
         { x: 2, y: 2 },
-        { x: 3, y: 2, wall: [ "corner", "north" ] },
+        { x: 3, y: 2 },
     ]
 },
 {
@@ -86,14 +90,16 @@
                { side: 1, location: 1, length: 2, name: "b" },
                { side: 2, location: 0, length: 3, name: "c" }],
 
+    terminal: true,
+
     terrain: [
-        { x: 0, y: 0, wall: [ "wall", "west" ] },
+        { x: 0, y: 0 },
         { x: 1, y: 0 },
         { x: 2, y: 0 },
-        { x: 0, y: 1, wall: [ "wall", "west" ] },
+        { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "wall", "west" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
         { x: 2, y: 2 },
         { x: 1, y: 3 },
@@ -110,17 +116,19 @@
                { side: 2, location: 0, length: 3, name: "c" },
                { side: 3, location: 1, length: 2, name: "d" }],
 
+    terminal: true,
+
     terrain: [
-        { x: 0, y: 0, wall: [ "corner", "west" ] },
+        { x: 0, y: 0 },
         { x: 1, y: 0 },
         { x: 2, y: 0 },
         { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "out" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
         { x: 2, y: 2 },
-        { x: 0, y: 3, wall: [ "corner", "west" ] },
+        { x: 0, y: 3 },
         { x: 1, y: 3 },
         { x: 2, y: 3 },
     ]
@@ -134,6 +142,8 @@
     entrance: [{ side: 2, location: 0, length: 3, name: "c" },
                { side: 3, location: 0, length: 3, name: "d" }],
 
+    terminal: true,
+
     terrain: [
         { x: 0, y: 0 },
         { x: 1, y: 0 },
@@ -141,9 +151,9 @@
         { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "wall", "north" ] },
-        { x: 1, y: 2, wall: [ "wall", "north" ] },
-        { x: 2, y: 2, wall: [ "wall", "north" ] },]
+        { x: 0, y: 2 },
+        { x: 1, y: 2 },
+        { x: 2, y: 2 },]
 },
 {
     name: "south east wall",
@@ -154,6 +164,8 @@
     entrance: [{ side: 0, location: 0, length: 3, name: "a" },
                { side: 3, location: 0, length: 3, name: "d" }],
 
+    terminal: true,
+
     terrain: [
         { x: 0, y: 0 },
         { x: 1, y: 0 },
@@ -161,7 +173,7 @@
         { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "out" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
         { x: 2, y: 2 },]
 },
@@ -175,19 +187,21 @@
                { side: 1, location: 0, length: 3, name: "b" },
                { side: 2, location: 0, length: 3, name: "c" }],
 
+    terminal: true,
+
     terrain: [
-        { x: 0, y: 0, wall: [ "wall", "west" ] },
+        { x: 0, y: 0 },
         { x: 1, y: 0 },
         { x: 2, y: 0 },
-        { x: 0, y: 1, wall: [ "wall", "west" ] },
+        { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "in" ] },
-        { x: 1, y: 2, wall: [ "wall", "north" ] },
-        { x: 2, y: 2, wall: [ "wall", "north" ] },
+        { x: 0, y: 2 },
+        { x: 1, y: 2 },
+        { x: 2, y: 2 },
 
-        { x: 0, y: -1, wall: [ "wall", "west" ] },
-        { x: 3, y: 2, wall: [ "wall", "north" ] },
+        { x: 0, y: -1 },
+        { x: 3, y: 2 },
     ]
 },
 {
@@ -199,14 +213,16 @@
     entrance: [{ side: 0, location: 0, length: 3, name: "a" },
                { side: 1, location: 0, length: 3, name: "b" }],
 
+    terminal: true,
+
     terrain: [
-        { x: 0, y: 0, wall: [ "wall", "west" ] },
+        { x: 0, y: 0 },
         { x: 1, y: 0 },
         { x: 2, y: 0 },
-        { x: 0, y: 1, wall: [ "wall", "west" ] },
+        { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "wall", "west" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
         { x: 2, y: 2 },]
 },
@@ -230,9 +246,9 @@
         { x: 1, y: 1 },
         { x: 2, y: 1 },
         { x: 3, y: 1 },
-        { x: 1, y: 2, wall: [ "corner", "out" ] },
+        { x: 1, y: 2 },
         { x: 2, y: 2 },
-        { x: 3, y: 2, wall: [ "corner", "north" ] },
+        { x: 3, y: 2 },
     ]
 },
 {
@@ -255,10 +271,10 @@
         { x: 1, y: 1 },
         { x: 2, y: 1 },
         { x: 3, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "north" ] },
-        { x: 1, y: 2, wall: [ "corner", "out" ] },
+        { x: 0, y: 2 },
+        { x: 1, y: 2 },
         { x: 2, y: 2 },
-        { x: 3, y: 2, wall: [ "corner", "north" ] },
+        { x: 3, y: 2 },
     ]
 },
 {
@@ -273,13 +289,13 @@
                { side: 3, location: 1, length: 2, name: "d" },],
 
     terrain: [
-        { x: 0, y: 0, wall: [ "corner", "west" ] },
+        { x: 0, y: 0 },
         { x: 1, y: 0 },
         { x: 2, y: 0 },
         { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "out" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
         { x: 2, y: 2 },
         { x: 1, y: 3 },
@@ -298,16 +314,16 @@
                { side: 3, location: 1, length: 2, name: "d" }],
 
     terrain: [
-        { x: 0, y: 0, wall: [ "corner", "west" ] },
+        { x: 0, y: 0 },
         { x: 1, y: 0 },
         { x: 2, y: 0 },
         { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "out" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
         { x: 2, y: 2 },
-        { x: 0, y: 3, wall: [ "corner", "west" ] },
+        { x: 0, y: 3 },
         { x: 1, y: 3 },
         { x: 2, y: 3 },
     ]
@@ -329,9 +345,9 @@
         { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "out" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
-        { x: 2, y: 2, wall: [ "corner", "north" ] }]
+        { x: 2, y: 2 },]
 },
 {
     name: "north east wall east door",
@@ -350,9 +366,9 @@
         { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "wall", "north" ] },
-        { x: 1, y: 2, wall: [ "wall", "north" ] },
-        { x: 2, y: 2, wall: [ "wall", "north" ] },]
+        { x: 0, y: 2 },
+        { x: 1, y: 2 },
+        { x: 2, y: 2 },]
 },
 {
     name: "north east wall north and east door",
@@ -372,9 +388,9 @@
         { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "out" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
-        { x: 2, y: 2, wall: [ "corner", "north" ] }]
+        { x: 2, y: 2 },]
 },
 {
     name: "south east wall south door",
@@ -393,7 +409,7 @@
         { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "out" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
         { x: 2, y: 2 },]
 },
@@ -414,7 +430,7 @@
         { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "out" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
         { x: 2, y: 2 },]
 },
@@ -436,7 +452,7 @@
         { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "out" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
         { x: 2, y: 2 },]
 },
@@ -451,18 +467,18 @@
                { side: 2, location: 0, length: 3, name: "c" }],
 
     terrain: [
-        { x: 0, y: 0, wall: [ "wall", "west" ] },
+        { x: 0, y: 0 },
         { x: 1, y: 0 },
         { x: 2, y: 0 },
-        { x: 0, y: 1, wall: [ "wall", "west" ] },
+        { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "in" ] },
-        { x: 1, y: 2, wall: [ "corner", "out" ] },
+        { x: 0, y: 2 },
+        { x: 1, y: 2 },
         { x: 2, y: 2 },
 
-        { x: 0, y: -1, wall: [ "wall", "west" ] },
-        { x: 3, y: 2, wall: [ "corner", "north" ] },
+        { x: 0, y: -1 },
+        { x: 3, y: 2 },
     ]
 },
 {
@@ -479,15 +495,15 @@
         { x: 0, y: 0 },
         { x: 1, y: 0 },
         { x: 2, y: 0 },
-        { x: 0, y: 1, wall: [ "corner", "out" ] },
+        { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "in" ] },
-        { x: 1, y: 2, wall: [ "wall", "north" ] },
-        { x: 2, y: 2, wall: [ "wall", "north" ] }
+        { x: 0, y: 2 },
+        { x: 1, y: 2 },
+        { x: 2, y: 2 }
 
-        { x: 0, y: -1, wall: [ "corner", "west" ] },
-        { x: 3, y: 2, wall: [ "wall", "north" ] },
+        { x: 0, y: -1 },
+        { x: 3, y: 2 },
     ]
 },
 {
@@ -505,12 +521,12 @@
         { x: 0, y: 0 },
         { x: 1, y: 0 },
         { x: 2, y: 0 },
-        { x: 0, y: 1, wall: [ "corner", "out" ] },
+        { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "in" ] },
-        { x: 1, y: 2, wall: [ "corner", "out" ] },
-        { x: 2, y: 2 }
+        { x: 0, y: 2 },
+        { x: 1, y: 2 },
+        { x: 2, y: 2 },
 
         { x: 0, y: -1, wall: [ "corner", "west" ] },
         { x: 3, y: 2, wall: [ "corner", "north" ] },
@@ -527,13 +543,13 @@
                { side: 2, location: 0, length: 2, name: "c" },],
 
     terrain: [
-        { x: 0, y: 0, wall: [ "wall", "west" ] },
+        { x: 0, y: 0 },
         { x: 1, y: 0 },
         { x: 2, y: 0 },
-        { x: 0, y: 1, wall: [ "wall", "west" ] },
+        { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "wall", "west" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
         { x: 2, y: 2 },]
 },
@@ -548,13 +564,13 @@
                { side: 3, location: 1, length: 2, name: "d" },],
 
     terrain: [
-        { x: 0, y: 0, wall: [ "corner", "west" ] },
+        { x: 0, y: 0 },
         { x: 1, y: 0 },
         { x: 2, y: 0 },
         { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "out" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
         { x: 2, y: 2 },]
 },
@@ -570,13 +586,13 @@
                { side: 3, location: 1, length: 2, name: "d" },],
 
     terrain: [
-        { x: 0, y: 0, wall: [ "corner", "west" ] },
+        { x: 0, y: 0 },
         { x: 1, y: 0 },
         { x: 2, y: 0 },
         { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 2, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "out" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
         { x: 2, y: 2 },]
 },
@@ -585,16 +601,18 @@
 
     width: 2,
     height: 3,
-
+``
     entrance: [{ side: 2, location: 0, length: 2, name: "c" }],
 
+    terminal: true,
+
     terrain: [
-        { x: 0, y: 0, wall: [ "wall", "west" ] },
+        { x: 0, y: 0 },
         { x: 1, y: 0 },
-        { x: 0, y: 1, wall: [ "wall", "west" ] },
+        { x: 0, y: 1 },
         { x: 1, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "in" ], tags: [ "spawn" ] },
-        { x: 1, y: 2, wall: [ "wall", "north" ], tags: [ "spawn" ] },
+        { x: 0, y: 2, tags: [ "spawn" ] },
+        { x: 1, y: 2, tags: [ "spawn" ] },
     ]
 },
 {
@@ -605,12 +623,14 @@
 
     entrance: [{ side: 0, location: 0, length: 2, name: "a" }],
 
+    terminal: true,
+
     terrain: [
-        { x: 0, y: 0, wall: [ "wall", "west" ], tags: [ "spawn" ] },
+        { x: 0, y: 0, tags: [ "spawn" ] },
         { x: 1, y: 0, tags: [ "spawn" ] },
-        { x: 0, y: 1, wall: [ "wall", "west" ] },
+        { x: 0, y: 1 },
         { x: 1, y: 1 },
-        { x: 0, y: 2, wall: [ "corner", "west" ] },
+        { x: 0, y: 2 },
         { x: 1, y: 2 },
     ]
 },
@@ -622,13 +642,15 @@
 
     entrance: [{ side: 1, location: 0, length: 2, name: "b" }],
 
+    terminal: true,
+
     terrain: [
-        { x: 0, y: 0, wall: [ "wall", "west" ], tags: [ "spawn" ] },
+        { x: 0, y: 0, tags: [ "spawn" ] },
         { x: 1, y: 0 },
         { x: 2, y: 0 },
-        { x: 0, y: 1, wall: [ "corner", "in" ], tags: [ "spawn" ] },
-        { x: 1, y: 1, wall: [ "wall", "north" ] },
-        { x: 2, y: 1, wall: [ "wall", "north" ] },
+        { x: 0, y: 1, tags: [ "spawn" ] },
+        { x: 1, y: 1 },
+        { x: 2, y: 1 },
     ]
 },
 {
@@ -639,12 +661,14 @@
 
     entrance: [{ side: 3, location: 0, length: 2, name: "d" }],
 
+    terminal: true,
+
     terrain: [
         { x: 0, y: 0 },
         { x: 1, y: 0 },
         { x: 2, y: 0, tags: [ "spawn" ] },
-        { x: 0, y: 1, wall: [ "corner", "north" ] },
-        { x: 1, y: 1, wall: [ "wall", "north" ] },
-        { x: 2, y: 1, wall: [ "wall", "north" ], tags: [ "spawn" ] },
+        { x: 0, y: 1 },
+        { x: 1, y: 1 },
+        { x: 2, y: 1, tags: [ "spawn" ] },
     ]
 },

@@ -21,18 +21,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class GameLauncher {
 
     public static <G extends com.raven.engine2d.Game> void Open(G game) {
-
-        if (isOpenGL4Supported()) {
-            OpenAdvanced(game);
-        } else {
-            OpenBasic(game);
-        }
-    }
-
-    // OpenGL 2.0
-    private static <G extends Game> void OpenBasic(G game) {
-        com.raven.engine2d.GameProperties.setSupportsOpenGL4(false);
-        com.raven.engine2d.GameEngine.Launch(game);
+        OpenAdvanced(game); // assume opengl 4 is supported
     }
 
     // OpenGL 4.0
@@ -52,7 +41,7 @@ public class GameLauncher {
         // Window
         JFrame winMain = new JFrame(game.getTitle());
 
-        winMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        winMain.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         winMain.setResizable(false);
         winMain.setLocationRelativeTo(null);
@@ -89,36 +78,5 @@ public class GameLauncher {
         // Show
         winMain.pack();
         winMain.setVisible(true);
-    }
-
-    public static boolean isOpenGL4Supported() {
-        GLFWErrorCallback.createPrint(System.err).set();
-
-        // Initialize GLFW.
-        if (!glfwInit())
-            throw new IllegalStateException("Unable to initialize GLFW");
-
-        glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-
-        long window = glfwCreateWindow(1, 1,
-                "", NULL, NULL);
-
-        glfwMakeContextCurrent(window);
-
-        GL.createCapabilities();
-
-        GLCapabilities cat = GL.getCapabilities();
-
-        boolean supported = cat.OpenGL40;
-
-        // destory the window
-        glfwFreeCallbacks(window);
-        glfwDestroyWindow(window);
-
-        // Terminate GLFW and free the error callback
-        glfwTerminate();
-        glfwSetErrorCallback(null).free();
-
-        return supported;
     }
 }
