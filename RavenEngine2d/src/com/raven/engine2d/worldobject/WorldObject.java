@@ -55,6 +55,8 @@ public abstract class WorldObject<
             if (data.has("animation")) {
                 String animationName = data.getString("animation");
                 spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation(animationName));
+
+                data.ifHas("animation_idle", i -> spriteAnimationState.setIdleAction(i.asString()));
             }
         }
 

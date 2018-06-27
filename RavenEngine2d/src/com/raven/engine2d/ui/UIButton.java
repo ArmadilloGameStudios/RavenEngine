@@ -45,7 +45,7 @@ public abstract class UIButton<S extends Scene>
         } else if (isMouseHovering()) {
             spriteAnimationState.setAction("hover");
         } else {
-            spriteAnimationState.setAction("idle");
+            spriteAnimationState.setActionIdle();
         }
     }
 
@@ -63,7 +63,7 @@ public abstract class UIButton<S extends Scene>
                 if (isMouseHovering()) {
                     spriteAnimationState.setAction("hover");
                 } else {
-                    spriteAnimationState.setAction("idle");
+                    spriteAnimationState.setActionIdle();
                 }
             }
         } else if (!active) {
@@ -136,7 +136,7 @@ public abstract class UIButton<S extends Scene>
 
     @Override
     public void handleMouseLeave() {
-        if (!disable && !active) spriteAnimationState.setAction("idle");
+        if (!disable && !active) spriteAnimationState.setActionIdle();
     }
 
 }

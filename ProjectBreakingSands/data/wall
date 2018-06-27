@@ -1,16 +1,46 @@
 {
     name: "Wall, Red Light",
+    animation: "wall_north",
+    sprite: "sprites/wall_north_a.png",
+    standing: true,
+    tags: [ "wall", "red light", "north" ]
+},
+{
+    name: "Wall, Red Light",
     animation: "wall_west",
-    sprite: "sprites/wall_a.png",
+    animation_idle: "flashing",
+    sprite: "sprites/wall_west_a.png",
     standing: true,
     tags: [ "wall", "red light", "west" ]
 },
 {
-    name: "Wall, Red Light",
-    animation: "wall_north",
-    sprite: "sprites/wall_b.png",
+    name: "Wall, Indent",
+    animation: "wall_west",
+    sprite: "sprites/wall_west_b.png",
     standing: true,
-    tags: [ "wall", "red light", "north" ]
+    tags: [ "wall", "west" ]
+},
+{
+    name: "Wall",
+    animation: "wall_west",
+    sprite: "sprites/wall_west_c.png",
+    standing: true,
+    tags: [ "wall", "west" ]
+},
+{
+    name: "Wall, Cracked",
+    animation: "wall_west",
+    sprite: "sprites/wall_west_d.png",
+    standing: true,
+    tags: [ "wall", "cracked", "west" ]
+},
+{
+    name: "Wall, Light",
+    animation: "wall_west",
+    animation_idle: "light 2",
+    sprite: "sprites/wall_west_e.png",
+    standing: true,
+    tags: [ "wall", "cracked", "west" ]
 },
 {
     name: "Corner",

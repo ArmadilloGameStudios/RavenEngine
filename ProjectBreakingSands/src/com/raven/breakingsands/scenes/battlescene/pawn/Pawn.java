@@ -402,7 +402,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
                 getAnimationState().setAction("attack end");
 
             getAnimationState().addActionFinishHandler(a -> {
-                getAnimationState().setAction("idle");
+                getAnimationState().setActionIdle();
             });
 
 

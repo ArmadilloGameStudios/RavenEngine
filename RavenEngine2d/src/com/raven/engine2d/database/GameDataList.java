@@ -3,6 +3,7 @@ package com.raven.engine2d.database;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by cookedbird on 11/15/17.
@@ -43,10 +44,38 @@ public class GameDataList extends ArrayList<GameData> {
     }
 
     public GameData getRandom() {
-        return get((int)(rand.nextFloat() * size()));
+        int totalWeight = 0;
+        for (GameData i : this)
+        {
+            totalWeight += getWeight(i);
+        }
+
+        int randomIndex = -1;
+        double random = Math.random() * totalWeight;
+        for (int i = 0; i < size(); ++i)
+        {
+            random -= getWeight(get(i));
+            if (random <= 0.0d)
+            {
+                randomIndex = i;
+                break;
+            }
+        }
+
+        return get(randomIndex);
     }
 
     public GameData queryRandom(GameDataQuery gameDataQuery) {
         return queryAll(gameDataQuery).getRandom();
+    }
+
+    private int getWeight(GameData data) {
+        AtomicInteger weight = new AtomicInteger();
+
+        data.ifHas("weight",
+                w -> weight.set(w.asInteger()),
+                () -> weight.set(1));
+
+        return weight.get();
     }
 }

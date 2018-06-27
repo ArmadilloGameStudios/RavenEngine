@@ -116,7 +116,7 @@ public class Weapon
                     getAnimationState().setAction("attack end");
 
                 getAnimationState().addActionFinishHandler(r -> {
-                    getAnimationState().setAction("idle");
+                    getAnimationState().setActionIdle();
 //                    setVisibility(false);
                 });
             });

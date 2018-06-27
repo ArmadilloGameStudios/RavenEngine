@@ -59,11 +59,11 @@ public class GameData implements GameDatable {
         }
     }
 
-    public void ifHas(String prop, Consumer<GameData> consumer, Supplier elseConsumer) {
+    public void ifHas(String prop, Consumer<GameData> consumer, Runnable elseConsumer) {
         if (has(prop)) {
             consumer.accept(getData(prop));
         } else {
-            elseConsumer.get();
+            elseConsumer.run();
 //            elseConsumer.accept();
         }
     }

@@ -16,11 +16,12 @@ public class SpriteAnimationState {
 
     private float time = 0;
     private boolean flip = false;
+    private String idleAction = "idle";
 
 
     public SpriteAnimationState(SpriteAnimation animation) {
         this.animation = animation;
-        this.activeAction = animation.getAction("idle");
+        this.activeAction = animation.getAction(idleAction);
         this.activeFrame = activeAction.getFrames().get(0);
     }
 
@@ -79,6 +80,25 @@ public class SpriteAnimationState {
             this.activeFrame = activeAction.getFrames().get(0);
             this.time = 0;
         }
+    }
+
+    public void setIdleAction(String idleAction) {
+        if (activeAction.getName().equals(this.idleAction)) {
+            setAction(idleAction);
+        }
+        this.idleAction = idleAction;
+    }
+
+    public String getIdleAction() {
+        return idleAction;
+    }
+
+    public void setActionIdle() {
+        setAction(idleAction);
+    }
+
+    public void setActionIdle(boolean b) {
+        setAction(idleAction, b);
     }
 
     public void setFlip(boolean flip) {

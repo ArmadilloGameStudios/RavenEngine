@@ -489,7 +489,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                     }
                 } else {
                     if (activePawn != null) {
-                        activePawn.getAnimationState().setAction("idle");
+                        activePawn.getAnimationState().setActionIdle();
                     }
 
                     currentPath = null;
@@ -579,7 +579,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     private void setStateSelectDefault() {
-        activePawn.getAnimationState().setAction("idle", false);
+        activePawn.getAnimationState().setActionIdle(false);
 
         Terrain parentTerrain = activePawn.getParent();
 
@@ -617,7 +617,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     private void setStateSelectMove() {
-        activePawn.getAnimationState().setAction("idle", false);
+        activePawn.getAnimationState().setActionIdle(false);
 
         if (activePawn.canMove()) {  // TODO add ability
             // find movement
@@ -638,7 +638,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     private void setStateSelectAttack() {
-        activePawn.getAnimationState().setAction("idle", false);
+        activePawn.getAnimationState().setActionIdle(false);
 
         if (activePawn.canAttack()) {
             // find attack
@@ -659,7 +659,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     private void setStateSelectAbility() {
-        activePawn.getAnimationState().setAction("idle", false);
+        activePawn.getAnimationState().setActionIdle(false);
 
         if (activePawn.canAbility(activeAbility)) {
             // find target
