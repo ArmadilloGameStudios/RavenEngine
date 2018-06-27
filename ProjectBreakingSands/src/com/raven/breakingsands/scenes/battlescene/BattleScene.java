@@ -12,7 +12,7 @@ import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
 import com.raven.breakingsands.scenes.battlescene.pawn.Hack;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
-import com.raven.breakingsands.scenes.battlescene.pawn.PawnDamage;
+import com.raven.breakingsands.scenes.battlescene.pawn.PawnMessage;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
 import com.raven.breakingsands.scenes.hud.UIBottomRightContainer;
@@ -80,9 +80,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     private int activeTeam = 0;
     private Ability activeAbility;
-
-    private PawnDamage textDamage;
-    private float damageShowTime;
 
     private List<Character> canLevelUp = new ArrayList<>();
 
@@ -171,9 +168,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         map = new Map(this);
         getLayerTerrain().addChild(map);
 
-        textDamage = new PawnDamage(this);
-        getLayerDetails().addChild(textDamage);
-
         Vector2f wo = this.getWorldOffset();
         wo.x = GameProperties.getScreenWidth() / 2f;
         wo.y = GameProperties.getScreenHeight() / 2f;
@@ -216,29 +210,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         setActiveTeam(0);
     }
 
-    public void showDamage(Pawn pawn, String damage) {
-        textDamage.setText(damage);
-        Vector2f pos = pawn.getWorldPosition();
-        pos.x -= .9;
-        pos.y += 1.3;
-        textDamage.setPosition(pos);
-
-        damageShowTime = 0;
-    }
-
     private void addPawns() {
         List<Terrain> terrainList = map.getTerrainList();
-
-        // characters
-//        for (Character character : getGame().getCharacters()) {
-//
-//            Pawn p = new Pawn(this, character);
-//            pawns.add(p);
-//
-//            Optional<Terrain> o = terrainList.stream().filter(t -> t.getPawn() == null && t.isPassable()).findAny();
-//
-//            map.setPawn(o.get(), p);
-//        }
 
         for (int i = 0; i < 4; i++) {
             GameData gdPawn = GameDatabase.all("pawn").stream()
@@ -302,13 +275,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                         ai.resolve();
                     }
                 break;
-        }
-
-        damageShowTime += deltaTime;
-        if (damageShowTime < 750) {
-            textDamage.setVisibility(true);
-        } else {
-            textDamage.setVisibility(false);
         }
 
         float smoothing = .5f;

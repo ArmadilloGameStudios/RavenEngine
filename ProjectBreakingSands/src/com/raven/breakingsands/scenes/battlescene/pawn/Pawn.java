@@ -2,7 +2,6 @@ package com.raven.breakingsands.scenes.battlescene.pawn;
 
 import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.character.Ability;
-import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
@@ -10,17 +9,14 @@ import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
-import com.raven.engine2d.database.GameDataQuery;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
+import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.WorldObject;
-import com.raven.engine2d.worldobject.WorldTextObject;
 
-import javax.sound.sampled.Clip;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
@@ -47,12 +43,16 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
             hitPoints, remainingHitPoints, bonusHp,
             totalShield, remainingShield, bonusShield,
             totalMovement, remainingMovement,
-            resistance, totalAttacks = 1, remainingAttacks;
+            resistance, totalAttacks = 1, remainingAttacks,
+            xp, xpGain;
     private Hack hack;
     private boolean unmoved = true;
     private boolean ready = true;
     private List<Ability> abilities = new ArrayList<>();
     private List<Ability> abilityAffects = new ArrayList<>();
+
+    private PawnMessage pawnMessage;
+    private float messageShowTime;
 
     public Pawn(BattleScene scene, GameData gameData) {
         super(scene, gameData);
@@ -63,6 +63,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         gameData.ifHas("shield",
                 gd -> remainingShield = totalShield = gd.asInteger());
         totalMovement = gameData.getInteger("movement");
+        gameData.ifHas("xp_gain", x -> xpGain = x.asInteger());
 
         // weapon
         if (gameData.has("weapon")) {
@@ -83,6 +84,13 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         if (weapon != null) {
             addChild(weapon);
         }
+
+        pawnMessage = new PawnMessage(scene);
+        Vector2f pos = pawnMessage.getWorldPosition();
+        pos.x -= .9;
+        pos.y += 1.3;
+        pawnMessage.setPosition(pos);
+        addChild(pawnMessage);
     }
 
     public String getName() {
@@ -134,6 +142,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public boolean canMove() {
         boolean canMove = true;
+
+        canMove &= remainingMovement > 0;
 
         canMove &= remainingAttacks == totalAttacks;
 
@@ -276,8 +286,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
                                 if (a.uses == null) {
                                     a.uses = ability.uses;
                                     a.remainingUses = ability.uses;
-                                }
-                                else {
+                                } else {
                                     a.uses += ability.uses;
                                     a.remainingUses += ability.uses;
                                 }
@@ -341,6 +350,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
     public void setLevel(int lvl) {
         level = lvl;
+    }
+
+    public boolean canLevel() {
+        return xp > (level * (level + 1) + 1) * 100;
     }
 
     public Weapon getWeapon() {
@@ -427,7 +440,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
         setUnmoved(false);
 
-        pawn.damage(dealtDamage);
+        if (pawn.damage(dealtDamage)) {
+            xp += pawn.xpGain;
+            showMessage("+" + Integer.toString(pawn.xpGain) + "xp");
+        }
     }
 
     public void reduceAttacks() {
@@ -438,7 +454,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         }
     }
 
-    public void damage(int dealtDamage) {
+    public boolean damage(int dealtDamage) {
         if (dealtDamage <= 0) {
             dealtDamage = 1;
         }
@@ -465,17 +481,29 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
         this.getParent().updateText();
 
-        this.showDamage("-" + Integer.toString(dealtDamage));
+        this.showMessage("-" + Integer.toString(dealtDamage));
+
+        return this.remainingHitPoints == 0;
     }
 
-    private void showDamage(String damage) {
-        getScene().showDamage(this, damage);
+    public void showMessage(String msg) {
+        pawnMessage.setText(msg);
+        messageShowTime = 0;
     }
 
     public void die() {
         System.out.println("DIE");
         getParent().removePawn();
         getScene().removePawn(this);
+    }
+
+    @Override
+    public void onUpdate(float deltaTime) {
+        messageShowTime += deltaTime;
+
+        if (messageShowTime > 750 && pawnMessage.isVisible()) {
+            pawnMessage.setVisibility(false);
+        }
     }
 
     @Override

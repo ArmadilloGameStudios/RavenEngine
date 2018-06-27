@@ -5,7 +5,6 @@ import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.GameObject;
 import com.raven.engine2d.worldobject.Parentable;
-import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +81,7 @@ public abstract class UIObject<S extends Scene, P extends Parentable<UIObject>>
 
     public void draw(MainShader shader) {
         for (UIObject o : this.getChildren()) {
-            if (o.getVisibility())
+            if (o.isVisible())
                 o.draw(shader);
         }
     }

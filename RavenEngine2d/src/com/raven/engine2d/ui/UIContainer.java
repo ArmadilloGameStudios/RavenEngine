@@ -63,7 +63,7 @@ public abstract class UIContainer<S extends Scene>
     }
 
     public void pack() {
-        final List<UIObject> children = this.getChildren().stream().filter(GameObject::getVisibility).collect(Collectors.toList());
+        final List<UIObject> children = this.getChildren().stream().filter(GameObject::isVisible).collect(Collectors.toList());
 
         switch (getStyle()) {
             case BOTTOM:

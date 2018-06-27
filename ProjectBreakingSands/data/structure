@@ -591,8 +591,8 @@
     terrain: [
         { x: 0, y: 0, wall: [ "wall", "west" ] },
         { x: 1, y: 0 },
-        { x: 0, y: 1, wall: [ "wall", "west" ], tags: [ "spawn" ] },
-        { x: 1, y: 1, tags: [ "spawn" ] },
+        { x: 0, y: 1, wall: [ "wall", "west" ] },
+        { x: 1, y: 1 },
         { x: 0, y: 2, wall: [ "corner", "in" ], tags: [ "spawn" ] },
         { x: 1, y: 2, wall: [ "wall", "north" ], tags: [ "spawn" ] },
     ]
@@ -608,8 +608,8 @@
     terrain: [
         { x: 0, y: 0, wall: [ "wall", "west" ], tags: [ "spawn" ] },
         { x: 1, y: 0, tags: [ "spawn" ] },
-        { x: 0, y: 1, wall: [ "wall", "west" ], tags: [ "spawn" ] },
-        { x: 1, y: 1, tags: [ "spawn" ] },
+        { x: 0, y: 1, wall: [ "wall", "west" ] },
+        { x: 1, y: 1 },
         { x: 0, y: 2, wall: [ "corner", "west" ] },
         { x: 1, y: 2 },
     ]
@@ -624,10 +624,10 @@
 
     terrain: [
         { x: 0, y: 0, wall: [ "wall", "west" ], tags: [ "spawn" ] },
-        { x: 1, y: 0, tags: [ "spawn" ] },
+        { x: 1, y: 0 },
         { x: 2, y: 0 },
         { x: 0, y: 1, wall: [ "corner", "in" ], tags: [ "spawn" ] },
-        { x: 1, y: 1, wall: [ "wall", "north" ], tags: [ "spawn" ] },
+        { x: 1, y: 1, wall: [ "wall", "north" ] },
         { x: 2, y: 1, wall: [ "wall", "north" ] },
     ]
 },
@@ -641,10 +641,10 @@
 
     terrain: [
         { x: 0, y: 0 },
-        { x: 1, y: 0, tags: [ "spawn" ]},
+        { x: 1, y: 0 },
         { x: 2, y: 0, tags: [ "spawn" ] },
         { x: 0, y: 1, wall: [ "corner", "north" ] },
-        { x: 1, y: 1, wall: [ "wall", "north" ], tags: [ "spawn" ] },
+        { x: 1, y: 1, wall: [ "wall", "north" ] },
         { x: 2, y: 1, wall: [ "wall", "north" ], tags: [ "spawn" ] },
     ]
 },

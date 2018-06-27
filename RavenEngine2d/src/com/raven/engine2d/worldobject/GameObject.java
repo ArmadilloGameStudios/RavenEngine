@@ -74,7 +74,7 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
         for (MouseHandler c : clickHandlers) c.handleMouseClick();
     }
 
-    public boolean getVisibility() {
+    public boolean isVisible() {
         return visibility;
     }
 

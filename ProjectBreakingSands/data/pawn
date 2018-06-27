@@ -18,7 +18,8 @@
     team: 1,
     hp: 5,
     movement: 3,
-    weapon: "Guard Disk"
+    weapon: "Guard Disk",
+    xp_gain: 30,
 },
 {
     name: "Guard Drone",
@@ -29,5 +30,6 @@
     hp: 15,
     resistance: 1,
     movement: 2,
-    weapon: "Guard Disk"
+    weapon: "Guard Disk",
+    xp_gain: 30,
 }

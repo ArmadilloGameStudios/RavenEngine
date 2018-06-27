@@ -321,6 +321,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             btnSkip.setActive(false);
             btnLevel.setDisable(disable);
             btnLevel.setActive(false);
+            btnLevel.setVisibility(false);
             btnPushBlast.setDisable(disable);
             btnPushBlast.setActive(false);
             btnPushBlast.setVisibility(false);
@@ -333,13 +334,17 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
         } else {
             btnCancel.setDisable(!(pawn.getTotalMovement() == pawn.getRemainingMovement()));
 
-            btnAttack.setDisable(false);
+            btnAttack.setDisable(!pawn.canAttack());
             btnAttack.setActive(false);
-            btnMove.setDisable(false);
+            btnMove.setDisable(!pawn.canMove());
             btnMove.setActive(false);
             btnSkip.setDisable(false);
             btnSkip.setActive(false);
-            btnLevel.setDisable(pawn.getLevel() >= 40); // TODO
+
+            if (pawn.canLevel()) {
+                btnLevel.setDisable(false); // TODO
+                btnLevel.setVisibility(true); // TODO
+            }
 
             Optional<Ability> ability = pawn.getAbilities().stream().filter(a -> a.push_blast).findFirst();
             if (ability.isPresent()) {

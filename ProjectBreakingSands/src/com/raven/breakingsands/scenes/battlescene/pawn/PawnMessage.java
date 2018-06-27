@@ -4,8 +4,8 @@ import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.engine2d.ui.UIFont;
 import com.raven.engine2d.worldobject.WorldTextObject;
 
-public class PawnDamage extends WorldTextObject<BattleScene, Pawn> {
-    public PawnDamage(BattleScene scene) {
+public class PawnMessage extends WorldTextObject<BattleScene, Pawn> {
+    public PawnMessage(BattleScene scene) {
         super(scene);
 
         UIFont font = getFont();
@@ -13,6 +13,13 @@ public class PawnDamage extends WorldTextObject<BattleScene, Pawn> {
         font.setHighlight(false);
 
         setHighlight(BattleScene.OFF);
+    }
+
+    @Override
+    public void setText(String text) {
+        super.setText(text);
+
+        setVisibility(true);
     }
 
     @Override

@@ -6,12 +6,10 @@ import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
-import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.Control;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -155,7 +153,7 @@ public abstract class WorldObject<
 
     public Highlight getHighlight() {
         if (highlight == null && parentIsWorldObject) {
-            return ((WorldObject)parent).getHighlight();
+            return ((WorldObject) parent).getHighlight();
         }
 
         return highlight;
@@ -169,9 +167,9 @@ public abstract class WorldObject<
         if (spriteSheet != null)
             shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), standing, getHighlight(), DrawStyle.ISOMETRIC);
 
-        for (C child : children) {
-            child.draw(shader);
-        }
+        children.stream()
+                .filter(GameObject::isVisible)
+                .forEach(c -> c.draw(shader));
     }
 
     public void setParent(P parent) {

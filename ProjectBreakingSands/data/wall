@@ -25,7 +25,8 @@
     animation: "wall_west",
     sprite: "sprites/wall_west_c.png",
     standing: true,
-    tags: [ "wall", "west" ]
+    tags: [ "wall", "west" ],
+    weight: 5
 },
 {
     name: "Wall, Cracked",

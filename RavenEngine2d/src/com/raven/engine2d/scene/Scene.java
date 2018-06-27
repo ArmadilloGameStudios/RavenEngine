@@ -1,13 +1,9 @@
 package com.raven.engine2d.scene;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.raven.engine2d.Game;
 import com.raven.engine2d.graphics2d.GameWindow;
-import com.raven.engine2d.graphics2d.ScreenQuad;
 import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
@@ -47,19 +43,19 @@ public abstract class Scene<G extends Game> {
 
         // drawImage
         for (WorldObject o : layerTerrain.getChildren()) {
-            if (o.getVisibility())
+            if (o.isVisible())
                 o.draw(mainShader);
             window.printErrors("Draw World Object Error: ");
         }
 
         for (WorldObject o : layerDetails.getChildren()) {
-            if (o.getVisibility())
+            if (o.isVisible())
                 o.draw(mainShader);
         }
 
         // ui
         for (UIObject o : layerUI.getChildren()) {
-            if (o.getVisibility())
+            if (o.isVisible())
                 o.draw(mainShader);
             window.printErrors("Draw UI Error: ");
         }

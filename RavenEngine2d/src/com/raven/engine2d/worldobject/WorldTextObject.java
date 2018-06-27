@@ -11,6 +11,8 @@ public abstract class WorldTextObject
                 P extends Parentable<WorldObject>>
         extends WorldObject<S, P, WorldObject> {
 
+    private String text;
+
     private UITexture image;
     private UITextWriter textWriter;
 
@@ -21,6 +23,8 @@ public abstract class WorldTextObject
     }
 
     public void setText(String text) {
+        this.text = text;
+
         if (image == null) {
             if (font.isHighlight()) {
                 image = new UITexture(160, 12 * 2);
@@ -38,6 +42,10 @@ public abstract class WorldTextObject
         textWriter.write(text);
 
         image.load();
+    }
+
+    public String getText() {
+        return text;
     }
 
     public UIFont getFont() {
