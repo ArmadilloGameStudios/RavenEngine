@@ -4,6 +4,9 @@ import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.decal.WallFactory;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
+import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDataList;
+import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.util.pathfinding.Path;
 import com.raven.engine2d.util.pathfinding.PathFinder;
@@ -13,7 +16,8 @@ import org.lwjgl.system.CallbackI;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObject> {
+public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObject>
+        implements GameDatable {
 
     private List<Structure> structures = new ArrayList<>();
     private List<Terrain> terrain = new ArrayList<>();
@@ -26,6 +30,10 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
     public Map(BattleScene scene) {
         super(scene);
+    }
+
+    public GameData toGameData() {
+        return new GameDataList(structures).toGameData();
     }
 
     public void generate() {
@@ -236,5 +244,4 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
     public float getZ() {
         return ZLayer.TERRAIN.getValue();
     }
-
 }

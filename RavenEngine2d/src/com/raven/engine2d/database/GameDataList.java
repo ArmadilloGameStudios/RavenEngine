@@ -8,14 +8,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by cookedbird on 11/15/17.
  */
-public class GameDataList extends ArrayList<GameData> {
-    static Random rand = new Random();
+public class GameDataList extends ArrayList<GameData> implements GameDatable {
 
     public GameDataList() {
         super();
     }
 
-    public <G extends GameDatable> GameDataList(List<G> list) {
+    public <G extends GameDatable> GameDataList(List<? extends G> list) {
         super();
 
         for (GameDatable datable : list) {
@@ -77,5 +76,10 @@ public class GameDataList extends ArrayList<GameData> {
                 () -> weight.set(1));
 
         return weight.get();
+    }
+
+    @Override
+    public GameData toGameData() {
+        return new GameData(this);
     }
 }

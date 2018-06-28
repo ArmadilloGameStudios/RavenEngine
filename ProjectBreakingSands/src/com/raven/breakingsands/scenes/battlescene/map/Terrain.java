@@ -13,6 +13,7 @@ import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.util.Range;
 import com.raven.engine2d.util.pathfinding.PathAdjacentNode;
@@ -27,7 +28,7 @@ import java.util.Optional;
 import java.util.stream.DoubleStream;
 
 public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
-        implements MouseHandler, PathNode<Terrain> {
+        implements MouseHandler, PathNode<Terrain>, GameDatable {
 
     private static GameDataList dataList = GameDatabase.all("terrain");
 
@@ -108,6 +109,21 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                     break;
             }
         }));
+    }
+
+    @Override
+    public GameData toGameData() {
+        HashMap<String, GameData> map = new HashMap<>();
+
+        map.put("passable", new GameData(passable));
+        if (wall != null)
+            map.put("wall", wall.toGameData());
+        if (pawn != null)
+            map.put("pawn", new GameData(getScene().getPawns().indexOf(pawn)));
+        map.put("spawn", new GameData(spawn));
+        map.put("start", new GameData(start));
+
+        return new GameData(map);
     }
 
     public int getMapX() {
@@ -279,8 +295,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
         this.wall = wall;
         this.wall.setHighlight(BattleScene.OFF);
-
-        this.passable = wall.isPassable();
 
         this.addChild(wall);
 
@@ -470,11 +484,11 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         }
     }
 
-    public boolean isStart(){
+    public boolean isStart() {
         return start;
     }
 
-    public boolean isSpawn(){
+    public boolean isSpawn() {
         return spawn;
     }
 

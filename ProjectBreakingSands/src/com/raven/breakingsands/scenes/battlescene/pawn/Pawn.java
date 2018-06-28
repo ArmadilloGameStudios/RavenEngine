@@ -6,10 +6,12 @@ import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
+import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
@@ -17,9 +19,12 @@ import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
+public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
+        implements GameDatable {
+
     private static GameDataList dataList = GameDatabase.all("pawn");
 
     public static GameDataList getDataList() {
@@ -39,12 +44,12 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     // instance
     private Weapon weapon;
     private String name = "", charClass = "recruit";
-    private int level = 0, team,
+    private int level = 0, xp,  team,
             hitPoints, remainingHitPoints, bonusHp,
             totalShield, remainingShield, bonusShield,
             totalMovement, remainingMovement,
             resistance, totalAttacks = 1, remainingAttacks,
-            xp, xpGain;
+            xpGain;
     private Hack hack;
     private boolean unmoved = true;
     private boolean ready = true;
@@ -91,6 +96,35 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         pos.y += 1.3;
         pawnMessage.setPosition(pos);
         addChild(pawnMessage);
+    }
+
+    @Override
+    public GameData toGameData() {
+        HashMap<String, GameData> map = new HashMap<>();
+
+        map.put("name", new GameData(name));
+        map.put("class", new GameData(charClass));
+        map.put("level", new GameData(level));
+        map.put("xp", new GameData(xp));
+        map.put("team", new GameData(team));
+        map.put("hp", new GameData(hitPoints));
+        map.put("remainingHitPoints", new GameData(remainingHitPoints));
+        map.put("bonusHp", new GameData(bonusHp));
+        map.put("totalShield", new GameData(totalShield));
+        map.put("remainingShield", new GameData(remainingShield));
+        map.put("bonusShield", new GameData(bonusShield));
+        map.put("totalMovement", new GameData(totalMovement));
+        map.put("remainingMovement", new GameData(remainingMovement));
+        map.put("resistance", new GameData(resistance));
+        map.put("totalAttacks", new GameData(totalAttacks));
+        map.put("remainingAttacks", new GameData(remainingAttacks));
+        map.put("xpGain", new GameData(xpGain));
+        map.put("unmoved", new GameData(unmoved));
+        map.put("ready", new GameData(ready));
+        map.put("weapon", weapon.toGameData());
+        map.put("abilities", new GameDataList(abilities).toGameData());
+
+        return new GameData(map);
     }
 
     public String getName() {
@@ -544,4 +578,5 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
     public void setReadyIfUnmoved() {
         ready = unmoved;
     }
+
 }

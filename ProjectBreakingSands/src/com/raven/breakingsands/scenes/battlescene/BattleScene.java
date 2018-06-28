@@ -16,10 +16,13 @@ import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
 import com.raven.breakingsands.scenes.hud.UIBottomRightContainer;
 import com.raven.breakingsands.scenes.hud.UICenterContainer;
+import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
@@ -37,7 +40,7 @@ import java.util.stream.Collectors;
 
 import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_DEFAULT;
 
-public class BattleScene extends Scene<BreakingSandsGame> {
+public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable {
     public static Highlight
             OFF = new Highlight(),
             BLUE = new Highlight(.2f, .6f, 1f, .75f),
@@ -50,6 +53,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             GREEN_CHANGING = new Highlight(.3f, 1f, .2f, .5f),
             PURPLE = new Highlight(.5f, .1f, .8f, .75f),
             PURPLE_CHANGING = new Highlight(.5f, .1f, .8f, .75f);
+
+    private GameData loadGameData = null;
 
     private Menu menu;
     private UIActionSelect actionSelect;
@@ -91,6 +96,22 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         super(game);
 
         this.playersPawns = playersPawns;
+    }
+
+    public BattleScene(BreakingSandsGame game, GameData savedData) {
+        super(game);
+
+        loadGameData = savedData;
+    }
+
+    @Override
+    public GameData toGameData() {
+        HashMap<String, GameData> map = new HashMap<>();
+
+        map.put("pawns", new GameDataList(pawns).toGameData());
+        map.put("map", this.map.toGameData());
+
+        return new GameData(map);
     }
 
     @Override
@@ -353,7 +374,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             activePawn.setPosition(0, 0);
             current.setPawn(activePawn);
 
-            setState(State.SELECT_DEFAULT);
+            setActivePawn(activePawn);
         }
     }
 
@@ -370,6 +391,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     public void setActivePawn(Pawn pawn) {
+        getGame().saveGame();
+
         if (checkVictory()) return;
 
         if (activePawn != null && activePawn != pawn) {
@@ -562,7 +585,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         map.setState(Terrain.State.UNSELECTABLE);
 
         activePawn.runAttackAnimation(targetPawn, a -> {
-            setState(State.SELECT_DEFAULT);
+            setActivePawn(activePawn);
         });
     }
 
@@ -809,7 +832,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         this.setPaused(true);
         uiLevelUp.setVisibility(true);
         uiLevelUp.setPawn(getActivePawn());
-
     }
 
     public void pawnPushBlast(Ability blast) {
@@ -833,6 +855,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         });
 
         activePawn.reduceAttacks();
-        setState(State.SELECT_DEFAULT);
+        setActivePawn(activePawn);
     }
 }

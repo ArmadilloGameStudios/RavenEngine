@@ -10,8 +10,14 @@ public class GameDataTable extends GameDataList {
 		this.name = name;
 	}
 
-	public <G extends GameDatable> GameDataTable(String name, List<G> list) {
+	public <G extends GameDatable> GameDataTable(String name, List<? extends G> list) {
         super(list);
+        this.name = name;
+    }
+
+    public <G extends GameDatable> GameDataTable(String name, G data) {
+        super( new ArrayList<G>());
+	    add(data.toGameData());
         this.name = name;
     }
 

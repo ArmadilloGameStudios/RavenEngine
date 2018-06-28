@@ -1,10 +1,20 @@
 package com.raven.engine2d;
 
+import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDataReader;
+import com.raven.engine2d.database.GameDataTable;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.scene.Scene;
 
 import javax.sound.sampled.Clip;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.Map;
 
 public abstract class Game<G extends Game> {
     private GameEngine<G> engine;
@@ -99,5 +109,41 @@ public abstract class Game<G extends Game> {
 
     abstract public boolean saveGame();
 
+    protected boolean saveDataTables(List<GameDataTable> gdtToSave) {
+        boolean success = true;
+
+        try {
+            for (GameDataTable table : gdtToSave) {
+                Path p = Paths.get(getMainDirectory(), "save", table.getName());
+                File f = p.toFile();
+
+                if (f.getParentFile().exists())
+                    f.getParentFile().mkdirs();
+
+                if (!f.exists())
+                    f.createNewFile();
+
+                Files.write(p, table.toString().getBytes(), StandardOpenOption.CREATE);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            success = false;
+        }
+
+        return success;
+    }
+
     abstract public boolean loadGame();
+
+    protected List<GameData> loadSavedGameData(String table) {
+        Path savePath = Paths.get(getMainDirectory(), "save");
+
+        try {
+            return GameDataReader.readFile(savePath.resolve(table));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

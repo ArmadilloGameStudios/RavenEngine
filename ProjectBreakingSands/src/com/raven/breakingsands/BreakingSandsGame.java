@@ -4,14 +4,10 @@ import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
 import com.raven.engine2d.Game;
 import com.raven.engine2d.database.GameData;
-import com.raven.engine2d.database.GameDataReader;
 import com.raven.engine2d.database.GameDataTable;
 import com.raven.engine2d.launcher.GameLauncher;
 import com.raven.engine2d.scene.Scene;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,59 +45,29 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
 
     @Override
     public boolean saveGame() {
-        boolean success = true;
-
         List<GameDataTable> gdtToSave = new ArrayList<>();
 
-//        gdtToSave.add(new GameDataTable("characters", characters));
-//        gdtToSave.add(new GameDataTable("missions", missions));
+        Scene scene = getCurrentScene();
 
-        try {
-            for (GameDataTable table : gdtToSave) {
-                Path p = Paths.get(getMainDirectory(), "save", table.getName());
-                File f = p.toFile();
+        if (scene instanceof BattleScene) {
+            gdtToSave.add(new GameDataTable("current_save", ((BattleScene) getCurrentScene())));
 
-                if (f.getParentFile().exists())
-                    f.getParentFile().mkdirs();
+            System.out.println(gdtToSave.get(0));
 
-                if (!f.exists())
-                    f.createNewFile();
-
-                Files.write(p, table.toString().getBytes(), StandardOpenOption.CREATE);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            success = false;
+            return saveDataTables(gdtToSave);
+        } else {
+            return false;
         }
-
-        return success;
     }
 
     @Override
     public boolean loadGame() {
-        boolean success = true;
-
-        Path savePath = Paths.get(getMainDirectory(), "save");
-
-        try {
-            for (GameData data : GameDataReader.readFile(savePath.resolve("characters"))) {
-//                characters.add(new Character(data));
-            }
-
-            for (GameData data : GameDataReader.readFile(savePath.resolve("missions"))) {
-//                missions.add(new Mission(data));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            success = false;
+        List<GameData> currentSave = loadSavedGameData("current_save");
+        if (currentSave != null && currentSave.size() > 0) {
+            prepTransitionScene(new BattleScene(this, loadSavedGameData("current_save").get(0)));
+            return true;
+        } else {
+            return false;
         }
-
-        prepTransitionScene(new BattleScene(this, null));
-
-        return success;
-    }
-
-    public void newGame() {
-
     }
 }

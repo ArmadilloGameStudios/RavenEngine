@@ -11,7 +11,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
+public class Structure extends WorldObject<BattleScene, Map, WorldObject>
+        implements GameDatable {
 
     private int width = 3, height = 3;
     private int x, y;
@@ -70,6 +71,11 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
             entrances[i] = new StructureEntrance(this, gdcList.get(i));
         }
 
+    }
+
+    @Override
+    public GameData toGameData() {
+        return new GameDataList(terrainList).toGameData();
     }
 
     public StructureEntrance[] getEntrances() {

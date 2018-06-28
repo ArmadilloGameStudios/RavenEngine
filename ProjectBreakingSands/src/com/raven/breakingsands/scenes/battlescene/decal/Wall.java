@@ -7,13 +7,14 @@ import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Wall extends WorldObject<BattleScene, Terrain, WorldObject> {
+public class Wall extends WorldObject<BattleScene, Terrain, WorldObject> implements GameDatable {
     private static GameDataList dataList = GameDatabase.all("wall");
 
     public static GameDataList getDataList() {
@@ -33,7 +34,6 @@ public class Wall extends WorldObject<BattleScene, Terrain, WorldObject> {
     // instance
     private GameData gameData;
     private String name = "";
-    private boolean passable = true;
 
     public Wall(BattleScene scene, GameData gameData) {
         super(scene, gameData);
@@ -48,12 +48,13 @@ public class Wall extends WorldObject<BattleScene, Terrain, WorldObject> {
         return name;
     }
 
-    public boolean isPassable() {
-        return passable;
-    }
-
     @Override
     public float getZ() {
         return ZLayer.DECAL.getValue();
+    }
+
+    @Override
+    public GameData toGameData() {
+        return gameData;
     }
 }

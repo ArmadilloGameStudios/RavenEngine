@@ -2,6 +2,7 @@ package com.raven.breakingsands.scenes.mainmenuscene;
 
 import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
+import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.ui.UIButton;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
@@ -9,6 +10,8 @@ import com.raven.engine2d.database.GameDataQuery;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.ui.UIContainer;
 import com.raven.engine2d.ui.UITextButton;
+
+import java.util.List;
 
 public class NewGameButton
         extends UITextButton<MainMenuScene> {
@@ -21,8 +24,6 @@ public class NewGameButton
     public void handleMouseClick() {
         BreakingSandsGame game = getScene().getGame();
 
-        game.newGame();
-
-        game.prepTransitionScene(new BattleScene(game, null));
+        game.prepTransitionScene(new BattleScene(game, (List<Pawn>) null));
     }
 }
