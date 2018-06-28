@@ -135,7 +135,7 @@
     },
 
     damage: 2,
-    range: 3,
+    range: 2,
     piercing: 1,
     style: "diamond",
     effect: "disk",

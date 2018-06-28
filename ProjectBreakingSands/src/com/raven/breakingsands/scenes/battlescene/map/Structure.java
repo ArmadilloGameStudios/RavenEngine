@@ -45,9 +45,14 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject> {
 
         name = gameData.getString("name");
 
+        boolean variations = gameData.has("variations") && gameData.getBoolean("variations");
         GameDataList gdtList = gameData.getList("terrain");
 
         TerrainFactory tf = new TerrainFactory(this);
+
+        if (variations) {
+            gdtList = gdtList.getRandom(scene.getRandom()).asList();
+        }
 
         for (GameData gdt : gdtList) {
             tf.setPropertyData(gdt);

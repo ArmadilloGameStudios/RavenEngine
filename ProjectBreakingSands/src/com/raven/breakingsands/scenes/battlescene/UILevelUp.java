@@ -100,13 +100,6 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
         return 256;
     }
 
-    public void levelUp() {
-        setVisibility(true);
-        getScene().setPaused(true);
-//        getParent().pack();
-//        getScene().setActivePawn(pawn);
-    }
-
     public void close() {
         setVisibility(false);
         getScene().setPaused(false);

@@ -5,6 +5,8 @@ import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.decal.WallFactory;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.scene.Layer;
+import com.raven.engine2d.util.pathfinding.Path;
+import com.raven.engine2d.util.pathfinding.PathFinder;
 import com.raven.engine2d.worldobject.WorldObject;
 import org.lwjgl.system.CallbackI;
 
@@ -18,17 +20,22 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
     private Structure firstStructure;
 
-    private int size = 5;
+    private int size = 8;
     private int i = 0;
     private int tries = 0;
 
     public Map(BattleScene scene) {
         super(scene);
+    }
 
+    public void generate() {
         while (structures.size() == 0 || !structures.contains(firstStructure)) { // TODO already check for size?
             i = size;
             startGeneration();
         }
+
+        // remove islands
+        removeIslands();
 
         addWalls();
 
@@ -55,25 +62,29 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
     private boolean generate(StructureFactory structureFactory) {
         // find a structure with open connections
         List<Structure> openStructures = this.structures.stream()
-                .filter(st -> Arrays.stream(st.getEntrances()).anyMatch(e -> !e.isConnected()))
+                .filter(st -> Arrays.stream(st.getEntrances()).anyMatch(e -> !e.isConnected() && e.anyTerminal(i < 0)))
                 .collect(Collectors.toList());
 
         int sCount = openStructures.size();
 
         if (sCount == 0) {
+//            System.out.println("None Left");
             return false;
         }
 
         Structure buildFrom = openStructures.get(getScene().getRandom().nextInt(sCount));
         structureFactory.setConnection(buildFrom);
+//        System.out.println("BF " + buildFrom.getName());
         structureFactory.setTerminal(i < 0);
 
         Structure s = structureFactory.getInstance();
 
         if (s == null) {
+            if (buildFrom == firstStructure) return false;
             removeStructure(buildFrom);
         } else {
             addStructure(s);
+//            System.out.println("Add " + s.getName());
         }
 
         return true;
@@ -87,6 +98,7 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
     private void removeStructure(Structure s) {
         removeOnlyStructure(s);
+        System.out.println("Remove " + s.getName());
 
         // remove all not connected to the first
         // get list of connected
@@ -98,6 +110,7 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         int removedCount = toRemove.size();
 
         for (Structure r : toRemove) {
+            System.out.println("Remove " + r.getName());
             removeOnlyStructure(r);
         }
 
@@ -119,6 +132,25 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         }
 
         structures.forEach(st -> structures.forEach(st::tryConnect));
+    }
+
+    private void removeIslands() {
+        List<Terrain> toRemove = new ArrayList<>();
+
+        Terrain start = terrain.stream().filter(Terrain::isStart).findFirst().get();
+
+        PathFinder<Terrain> terrainPathFinder = new PathFinder<>();
+
+        terrain.forEach(t -> {
+            Path<Terrain> path = terrainPathFinder.findTarget(t, start);
+            if (path == null) {
+                toRemove.add(t);
+            }
+        });
+
+        terrain.removeAll(toRemove);
+        removeChildren(toRemove);
+        toRemove.forEach(t -> t.getParent().removeChild(t));
     }
 
     private void addWalls() {
@@ -161,7 +193,6 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
             }
         }
     }
-
 
     public Optional<Terrain> get(int x, int y) {
         return terrain.stream()

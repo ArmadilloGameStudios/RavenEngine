@@ -18,7 +18,7 @@ public class WallFactory extends Factory<Wall> {
     }
 
     public Wall getInstance() {
-        GameData gameData = Wall.getDataList().queryRandom(new GameDataQuery() {
+        GameData gameData = Wall.getDataList().queryRandom(scene.getRandom(), new GameDataQuery() {
             @Override
             public boolean matches(GameData row) {
 

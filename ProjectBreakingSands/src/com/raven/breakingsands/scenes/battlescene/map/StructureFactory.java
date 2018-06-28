@@ -29,15 +29,22 @@ public class StructureFactory extends Factory<Structure> {
             // get random empty entrance
             // if nothing can connect to it, fail
             List<StructureEntrance> entrances = Arrays.stream(connectedStructure.getEntrances())
-                    .filter(e -> !e.isConnected())
+                    .filter(e -> !e.isConnected() && e.anyTerminal(terminal))
                     .collect(Collectors.toList());
+
+//            System.out.println("OE " + entrances.size());
+
             int eCount = entrances.size();
             StructureEntrance connectedEntrance = entrances.get(map.getScene().getRandom().nextInt(eCount));
+//            System.out.println("CE " + connectedEntrance.getName());
+//            System.out.println("PS " + connectedEntrance.getPotentialStructures().size());
 
             // get potential structs
             List<PotentialStructure> potentialStructures = connectedEntrance.getPotentialStructures().stream()
                     .filter(ps -> ps.isTerminal() == terminal)
                     .collect(Collectors.toList());
+
+//            System.out.println("F " + potentialStructures.size());
 
             while (potentialStructures.size() > 0) {
 
@@ -55,16 +62,28 @@ public class StructureFactory extends Factory<Structure> {
                 // TODO move to potential structure generation
                 switch (gdEntrance.getInteger("side")) {
                     case 0:
-                        if (connectedEntrance.getSide() != 2) continue;
+                        if (connectedEntrance.getSide() != 2) {
+//                            System.out.println("SIDE 0 " + connectedEntrance.getName());
+                            continue;
+                        }
                         break;
                     case 1:
-                        if (connectedEntrance.getSide() != 3) continue;
+                        if (connectedEntrance.getSide() != 3) {
+//                            System.out.println("SIDE 1 " + connectedEntrance.getName());
+                            continue;
+                        }
                         break;
                     case 2:
-                        if (connectedEntrance.getSide() != 0) continue;
+                        if (connectedEntrance.getSide() != 0) {
+//                            System.out.println("SIDE 2 " + connectedEntrance.getName());
+                            continue;
+                        }
                         break;
                     case 3:
-                        if (connectedEntrance.getSide() != 1) continue;
+                        if (connectedEntrance.getSide() != 1) {
+//                            System.out.println("SIDE 3 " + connectedEntrance.getName());
+                            continue;
+                        }
                         break;
                 }
 
@@ -111,6 +130,7 @@ public class StructureFactory extends Factory<Structure> {
                 }
 
                 if (!safe) {
+//                    System.out.println("NS " + structureToAdd.getName());
                     continue;
                 }
 

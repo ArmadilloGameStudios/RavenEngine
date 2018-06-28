@@ -2,7 +2,6 @@ package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.BreakingSandsGame;
 import com.raven.breakingsands.character.Ability;
-import com.raven.breakingsands.character.Character;
 import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.ai.AI;
@@ -80,8 +79,6 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     private int activeTeam = 0;
     private Ability activeAbility;
-
-    private List<Character> canLevelUp = new ArrayList<>();
 
     private State state = SELECT_DEFAULT;
 
@@ -166,6 +163,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         // Terrain
         map = new Map(this);
+        map.generate();
         getLayerTerrain().addChild(map);
 
         Vector2f wo = this.getWorldOffset();
@@ -368,6 +366,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
             activePawn.getParent().updateText();
             setActiveDetailText(activePawn.getParent().getDetails());
 
+
             Vector2f pos = pawn.getWorldPosition();
             // TODO focus on pawn
 
@@ -377,6 +376,11 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 //            pawn.getParent().getAbilities().forEach(a -> System.out.println(a.name));
 
         }
+
+        if (pawn != null && pawn.getTeam() == 0)
+            actionSelect.setPawn(pawn);
+        else
+            actionSelect.setPawn(null);
 
         setState(SELECT_DEFAULT);
     }
@@ -447,10 +451,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
                     currentPath = null;
 
                     if (activePawn != null) {
-                        actionSelect.setPawn(activePawn);
                         setStateSelectDefault();
                     } else {
-                        actionSelect.setPawn(null);
                         setSelectablePawn();
                     }
                 } else {
@@ -702,23 +704,9 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
     public void victory() {
         BreakingSandsGame game = getGame();
-        canLevelUp.clear();
-
-        for (Character c : game.getCharacters()) {
-            c.addExperience(1);
-
-            if (c.canLevelUp()) {
-                c.increaseLevel();
-                canLevelUp.add(c);
-            }
-        }
-
         setPaused(true);
     }
 
-    public List<Character> getCharacterToLevel() {
-        return canLevelUp;
-    }
 
     public void setActiveDetailText(SelectionDetails details) {
         if (uiActiveDetailText != null)

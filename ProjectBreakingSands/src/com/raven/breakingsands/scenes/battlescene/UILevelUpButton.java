@@ -39,6 +39,8 @@ public class UILevelUpButton extends UITextButton<BattleScene> {
             pawn.setLevel(pawn.getLevel() + 1);
 
             getScene().getUILevelUp().close();
+
+            getScene().setActivePawn(pawn);
         }
     }
 

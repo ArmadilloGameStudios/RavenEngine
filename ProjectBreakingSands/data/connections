@@ -8,10 +8,10 @@
         { name: "north door", entrance: "c" },
         { name: "south wall", entrance: "a", terminal: true },
         { name: "south door", entrance: "a" },
-        { name: "west wall", entrance: "b, terminal: true" },
+        { name: "west wall", entrance: "b", terminal: true },
         { name: "west door", entrance: "b" },
         { name: "east wall", entrance: "d", terminal: true },
-        { name: "east door", entrance: "d" },],
+        { name: "east door", entrance: "d" }],
 },
 {
     name: "north corners",

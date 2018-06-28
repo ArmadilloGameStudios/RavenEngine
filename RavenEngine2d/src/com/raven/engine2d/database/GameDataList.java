@@ -43,7 +43,7 @@ public class GameDataList extends ArrayList<GameData> {
         return l;
     }
 
-    public GameData getRandom() {
+    public GameData getRandom(Random r) {
         int totalWeight = 0;
         for (GameData i : this)
         {
@@ -51,7 +51,7 @@ public class GameDataList extends ArrayList<GameData> {
         }
 
         int randomIndex = -1;
-        double random = Math.random() * totalWeight;
+        double random = r.nextDouble() * totalWeight;
         for (int i = 0; i < size(); ++i)
         {
             random -= getWeight(get(i));
@@ -65,8 +65,8 @@ public class GameDataList extends ArrayList<GameData> {
         return get(randomIndex);
     }
 
-    public GameData queryRandom(GameDataQuery gameDataQuery) {
-        return queryAll(gameDataQuery).getRandom();
+    public GameData queryRandom(Random r, GameDataQuery gameDataQuery) {
+        return queryAll(gameDataQuery).getRandom(r);
     }
 
     private int getWeight(GameData data) {

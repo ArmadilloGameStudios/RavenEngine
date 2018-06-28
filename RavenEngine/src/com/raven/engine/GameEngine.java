@@ -265,7 +265,7 @@ public class GameEngine<G extends Game> implements Runnable {
     private void loadModels(File base) {
         for (File f : base.listFiles()) {
             if (f.isFile()) {
-                System.out.println(f.getPath());
+//                System.out.println(f.getPath());
 
                 String[] parts = f.getPath().split("\\.");
                 String ext = parts[parts.length - 1];
@@ -292,7 +292,7 @@ public class GameEngine<G extends Game> implements Runnable {
     private void loadAnimations(File base) {
         for (File f : base.listFiles()) {
             if (f.isFile()) {
-                System.out.println("Animation: " + f.getPath());
+//                System.out.println("Animation: " + f.getPath());
 
                 animationMap.put(f.getPath(), RaniImporter.Import(f));
 

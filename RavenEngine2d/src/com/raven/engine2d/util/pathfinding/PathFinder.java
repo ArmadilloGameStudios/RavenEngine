@@ -63,7 +63,7 @@ public class PathFinder<N extends PathNode<N>> {
         }
     }
 
-    // TODO fix this shitty code
+    // TODO fix this shitty code - but does it work?
     public Path<N> findTarget(N start, N target) {
         HashMap<N, Path<N>> catMap = findDistance(start, 100);
 

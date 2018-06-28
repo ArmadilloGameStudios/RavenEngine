@@ -1,7 +1,5 @@
 package com.raven.breakingsands;
 
-import com.raven.breakingsands.character.Character;
-import com.raven.breakingsands.mission.Mission;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
 import com.raven.engine2d.Game;
@@ -24,10 +22,6 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
         System.out.println("Lunched");
 
     }
-
-    private List<Character> characters = new ArrayList<>();
-    private List<Mission> missions = new ArrayList<>();
-    private Mission activeMission = null;
 
     @Override
     public void setup() {
@@ -59,8 +53,8 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
 
         List<GameDataTable> gdtToSave = new ArrayList<>();
 
-        gdtToSave.add(new GameDataTable("characters", characters));
-        gdtToSave.add(new GameDataTable("missions", missions));
+//        gdtToSave.add(new GameDataTable("characters", characters));
+//        gdtToSave.add(new GameDataTable("missions", missions));
 
         try {
             for (GameDataTable table : gdtToSave) {
@@ -87,18 +81,15 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
     public boolean loadGame() {
         boolean success = true;
 
-        characters.clear();
-        missions.clear();
-
         Path savePath = Paths.get(getMainDirectory(), "save");
 
         try {
             for (GameData data : GameDataReader.readFile(savePath.resolve("characters"))) {
-                characters.add(new Character(data));
+//                characters.add(new Character(data));
             }
 
             for (GameData data : GameDataReader.readFile(savePath.resolve("missions"))) {
-                missions.add(new Mission(data));
+//                missions.add(new Mission(data));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -111,39 +102,6 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
     }
 
     public void newGame() {
-        characters.clear();
-        missions.clear();
 
-        // starting characters
-        Character character = new Character();
-        character.setName("Jotlin");
-        character.setTitle("Captain");
-        characters.add(character);
-
-        character = new Character();
-        character.setName("Admus");
-        character.setTitle("Recruit");
-        characters.add(character);
-
-        character = new Character();
-        character.setName("Ellet");
-        character.setTitle("Recruit");
-        characters.add(character);
-    }
-
-    public List<Character> getCharacters() {
-        return characters;
-    }
-
-    public List<Mission> getMissions() {
-        return missions;
-    }
-
-    public void setActiveMission(Mission activeMission) {
-        this.activeMission = activeMission;
-    }
-
-    public void resolveActiveMission(boolean success) {
-        missions.remove(activeMission);
     }
 }

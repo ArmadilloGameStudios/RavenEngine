@@ -342,8 +342,11 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             btnSkip.setActive(false);
 
             if (pawn.canLevel()) {
-                btnLevel.setDisable(false); // TODO
-                btnLevel.setVisibility(true); // TODO
+                btnLevel.setDisable(false);
+                btnLevel.setVisibility(true);
+            } else {
+                btnLevel.setDisable(true);
+                btnLevel.setVisibility(false);
             }
 
             Optional<Ability> ability = pawn.getAbilities().stream().filter(a -> a.push_blast).findFirst();

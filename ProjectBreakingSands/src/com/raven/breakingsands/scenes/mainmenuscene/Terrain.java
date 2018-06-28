@@ -12,6 +12,7 @@ import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Terrain extends WorldObject<MainMenuScene, Layer<WorldObject>, WorldObject> {
 
@@ -28,7 +29,7 @@ public class Terrain extends WorldObject<MainMenuScene, Layer<WorldObject>, Worl
     }
 
     public Terrain(MainMenuScene scene) {
-        super(scene, dataList.queryRandom(new GameDataQuery() {
+        super(scene, dataList.queryRandom(new Random(), new GameDataQuery() {
             @Override
             public boolean matches(GameData row) {
                 return row.getString("name").matches("sand");

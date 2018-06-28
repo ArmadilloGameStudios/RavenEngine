@@ -6,10 +6,7 @@ import com.raven.engine2d.GameProperties;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 
 public class GameDatabase {
     //<editor-fold> public methods
@@ -84,10 +81,10 @@ public class GameDatabase {
         });
     }
 
-    public static GameData queryRandom(String table, String prop, String value) {
-        return GameEngine.getEngine().getGameDatabase().getTable(table).queryRandom(new GameDataQuery() {
+    public static GameData queryRandom(String table, String prop, String value, Random r) {
+        return GameEngine.getEngine().getGameDatabase().getTable(table).queryRandom(r, new GameDataQuery() {
             @Override
-            public boolean matches(com.raven.engine2d.database.GameData row) {
+            public boolean matches(GameData row) {
                 return row.getData(prop).asString().equals(value);
             }
         });

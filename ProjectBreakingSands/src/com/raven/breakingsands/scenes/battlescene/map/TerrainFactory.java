@@ -25,7 +25,7 @@ public class TerrainFactory extends Factory<Terrain> {
 
     @Override
     public Terrain getInstance() {
-        GameData terrainData = dataList.queryRandom(new GameDataQuery() {
+        GameData terrainData = dataList.queryRandom(structure.getScene().getRandom(), new GameDataQuery() {
             @Override
             public boolean matches(GameData row) {
                 AtomicBoolean matches = new AtomicBoolean(false);

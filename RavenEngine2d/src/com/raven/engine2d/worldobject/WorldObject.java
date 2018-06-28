@@ -10,10 +10,7 @@ import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 
 import javax.sound.sampled.Clip;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class WorldObject<
@@ -211,6 +208,10 @@ public abstract class WorldObject<
 
     public void removeChild(C child) {
         children.remove(child);
+    }
+
+    public void removeChildren(Collection<? extends C> children) {
+        this.children.removeAll(children);
     }
 
     final public void update(float deltaTime) {

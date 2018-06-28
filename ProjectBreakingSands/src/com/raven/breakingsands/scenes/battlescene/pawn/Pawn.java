@@ -78,7 +78,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
                 weapon = new Weapon(scene, gdWeapon);
             }
         } else {
-            weapon = new Weapon(scene, GameDatabase.all("weapon").getRandom());
+            weapon = new Weapon(scene, GameDatabase.all("weapon").getRandom(scene.getRandom()));
         }
 
         if (weapon != null) {
@@ -152,6 +152,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         }
 
         return canMove;
+    }
+
+    public boolean canLevel() {
+        return xp > (level * (level + 1) + 1) * 100;
     }
 
     public boolean canAttack() {
@@ -352,10 +356,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
         level = lvl;
     }
 
-    public boolean canLevel() {
-        return xp > (level * (level + 1) + 1) * 100;
-    }
-
     public Weapon getWeapon() {
         return weapon;
     }
@@ -440,9 +440,17 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject> {
 
         setUnmoved(false);
 
-        if (pawn.damage(dealtDamage)) {
+        if (pawn.damage(dealtDamage) && getTeam() == 0) {
             xp += pawn.xpGain;
             showMessage("+" + Integer.toString(pawn.xpGain) + "xp");
+
+            getScene().getPawns().stream()
+                    .filter(p -> p.getTeam() == 0 && p != this)
+                    .forEach(p -> {
+                        p.xp += pawn.xpGain / 3;
+                        p.showMessage("+" + Integer.toString(pawn.xpGain / 3) + "xp");
+                    });
+
         }
     }
 

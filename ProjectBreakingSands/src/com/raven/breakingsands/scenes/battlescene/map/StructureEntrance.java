@@ -229,4 +229,8 @@ public class StructureEntrance {
     public List<PotentialStructure> getPotentialStructures() {
         return potentialStructures;
     }
+
+    public boolean anyTerminal(boolean terminal) {
+        return potentialStructures.stream().anyMatch(p -> p.isTerminal() == terminal);
+    }
 }

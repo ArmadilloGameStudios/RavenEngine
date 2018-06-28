@@ -12,6 +12,7 @@ import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class DisplayPawn extends WorldObject<Scene, Terrain, WorldObject> {
     private static GameDataList dataList = GameDatabase.all("pawn");
@@ -27,7 +28,7 @@ public class DisplayPawn extends WorldObject<Scene, Terrain, WorldObject> {
     }
 
     public DisplayPawn(Scene scene) {
-        super(scene, dataList.getRandom());
+        super(scene, dataList.getRandom(new Random()));
     }
 
     @Override
