@@ -23,6 +23,6 @@ public class NewGameButton
 
         game.newGame();
 
-        game.prepTransitionScene(new BattleScene(game));
+        game.prepTransitionScene(new BattleScene(game, null));
     }
 }

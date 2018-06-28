@@ -258,7 +258,7 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiHP.setX(370-334);
+        uiHP.setX(370 - 334);
         uiHP.setY(94);
         uiHP.load();
 
@@ -279,7 +279,7 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiMov.setX(480-334);
+        uiMov.setX(480 - 334);
         uiMov.setY(94);
         uiMov.load();
 
@@ -289,7 +289,7 @@ public class UIDetailText
         font = uiLblMov.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblMov.setX(450-334);
+        uiLblMov.setX(450 - 334);
         uiLblMov.setY(94);
         uiLblMov.load();
 
@@ -300,7 +300,7 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiRes.setX(370-334);
+        uiRes.setX(370 - 334);
         uiRes.setY(74);
         uiRes.load();
 
@@ -310,7 +310,7 @@ public class UIDetailText
         font = uiLblRes.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblRes.setX(340-334);
+        uiLblRes.setX(340 - 334);
         uiLblRes.setY(74);
         uiLblRes.load();
 
@@ -321,17 +321,17 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiSld.setX(480-334);
+        uiSld.setX(480 - 334);
         uiSld.setY(74);
         uiSld.load();
 
         addChild(uiSld);
 
-        uiLblSld = new UILabel<>(getScene(), "eva:", 30, 10);
+        uiLblSld = new UILabel<>(getScene(), "sld:", 30, 10);
         font = uiLblSld.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblSld.setX(450-334);
+        uiLblSld.setX(450 - 334);
         uiLblSld.setY(74);
         uiLblSld.load();
 
@@ -354,7 +354,7 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiDmg.setX(370-334);
+        uiDmg.setX(370 - 334);
         uiDmg.setY(18);
         uiDmg.load();
 
@@ -364,7 +364,7 @@ public class UIDetailText
         font = uiLblDmg.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblDmg.setX(340-334);
+        uiLblDmg.setX(340 - 334);
         uiLblDmg.setY(18);
         uiLblDmg.load();
 
@@ -376,7 +376,7 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiPir.setX(480-334);
+        uiPir.setX(480 - 334);
         uiPir.setY(18);
         uiPir.load();
 
@@ -386,7 +386,7 @@ public class UIDetailText
         font = uiLblPir.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblPir.setX(450-334);
+        uiLblPir.setX(450 - 334);
         uiLblPir.setY(18);
         uiLblPir.load();
 
@@ -398,7 +398,7 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiRng.setX(370-334);
+        uiRng.setX(370 - 334);
         uiRng.setY(-2);
         uiRng.load();
 
@@ -408,7 +408,7 @@ public class UIDetailText
         font = uiLblRng.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblRng.setX(340-334);
+        uiLblRng.setX(340 - 334);
         uiLblRng.setY(-2);
         uiLblRng.load();
 
@@ -420,17 +420,17 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiShots.setX(480-334);
+        uiShots.setX(480 - 334);
         uiShots.setY(-2);
         uiShots.load();
 
         addChild(uiShots);
 
-        uiLblShots = new UILabel<>(getScene(), "acc:", 30, 10);
+        uiLblShots = new UILabel<>(getScene(), "shots:", 30, 10);
         font = uiLblShots.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblShots.setX(450-334);
+        uiLblShots.setX(450 - 334);
         uiLblShots.setY(-2);
         uiLblShots.load();
 
@@ -480,34 +480,54 @@ public class UIDetailText
     public void setDetails(SelectionDetails details) {
         this.details = details;
 
-        uiName.setText(details.name);
-        uiName.load();
+        if (!uiName.getText().equals(details.name)) {
+            uiName.setText(details.name);
+            uiName.load();
+        }
 
-        uiHP.setText(details.hp);
-        uiHP.load();
+        if (!uiHP.getText().equals(details.hp)) {
+            uiHP.setText(details.hp);
+            uiHP.load();
+        }
 
-        uiMov.setText(details.movement);
-        uiMov.load();
+        if (!uiMov.getText().equals(details.movement)) {
+            uiMov.setText(details.movement);
+            uiMov.load();
+        }
 
-        uiRes.setText(details.resistance);
-        uiRes.load();
+        if (!uiRes.getText().equals(details.resistance)) {
+            uiRes.setText(details.resistance);
+            uiRes.load();
+        }
 
-        uiSld.setText(details.shield);
-        uiSld.load();
+        if (!uiSld.getText().equals(details.shield)) {
+            uiSld.setText(details.shield);
+            uiSld.load();
+        }
 
-        uiWeapon.setText(details.weapon);
-        uiWeapon.load();
+        if (!uiWeapon.getText().equals(details.weapon)) {
+            uiWeapon.setText(details.weapon);
+            uiWeapon.load();
+        }
 
-        uiDmg.setText(details.damage);
-        uiDmg.load();
+        if (!uiDmg.getText().equals(details.damage)) {
+            uiDmg.setText(details.damage);
+            uiDmg.load();
+        }
 
-        uiPir.setText(details.piercing);
-        uiPir.load();
+        if (!uiPir.getText().equals(details.piercing)) {
+            uiPir.setText(details.piercing);
+            uiPir.load();
+        }
 
-        uiRng.setText(details.range);
-        uiRng.load();
+        if (!uiRng.getText().equals(details.range)) {
+            uiRng.setText(details.range);
+            uiRng.load();
+        }
 
-        uiShots.setText(details.shots);
-        uiShots.load();
+        if (!uiShots.getText().equals(details.shots)) {
+            uiShots.setText(details.shots);
+            uiShots.load();
+        }
     }
 }

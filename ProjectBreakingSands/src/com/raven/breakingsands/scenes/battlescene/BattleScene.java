@@ -74,6 +74,7 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private HashMap<Terrain, Float> rangeMap;
 
     private List<Pawn> pawns = new CopyOnWriteArrayList<>();
+    private List<Pawn> playersPawns;
     private Pawn activePawn;
     private Pawn targetPawn;
 
@@ -86,8 +87,10 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private AI ai = new AI(this);
     private Future aiFuture;
 
-    public BattleScene(BreakingSandsGame game) {
+    public BattleScene(BreakingSandsGame game, List<Pawn> playersPawns) {
         super(game);
+
+        this.playersPawns = playersPawns;
     }
 
     @Override
@@ -211,18 +214,29 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     private void addPawns() {
         List<Terrain> terrainList = map.getTerrainList();
 
-        for (int i = 0; i < 4; i++) {
-            GameData gdPawn = GameDatabase.all("pawn").stream()
-                    .filter(p -> p.getString("name").equals("Recruit"))
-                    .findFirst().get();
+        if (playersPawns == null)
+            for (int i = 0; i < 4; i++) {
+                GameData gdPawn = GameDatabase.all("pawn").stream()
+                        .filter(p -> p.getString("name").equals("Recruit"))
+                        .findFirst().get();
 
-            Pawn p = new Pawn(this, gdPawn);
-            pawns.add(p);
+                Pawn p = new Pawn(this, gdPawn);
+                pawns.add(p);
 
-            Optional<Terrain> o = terrainList.stream()
-                    .filter(t -> t.isPassable() && t.isStart()).findAny();
+                Optional<Terrain> o = terrainList.stream()
+                        .filter(t -> t.isPassable() && t.isStart()).findAny();
 
-            map.setPawn(o.get(), p);
+                map.setPawn(o.get(), p);
+            }
+        else {
+            playersPawns.forEach(p -> {
+                pawns.add(p);
+
+                Optional<Terrain> o = terrainList.stream()
+                        .filter(t -> t.isPassable() && t.isStart()).findAny();
+
+                o.ifPresent(t -> map.setPawn(t, p));
+            });
         }
 
         terrainList.forEach(t -> {
@@ -356,6 +370,8 @@ public class BattleScene extends Scene<BreakingSandsGame> {
     }
 
     public void setActivePawn(Pawn pawn) {
+        if (checkVictory()) return;
+
         if (activePawn != null && activePawn != pawn) {
             activePawn.setReadyIfUnmoved();
         }
@@ -364,7 +380,11 @@ public class BattleScene extends Scene<BreakingSandsGame> {
 
         if (activePawn != null) {
             activePawn.getParent().updateText();
-            setActiveDetailText(activePawn.getParent().getDetails());
+
+            if (pawn.getTeam() == 0)
+                setActiveDetailText(activePawn.getParent().getDetails());
+            else
+                clearActiveDetailText();
 
 
             Vector2f pos = pawn.getWorldPosition();
@@ -693,20 +713,24 @@ public class BattleScene extends Scene<BreakingSandsGame> {
         this.currentPath = currentPath;
     }
 
-    public void checkVictory() {
+    public boolean checkVictory() {
         for (Pawn pawn : pawns) {
             if (pawn.getTeam() != 0)
-                return;
+                return false;
         }
 
         victory();
+        return true;
     }
 
     public void victory() {
-        BreakingSandsGame game = getGame();
-        setPaused(true);
+        getGame().prepTransitionScene(new BattleScene(getGame(), pawns.stream().filter(p -> p.getTeam() == 0).collect(Collectors.toList())));
     }
 
+    private void clearActiveDetailText() {
+        if (uiActiveDetailText != null)
+            uiActiveDetailText.setDetails(new SelectionDetails());
+    }
 
     public void setActiveDetailText(SelectionDetails details) {
         if (uiActiveDetailText != null)

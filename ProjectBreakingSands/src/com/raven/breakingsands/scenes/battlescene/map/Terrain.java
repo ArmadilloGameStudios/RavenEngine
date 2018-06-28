@@ -180,6 +180,9 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             }
 
             selectHighlight();
+
+
+            getScene().setSelectedDetailText(getDetails());
         }
     }
 

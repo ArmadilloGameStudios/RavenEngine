@@ -20,7 +20,7 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
     private Structure firstStructure;
 
-    private int size = 8;
+    private int size = 2;
     private int i = 0;
     private int tries = 0;
 

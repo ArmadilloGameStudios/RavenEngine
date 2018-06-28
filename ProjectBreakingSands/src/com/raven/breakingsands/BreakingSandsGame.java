@@ -96,7 +96,7 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
             success = false;
         }
 
-        prepTransitionScene(new BattleScene(this));
+        prepTransitionScene(new BattleScene(this, null));
 
         return success;
     }
