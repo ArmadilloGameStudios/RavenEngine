@@ -187,7 +187,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     public void onEnterScene() {
         setBackgroundColor(new Vector3f(0f, 0f, 0f));
 
-
         Vector2f wo = this.getWorldOffset();
         wo.x = GameProperties.getScreenWidth() / GameProperties.getScaling();
         wo.y = GameProperties.getScreenHeight() / GameProperties.getScaling();
@@ -240,12 +239,16 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             if (loadGameData.getInteger("activePawn") >= 0) {
                 Pawn a = pawns.get(loadGameData.getInteger("activePawn"));
                 setActivePawn(a);
-            }
-            else
+            } else
                 setActivePawn(null);
         } else {
+            int difficulty = 1;
+            if (playersPawns != null) {
+                difficulty = (int) (Math.max(playersPawns.stream().mapToInt(Pawn::getLevel).sum() / 1.5 - 2, 1.0));
+            }
+
             // Terrain
-            map = new Map(this);
+            map = new Map(this, difficulty);
             map.generate();
             getLayerTerrain().addChild(map);
 
@@ -287,6 +290,9 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             setActiveTeam(0);
 
         }
+
+        // restore shield
+        pawns.forEach(Pawn::restoreShield);
     }
 
     private void addPawns() {
@@ -295,7 +301,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         if (playersPawns == null)
             for (int i = 0; i < 4; i++) {
                 GameData gdPawn = GameDatabase.all("pawn").stream()
-                        .filter(p -> p.getString("name").equals("Recruit"))
+                        .filter(p -> p.getString("name").equals("amateur"))
                         .findFirst().get();
 
                 Pawn p = new Pawn(this, gdPawn);
@@ -518,7 +524,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 .filter(p -> p.getTeam() == activeTeam)
                 .forEach(Pawn::ready);
 
-        setState(SELECT_DEFAULT);
+        setActivePawn(null);
     }
 
     public Ability getActiveAbility() {
@@ -805,7 +811,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     public void victory() {
-        getGame().prepTransitionScene(new BattleScene(getGame(), pawns.stream().filter(p -> p.getTeam() == 0).collect(Collectors.toList())));
+        getGame().prepTransitionScene(new BattleScene(getGame(), pawns.stream().filter(p -> p.getTeam() == 0 && p.getHack() == null).collect(Collectors.toList())));
     }
 
     private void clearActiveDetailText() {
@@ -892,11 +898,14 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         uiLevelUp.setPawn(getActivePawn());
     }
 
-    public void pawnPushBlast(Ability blast) {
+    public void pawnPushBlast(Ability blast) { // TODO change to make more generic on button click
+        if (activeAbility.uses != null) {
+            activeAbility.remainingUses--;
+        }
+
         List<Pawn> pawns = this.pawns.stream()
                 .filter(p ->
                         p.getAbilityAffects().stream()
-//                                .anyMatch(a -> a.push_blast && a.owner == activePawn))
                                 .anyMatch(a -> a == blast))
                 .collect(Collectors.toList());
 
@@ -910,6 +919,8 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                     t.setPawn(p);
                 }
             });
+
+            activePawn.attack(p, activeAbility.damage, 0, 1);
         });
 
         activePawn.reduceAttacks();

@@ -51,6 +51,7 @@
 
 
             uses: 1,
+            damage: 4,
             style: "square"
             size: 1,
             push_blast: true,
@@ -64,6 +65,7 @@
             uses: 1,
             size: 5,
             style: "straight",
+            remain: true,
             hook_pull: true,
         }
     ]

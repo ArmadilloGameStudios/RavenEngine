@@ -8,7 +8,7 @@
         attack: "plasma_blade_sound.wav"
     },
 
-    damage: 3,
+    damage: 2,
     piercing: 1,
     range: 3,
     directional: true,
@@ -121,6 +121,7 @@
     piercing: 1,
     range: 2,
     shots: 2,
+    style: "straight",
 
     directional: true,
 

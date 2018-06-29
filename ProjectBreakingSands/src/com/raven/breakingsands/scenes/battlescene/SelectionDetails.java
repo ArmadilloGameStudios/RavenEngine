@@ -2,6 +2,7 @@ package com.raven.breakingsands.scenes.battlescene;
 
 public class SelectionDetails {
     public String name = "-";
+    public String level = "";
     public String hp = "-";
     public String movement = "-";
     public String resistance = "-";
@@ -14,6 +15,7 @@ public class SelectionDetails {
 
     public void clear() {
         name = "-";
+        level = "-";
         hp = "-";
         movement = "-";
         resistance = "-";

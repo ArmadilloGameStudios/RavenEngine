@@ -1,5 +1,5 @@
 {
-    name: "Recruit",
+    name: "amateur",
     sprite: "sprites/character.png",
     animation: "character",
     standing: true,

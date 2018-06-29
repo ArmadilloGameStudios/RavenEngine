@@ -25,12 +25,14 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
     private Structure firstStructure;
 
-    private int size = 2;
+    private int size;
     private int i = 0;
     private int tries = 0;
 
-    public Map(BattleScene scene) {
+    public Map(BattleScene scene, int size) {
         super(scene);
+
+        this.size = Math.min(size, 8);
     }
 
     public Map(BattleScene scene, GameData gameData) {
@@ -49,13 +51,11 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
     }
 
     public void generate() {
-        while (structures.size() == 0 || !structures.contains(firstStructure)) {
+        while (structures.size() == 0 || !structures.contains(firstStructure) || terrain.stream().noneMatch(Terrain::isSpawn)) {
             i = size;
             startGeneration();
+            removeIslands();
         }
-
-        // remove islands
-        removeIslands();
 
         addWalls();
 

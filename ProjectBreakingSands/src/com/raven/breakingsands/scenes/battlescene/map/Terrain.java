@@ -515,6 +515,10 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
         if (pawn != null) {
             details.name = pawn.getName();
+            if (pawn.getTeam(false) == 0)
+                details.level = Integer.toString(pawn.getLevel()) + "," + pawn.getXp() + "/" + pawn.getNextLevelXp();
+            else
+                details.level = "";
             details.hp = pawn.getRemainingHitPoints() + "/" + pawn.getHitPoints();
             if (pawn.getBonusHp() > 0) {
                 details.hp += "+" + pawn.getBonusHp();

@@ -14,7 +14,7 @@ public class UIDetailText
     private UIImage<BattleScene> backgroundImg;
     private SelectionDetails details;
     private UILabel<BattleScene>
-            uiName, uiWeapon,
+            uiName, uiLvl, uiWeapon,
             uiHP, uiLblHP,
             uiMov, uiLblMov,
             uiRes, uiLblRes,
@@ -50,6 +50,17 @@ public class UIDetailText
         uiName.load();
 
         addChild(uiName);
+
+        uiLvl = new UILabel<>(getScene(), "", 30, 10);
+        font = uiLvl.getFont();
+        font.setSmall(true);
+        font.setSide(UIFont.Side.RIGHT);
+        font.setHighlight(false);
+        uiLvl.setX(442);
+        uiLvl.setY(122);
+        uiLvl.load();
+
+        addChild(uiLvl);
 
         uiHP = new UILabel<>(getScene(), "-", 30, 10);
         font = uiHP.getFont();
@@ -252,6 +263,18 @@ public class UIDetailText
         uiName.load();
 
         addChild(uiName);
+
+        uiLvl = new UILabel<>(getScene(), "", 30, 10);
+        font = uiLvl.getFont();
+        font.setSmall(true);
+        font.setSide(UIFont.Side.RIGHT);
+        font.setHighlight(false);
+        uiLvl.setX(146);
+        uiLvl.setY(122);
+        uiLvl.load();
+
+        addChild(uiLvl);
+
 
         uiHP = new UILabel<>(getScene(), "-", 30, 10);
         font = uiHP.getFont();
@@ -483,6 +506,11 @@ public class UIDetailText
         if (!uiName.getText().equals(details.name)) {
             uiName.setText(details.name);
             uiName.load();
+        }
+
+        if (!uiLvl.getText().equals(details.level)) {
+            uiLvl.setText(details.level);
+            uiLvl.load();
         }
 
         if (!uiHP.getText().equals(details.hp)) {

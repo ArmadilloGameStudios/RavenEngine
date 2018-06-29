@@ -41,6 +41,10 @@ void main() {
 
 
     vec4 sprite = texture(spriteSheet, texture_coords);
+
+    if (sprite.a <= 0)
+        discard;
+
     gl_FragDepth = mix(1, z, sprite.a - texture_coords.y / 1000); // TODO get world coords
 
     float part = min(1, dot(sprite.xyz, vec3(.4)));

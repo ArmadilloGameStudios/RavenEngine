@@ -43,7 +43,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     // instance
     private Weapon weapon;
-    private String name = "", charClass = "recruit";
+    private String name = "", charClass = "amateur";
     private int level = 0, xp, team,
             hitPoints, remainingHitPoints, bonusHp, bonusHpLoss,
             totalShield, remainingShield, bonusShield, bonusShieldLoss,
@@ -174,11 +174,19 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         return name;
     }
 
-    public int getTeam() {
-        if (hack == null)
-            return team;
+    public int getTeam(boolean withHack) {
+        if (withHack) {
+            if (hack == null)
+                return team;
+            else
+                return hack.getTeam();
+        }
         else
-            return hack.getTeam();
+            return team;
+    }
+
+    public int getTeam() {
+        return getTeam(true);
     }
 
     public void setTeam(int i) {
@@ -222,17 +230,17 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         canMove &= remainingMovement > 0;
 
-        canMove &= remainingAttacks == totalAttacks;
-
-        for (Ability a : abilities) {
-            canMove &= a.uses == null || (a.remainingUses == a.uses || a.remain);
-        }
+//        canMove &= remainingAttacks == totalAttacks;
+//
+//        for (Ability a : abilities) {
+//            canMove &= a.uses == null || (a.remainingUses == a.uses || a.remain);
+//        }
 
         return canMove;
     }
 
     public boolean canLevel() {
-        return xp > (level * (level + 1) + 1) * 100;
+        return xp >= getNextLevelXp();
     }
 
     public boolean canAttack() {
@@ -250,7 +258,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     public boolean canAbility(Ability ability) {
         boolean canMove = true;
 
-        canMove &= remainingAttacks == totalAttacks;
+        canMove &= remainingAttacks == totalAttacks || abilities.stream().anyMatch(a -> a.remain);
 
         for (Ability a : abilities) {
             if (a == ability)
@@ -486,7 +494,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         getAnimationState().addActionFinishHandler(x -> {
 
-            attack(target);
+            attack(target, weapon.getDamage(), weapon.getPiercing(), weapon.getShots());
 
             if (directional)
                 if (directionUp)
@@ -514,11 +522,11 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     }
 
-    public void attack(Pawn pawn) {
+    public void attack(Pawn pawn, int damage, int percing, int shots) {
         reduceAttacks();
 
-        int remainingResistance = Math.max(pawn.getResistance() - weapon.getPiercing(), 0);
-        int dealtDamage = Math.max(weapon.getDamage() - remainingResistance, 0) * weapon.getShots();
+        int remainingResistance = Math.max(pawn.getResistance() - percing, 0);
+        int dealtDamage = Math.max(damage - remainingResistance, 0) * shots;
 
         setUnmoved(false);
 
@@ -549,16 +557,12 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             dealtDamage = 1;
         }
 
-        System.out.println(bonusShieldLoss);
-
         int rolloverBonusShieldDamage = dealtDamage;
         if (getBonusShield() > 0) {
             System.out.println(bonusShield);
             rolloverBonusShieldDamage = -Math.min(getBonusShield() - dealtDamage, 0);
             this.bonusShieldLoss = Math.min(getBonusShield() - dealtDamage, -this.bonusShield);
         }
-
-        System.out.println(bonusShieldLoss);
 
         int rolloverShieldDamage = -Math.min(this.remainingShield - rolloverBonusShieldDamage, 0);
         this.remainingShield = Math.max(this.remainingShield - rolloverBonusShieldDamage, 0);
@@ -629,7 +633,18 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public void setReadyIfUnmoved() {
-        ready = unmoved;
+        //ready = unmoved;
     }
 
+    public void restoreShield() {
+        remainingShield = totalShield;
+    }
+
+    public int getXp() {
+        return xp;
+    }
+
+    public int getNextLevelXp() {
+        return (level * (level + 1) + 1) * 50;
+    }
 }

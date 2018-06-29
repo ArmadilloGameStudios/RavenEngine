@@ -352,7 +352,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             Optional<Ability> ability = pawn.getAbilities().stream().filter(a -> a.push_blast).findFirst();
             if (ability.isPresent()) {
                 btnPushBlast.setVisibility(true);
-                btnPushBlast.setDisable(false);
+                btnPushBlast.setDisable(!(ability.get().uses == null || (ability.get().remainingUses > 0)));
                 btnPushBlast.setActive(false);
                 btnPushBlast.setAbility(ability.get());
             } else {
@@ -362,7 +362,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             ability = pawn.getAbilities().stream().filter(a -> a.hook_pull).findFirst();
             if (ability.isPresent()) {
                 btnHookPull.setVisibility(true);
-                btnHookPull.setDisable(false);
+                btnHookPull.setDisable(!(ability.get().uses == null || (ability.get().remainingUses > 0)));
                 btnHookPull.setActive(false);
                 btnHookPull.setAbility(ability.get());
             } else {
@@ -372,7 +372,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             ability = pawn.getAbilities().stream().filter(a -> a.hack).findFirst();
             if (ability.isPresent()) {
                 btnHack.setVisibility(true);
-                btnHack.setDisable(false);
+                btnHack.setDisable(!(ability.get().uses == null || (ability.get().remainingUses > 0)));
                 btnHack.setActive(false);
                 btnHack.setAbility(ability.get());
             } else {
@@ -381,6 +381,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
         }
 
         btnEnd.setDisable(getScene().getActiveTeam() != 0);
+        oldState = SELECT_DEFAULT;
 
         pack();
     }

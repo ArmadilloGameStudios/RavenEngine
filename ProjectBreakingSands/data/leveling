@@ -1,5 +1,5 @@
 {
-    class: "recruit",
+    class: "amateur",
 
     level: [
         { level: 1, bonus: { type: "weapon", tag: "common" }},

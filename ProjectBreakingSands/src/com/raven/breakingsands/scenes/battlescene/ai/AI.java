@@ -43,9 +43,11 @@ public class AI implements Runnable {
             // create a clean slate, since this object is reused each time
             clean();
 
-            if (scene.getActivePawn() == null || !scene.getActivePawn().isReady()) {
+            if (scene.getActivePawn() == null || (!scene.getActivePawn().canMove() && !scene.getActivePawn().canAttack())) {
+                System.out.println("pawn");
                 selectPawn();
             } else {
+                System.out.println("move");
                 selectMove();
             }
         } catch (Exception e) {
@@ -55,7 +57,7 @@ public class AI implements Runnable {
 
     private void selectPawn() {
         List<Pawn> pawns = scene.getPawns().stream()
-                .filter(p -> p.getTeam() != 0 && p.isReady())
+                .filter(p -> p.getTeam() != 0 && (p.isReady() && (p.canAttack() || p.canMove())))
                 .collect(Collectors.toList());
 
         if (pawns.size() > 0) {
@@ -72,37 +74,39 @@ public class AI implements Runnable {
                 .collect(Collectors.toList());
 
         // check if can attack
-        List<Terrain> inRange = scene.getActivePawn().getParent().selectRange(
-                scene.getActivePawn().getWeapon().getStyle(),
-                scene.getActivePawn().getWeapon().getRange());
-        inRange = inRange.stream()
-                .filter(t -> t.getPawn() != null &&
-                        t.getPawn().getTeam() != scene.getActiveTeam())
-                .collect(Collectors.toList());
-
-        if (taunters.size() > 0) {
+        if (scene.getActivePawn().canAttack()) {
+            List<Terrain> inRange = scene.getActivePawn().getParent().selectRange(
+                    scene.getActivePawn().getWeapon().getStyle(),
+                    scene.getActivePawn().getWeapon().getRange());
             inRange = inRange.stream()
-                    .filter(t -> taunters.contains(t.getPawn()))
+                    .filter(t -> t.getPawn() != null &&
+                            t.getPawn().getTeam() != scene.getActiveTeam())
                     .collect(Collectors.toList());
-        }
 
-        HashMap<Terrain, Float> rangeMap = scene.getActivePawn().getParent().filterCoverRange(inRange);
+            if (taunters.size() > 0) {
+                inRange = inRange.stream()
+                        .filter(t -> taunters.contains(t.getPawn()))
+                        .collect(Collectors.toList());
+            }
 
-        if (rangeMap.size() > 0) {
-            Optional<Terrain> optionalTerrain;
+            HashMap<Terrain, Float> rangeMap = scene.getActivePawn().getParent().filterCoverRange(inRange);
 
-            if (rangeMap.size() > 1) {
-                optionalTerrain = rangeMap.keySet().stream()
-                        .filter(Objects::nonNull)
-                        .max((a, b) -> (int) (rangeMap.get(a) - rangeMap.get(b)));
+            if (rangeMap.size() > 0) {
+                Optional<Terrain> optionalTerrain;
 
-                if (optionalTerrain.isPresent()) {
-                    attack = optionalTerrain.get();
+                if (rangeMap.size() > 1) {
+                    optionalTerrain = rangeMap.keySet().stream()
+                            .filter(Objects::nonNull)
+                            .max((a, b) -> (int) (rangeMap.get(a) - rangeMap.get(b)));
+
+                    if (optionalTerrain.isPresent()) {
+                        attack = optionalTerrain.get();
+                        return;
+                    }
+                } else {
+                    attack = rangeMap.keySet().stream().findFirst().get();
                     return;
                 }
-            } else {
-                attack = rangeMap.keySet().stream().findFirst().get();
-                return;
             }
         }
 
@@ -164,6 +168,7 @@ public class AI implements Runnable {
     }
 
     public void resolve() {
+        System.out.println("" + attack + " " + moving + " " + select);
         if (attack != null) {
             scene.setTargetPawn(attack.getPawn());
             scene.getActivePawn().setReady(false);
