@@ -232,7 +232,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public boolean canLevel() {
-        return xp > (level * (level + 1) + 1) * 100 || true;
+        return xp > (level * (level + 1) + 1) * 100;
     }
 
     public boolean canAttack() {
