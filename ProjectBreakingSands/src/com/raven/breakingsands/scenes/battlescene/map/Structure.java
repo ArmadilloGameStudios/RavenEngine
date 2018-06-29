@@ -1,15 +1,13 @@
 package com.raven.breakingsands.scenes.battlescene.map;
 
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
+import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.*;
 import com.raven.engine2d.util.math.Vector2i;
 import com.raven.engine2d.worldobject.WorldObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Structure extends WorldObject<BattleScene, Map, WorldObject>
         implements GameDatable {
@@ -73,9 +71,38 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject>
 
     }
 
+    public Structure(BattleScene scene, GameData gdStructure) {
+        super(scene);
+
+        this.x = gdStructure.getInteger("x");
+        this.y = gdStructure.getInteger("y");
+        this.setX(x);
+        this.setY(y);
+
+        width = gdStructure.getInteger("width");
+        height = gdStructure.getInteger("height");
+
+        name = gdStructure.getString("name");
+
+        for (GameData gdTerrain : gdStructure.getList("terrain")) {
+            Terrain terrain = new Terrain(scene, this, gdTerrain);
+            terrainList.add(terrain);
+            addChild(terrain);
+        }
+    }
+
     @Override
     public GameData toGameData() {
-        return new GameDataList(terrainList).toGameData();
+        HashMap<String, GameData> map = new HashMap<>();
+
+        map.put("x", new GameData(x));
+        map.put("y", new GameData(y));
+        map.put("width", new GameData(width));
+        map.put("height", new GameData(height));
+        map.put("name", new GameData(name));
+        map.put("terrain", new GameDataList(terrainList).toGameData());
+
+        return new GameData(map);
     }
 
     public StructureEntrance[] getEntrances() {
@@ -84,6 +111,12 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject>
 
     public List<Terrain> getTerrainList() {
         return terrainList;
+    }
+
+    public void removeTerrain(Terrain t) {
+        if (terrainList.remove(t)) {
+            removeChild(t);
+        }
     }
 
     public String getName() {

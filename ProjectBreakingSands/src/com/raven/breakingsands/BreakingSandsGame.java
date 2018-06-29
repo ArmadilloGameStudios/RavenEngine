@@ -16,7 +16,6 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
     public static void main(String[] args) {
         GameLauncher.Open(new BreakingSandsGame());
         System.out.println("Lunched");
-
     }
 
     @Override

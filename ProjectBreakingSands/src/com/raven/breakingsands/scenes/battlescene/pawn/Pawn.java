@@ -44,7 +44,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     // instance
     private Weapon weapon;
     private String name = "", charClass = "recruit";
-    private int level = 0, xp,  team,
+    private int level = 0, xp, team,
             hitPoints, remainingHitPoints, bonusHp,
             totalShield, remainingShield, bonusShield,
             totalMovement, remainingMovement,
@@ -63,12 +63,36 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         super(scene, gameData);
 
         name = gameData.getString("name");
+        gameData.ifHas("class", c -> charClass = c.asString());
+        gameData.ifHas("level", l -> level = l.asInteger());
+        gameData.ifHas("xp", x -> xp = x.asInteger());
         team = gameData.getInteger("team");
-        remainingHitPoints = hitPoints = gameData.getInteger("hp");
-        gameData.ifHas("shield",
-                gd -> remainingShield = totalShield = gd.asInteger());
+
+        gameData.ifHas("bonusHp", g -> bonusHp = g.asInteger()); // TODO check after abilities
+        gameData.ifHas("remainingHitPoints",
+                r -> {
+                    remainingHitPoints = r.asInteger();
+                    hitPoints = gameData.getInteger("hp");
+                },
+                () -> remainingHitPoints = hitPoints = gameData.getInteger("hp"));
+
+
+        gameData.ifHas("bonusShield", g -> bonusShield = g.asInteger()); // TODO check after abilities
+        gameData.ifHas("remainingShield",
+                r -> {
+                    remainingShield = r.asInteger();
+                    totalShield = gameData.getInteger("shield");
+                },
+                () -> gameData.ifHas("shield", s -> remainingShield = totalShield = s.asInteger()));
+
         totalMovement = gameData.getInteger("movement");
+        gameData.ifHas("remainingMovement", m -> remainingMovement = m.asInteger());
+        gameData.ifHas("resistance", m -> resistance = m.asInteger());
+        gameData.ifHas("totalAttacks", m -> totalAttacks = m.asInteger());
+        gameData.ifHas("remainingAttacks", m -> remainingAttacks = m.asInteger());
         gameData.ifHas("xp_gain", x -> xpGain = x.asInteger());
+        gameData.ifHas("unmoved", x -> unmoved = x.asBoolean());
+        gameData.ifHas("ready", x -> ready = x.asBoolean());
 
         // weapon
         if (gameData.has("weapon")) {
@@ -90,6 +114,13 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             addChild(weapon);
         }
 
+        // abilities
+        if (gameData.has("abilities")) {
+            for (GameData gdAbility : gameData.getList("abilities")) {
+                addAbility(new Ability(gdAbility));
+            }
+        }
+
         pawnMessage = new PawnMessage(scene);
         Vector2f pos = pawnMessage.getWorldPosition();
         pos.x -= .9;
@@ -102,6 +133,11 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     public GameData toGameData() {
         HashMap<String, GameData> map = new HashMap<>();
 
+        GameData woData = getWorldObjectData();
+        for (String key : woData.asMap().keySet()) {
+            map.put(key, woData.getData(key));
+        }
+
         map.put("name", new GameData(name));
         map.put("class", new GameData(charClass));
         map.put("level", new GameData(level));
@@ -110,15 +146,15 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         map.put("hp", new GameData(hitPoints));
         map.put("remainingHitPoints", new GameData(remainingHitPoints));
         map.put("bonusHp", new GameData(bonusHp));
-        map.put("totalShield", new GameData(totalShield));
+        map.put("shield", new GameData(totalShield));
         map.put("remainingShield", new GameData(remainingShield));
         map.put("bonusShield", new GameData(bonusShield));
-        map.put("totalMovement", new GameData(totalMovement));
+        map.put("movement", new GameData(totalMovement));
         map.put("remainingMovement", new GameData(remainingMovement));
         map.put("resistance", new GameData(resistance));
         map.put("totalAttacks", new GameData(totalAttacks));
         map.put("remainingAttacks", new GameData(remainingAttacks));
-        map.put("xpGain", new GameData(xpGain));
+        map.put("xp_gain", new GameData(xpGain));
         map.put("unmoved", new GameData(unmoved));
         map.put("ready", new GameData(ready));
         map.put("weapon", weapon.toGameData());

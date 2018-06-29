@@ -110,6 +110,8 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         map.put("pawns", new GameDataList(pawns).toGameData());
         map.put("map", this.map.toGameData());
+        map.put("activeTeam", new GameData(activeTeam));
+        map.put("activePawn", new GameData(pawns.indexOf(activePawn)));
 
         return new GameData(map);
     }
@@ -185,51 +187,103 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     public void onEnterScene() {
         setBackgroundColor(new Vector3f(0f, 0f, 0f));
 
-        // Terrain
-        map = new Map(this);
-        map.generate();
-        getLayerTerrain().addChild(map);
 
         Vector2f wo = this.getWorldOffset();
-        wo.x = GameProperties.getScreenWidth() / 2f;
-        wo.y = GameProperties.getScreenHeight() / 2f;
+        wo.x = GameProperties.getScreenWidth() / GameProperties.getScaling();
+        wo.y = GameProperties.getScreenHeight() / GameProperties.getScaling();
 
-        // Bottom UI
-        UIBottomRightContainer<BattleScene> bottomRightContainer = new UIBottomRightContainer<>(this);
-        getLayerUI().addChild(bottomRightContainer);
-        uiActiveDetailText = new UIDetailText(this, bottomRightContainer.getStyle());
-        bottomRightContainer.addChild(uiActiveDetailText);
-        bottomRightContainer.pack();
+        if (loadGameData != null) {
+            // Pawns
+            loadGameData.getList("pawns").forEach(p -> {
+                pawns.add(new Pawn(this, p));
+            });
 
-        UIBottomLeftContainer<BattleScene> bottomLeftContainer = new UIBottomLeftContainer<>(this);
-        getLayerUI().addChild(bottomLeftContainer);
-        uiSelectedDetailText = new UIDetailText(this, bottomLeftContainer.getStyle());
-        bottomLeftContainer.addChild(uiSelectedDetailText);
-        bottomLeftContainer.pack();
+            // Terrain
+            map = new Map(this, loadGameData.getData("map"));
+            getLayerTerrain().addChild(map);
 
-        // Action Select
-        actionSelect = new UIActionSelect(this);
-        getLayerUI().addChild(actionSelect);
+            // Bottom UI
+            UIBottomRightContainer<BattleScene> bottomRightContainer = new UIBottomRightContainer<>(this);
+            getLayerUI().addChild(bottomRightContainer);
+            uiActiveDetailText = new UIDetailText(this, bottomRightContainer.getStyle());
+            bottomRightContainer.addChild(uiActiveDetailText);
+            bottomRightContainer.pack();
 
-        // Level UP
-        UICenterContainer<BattleScene> centerContainer = new UICenterContainer<>(this);
-        getLayerUI().addChild(centerContainer);
-        uiLevelUp = new UILevelUp(this);
-        centerContainer.addChild(uiLevelUp);
-        centerContainer.pack();
-        uiLevelUp.setVisibility(false);
+            UIBottomLeftContainer<BattleScene> bottomLeftContainer = new UIBottomLeftContainer<>(this);
+            getLayerUI().addChild(bottomLeftContainer);
+            uiSelectedDetailText = new UIDetailText(this, bottomLeftContainer.getStyle());
+            bottomLeftContainer.addChild(uiSelectedDetailText);
+            bottomLeftContainer.pack();
 
-        // Menu
-        menu = new Menu(this);
-        menu.pack();
-        getLayerUI().addChild(menu);
-        menu.setVisibility(false);
+            // Action Select
+            actionSelect = new UIActionSelect(this);
+            getLayerUI().addChild(actionSelect);
 
-//        victory();
+            // Level UP
+            UICenterContainer<BattleScene> centerContainer = new UICenterContainer<>(this);
+            getLayerUI().addChild(centerContainer);
+            uiLevelUp = new UILevelUp(this);
+            centerContainer.addChild(uiLevelUp);
+            centerContainer.pack();
+            uiLevelUp.setVisibility(false);
 
-        addPawns();
+            // Menu
+            menu = new Menu(this);
+            menu.pack();
+            getLayerUI().addChild(menu);
+            menu.setVisibility(false);
 
-        setActiveTeam(0);
+//          victory();
+
+            setActiveTeam(loadGameData.getInteger("activeTeam"));
+            if (loadGameData.getInteger("activePawn") >= 0)
+                setActivePawn(pawns.get(loadGameData.getInteger("activePawn")));
+            else
+                setActivePawn(null);
+        } else {
+            // Terrain
+            map = new Map(this);
+            map.generate();
+            getLayerTerrain().addChild(map);
+
+            // Bottom UI
+            UIBottomRightContainer<BattleScene> bottomRightContainer = new UIBottomRightContainer<>(this);
+            getLayerUI().addChild(bottomRightContainer);
+            uiActiveDetailText = new UIDetailText(this, bottomRightContainer.getStyle());
+            bottomRightContainer.addChild(uiActiveDetailText);
+            bottomRightContainer.pack();
+
+            UIBottomLeftContainer<BattleScene> bottomLeftContainer = new UIBottomLeftContainer<>(this);
+            getLayerUI().addChild(bottomLeftContainer);
+            uiSelectedDetailText = new UIDetailText(this, bottomLeftContainer.getStyle());
+            bottomLeftContainer.addChild(uiSelectedDetailText);
+            bottomLeftContainer.pack();
+
+            // Action Select
+            actionSelect = new UIActionSelect(this);
+            getLayerUI().addChild(actionSelect);
+
+            // Level UP
+            UICenterContainer<BattleScene> centerContainer = new UICenterContainer<>(this);
+            getLayerUI().addChild(centerContainer);
+            uiLevelUp = new UILevelUp(this);
+            centerContainer.addChild(uiLevelUp);
+            centerContainer.pack();
+            uiLevelUp.setVisibility(false);
+
+            // Menu
+            menu = new Menu(this);
+            menu.pack();
+            getLayerUI().addChild(menu);
+            menu.setVisibility(false);
+
+//          victory();
+
+            addPawns();
+
+            setActiveTeam(0);
+
+        }
     }
 
     private void addPawns() {
@@ -247,10 +301,11 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 Optional<Terrain> o = terrainList.stream()
                         .filter(t -> t.isPassable() && t.isStart()).findAny();
 
-                map.setPawn(o.get(), p);
+                o.ifPresent(t -> map.setPawn(t, p));
             }
         else {
             playersPawns.forEach(p -> {
+                p.setScene(this);
                 pawns.add(p);
 
                 Optional<Terrain> o = terrainList.stream()

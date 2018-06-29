@@ -9,6 +9,7 @@ import com.raven.breakingsands.scenes.battlescene.SelectionDetails;
 import com.raven.breakingsands.scenes.battlescene.decal.Wall;
 import com.raven.breakingsands.scenes.battlescene.decal.WallFactory;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
+import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
@@ -86,19 +87,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             this.passable = terrainData.getBoolean("passable");
         }
 
-//        if (propData.has("wall")) {
-//            GameData wallData = propData.getData("wall");
-//
-//            WallFactory f = new WallFactory(scene);
-//
-//            for (GameData tag : wallData.asList()) {
-//                f.addTypeRestriction(tag.asString());
-//            }
-//
-//            Wall wall = f.getInstance();
-//            setWall(wall);
-//        }
-
         propData.ifHas("tags", p -> p.asList().forEach(t -> {
             switch (t.asString()) {
                 case "spawn":
@@ -109,6 +97,26 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                     break;
             }
         }));
+    }
+
+    public Terrain(BattleScene scene, Structure structure, GameData gdTerrain) {
+        super(scene, gdTerrain);
+
+        gdTerrain.ifHas("passable", p -> passable = p.asBoolean());
+        gdTerrain.ifHas("spawn", s -> spawn = s.asBoolean());
+        gdTerrain.ifHas("start", s -> start = s.asBoolean());
+        gdTerrain.ifHas("x", s -> x = s.asInteger());
+        gdTerrain.ifHas("y", s -> y = s.asInteger());
+        setX(x - structure.getMapX());
+        setY(y - structure.getMapY());
+
+        gdTerrain.ifHas("wall", w -> setWall(new Wall(scene, w)));
+
+        gdTerrain.ifHas("pawn", p -> {
+            setPawn(scene.getPawns().get(p.asInteger()));
+        });
+
+        this.addMouseHandler(this);
     }
 
     @Override
@@ -122,6 +130,13 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             map.put("pawn", new GameData(getScene().getPawns().indexOf(pawn)));
         map.put("spawn", new GameData(spawn));
         map.put("start", new GameData(start));
+        map.put("x", new GameData(x));
+        map.put("y", new GameData(y));
+
+        GameData woData = getWorldObjectData();
+        for (String key : woData.asMap().keySet()) {
+            map.put(key, woData.getData(key));
+        }
 
         return new GameData(map);
     }

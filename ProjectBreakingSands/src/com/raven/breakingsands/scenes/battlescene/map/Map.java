@@ -4,6 +4,7 @@ import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.decal.WallFactory;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
+import com.raven.engine2d.Game;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatable;
@@ -32,12 +33,23 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
         super(scene);
     }
 
+    public Map(BattleScene scene, GameData gameData) {
+        super(scene);
+
+        for (GameData gdStructure : gameData.getList("structures")) {
+            Structure structure = new Structure(scene, gdStructure);
+            addStructure(structure);
+        }
+    }
+
     public GameData toGameData() {
-        return new GameDataList(structures).toGameData();
+        HashMap<String, GameData> map = new HashMap<>();
+        map.put("structures", new GameDataList(structures).toGameData());
+        return new GameData(map);
     }
 
     public void generate() {
-        while (structures.size() == 0 || !structures.contains(firstStructure)) { // TODO already check for size?
+        while (structures.size() == 0 || !structures.contains(firstStructure)) {
             i = size;
             startGeneration();
         }
@@ -158,7 +170,7 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
         terrain.removeAll(toRemove);
         removeChildren(toRemove);
-        toRemove.forEach(t -> t.getParent().removeChild(t));
+        toRemove.forEach(t -> t.getParent().removeTerrain(t));
     }
 
     private void addWalls() {
@@ -209,17 +221,6 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
     public List<Terrain> getTerrainList() {
         return terrain;
-    }
-
-    public void setPawn(int x, int y, Pawn p) {
-        Optional<Terrain> o = terrain.stream()
-                .filter(t -> t.getMapX() == x && t.getMapY() == y).findFirst();
-
-        if (o.isPresent()) {
-            Terrain selected = o.get();
-
-            selected.setPawn(p);
-        }
     }
 
     public void setPawn(Terrain t, Pawn p) {

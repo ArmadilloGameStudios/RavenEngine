@@ -1,5 +1,6 @@
 package com.raven.engine2d.worldobject;
 
+import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.graphics2d.DrawStyle;
@@ -19,6 +20,7 @@ public abstract class WorldObject<
         C extends WorldObject>
         extends GameObject<WorldObject, P, C> {
 
+    private Map<String, GameData> audioData;
     private Map<String, Clip> audioMap = new HashMap<>();
 
     private List<WorldObject> parentList = new ArrayList<>();
@@ -31,7 +33,9 @@ public abstract class WorldObject<
 
     private List<C> children = new CopyOnWriteArrayList<>();
 
+    private String spriteSheetName;
     ShaderTexture spriteSheet;
+    private String animationName;
     private SpriteAnimationState spriteAnimationState;
 
     P parent;
@@ -45,10 +49,11 @@ public abstract class WorldObject<
         }
 
         if (data.has("sprite")) {
-            spriteSheet = GameEngine.getEngine().getSpriteSheet(data.getString("sprite"));
+            spriteSheetName = data.getString("sprite");
+            spriteSheet = GameEngine.getEngine().getSpriteSheet(spriteSheetName);
 
             if (data.has("animation")) {
-                String animationName = data.getString("animation");
+                animationName = data.getString("animation");
                 spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation(animationName));
 
                 data.ifHas("animation_idle", i -> spriteAnimationState.setIdleAction(i.asString()));
@@ -56,7 +61,7 @@ public abstract class WorldObject<
         }
 
         if (data.has("audio")) {
-            Map<String, GameData> audioData = data.getData("audio").asMap();
+            audioData = data.getData("audio").asMap();
 
             for (String audioKey : audioData.keySet()) {
 
@@ -68,6 +73,28 @@ public abstract class WorldObject<
 
     public WorldObject(S scene) {
         this.scene = scene;
+    }
+
+    public GameData getWorldObjectData() {
+        HashMap<String, GameData> map = new HashMap<>();
+
+        if (standing)
+            map.put("standing", new GameData(true));
+        if (spriteSheetName != null) {
+            map.put("sprite", new GameData(spriteSheetName));
+
+            if (animationName != null) {
+                map.put("animation", new GameData(animationName));
+
+                if (!spriteAnimationState.getIdleAction().equals("idle")) {
+                    map.put("animation_idle", new GameData(spriteAnimationState.getIdleAction()));
+                }
+            }
+        }
+        if (audioData != null) {
+            map.put("audio", new GameData(audioData));
+        }
+        return new GameData(map);
     }
 
     public float getX() {
@@ -228,5 +255,11 @@ public abstract class WorldObject<
 
     public void onUpdate(float deltaTime) {
 
+    }
+
+    public void setScene(S scene) {
+        this.scene = scene;
+
+        children.forEach(c -> c.setScene(scene));
     }
 }

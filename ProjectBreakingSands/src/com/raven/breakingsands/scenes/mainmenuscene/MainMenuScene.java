@@ -56,11 +56,12 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
 
         Path charPath = Paths.get(getGame().getMainDirectory(), "save");
 
-//        if (charPath.toFile().list().length > 0) {
-//            ContinueButton continueBtn = new ContinueButton(this);
-//            container.addChild(continueBtn);
-//            continueBtn.updateTexture();
-//        }
+        if (charPath.toFile().list().length > 0) {
+            ContinueButton continueBtn = new ContinueButton(this);
+            continueBtn.load();
+            container.addChild(continueBtn);
+        }
+
 
         NewGameButton newGameBtn = new NewGameButton(this);
         newGameBtn.load();
