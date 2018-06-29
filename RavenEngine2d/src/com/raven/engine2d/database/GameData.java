@@ -47,7 +47,7 @@ public class GameData implements GameDatable {
 
     public boolean has(String prop) {
         if (isData()) {
-            return asMap().containsKey(prop);
+            return asMap().containsKey(prop.toLowerCase());
         } else {
             return false;
         }

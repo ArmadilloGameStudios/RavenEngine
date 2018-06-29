@@ -45,10 +45,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     private Weapon weapon;
     private String name = "", charClass = "recruit";
     private int level = 0, xp, team,
-            hitPoints, remainingHitPoints, bonusHp,
-            totalShield, remainingShield, bonusShield,
+            hitPoints, remainingHitPoints, bonusHp, bonusHpLoss,
+            totalShield, remainingShield, bonusShield, bonusShieldLoss,
             totalMovement, remainingMovement,
-            resistance, totalAttacks = 1, remainingAttacks,
+            resistance, bonusResistance, totalAttacks = 1, remainingAttacks,
             xpGain;
     private Hack hack;
     private boolean unmoved = true;
@@ -68,7 +68,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         gameData.ifHas("xp", x -> xp = x.asInteger());
         team = gameData.getInteger("team");
 
-        gameData.ifHas("bonusHp", g -> bonusHp = g.asInteger()); // TODO check after abilities
+        gameData.ifHas("bonusHpLoss", g -> bonusHpLoss = g.asInteger()); // TODO check after abilities
         gameData.ifHas("remainingHitPoints",
                 r -> {
                     remainingHitPoints = r.asInteger();
@@ -77,7 +77,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 () -> remainingHitPoints = hitPoints = gameData.getInteger("hp"));
 
 
-        gameData.ifHas("bonusShield", g -> bonusShield = g.asInteger()); // TODO check after abilities
+        gameData.ifHas("bonusShieldLoss", g -> bonusShieldLoss = g.asInteger()); // TODO check after abilities
         gameData.ifHas("remainingShield",
                 r -> {
                     remainingShield = r.asInteger();
@@ -86,6 +86,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 () -> gameData.ifHas("shield", s -> remainingShield = totalShield = s.asInteger()));
 
         totalMovement = gameData.getInteger("movement");
+
         gameData.ifHas("remainingMovement", m -> remainingMovement = m.asInteger());
         gameData.ifHas("resistance", m -> resistance = m.asInteger());
         gameData.ifHas("totalAttacks", m -> totalAttacks = m.asInteger());
@@ -117,9 +118,12 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         // abilities
         if (gameData.has("abilities")) {
             for (GameData gdAbility : gameData.getList("abilities")) {
-                addAbility(new Ability(gdAbility));
+                addAbility(new Ability(gdAbility), false);
             }
         }
+
+        // hack
+        gameData.ifHas("hack", h -> hack = new Hack(h));
 
         pawnMessage = new PawnMessage(scene);
         Vector2f pos = pawnMessage.getWorldPosition();
@@ -145,10 +149,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         map.put("team", new GameData(team));
         map.put("hp", new GameData(hitPoints));
         map.put("remainingHitPoints", new GameData(remainingHitPoints));
-        map.put("bonusHp", new GameData(bonusHp));
+        map.put("bonusHpLoss", new GameData(bonusHpLoss));
         map.put("shield", new GameData(totalShield));
         map.put("remainingShield", new GameData(remainingShield));
-        map.put("bonusShield", new GameData(bonusShield));
+        map.put("bonusShieldLoss", new GameData(bonusShieldLoss));
         map.put("movement", new GameData(totalMovement));
         map.put("remainingMovement", new GameData(remainingMovement));
         map.put("resistance", new GameData(resistance));
@@ -159,6 +163,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         map.put("ready", new GameData(ready));
         map.put("weapon", weapon.toGameData());
         map.put("abilities", new GameDataList(abilities).toGameData());
+        if (hack != null) {
+            map.put("hack", hack.toGameData());
+        }
 
         return new GameData(map);
     }
@@ -195,7 +202,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public int getBonusHp() {
-        return bonusHp;
+        return Math.max(bonusHp + bonusHpLoss, 0);
     }
 
     public int getTotalShield() {
@@ -207,7 +214,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public int getBonusShield() {
-        return bonusShield;
+        return Math.max(bonusShield + bonusShieldLoss, 0);
     }
 
     public boolean canMove() {
@@ -225,7 +232,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public boolean canLevel() {
-        return xp > (level * (level + 1) + 1) * 100;
+        return xp > (level * (level + 1) + 1) * 100 || true;
     }
 
     public boolean canAttack() {
@@ -269,7 +276,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public int getResistance() {
-        return resistance;
+        return resistance + bonusResistance;
     }
 
     public String getCharacterClass() {
@@ -307,6 +314,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public void addAbility(Ability ability) {
+        addAbility(ability, true);
+    }
+
+    public void addAbility(Ability ability, boolean add) {
         ability.owner = this;
 
         if (ability.replace != null) {
@@ -318,7 +329,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         abilities.add(ability);
 
         if (ability.type == Ability.Type.SELF) {
-            if (ability.upgrade == null) {
+            if (ability.upgrade == null && add) {
                 if (ability.hp != null) {
                     hitPoints += ability.hp;
                     remainingHitPoints += ability.hp;
@@ -370,7 +381,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             }
         }
 
-        getParent().setPawn(this); // Shitty way of making sure the aurora effect is there
+        if (getParent() != null)
+            getParent().setPawn(this); // Shitty way of making sure the aurora effect is there
     }
 
     public void removeAbility(Ability a) {
@@ -394,7 +406,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             if (a.shield != null)
                 this.bonusShield += a.shield;
             if (a.resistance != null)
-                this.resistance += a.resistance;
+                this.bonusResistance += a.resistance;
 
             getParent().updateText();
         }
@@ -505,7 +517,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     public void attack(Pawn pawn) {
         reduceAttacks();
 
-        int remainingResistance = Math.max(pawn.resistance - weapon.getPiercing(), 0);
+        int remainingResistance = Math.max(pawn.getResistance() - weapon.getPiercing(), 0);
         int dealtDamage = Math.max(weapon.getDamage() - remainingResistance, 0) * weapon.getShots();
 
         setUnmoved(false);
@@ -537,21 +549,26 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             dealtDamage = 1;
         }
 
+        System.out.println(bonusShieldLoss);
+
         int rolloverBonusShieldDamage = dealtDamage;
-        if (this.bonusShield > 0) {
-            rolloverBonusShieldDamage = -Math.min(this.bonusShield - dealtDamage, 0);
-            this.bonusShield = Math.max(this.bonusShield - dealtDamage, 0);
+        if (getBonusShield() > 0) {
+            System.out.println(bonusShield);
+            rolloverBonusShieldDamage = -Math.min(getBonusShield() - dealtDamage, 0);
+            this.bonusShieldLoss = Math.min(getBonusShield() - dealtDamage, -this.bonusShield);
         }
+
+        System.out.println(bonusShieldLoss);
 
         int rolloverShieldDamage = -Math.min(this.remainingShield - rolloverBonusShieldDamage, 0);
         this.remainingShield = Math.max(this.remainingShield - rolloverBonusShieldDamage, 0);
 
         int rolloverBonusHp = rolloverShieldDamage;
-        if (this.bonusHp > 0) {
-            rolloverBonusHp = -Math.min(this.bonusHp - rolloverShieldDamage, 0);
-            this.bonusHp = Math.max(this.bonusHp - rolloverShieldDamage, 0);
+        if (getBonusHp() > 0) {
+            rolloverBonusHp = -Math.min(getBonusHp() - rolloverShieldDamage, 0);
+            this.bonusHpLoss = Math.min(getBonusHp() - rolloverShieldDamage, 0);
         }
-        this.remainingHitPoints = Math.max(this.remainingHitPoints - rolloverBonusHp, 0);
+        this.remainingHitPoints = Math.max(this.remainingHitPoints - rolloverBonusHp, -this.bonusHp);
 
         if (this.remainingHitPoints == 0) {
             this.die();

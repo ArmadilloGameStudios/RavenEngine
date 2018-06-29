@@ -24,7 +24,7 @@ public class Ability implements GameDatable {
     public String replace;
 
     public Integer size, damage, turns, uses;
-    public int remainingUses;
+    public Integer remainingUses;
     public Integer hp, shield, movement, resistance;
     public boolean taunt, push_blast, hook_pull, hack, remain;
 
@@ -87,6 +87,11 @@ public class Ability implements GameDatable {
         gameData.ifHas("movement", m -> movement = m.asInteger());
         gameData.ifHas("resistance", r -> resistance = r.asInteger());
         gameData.ifHas("turns", t -> turns = t.asInteger());
+        if (gameData.has("remainingUses")) {
+            gameData.ifHas("remainingUses", u -> remainingUses = u.asInteger());
+            gameData.ifHas("uses", u -> uses = u.asInteger());
+        } else
+            gameData.ifHas("uses", u -> remainingUses = uses = u.asInteger());
         gameData.ifHas("uses", u -> remainingUses = uses = u.asInteger());
         gameData.ifHas("remain", c -> remain = c.asBoolean());
         gameData.ifHas("taunt", t -> taunt = t.asBoolean());
@@ -97,7 +102,11 @@ public class Ability implements GameDatable {
 
     @Override
     public GameData toGameData() {
+        if (remainingUses != null)
+        gameData.asMap().put("remainingUses", new GameData(remainingUses));
+
         return gameData;
+
 
 //        HashMap<String, GameData> map = new HashMap<>();
 //

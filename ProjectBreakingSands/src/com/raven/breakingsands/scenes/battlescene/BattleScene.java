@@ -201,6 +201,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             // Terrain
             map = new Map(this, loadGameData.getData("map"));
             getLayerTerrain().addChild(map);
+            map.getTerrainList().forEach(Terrain::setPawnIndex);
 
             // Bottom UI
             UIBottomRightContainer<BattleScene> bottomRightContainer = new UIBottomRightContainer<>(this);
@@ -235,9 +236,11 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
 //          victory();
 
-            setActiveTeam(loadGameData.getInteger("activeTeam"));
-            if (loadGameData.getInteger("activePawn") >= 0)
-                setActivePawn(pawns.get(loadGameData.getInteger("activePawn")));
+            activeTeam = loadGameData.getInteger("activeTeam");
+            if (loadGameData.getInteger("activePawn") >= 0) {
+                Pawn a = pawns.get(loadGameData.getInteger("activePawn"));
+                setActivePawn(a);
+            }
             else
                 setActivePawn(null);
         } else {

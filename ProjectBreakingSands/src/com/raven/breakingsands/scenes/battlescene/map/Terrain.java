@@ -43,6 +43,11 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         return data;
     }
 
+    public void setPawnIndex() {
+        if (pawnIndex != null)
+            setPawn(getScene().getPawns().get(pawnIndex));
+    }
+
     public enum State {
         SELECTABLE,
         UNSELECTABLE,
@@ -61,6 +66,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     private boolean passable = true;
     private SelectionDetails details = new SelectionDetails();
     private Wall wall;
+    private Integer pawnIndex;
     private Pawn pawn;
     private boolean spawn = false;
     private boolean start = false;
@@ -112,9 +118,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
         gdTerrain.ifHas("wall", w -> setWall(new Wall(scene, w)));
 
-        gdTerrain.ifHas("pawn", p -> {
-            setPawn(scene.getPawns().get(p.asInteger()));
-        });
+        gdTerrain.ifHas("pawn", p -> pawnIndex = p.asInteger());
 
         this.addMouseHandler(this);
     }
