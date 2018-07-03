@@ -326,7 +326,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         terrainList.forEach(t -> {
             if (t.isSpawn()) {
-                spawnPawn("Service Drone", t);
+                spawnPawn(1, t);
             }
         });
 
@@ -338,10 +338,10 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         return pawns;
     }
 
-    public void spawnPawn(String name, Terrain terrain) {
+    public void spawnPawn(int team, Terrain terrain) {
         if (terrain.isPassable()) {
             PawnFactory pf = new PawnFactory(this);
-            pf.setName(name);
+            pf.setTeam(team);
             Pawn p = pf.getInstance();
 
             pawns.add(p);

@@ -7,12 +7,12 @@
     hp: 10,
     shield: 5
     resistance: 0,
-    movement: 4,
+    movement: 3,
     weapon: "Std. Pistol"
 },
 {
-    name: "Service Drone",
-    sprite: "sprites/enemy.png",
+    name: "Guard Drone",
+    sprite: "sprites/guarddrone.png",
     animation: "guarddrone",
     standing: true,
     team: 1,
@@ -20,16 +20,20 @@
     movement: 3,
     weapon: "Guard Disk",
     xp_gain: 30,
+
+    weight: 1,
 },
 {
-    name: "Guard Drone",
-    sprite: "sprites/enemy.png",
-    animation: "guarddrone",
+    name: "Blade Drone",
+    sprite: "sprites/bladedrone.png",
+    animation: "bladedrone",
     standing: true,
     team: 1,
-    hp: 15,
+    hp: 6,
     resistance: 1,
-    movement: 2,
-    weapon: "Guard Disk",
-    xp_gain: 30,
+    movement: 4,
+    weapon: "Plasma Blade",
+    xp_gain: 70,
+
+    weight: 2
 }
