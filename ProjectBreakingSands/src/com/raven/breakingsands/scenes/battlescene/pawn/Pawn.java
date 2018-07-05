@@ -591,10 +591,20 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public void die() {
+        if (getAnimationState().hasAction("die")) {
+            getAnimationState().setAction("die");
+            getAnimationState().addActionFinishHandler(a -> onDie());
+        } else {
+            onDie();
+        }
+    }
+
+    private void onDie() {
         System.out.println("DIE");
         getParent().removePawn();
         getScene().removePawn(this);
     }
+
 
     @Override
     public void onUpdate(float deltaTime) {

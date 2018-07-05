@@ -34,4 +34,8 @@ public class SpriteAnimation {
 
         return action;
     }
+
+    public boolean hasAction(String action) {
+        return actions.keySet().contains(action);
+    }
 }

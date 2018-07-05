@@ -69,6 +69,10 @@ public class SpriteAnimationState {
         return activeFrame.getHeight();
     }
 
+    public boolean hasAction(String action) {
+        return animation.hasAction(action);
+    }
+
     public void setAction(String action) {
         setAction(action, true);
     }

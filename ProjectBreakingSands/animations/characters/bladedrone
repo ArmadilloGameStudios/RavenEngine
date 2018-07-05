@@ -54,4 +54,17 @@
     height: 32,
     frames: [{ time: 500, x: 64, y: 96, xoffset: -10, yoffset: -10 },
              { time: 200, x: 0, y: 0 }]
-}
+},
+{
+    name: "die",
+    width: 32,
+    height: 32,
+    frames: [{ time: 100, y: 128, x: 0 },
+             { time: 100, y: 128, x: 32 },
+             { time: 100, y: 128, x: 64 },
+             { time: 100, y: 128, x: 96 },
+             { time: 100, y: 160, x: 0 },
+             { time: 100, y: 160, x: 32 },
+             { time: 100, y: 160, x: 64 },
+             { time: 100, y: 160, x: 96 }]
+},
