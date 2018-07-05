@@ -1,5 +1,6 @@
 package com.raven.engine2d.graphics2d.sprite;
 
+import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
 import com.raven.engine2d.graphics2d.sprite.handler.FrameFinishHandler;
 

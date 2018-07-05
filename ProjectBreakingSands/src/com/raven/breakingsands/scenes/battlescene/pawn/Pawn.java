@@ -6,7 +6,6 @@ import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
-import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
@@ -18,9 +17,11 @@ import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.WorldObject;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         implements GameDatable {
@@ -494,8 +495,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         getAnimationState().addActionFinishHandler(x -> {
 
-            attack(target, weapon.getDamage(), weapon.getPiercing(), weapon.getShots());
-
             if (directional)
                 if (directionUp)
                     getAnimationState().setAction("attack up end");
@@ -504,25 +503,47 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             else
                 getAnimationState().setAction("attack end");
 
-            getAnimationState().addActionFinishHandler(a -> {
-                getAnimationState().setActionIdle();
-            });
-
-
             Effect effect = weapon.getEffect();
             if (effect != null) {
                 target.addChild(effect);
-                effect.getAnimationState().addActionFinishHandler(a -> target.removeChild(effect));
+                effect.getAnimationState().addActionFinishHandler(an -> target.removeChild(effect));
             }
 
-            getAnimationState().addActionFinishHandler(onAttackDone);
+            AtomicReference<Boolean> a = new AtomicReference<>(false);
+            AtomicReference<Boolean> b = new AtomicReference<>(false);
+
+            Pawn p = this;
+            ActionFinishHandler handlerA = animationState -> {
+                a.set(true);
+                System.out.println("a");
+
+                if (b.get()) {
+                    System.out.println("b true");
+                    onAttackDone.onActionFinish(animationState);
+                }
+            };
+
+            ActionFinishHandler handlerB = animationState -> {
+                b.set(true);
+                System.out.println("b");
+
+                if (a.get()) {
+                    System.out.println("a true");
+                    onAttackDone.onActionFinish(animationState);
+                }
+            };
+
+            attack(target, weapon.getDamage(), weapon.getPiercing(), weapon.getShots(), handlerB);
+            getAnimationState().addActionFinishHandler(handlerA);
+            getAnimationState().addActionFinishHandler(cat -> cat.setActionIdle(false));
+
         });
 
         weapon.runAttackAnimation(directionUp);
 
     }
 
-    public void attack(Pawn pawn, int damage, int percing, int shots) {
+    public void attack(Pawn pawn, int damage, int percing, int shots, ActionFinishHandler onAttackDone) {
         reduceAttacks();
 
         int remainingResistance = Math.max(pawn.getResistance() - percing, 0);
@@ -530,7 +551,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         setUnmoved(false);
 
-        if (pawn.damage(dealtDamage) && getTeam() == 0) {
+        if (pawn.damage(dealtDamage, onAttackDone) && getTeam() == 0) {
             xp += pawn.xpGain;
             showMessage("+" + Integer.toString(pawn.xpGain) + "xp");
 
@@ -552,7 +573,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         }
     }
 
-    public boolean damage(int dealtDamage) {
+    public boolean damage(int dealtDamage, ActionFinishHandler onAttackDone) {
         if (dealtDamage <= 0) {
             dealtDamage = 1;
         }
@@ -575,7 +596,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         this.remainingHitPoints = Math.max(this.remainingHitPoints - rolloverBonusHp, -this.bonusHp);
 
         if (this.remainingHitPoints == 0) {
-            this.die();
+            this.die(onAttackDone);
+        } else {
+            onAttackDone.onActionFinish(getAnimationState());
         }
 
         this.getParent().updateText();
@@ -590,12 +613,14 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         messageShowTime = 0;
     }
 
-    public void die() {
+    public void die(ActionFinishHandler onAttackDone) {
         if (getAnimationState().hasAction("die")) {
             getAnimationState().setAction("die");
             getAnimationState().addActionFinishHandler(a -> onDie());
+            getAnimationState().addActionFinishHandler(onAttackDone);
         } else {
             onDie();
+            onAttackDone.onActionFinish(getAnimationState());
         }
     }
 

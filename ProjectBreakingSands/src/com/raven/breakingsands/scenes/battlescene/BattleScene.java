@@ -510,7 +510,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
                     if (hack.getRemainingTurnsTurns() <= 0) {
                         if (hack.getSelfDestruct() > 0) {
-                            pawn.damage(5);
+                            pawn.damage(5, null);
                         }
                         pawn.hack(null);
                     }
@@ -649,7 +649,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         map.setState(Terrain.State.UNSELECTABLE);
 
         activePawn.runAttackAnimation(targetPawn, a -> {
-            setActivePawn(activePawn);
+            activePawn.getScene().setActivePawn(activePawn);
         });
     }
 
@@ -920,7 +920,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 }
             });
 
-            activePawn.attack(p, activeAbility.damage, 0, 1);
+            activePawn.attack(p, activeAbility.damage, 0, 1, null);
         });
 
         activePawn.reduceAttacks();
