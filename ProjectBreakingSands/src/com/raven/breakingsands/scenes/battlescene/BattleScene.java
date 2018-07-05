@@ -199,29 +199,29 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
             // Terrain
             map = new Map(this, loadGameData.getData("map"));
-            getLayerTerrain().addChild(map);
+            addChild(map);
             map.getTerrainList().forEach(Terrain::setPawnIndex);
 
             // Bottom UI
             UIBottomRightContainer<BattleScene> bottomRightContainer = new UIBottomRightContainer<>(this);
-            getLayerUI().addChild(bottomRightContainer);
+            addChild(bottomRightContainer);
             uiActiveDetailText = new UIDetailText(this, bottomRightContainer.getStyle());
             bottomRightContainer.addChild(uiActiveDetailText);
             bottomRightContainer.pack();
 
             UIBottomLeftContainer<BattleScene> bottomLeftContainer = new UIBottomLeftContainer<>(this);
-            getLayerUI().addChild(bottomLeftContainer);
+            addChild(bottomLeftContainer);
             uiSelectedDetailText = new UIDetailText(this, bottomLeftContainer.getStyle());
             bottomLeftContainer.addChild(uiSelectedDetailText);
             bottomLeftContainer.pack();
 
             // Action Select
             actionSelect = new UIActionSelect(this);
-            getLayerUI().addChild(actionSelect);
+            addChild(actionSelect);
 
             // Level UP
             UICenterContainer<BattleScene> centerContainer = new UICenterContainer<>(this);
-            getLayerUI().addChild(centerContainer);
+            addChild(centerContainer);
             uiLevelUp = new UILevelUp(this);
             centerContainer.addChild(uiLevelUp);
             centerContainer.pack();
@@ -230,7 +230,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             // Menu
             menu = new Menu(this);
             menu.pack();
-            getLayerUI().addChild(menu);
+            addChild(menu);
             menu.setVisibility(false);
 
 //          victory();
@@ -250,28 +250,28 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             // Terrain
             map = new Map(this, difficulty);
             map.generate();
-            getLayerTerrain().addChild(map);
+            addChild(map);
 
             // Bottom UI
             UIBottomRightContainer<BattleScene> bottomRightContainer = new UIBottomRightContainer<>(this);
-            getLayerUI().addChild(bottomRightContainer);
+            addChild(bottomRightContainer);
             uiActiveDetailText = new UIDetailText(this, bottomRightContainer.getStyle());
             bottomRightContainer.addChild(uiActiveDetailText);
             bottomRightContainer.pack();
 
             UIBottomLeftContainer<BattleScene> bottomLeftContainer = new UIBottomLeftContainer<>(this);
-            getLayerUI().addChild(bottomLeftContainer);
+            addChild(bottomLeftContainer);
             uiSelectedDetailText = new UIDetailText(this, bottomLeftContainer.getStyle());
             bottomLeftContainer.addChild(uiSelectedDetailText);
             bottomLeftContainer.pack();
 
             // Action Select
             actionSelect = new UIActionSelect(this);
-            getLayerUI().addChild(actionSelect);
+            addChild(actionSelect);
 
             // Level UP
             UICenterContainer<BattleScene> centerContainer = new UICenterContainer<>(this);
-            getLayerUI().addChild(centerContainer);
+            addChild(centerContainer);
             uiLevelUp = new UILevelUp(this);
             centerContainer.addChild(uiLevelUp);
             centerContainer.pack();
@@ -280,7 +280,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             // Menu
             menu = new Menu(this);
             menu.pack();
-            getLayerUI().addChild(menu);
+            addChild(menu);
             menu.setVisibility(false);
 
 //          victory();
@@ -293,6 +293,8 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         // restore shield
         pawns.forEach(Pawn::restoreShield);
+
+        System.out.println(getChildren());
     }
 
     private void addPawns() {
@@ -484,12 +486,14 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         }
 
-        if (pawn != null && pawn.getTeam() == 0)
-            actionSelect.setPawn(pawn);
+        setState(SELECT_DEFAULT);
+    }
+
+    private void updateActionSelect() {
+        if (activePawn != null && activePawn.getTeam() == 0)
+            actionSelect.setPawn(activePawn);
         else
             actionSelect.setPawn(null);
-
-        setState(SELECT_DEFAULT);
     }
 
     public Pawn getActivePawn() {
@@ -548,7 +552,8 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     public void setState(State state) {
         this.state = state;
-//        System.out.println("State: " + state);
+
+        updateActionSelect();
 
         switch (state) {
             case SELECT_DEFAULT:

@@ -17,7 +17,7 @@ import org.lwjgl.system.CallbackI;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObject>
+public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
         implements GameDatable {
 
     private List<Structure> structures = new ArrayList<>();
@@ -239,6 +239,11 @@ public class Map extends WorldObject<BattleScene, Layer<WorldObject>, WorldObjec
 
     public Structure getFirstStructure() {
         return firstStructure;
+    }
+
+    @Override
+    public Layer.Destination getDestination() {
+        return Layer.Destination.Terrain;
     }
 
     @Override

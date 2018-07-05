@@ -4,6 +4,7 @@ import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.*;
+import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.util.math.Vector2i;
 import com.raven.engine2d.worldobject.WorldObject;
 
@@ -185,6 +186,11 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject>
         }
 
         return connections;
+    }
+
+    @Override
+    public Layer.Destination getDestination() {
+        return Layer.Destination.Terrain;
     }
 
     @Override

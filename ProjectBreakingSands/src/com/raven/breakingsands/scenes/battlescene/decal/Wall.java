@@ -9,6 +9,7 @@ import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
+import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
@@ -46,6 +47,11 @@ public class Wall extends WorldObject<BattleScene, Terrain, WorldObject> impleme
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public Layer.Destination getDestination() {
+        return Layer.Destination.Terrain;
     }
 
     @Override

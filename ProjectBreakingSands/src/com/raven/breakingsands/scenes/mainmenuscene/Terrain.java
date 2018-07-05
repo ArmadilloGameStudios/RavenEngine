@@ -1,6 +1,7 @@
 package com.raven.breakingsands.scenes.mainmenuscene;
 
 import com.raven.breakingsands.ZLayer;
+import com.raven.breakingsands.scenes.battlescene.map.Map;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Terrain extends WorldObject<MainMenuScene, Layer<WorldObject>, WorldObject> {
+public class Terrain extends WorldObject<MainMenuScene, Map, WorldObject> {
 
     private static GameDataList dataList = GameDatabase.all("terrain");
 
@@ -35,6 +36,11 @@ public class Terrain extends WorldObject<MainMenuScene, Layer<WorldObject>, Worl
                 return row.getString("name").matches("sand");
             }
         }));
+    }
+
+    @Override
+    public Layer.Destination getDestination() {
+        return Layer.Destination.Terrain;
     }
 
     @Override

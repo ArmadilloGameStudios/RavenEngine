@@ -5,15 +5,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.graphics2d.GameWindow;
+import com.raven.engine2d.worldobject.GameObject;
 
-public class Layer<C extends com.raven.engine2d.worldobject.Childable>
-        implements com.raven.engine2d.worldobject.Parentable<C> {
+public class Layer {
 
-    public enum Destination { Terrain, UI, Details}
+    public enum Destination {Terrain, UI, Details, Effects;
+    }
 
     private Scene scene;
     private Destination destination;
-    private List<C> gameObjectList = new CopyOnWriteArrayList<>();
+    private List<GameObject> gameObjectList = new CopyOnWriteArrayList<>();
 
     private GameWindow window;
 
@@ -23,24 +24,21 @@ public class Layer<C extends com.raven.engine2d.worldobject.Childable>
         this.window = GameEngine.getEngine().getWindow();
     }
 
-    @Override
-    public List<C> getChildren() {
+    public List<GameObject> getChildren() {
         return gameObjectList;
     }
 
-    public void addChild(C obj) {
-        obj.setParent(this);
-        gameObjectList.add(obj);
+    public void addChild(GameObject obj) {
+        if (!gameObjectList.contains(obj))
+            gameObjectList.add(obj);
+    }
+
+    public void removeChild(GameObject obj) {
+        gameObjectList.remove(obj);
     }
 
     public void setScene(Scene scene) {
         this.scene = scene;
-    }
-
-    public void update(float deltaTime) {
-        for (C o : gameObjectList) {
-            o.update(deltaTime);
-        }
     }
 
     public Destination getDestination() {

@@ -1,5 +1,6 @@
 package com.raven.engine2d.ui;
 
+import com.raven.engine2d.Game;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class UIContainer<S extends Scene>
-        extends UIObject<S, Layer<UIObject>> {
+        extends UIObject<S, Scene<Game>> {
 
     public static final int CENTER = 0, BOTTOM_LEFT = 1, BOTTOM = 2, BOTTOM_RIGHT = 3, RIGHT = 4;
 

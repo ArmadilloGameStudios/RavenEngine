@@ -7,6 +7,7 @@ import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
+import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 
@@ -16,7 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class WorldObject<
         S extends Scene,
-        P extends Parentable<WorldObject>,
+        P extends Parentable<? extends GameObject>,
         C extends WorldObject>
         extends GameObject<WorldObject, P, C> {
 
@@ -39,10 +40,10 @@ public abstract class WorldObject<
     private SpriteAnimationState spriteAnimationState;
 
     P parent;
-    boolean parentIsWorldObject;
 
     public WorldObject(S scene, GameData data) {
         this.scene = scene;
+        scene.addGameObject(this);
 
         if (data.has("standing")) {
             standing = true;
@@ -73,6 +74,7 @@ public abstract class WorldObject<
 
     public WorldObject(S scene) {
         this.scene = scene;
+        scene.addGameObject(this);
     }
 
     public GameData getWorldObjectData() {
@@ -132,7 +134,7 @@ public abstract class WorldObject<
     private Vector2f worldPos = new Vector2f();
 
     public Vector2f getWorldPosition() {
-        if (this.parentIsWorldObject) {
+        if (getParent() instanceof WorldObject) {
             return position.add(((WorldObject) getParent()).getWorldPosition(), worldPos);
         }
         return position;
@@ -176,7 +178,7 @@ public abstract class WorldObject<
     }
 
     public Highlight getHighlight() {
-        if (highlight == null && parentIsWorldObject) {
+        if (highlight == null && parent instanceof WorldObject) {
             return ((WorldObject) parent).getHighlight();
         }
 
@@ -190,10 +192,6 @@ public abstract class WorldObject<
     public void draw(MainShader shader) {
         if (spriteSheet != null)
             shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), standing, getHighlight(), DrawStyle.ISOMETRIC);
-
-        children.stream()
-                .filter(GameObject::isVisible)
-                .forEach(c -> c.draw(shader));
     }
 
     public void setParent(P parent) {
@@ -208,7 +206,7 @@ public abstract class WorldObject<
     public List<WorldObject> getParentGameObjectList() {
         parentList.clear();
 
-        if (parentIsWorldObject) {
+        if (parent instanceof WorldObject) {
             parentList.addAll(((WorldObject) parent).getParentGameObjectList());
             parentList.add((WorldObject) parent);
         }
@@ -223,10 +221,11 @@ public abstract class WorldObject<
 
     @Override
     public void addChild(C child) {
-        child.parentIsWorldObject = true;
         child.setParent(this);
 
         children.add(child);
+
+        scene.addGameObject(child);
     }
 
     public void removeAllChildren() {
@@ -235,10 +234,14 @@ public abstract class WorldObject<
 
     public void removeChild(C child) {
         children.remove(child);
+
+        scene.removeGameObject(child);
     }
 
     public void removeChildren(Collection<? extends C> children) {
-        this.children.removeAll(children);
+//        this.children.removeAll(children);
+
+        children.forEach(this::removeChild);
     }
 
     final public void update(float deltaTime) {

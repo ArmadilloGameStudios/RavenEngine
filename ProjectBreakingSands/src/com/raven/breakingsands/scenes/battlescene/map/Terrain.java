@@ -16,6 +16,7 @@ import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
+import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.util.Range;
 import com.raven.engine2d.util.pathfinding.PathAdjacentNode;
 import com.raven.engine2d.util.pathfinding.PathNode;
@@ -709,6 +710,11 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     private float linePointDist(float a, float b, float c, float x, float y) {
         return ((a * x + b * y + c) / (Math.abs(a) + Math.abs(b)));
+    }
+
+    @Override
+    public Layer.Destination getDestination() {
+        return Layer.Destination.Terrain;
     }
 
     @Override

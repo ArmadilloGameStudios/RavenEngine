@@ -52,8 +52,6 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
         if (scene instanceof BattleScene) {
             gdtToSave.add(new GameDataTable("current_save", ((BattleScene) getCurrentScene())));
 
-            System.out.println(gdtToSave.get(0));
-
             return saveDataTables(gdtToSave);
         } else {
             return false;

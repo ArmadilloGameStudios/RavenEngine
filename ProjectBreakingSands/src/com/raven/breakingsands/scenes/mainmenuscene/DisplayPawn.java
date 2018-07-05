@@ -7,6 +7,7 @@ import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDataQuery;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
+import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.worldobject.WorldObject;
 
@@ -29,6 +30,11 @@ public class DisplayPawn extends WorldObject<Scene, Terrain, WorldObject> {
 
     public DisplayPawn(Scene scene) {
         super(scene, dataList.getRandom(new Random()));
+    }
+
+    @Override
+    public Layer.Destination getDestination() {
+        return Layer.Destination.Details;
     }
 
     @Override

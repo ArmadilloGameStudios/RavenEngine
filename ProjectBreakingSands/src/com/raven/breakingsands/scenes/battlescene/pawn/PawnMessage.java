@@ -1,6 +1,7 @@
 package com.raven.breakingsands.scenes.battlescene.pawn;
 
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
+import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.ui.UIFont;
 import com.raven.engine2d.worldobject.WorldTextObject;
 
@@ -20,6 +21,11 @@ public class PawnMessage extends WorldTextObject<BattleScene, Pawn> {
         super.setText(text);
 
         setVisibility(true);
+    }
+
+    @Override
+    public Layer.Destination getDestination() {
+        return Layer.Destination.Details;
     }
 
     @Override

@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.ATTACKING;
+import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.MOVING;
 import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_DEFAULT;
 
 public class UIActionSelect extends UIRightContainer<BattleScene> {
@@ -380,7 +382,10 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             }
         }
 
-        btnEnd.setDisable(getScene().getActiveTeam() != 0);
+        btnEnd.setDisable(
+                getScene().getActiveTeam() != 0 ||
+                getScene().getState() == MOVING ||
+                getScene().getState() == ATTACKING);
         oldState = SELECT_DEFAULT;
 
         pack();

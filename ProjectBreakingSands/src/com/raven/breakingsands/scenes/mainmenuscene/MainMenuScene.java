@@ -39,7 +39,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
     public void onEnterScene() {
         // Pawn
         pawn = new DisplayPawn(this);
-        getLayerDetails().addChild(pawn);
+        addChild(pawn);
 
         // Background
         setBackgroundColor(new Vector3f(0,0,0));
@@ -52,7 +52,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
 
         // UI
         UIBottomLeftContainer<MainMenuScene> container = new UIBottomLeftContainer<>(this);
-        getLayerUI().addChild(container);
+        addChild(container);
 
         Path charPath = Paths.get(getGame().getMainDirectory(), "save");
 
@@ -61,7 +61,6 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
             continueBtn.load();
             container.addChild(continueBtn);
         }
-
 
         NewGameButton newGameBtn = new NewGameButton(this);
         newGameBtn.load();

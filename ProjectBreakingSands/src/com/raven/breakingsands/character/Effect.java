@@ -8,6 +8,7 @@ import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
+import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
@@ -15,10 +16,10 @@ import java.util.List;
 
 public class Effect extends WorldObject<BattleScene, Terrain, WorldObject> {
 
-
     private static GameDataList dataList = GameDatabase.all("effect");
 
     public static List<SpriteSheet> getSpriteSheets() {
+
         List<SpriteSheet> data = new ArrayList<>();
 
         for (GameData gameData : dataList) {
@@ -33,8 +34,15 @@ public class Effect extends WorldObject<BattleScene, Terrain, WorldObject> {
     public Effect(BattleScene scene, GameData gameData) {
         super(scene, gameData);
 
+        this.setVisibility(false);
+
         name = gameData.getString("name");
 //        System.out.println(gameData);
+    }
+
+    @Override
+    public Layer.Destination getDestination() {
+        return Layer.Destination.Effects;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.raven.engine2d.worldobject;
 
+import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.scene.Layer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +36,8 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
     public final int getID() {
         return id;
     }
+
+    public abstract Layer.Destination getDestination();
 
     public abstract float getZ();
 
@@ -74,18 +79,17 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
         for (MouseHandler c : clickHandlers) c.handleMouseClick();
     }
 
+    public abstract void draw(MainShader shader);
+
     public boolean isVisible() {
+        if (getParent() instanceof GameObject) {
+            return visibility & ((GameObject) getParent()).isVisible();
+        }
         return visibility;
     }
 
     public void setVisibility(boolean visibility) {
         this.visibility = visibility;
-
-        onSetVisibility(visibility);
-    }
-
-    protected void onSetVisibility(boolean visibility) {
-
     }
 
     public void release() {

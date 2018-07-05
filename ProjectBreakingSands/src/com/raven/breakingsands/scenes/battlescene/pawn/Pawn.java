@@ -14,6 +14,7 @@ import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
+import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.WorldObject;
 
@@ -505,6 +506,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
             Effect effect = weapon.getEffect();
             if (effect != null) {
+                effect.setVisibility(true);
                 target.addChild(effect);
                 effect.getAnimationState().addActionFinishHandler(an -> target.removeChild(effect));
             }
@@ -638,6 +640,11 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         if (messageShowTime > 750 && pawnMessage.isVisible()) {
             pawnMessage.setVisibility(false);
         }
+    }
+
+    @Override
+    public Layer.Destination getDestination() {
+        return Layer.Destination.Details;
     }
 
     @Override

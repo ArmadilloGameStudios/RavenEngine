@@ -1,6 +1,7 @@
 package com.raven.engine2d.ui;
 
 import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.GameObject;
@@ -9,7 +10,7 @@ import com.raven.engine2d.worldobject.Parentable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class UIObject<S extends Scene, P extends Parentable<UIObject>>
+public abstract class UIObject<S extends Scene, P extends Parentable<? extends GameObject>>
         extends GameObject<UIObject, P, UIObject> {
 
     private List<UIObject> children = new ArrayList<>();
@@ -20,6 +21,7 @@ public abstract class UIObject<S extends Scene, P extends Parentable<UIObject>>
 
     public UIObject(S scene) {
         this.scene = scene;
+        scene.addGameObject(this);
     }
 
     @Override
@@ -43,6 +45,12 @@ public abstract class UIObject<S extends Scene, P extends Parentable<UIObject>>
 
         obj.setParent(this);
         children.add(obj);
+    }
+
+
+    @Override
+    public final Layer.Destination getDestination() {
+        return Layer.Destination.UI;
     }
 
     @Override
@@ -80,10 +88,7 @@ public abstract class UIObject<S extends Scene, P extends Parentable<UIObject>>
     }
 
     public void draw(MainShader shader) {
-        for (UIObject o : this.getChildren()) {
-            if (o.isVisible())
-                o.draw(shader);
-        }
+
     }
 
     @Override

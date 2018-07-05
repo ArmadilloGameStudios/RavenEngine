@@ -56,11 +56,6 @@ public abstract class UIText<S extends Scene>
 
     public void draw(MainShader shader) {
         shader.draw(image, getSpriteAnimationState(), getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), true, null, DrawStyle.UI);
-
-        for (UIObject o : this.getChildren()) {
-            if (o.isVisible())
-                o.draw(shader);
-        }
     }
 
     public void setAnimationAction(String action) {

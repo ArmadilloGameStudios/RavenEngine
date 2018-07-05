@@ -45,7 +45,7 @@ void main() {
     if (sprite.a <= 0)
         discard;
 
-    gl_FragDepth = mix(1, z, sprite.a - texture_coords.y / 1000); // TODO get world coords
+    gl_FragDepth = mix(1, z, 1 - texture_coords.y / 1000); // TODO get world coords
 
     float part = min(1, dot(sprite.xyz, vec3(.4)));
 

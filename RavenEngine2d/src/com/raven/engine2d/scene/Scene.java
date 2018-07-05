@@ -1,5 +1,6 @@
 package com.raven.engine2d.scene;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.raven.engine2d.Game;
@@ -12,17 +13,21 @@ import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.ui.UIContainer;
 import com.raven.engine2d.worldobject.GameObject;
+import com.raven.engine2d.worldobject.Parentable;
 import com.raven.engine2d.worldobject.WorldObject;
 
 import javax.sound.sampled.Clip;
 
-public abstract class Scene<G extends Game> {
-    private Layer<WorldObject> layerTerrain = new Layer<>(Layer.Destination.Terrain);
-    private Layer<WorldObject> layerDetails = new Layer<>(Layer.Destination.Details);
-    private Layer<UIContainer> layerUI = new Layer<>(Layer.Destination.UI);
+public abstract class Scene<G extends Game> implements Parentable<GameObject> {
+    private Layer layerTerrain = new Layer(Layer.Destination.Terrain);
+    private Layer layerDetails = new Layer(Layer.Destination.Details);
+    private Layer layerEffects = new Layer(Layer.Destination.Effects);
+    private Layer layerUI = new Layer(Layer.Destination.UI);
 
     private Vector3f backgroundColor = new Vector3f();
     private Vector2f worldOffset = new Vector2f();
+
+    private List<GameObject> children = new ArrayList<>();
 
     private boolean paused = false;
 
@@ -42,19 +47,24 @@ public abstract class Scene<G extends Game> {
 
 
         // drawImage
-        for (WorldObject o : layerTerrain.getChildren()) {
+        for (GameObject o : layerTerrain.getChildren()) {
             if (o.isVisible())
                 o.draw(mainShader);
             window.printErrors("Draw World Object Error: ");
         }
 
-        for (WorldObject o : layerDetails.getChildren()) {
+        for (GameObject o : layerDetails.getChildren()) {
+            if (o.isVisible())
+                o.draw(mainShader);
+        }
+
+        for (GameObject o : layerEffects.getChildren()) {
             if (o.isVisible())
                 o.draw(mainShader);
         }
 
         // ui
-        for (UIObject o : layerUI.getChildren()) {
+        for (GameObject o : layerUI.getChildren()) {
             if (o.isVisible())
                 o.draw(mainShader);
             window.printErrors("Draw UI Error: ");
@@ -64,37 +74,57 @@ public abstract class Scene<G extends Game> {
     }
 
     final public void update(float deltaTime) {
+        onUpdate(deltaTime);
 
         if (!isPaused()) {
-            onUpdate(deltaTime);
-
-            layerTerrain.update(deltaTime);
-            layerDetails.update(deltaTime);
+            getChildren().forEach(c -> c.update(deltaTime));
         }
-
-        layerUI.update(deltaTime);
     }
 
-    final public Layer<WorldObject> getLayerTerrain() {
+    private Layer getLayerTerrain() {
         return layerTerrain;
     }
 
-    final public Layer<WorldObject> getLayerDetails() {
+    private Layer getLayerDetails() {
         return layerDetails;
     }
 
-    final public Layer<UIContainer> getLayerUI() {
+    private Layer getLayerUI() {
         return layerUI;
     }
 
     public Layer getLayer(Layer.Destination destination) {
         switch (destination) {
             case Terrain:
-                return getLayerTerrain();
+                return layerTerrain;
             case Details:
-            default:
-                return getLayerDetails();
+                return layerDetails;
+            case Effects:
+                return layerEffects;
+            case UI:
+                return layerUI;
         }
+
+        return null;
+    }
+
+    @Override
+    public List<GameObject> getChildren() {
+        return children;
+    }
+
+    @Override
+    public void addChild(GameObject child) {
+        if (!children.contains(child))
+            children.add(child);
+    }
+
+    public void addGameObject(GameObject go) {
+        getLayer(go.getDestination()).addChild(go);
+    }
+
+    public void removeGameObject(GameObject go) {
+        getLayer(go.getDestination()).removeChild(go);
     }
 
     abstract public List<SpriteSheet> getSpriteSheets();
