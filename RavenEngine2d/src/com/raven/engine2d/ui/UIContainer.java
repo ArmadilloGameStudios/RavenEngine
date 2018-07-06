@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class UIContainer<S extends Scene>
-        extends UIObject<S, Scene<Game>> {
+        extends UIObject<S, Scene<? extends Game>> {
 
     public static final int CENTER = 0, BOTTOM_LEFT = 1, BOTTOM = 2, BOTTOM_RIGHT = 3, RIGHT = 4;
 

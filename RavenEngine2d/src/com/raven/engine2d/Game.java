@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Game<G extends Game<G>> {
-    private GameEngine<? extends G> engine;
+    private GameEngine<G> engine;
 
     private Scene<G> currentScene;
     private Scene<G> readyTransitionScene;
@@ -32,11 +32,11 @@ public abstract class Game<G extends Game<G>> {
         GameProperties.setMainDirectory(getMainDirectory());
     }
 
-    public GameEngine<? extends G> getEngine() {
+    public GameEngine<G> getEngine() {
         return engine;
     }
 
-    void setEngine(GameEngine<? extends G> engine) {
+    void setEngine(GameEngine<G> engine) {
         this.engine = engine;
     }
 

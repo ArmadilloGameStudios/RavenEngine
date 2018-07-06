@@ -19,7 +19,7 @@ import com.raven.engine2d.worldobject.WorldObject;
 
 import javax.sound.sampled.Clip;
 
-public abstract class Scene<G extends Game> implements Parentable<GameObject> {
+public abstract class Scene<G extends Game<G>> implements Parentable<GameObject> {
     private Layer layerTerrain = new Layer(Layer.Destination.Terrain);
     private Layer layerDetails = new Layer(Layer.Destination.Details);
     private Layer layerEffects = new Layer(Layer.Destination.Effects);
@@ -79,7 +79,8 @@ public abstract class Scene<G extends Game> implements Parentable<GameObject> {
     }
 
     final public void update(float deltaTime) {
-        onUpdate(deltaTime);
+        if (!isPaused())
+            onUpdate(deltaTime);
 
         if (!isPaused()) {
             getChildren().forEach(c -> c.update(deltaTime));

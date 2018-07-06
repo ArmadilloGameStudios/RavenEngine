@@ -673,6 +673,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public void restoreShield() {
+        bonusHpLoss = 0;
+        bonusShieldLoss = 0;
         remainingShield = totalShield;
     }
 
