@@ -1,13 +1,27 @@
 <component name="libraryTable">
   <library name="lwjgl">
     <CLASSES>
-      <root url="file://$USER_HOME$/eclipse/lwjgl" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-glfw.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-glfw-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-glfw-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-glfw-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-opengl-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-opengl-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-opengl-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-opengl.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl.jar!/" />
     </CLASSES>
-    <JAVADOC />
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-glfw-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-opengl-javadoc.jar!/" />
+    </JAVADOC>
     <SOURCES>
-      <root url="file://$USER_HOME$/eclipse/lwjgl" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-glfw-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-opengl-sources.jar!/" />
     </SOURCES>
-    <jarDirectory url="file://$USER_HOME$/eclipse/lwjgl" recursive="false" />
-    <jarDirectory url="file://$USER_HOME$/eclipse/lwjgl" recursive="false" type="SOURCES" />
   </library>
 </component>

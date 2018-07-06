@@ -11,6 +11,7 @@ import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
     }
 
     private Vector3f tempVec = new Vector3f();
+
     @Override
     public void onEnterScene() {
         // Pawn
@@ -42,7 +44,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         addChild(pawn);
 
         // Background
-        setBackgroundColor(new Vector3f(0,0,0));
+        setBackgroundColor(new Vector3f(0, 0, 0));
 
         // World Offset
         Vector2f wo = getWorldOffset();
@@ -56,7 +58,12 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
 
         Path charPath = Paths.get(getGame().getMainDirectory(), "save");
 
-        if (charPath.toFile().list().length > 0) {
+        File sFile = charPath.toFile();
+        if (sFile.list() == null) {
+            sFile.mkdir();
+        }
+
+        if (sFile.list().length > 0) {
             ContinueButton continueBtn = new ContinueButton(this);
             continueBtn.load();
             container.addChild(continueBtn);
