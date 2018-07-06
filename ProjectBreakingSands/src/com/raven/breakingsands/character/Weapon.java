@@ -20,14 +20,12 @@ public class Weapon
         extends WorldObject<BattleScene, Pawn, WorldObject>
         implements GameDatable {
 
-    private static GameDataList dataList = GameDatabase.all("weapon");
-
-    public static List<SpriteSheet> getSpriteSheets() {
+    public static List<SpriteSheet> getSpriteSheets(BattleScene scene) {
         List<SpriteSheet> data = new ArrayList<>();
 
-        for (GameData gameData : dataList) {
+        for (GameData gameData : GameDatabase.all("weapon")) {
             gameData.ifHas("sprite", gd ->
-                    data.add(GameEngine.getEngine().getSpriteSheet(gd.asString())));
+                    data.add(scene.getEngine().getSpriteSheet(gd.asString())));
         }
 
         return data;

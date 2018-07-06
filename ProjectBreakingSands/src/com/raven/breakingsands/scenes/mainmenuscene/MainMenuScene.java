@@ -29,8 +29,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
     public List<SpriteSheet> getSpriteSheets() {
         List<SpriteSheet> modelDataList = new ArrayList<>();
 
-        modelDataList.addAll(DisplayPawn.getSpriteSheets());
-//        modelDataList.add(MenuButton.getSpriteSheet());
+        modelDataList.addAll(DisplayPawn.getSpriteSheets(this));
 
         return modelDataList;
     }

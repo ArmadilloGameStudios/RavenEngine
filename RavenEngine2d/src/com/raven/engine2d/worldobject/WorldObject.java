@@ -51,11 +51,11 @@ public abstract class WorldObject<
 
         if (data.has("sprite")) {
             spriteSheetName = data.getString("sprite");
-            spriteSheet = GameEngine.getEngine().getSpriteSheet(spriteSheetName);
+            spriteSheet = scene.getEngine().getSpriteSheet(spriteSheetName);
 
             if (data.has("animation")) {
                 animationName = data.getString("animation");
-                spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation(animationName));
+                spriteAnimationState = new SpriteAnimationState(scene.getEngine().getAnimation(animationName));
 
                 data.ifHas("animation_idle", i -> spriteAnimationState.setIdleAction(i.asString()));
             }
@@ -67,7 +67,7 @@ public abstract class WorldObject<
             for (String audioKey : audioData.keySet()) {
 
                 audioMap.put(audioKey,
-                        GameEngine.getEngine().getAudioClip(audioData.get(audioKey).asString()));
+                        scene.getEngine().getAudioClip(audioData.get(audioKey).asString()));
             }
         }
     }

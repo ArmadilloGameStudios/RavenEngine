@@ -27,17 +27,15 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         implements GameDatable {
 
-    private static GameDataList dataList = GameDatabase.all("pawn");
-
-    public static GameDataList getDataList() {
-        return dataList;
+    public static GameDataList getDataList(BattleScene scene) {
+        return GameDatabase.all("pawn");
     }
 
-    public static List<SpriteSheet> getSpriteSheets() {
+    public static List<SpriteSheet> getSpriteSheets(BattleScene scene) {
         List<SpriteSheet> data = new ArrayList<>();
 
-        for (GameData gameData : dataList) {
-            data.add(GameEngine.getEngine().getSpriteSheet(gameData.getString("sprite")));
+        for (GameData gameData : getDataList(scene)) {
+            data.add(scene.getEngine().getSpriteSheet(gameData.getString("sprite")));
         }
 
         return data;
@@ -97,12 +95,14 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         gameData.ifHas("unmoved", x -> unmoved = x.asBoolean());
         gameData.ifHas("ready", x -> ready = x.asBoolean());
 
+        GameDatabase db = scene.getEngine().getGameDatabase();
+
         // weapon
         if (gameData.has("weapon")) {
             GameData gdWeapon = gameData.getData("weapon");
 
             if (gdWeapon.isString()) {
-                GameDatabase.all("weapon").stream()
+                db.getTable("weapon").stream()
                         .filter(w -> w.getString("name").equals(gdWeapon.asString()))
                         .findFirst()
                         .ifPresent(w -> weapon = new Weapon(scene, w));
@@ -110,7 +110,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 weapon = new Weapon(scene, gdWeapon);
             }
         } else {
-            weapon = new Weapon(scene, GameDatabase.all("weapon").getRandom(scene.getRandom()));
+            weapon = new Weapon(scene, db.getTable("weapon").getRandom(scene.getRandom()));
         }
 
         if (weapon != null) {
@@ -517,20 +517,16 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             Pawn p = this;
             ActionFinishHandler handlerA = animationState -> {
                 a.set(true);
-                System.out.println("a");
 
                 if (b.get()) {
-                    System.out.println("b true");
                     onAttackDone.onActionFinish(animationState);
                 }
             };
 
             ActionFinishHandler handlerB = animationState -> {
                 b.set(true);
-                System.out.println("b");
 
                 if (a.get()) {
-                    System.out.println("a true");
                     onAttackDone.onActionFinish(animationState);
                 }
             };
@@ -582,7 +578,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         int rolloverBonusShieldDamage = dealtDamage;
         if (getBonusShield() > 0) {
-            System.out.println(bonusShield);
             rolloverBonusShieldDamage = -Math.min(getBonusShield() - dealtDamage, 0);
             this.bonusShieldLoss = Math.min(getBonusShield() - dealtDamage, -this.bonusShield);
         }
@@ -627,7 +622,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     private void onDie() {
-        System.out.println("DIE");
         getParent().removePawn();
         getScene().removePawn(this);
     }

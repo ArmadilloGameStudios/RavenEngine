@@ -37,8 +37,8 @@ public class MainShader extends Shader {
 
     private IntBuffer buffers;
 
-    public MainShader(GameWindow window) {
-        super("vertex.glsl", "terrain_fragment.glsl");
+    public MainShader(GameEngine engine, GameWindow window) {
+        super("vertex.glsl", "terrain_fragment.glsl", engine);
 
         this.window = window;
 
@@ -277,7 +277,7 @@ public class MainShader extends Shader {
     private IntBuffer pixelReadBuffer = BufferUtils.createIntBuffer(1);
 
     public int getWorldObjectID() {
-        Mouse mouse = GameEngine.getEngine().getMouse();
+        Mouse mouse = getEngine().getMouse();
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_handle);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -297,7 +297,7 @@ public class MainShader extends Shader {
     }
 
     public void setWorldObjectID(int id) {
-        if (GameEngine.getEngine().getWindow().getActiveShader() == this)
+        if (getEngine().getWindow().getActiveShader() == this)
             if (id != 0) {
                 int r = (id & 0x000000FF) >> 0;
                 int g = (id & 0x0000FF00) >> 8;

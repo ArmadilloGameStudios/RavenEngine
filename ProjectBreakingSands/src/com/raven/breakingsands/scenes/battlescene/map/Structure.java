@@ -24,7 +24,7 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject>
 
     public Structure(BattleScene scene, int x, int y) {
         this(scene,
-                GameEngine.getEngine().getGameDatabase().getTable("structure").stream()
+                GameDatabase.all("structure").stream()
                         .filter(s -> s.getString("name").equals("center"))
                         .findAny()
                         .get(),

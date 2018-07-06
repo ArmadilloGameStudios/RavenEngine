@@ -121,11 +121,11 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         List<SpriteSheet> models = new ArrayList<>();
 
         // TODO
-        models.addAll(Terrain.getSpriteSheets());
-        models.addAll(Wall.getSpriteSheets());
-        models.addAll(Pawn.getSpriteSheets());
-        models.addAll(Effect.getSpriteSheets());
-        models.addAll(Weapon.getSpriteSheets());
+        models.addAll(Terrain.getSpriteSheets(this));
+        models.addAll(Wall.getSpriteSheets(this));
+        models.addAll(Pawn.getSpriteSheets(this));
+        models.addAll(Effect.getSpriteSheets(this));
+        models.addAll(Weapon.getSpriteSheets(this));
 
         return models;
     }
@@ -360,7 +360,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     @Override
     public void onUpdate(float deltaTime) {
-        float a = (float) (Math.cos(GameEngine.getEngine().getSystemTime() * .005) * .15 + .4);
+        float a = (float) (Math.cos(getEngine().getSystemTime() * .005) * .15 + .4);
 
         PURPLE_CHANGING.a = BLUE_CHANGING.a = RED_CHANGING.a = GREEN_CHANGING.a = YELLOW_CHANGING.a = a;
 

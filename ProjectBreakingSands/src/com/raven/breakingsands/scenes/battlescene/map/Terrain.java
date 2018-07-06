@@ -32,13 +32,11 @@ import java.util.stream.DoubleStream;
 public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         implements MouseHandler, PathNode<Terrain>, GameDatable {
 
-    private static GameDataList dataList = GameDatabase.all("terrain");
-
-    public static List<SpriteSheet> getSpriteSheets() {
+    public static List<SpriteSheet> getSpriteSheets(BattleScene scene) {
         List<SpriteSheet> data = new ArrayList<>();
 
-        for (GameData gameData : dataList) {
-            data.add(GameEngine.getEngine().getSpriteSheet(gameData.getString("sprite")));
+        for (GameData gameData : GameDatabase.all("terrain")) {
+            data.add(scene.getEngine().getSpriteSheet(gameData.getString("sprite")));
         }
 
         return data;

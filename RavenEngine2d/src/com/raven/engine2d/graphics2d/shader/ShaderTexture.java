@@ -1,6 +1,19 @@
 package com.raven.engine2d.graphics2d.shader;
 
+import com.raven.engine2d.Game;
+import com.raven.engine2d.GameEngine;
+
 public abstract class ShaderTexture {
+
+    private GameEngine engine;
+
+    protected ShaderTexture(GameEngine engine) {
+        this.engine = engine;
+    }
+
+    protected GameEngine getEngine() {
+        return engine;
+    }
 
     public abstract void load();
 
@@ -9,5 +22,6 @@ public abstract class ShaderTexture {
     public abstract void release();
 
     public abstract int getWidth();
+
     public abstract int getHeight();
 }

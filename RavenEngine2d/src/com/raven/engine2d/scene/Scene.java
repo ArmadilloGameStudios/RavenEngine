@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.raven.engine2d.Game;
+import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.shader.Shader;
@@ -35,6 +36,10 @@ public abstract class Scene<G extends Game> implements Parentable<GameObject> {
 
     public Scene(G game) {
         this.game = game;
+    }
+
+    public GameEngine<G> getEngine() {
+        return game.getEngine();
     }
 
     final public void draw(GameWindow window) {
@@ -190,5 +195,4 @@ public abstract class Scene<G extends Game> implements Parentable<GameObject> {
     public Clip getClip(String name) {
         return null;
     }
-
 }

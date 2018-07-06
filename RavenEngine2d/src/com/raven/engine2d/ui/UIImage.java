@@ -23,7 +23,7 @@ public final class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObj
         this.width = width;
         this.height = height;
 
-        texture = new UITexture(src);
+        texture = new UITexture(scene.getEngine(), src);
         texture.load();
     }
 

@@ -16,8 +16,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Game<G extends Game> {
-    private GameEngine<G> engine;
+public abstract class Game<G extends Game<G>> {
+    private GameEngine<? extends G> engine;
 
     private Scene<G> currentScene;
     private Scene<G> readyTransitionScene;
@@ -28,13 +28,15 @@ public abstract class Game<G extends Game> {
 
     public Game() {
         isRunning = true;
+
+        GameProperties.setMainDirectory(getMainDirectory());
     }
 
-    public GameEngine<G> getEngine() {
+    public GameEngine<? extends G> getEngine() {
         return engine;
     }
 
-    void setEngine(GameEngine<G> engine) {
+    void setEngine(GameEngine<? extends G> engine) {
         this.engine = engine;
     }
 

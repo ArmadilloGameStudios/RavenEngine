@@ -22,20 +22,14 @@ import org.lwjgl.system.CallbackI;
 import javax.sound.sampled.*;
 
 public class GameEngine<G extends Game> {
-    private static GameEngine engine;
 
     public static <G extends Game> GameEngine Launch(G game) {
         GameEngine<G> engine = new GameEngine<>(game);
 
-        GameEngine.engine = engine;
         engine.window = new GameWindow(engine);
 
         engine.run();
 
-        return engine;
-    }
-
-    public static GameEngine getEngine() {
         return engine;
     }
 
@@ -235,7 +229,7 @@ public class GameEngine<G extends Game> {
             if (f.isFile()) {
 //                System.out.println(f.getPath());
 
-                spriteSheetsMap.put(f.getPath(), new SpriteSheet(f));
+                spriteSheetsMap.put(f.getPath(), new SpriteSheet(this, f));
             } else if (f.isDirectory()) {
                 loadSprites(f);
             }

@@ -1,5 +1,6 @@
 package com.raven.engine2d.ui;
 
+import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
@@ -39,11 +40,14 @@ public class UITextWriter {
     private Graphics2D imgGraphics;
     private UIFont font;
     private UITexture uiImage;
+    private GameEngine engine;
 
     private int x = 0; // 8
     private int y = 0; // 10
 
-    public UITextWriter(UITexture image, UIFont font) {
+    public UITextWriter(GameEngine engine, UITexture image, UIFont font) {
+        this.engine = engine;
+
         uiImage = image;
         img = image.getImage();
         this.font = font;
@@ -61,13 +65,13 @@ public class UITextWriter {
 
         GameDataList alphabetLocation;
         if (font.isSmall())
-            alphabetLocation = GameDatabase.all("text").stream()
+            alphabetLocation = engine.getGameDatabase().getTable("text").stream()
                     .filter(d -> d.getString("name").equals("alphabet small"))
                     .findFirst()
                     .map(d -> d.getList("chars"))
                     .get();
         else
-            alphabetLocation = GameDatabase.all("text").stream()
+            alphabetLocation = engine.getGameDatabase().getTable("text").stream()
                     .filter(d -> d.getString("name").equals("alphabet"))
                     .findFirst()
                     .map(d -> d.getList("chars"))

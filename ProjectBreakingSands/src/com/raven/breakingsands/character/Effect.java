@@ -16,14 +16,12 @@ import java.util.List;
 
 public class Effect extends WorldObject<BattleScene, Terrain, WorldObject> {
 
-    private static GameDataList dataList = GameDatabase.all("effect");
-
-    public static List<SpriteSheet> getSpriteSheets() {
+    public static List<SpriteSheet> getSpriteSheets(BattleScene scene) {
 
         List<SpriteSheet> data = new ArrayList<>();
 
-        for (GameData gameData : dataList) {
-            data.add(GameEngine.getEngine().getSpriteSheet(gameData.getString("sprite")));
+        for (GameData gameData : GameDatabase.all("effect")) {
+            data.add(scene.getEngine().getSpriteSheet(gameData.getString("sprite")));
         }
 
         return data;

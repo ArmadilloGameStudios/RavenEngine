@@ -1,5 +1,6 @@
 package com.raven.engine2d.graphics2d.sprite;
 
+import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.shader.Shader;
 import org.lwjgl.BufferUtils;
@@ -24,7 +25,9 @@ public class SpriteSheet extends ShaderTexture {
     private int width;
     private BufferedImage img;
 
-    public SpriteSheet(File f) {
+    public SpriteSheet(GameEngine engine, File f) {
+        super(engine);
+
         filePath = f.getPath();
 
         try {

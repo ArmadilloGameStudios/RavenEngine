@@ -6,15 +6,24 @@ package com.raven.engine2d;
  * Created by cookedbird on 11/15/17.
  */
 public class GameProperties {
-    private static boolean supportsOpenGL4 = true;
     private static int scaling = 2;
+    private static int height = 1080, width = 1920;
+    private static String mainDirectory;
 
     public static int getScreenWidth() {
-        return 1920;
+        return width;
+    }
+
+    public static void setScreenWidth(int width) {
+        GameProperties.width = width;
     }
 
     public static int getScreenHeight() {
-        return 1080;
+        return height;
+    }
+
+    public static void setScreenHeight(int height) {
+        GameProperties.height = height;
     }
 
     public static int getScaling() { return scaling; }
@@ -24,15 +33,11 @@ public class GameProperties {
     }
 
     public static String getMainDirectory() {
-        return GameEngine.getEngine().getGame().getMainDirectory();
+        return mainDirectory;
     }
 
-    public static void setSupportsOpenGL4(boolean supportsOpenGL4) {
-        GameProperties.supportsOpenGL4 = supportsOpenGL4;
-    }
-
-    public static boolean supportsOpenGL4() {
-        return supportsOpenGL4;
+    public static void setMainDirectory(String dir) {
+        GameProperties.mainDirectory = dir;
     }
 
     private GameProperties() {}

@@ -15,21 +15,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class DisplayPawn extends WorldObject<Scene, Terrain, WorldObject> {
-    private static GameDataList dataList = GameDatabase.all("pawn");
+public class DisplayPawn extends WorldObject<Scene, MainMenuScene, WorldObject> {
 
-    public static List<SpriteSheet> getSpriteSheets() {
+    public static List<SpriteSheet> getSpriteSheets(MainMenuScene scene) {
         List<SpriteSheet> data = new ArrayList<>();
 
-        for (GameData gameData : dataList) {
-            data.add(GameEngine.getEngine().getSpriteSheet(gameData.getString("sprite")));
+        for (GameData gameData : GameDatabase.all("pawn")) {
+            data.add(scene.getEngine().getSpriteSheet(gameData.getString("sprite")));
         }
 
         return data;
     }
 
     public DisplayPawn(Scene scene) {
-        super(scene, dataList.getRandom(new Random()));
+        super(scene, GameDatabase.all("pawn").getRandom(new Random()));
     }
 
     @Override

@@ -96,7 +96,7 @@ public class GameWindow {
 
         GL.createCapabilities();
 
-        mainShader = new MainShader(this);
+        mainShader = new MainShader(engine, this);
 
         // Enable depth test
         glEnable(GL_DEPTH_TEST);

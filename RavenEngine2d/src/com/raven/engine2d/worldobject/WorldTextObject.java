@@ -27,16 +27,16 @@ public abstract class WorldTextObject
 
         if (image == null) {
             if (font.isHighlight()) {
-                image = new UITexture(160, 12 * 2);
+                image = new UITexture(getScene().getEngine(), 160, 12 * 2);
             } else {
-                image = new UITexture(160, 12);
+                image = new UITexture(getScene().getEngine(), 160, 12);
             }
 
             spriteSheet = image;
         }
 
         // TODO don't remake each time
-        textWriter = new UITextWriter(image, font);
+        textWriter = new UITextWriter(getScene().getEngine(), image, font);
         textWriter.clear();
 
         textWriter.write(text);

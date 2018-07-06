@@ -16,17 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Wall extends WorldObject<BattleScene, Terrain, WorldObject> implements GameDatable {
-    private static GameDataList dataList = GameDatabase.all("wall");
 
-    public static GameDataList getDataList() {
-        return dataList;
+    public static GameDataList getDataList(BattleScene scene) {
+        return GameDatabase.all("wall");
     }
 
-    public static List<SpriteSheet> getSpriteSheets() {
+    public static List<SpriteSheet> getSpriteSheets(BattleScene scene) {
         List<SpriteSheet> data = new ArrayList<>();
 
-        for (GameData gameData : dataList) {
-            data.add(GameEngine.getEngine().getSpriteSheet(gameData.getString("sprite")));
+        for (GameData gameData : getDataList(scene)) {
+            data.add(scene.getEngine().getSpriteSheet(gameData.getString("sprite")));
         }
 
         return data;

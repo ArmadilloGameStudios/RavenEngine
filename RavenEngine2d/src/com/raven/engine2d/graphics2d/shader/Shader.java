@@ -32,7 +32,11 @@ public abstract class Shader {
 
     int vertex_handel, fragment_handel, program_handel;
 
-    public Shader(String vertex_shader, String fragment_shader) {
+    private GameEngine engine;
+
+    public Shader(String vertex_shader, String fragment_shader, GameEngine engine) {
+        this.engine = engine;
+
         try {
             // Get the variable map
             Map<String, String> variables = getGLSLVariableMap();
@@ -117,9 +121,9 @@ public abstract class Shader {
     }
 
     protected void useProgram() {
-        if (GameEngine.getEngine().getWindow().getActiveShader() != this) {
-            GameEngine.getEngine().getWindow().endActiveShader();
-            GameEngine.getEngine().getWindow().setActiveShader(this);
+        if (engine.getWindow().getActiveShader() != this) {
+            engine.getWindow().endActiveShader();
+            engine.getWindow().setActiveShader(this);
         }
         glUseProgram(getProgramHandel());
     }
@@ -132,6 +136,10 @@ public abstract class Shader {
 
     protected final int getFragmentHandel() {
         return fragment_handel;
+    }
+
+    protected final GameEngine getEngine() {
+        return engine;
     }
 
     public final int getProgramHandel() {

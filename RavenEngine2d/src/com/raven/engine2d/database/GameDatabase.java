@@ -12,6 +12,12 @@ public class GameDatabase {
     //<editor-fold> public methods
     private Dictionary<String, GameDataTable> tables = new Hashtable<String, GameDataTable>();
 
+    private static GameDatabase gameDatabase;
+
+    public GameDatabase() {
+        gameDatabase = this;
+    }
+
     public List<GameDataTable> getTables() {
         return Collections.list(tables.elements());
     }
@@ -62,37 +68,7 @@ public class GameDatabase {
     }
     //</editor-fold>
 
-    //<editor-fold> static methods
-    public static GameDataList queryAll(String table, String prop, String value) {
-        return GameEngine.getEngine().getGameDatabase().getTable(table).queryAll(new GameDataQuery() {
-            @Override
-            public boolean matches(com.raven.engine2d.database.GameData row) {
-                return row.getData(prop).asString().equals(value);
-            }
-        });
-    }
-
-    public static GameData queryFirst(String table, String prop, String value) {
-        return GameEngine.getEngine().getGameDatabase().getTable(table).queryFirst(new GameDataQuery() {
-            @Override
-            public boolean matches(com.raven.engine2d.database.GameData row) {
-                return row.getData(prop).asString().equals(value);
-            }
-        });
-    }
-
-    public static GameData queryRandom(String table, String prop, String value, Random r) {
-        return GameEngine.getEngine().getGameDatabase().getTable(table).queryRandom(r, new GameDataQuery() {
-            @Override
-            public boolean matches(GameData row) {
-                return row.getData(prop).asString().equals(value);
-            }
-        });
-    }
-
-
     public static GameDataTable all(String table) {
-        return GameEngine.getEngine().getGameDatabase().getTable(table);
+        return gameDatabase.getTable(table);
     }
-    //</editor-fold>
 }

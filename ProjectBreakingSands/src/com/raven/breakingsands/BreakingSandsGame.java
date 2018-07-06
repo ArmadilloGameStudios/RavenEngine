@@ -4,6 +4,7 @@ import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
 import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataTable;
 import com.raven.engine2d.launcher.GameLauncher;
@@ -15,7 +16,7 @@ import java.util.List;
 public class BreakingSandsGame extends Game<BreakingSandsGame> {
 
     public static void main(String[] args) {
-        GameEngine.Launch(new BreakingSandsGame());
+        GameEngine.<BreakingSandsGame>Launch(new BreakingSandsGame());
         System.out.println("Lunched");
     }
 

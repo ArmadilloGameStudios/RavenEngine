@@ -12,16 +12,11 @@ public class Layer {
     public enum Destination {Terrain, UI, Details, Effects;
     }
 
-    private Scene scene;
     private Destination destination;
     private List<GameObject> gameObjectList = new CopyOnWriteArrayList<>();
 
-    private GameWindow window;
-
     public Layer(Destination destination) {
         this.destination = destination;
-
-        this.window = GameEngine.getEngine().getWindow();
     }
 
     public List<GameObject> getChildren() {
@@ -35,10 +30,6 @@ public class Layer {
 
     public void removeChild(GameObject obj) {
         gameObjectList.remove(obj);
-    }
-
-    public void setScene(Scene scene) {
-        this.scene = scene;
     }
 
     public Destination getDestination() {

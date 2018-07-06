@@ -25,7 +25,7 @@ public abstract class UIButton<S extends Scene>
     public UIButton(S scene, String btnImgSrc, String animation) {
         super(scene);
 
-        spriteAnimationState = new SpriteAnimationState(GameEngine.getEngine().getAnimation(animation));
+        spriteAnimationState = new SpriteAnimationState(scene.getEngine().getAnimation(animation));
 
         image = new UIImage<>(scene, (int) getWidth(), (int) getHeight() * 2, btnImgSrc);
 
