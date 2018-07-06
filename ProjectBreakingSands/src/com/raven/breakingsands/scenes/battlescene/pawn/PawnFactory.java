@@ -23,7 +23,7 @@ public class PawnFactory extends Factory<Pawn> {
     }
 
     public Pawn getInstance() {
-        GameData gameData = Pawn.getDataList(scene).queryRandom(scene.getRandom(), new GameDataQuery() {
+        GameData gameData = Pawn.getDataList().queryRandom(scene.getRandom(), new GameDataQuery() {
             @Override
             public boolean matches(GameData row) {
 

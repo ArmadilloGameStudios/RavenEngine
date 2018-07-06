@@ -27,14 +27,14 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         implements GameDatable {
 
-    public static GameDataList getDataList(BattleScene scene) {
+    public static GameDataList getDataList() {
         return GameDatabase.all("pawn");
     }
 
     public static List<SpriteSheet> getSpriteSheets(BattleScene scene) {
         List<SpriteSheet> data = new ArrayList<>();
 
-        for (GameData gameData : getDataList(scene)) {
+        for (GameData gameData : getDataList()) {
             data.add(scene.getEngine().getSpriteSheet(gameData.getString("sprite")));
         }
 

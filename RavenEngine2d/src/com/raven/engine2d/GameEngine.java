@@ -21,9 +21,9 @@ import org.lwjgl.system.CallbackI;
 
 import javax.sound.sampled.*;
 
-public class GameEngine<G extends Game> {
+public class GameEngine<G extends Game<G>> {
 
-    public static <G extends Game> GameEngine Launch(G game) {
+    public static <G extends Game<G>> GameEngine Launch(G game) {
         GameEngine<G> engine = new GameEngine<>(game);
 
         engine.window = new GameWindow(engine);
