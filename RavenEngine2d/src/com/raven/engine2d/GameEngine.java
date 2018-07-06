@@ -6,6 +6,8 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import java.io.File;
 import java.util.*;
 
+import com.codedisaster.steamworks.SteamAPI;
+import com.codedisaster.steamworks.SteamException;
 import com.raven.engine2d.database.GameDataTable;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.GameWindow;
@@ -15,21 +17,20 @@ import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.input.Keyboard;
 import com.raven.engine2d.input.Mouse;
 import com.raven.engine2d.worldobject.GameObject;
+import org.lwjgl.system.CallbackI;
 
 import javax.sound.sampled.*;
 
-public class GameEngine<G extends Game> implements Runnable {
+public class GameEngine<G extends Game> {
     private static GameEngine engine;
 
     public static <G extends Game> GameEngine Launch(G game) {
         GameEngine<G> engine = new GameEngine<>(game);
 
         GameEngine.engine = engine;
-
         engine.window = new GameWindow(engine);
 
-        engine.thread = new Thread(engine);
-        engine.thread.start();
+        engine.run();
 
         return engine;
     }
@@ -39,7 +40,6 @@ public class GameEngine<G extends Game> implements Runnable {
     }
 
     private G game;
-    private Thread thread;
     private GameWindow window;
     private List<GameObject> oldMouseList = new ArrayList<>();
     private GameDatabase gdb;
@@ -48,14 +48,11 @@ public class GameEngine<G extends Game> implements Runnable {
     private Map<String, Clip> audioMap = new HashMap<>();
     private float deltaTime;
     private long systemTime;
+    private boolean steamInit = false;
     private Mouse mouse = new Mouse();
     private Keyboard keyboard = new Keyboard();
 
     // Accessors
-    public Thread getThread() {
-        return thread;
-    }
-
     public G getGame() {
         return game;
     }
@@ -88,19 +85,23 @@ public class GameEngine<G extends Game> implements Runnable {
         return mouse;
     }
 
-    public void breakThread() {
-        System.out
-                .println("Breaking Thread. Was it alive? " + thread.isAlive());
-
-        game.breakdown();
-    }
-
     private int frame = 0;
     private float framesdt = 0;
 
-    @Override
     public void run() {
         System.out.println("Started Run");
+
+        System.out.println("Starting Steam API");
+        try
+        {
+            steamInit = SteamAPI.init();
+        } catch (SteamException se) {
+            System.out.println("Couldn't load steam native libraries");
+        }
+
+        if (!steamInit) {
+            System.out.println("Steam failed to start");
+        }
 
         System.out.println("Starting OpenGL");
         window.create();

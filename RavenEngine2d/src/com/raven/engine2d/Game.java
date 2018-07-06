@@ -34,7 +34,7 @@ public abstract class Game<G extends Game> {
         return engine;
     }
 
-    public void setEngine(GameEngine<G> engine) {
+    void setEngine(GameEngine<G> engine) {
         this.engine = engine;
     }
 
