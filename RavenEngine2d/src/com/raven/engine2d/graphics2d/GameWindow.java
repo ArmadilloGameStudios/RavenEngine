@@ -4,6 +4,7 @@ import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.shader.TextShader;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -30,6 +31,7 @@ public class GameWindow {
     private long window;
 
     private MainShader mainShader;
+    private TextShader textShader;
 
     private GameEngine engine;
 
@@ -88,7 +90,7 @@ public class GameWindow {
         glfwMakeContextCurrent(window);
 
         // Enable v-sync
-        glfwSwapInterval(1);
+        glfwSwapInterval(GL_TRUE);
 
         // Make the window visible
         glfwShowWindow(window);
@@ -104,6 +106,7 @@ public class GameWindow {
         GL.createCapabilities();
 
         mainShader = new MainShader(engine, this);
+        textShader = new TextShader(engine, this);
 
         // Enable depth test
         glEnable(GL_DEPTH_TEST);
@@ -133,6 +136,10 @@ public class GameWindow {
 
     public MainShader getMainShader() {
         return mainShader;
+    }
+
+    public TextShader getTexthader() {
+        return textShader;
     }
 
     public void drawQuad() {

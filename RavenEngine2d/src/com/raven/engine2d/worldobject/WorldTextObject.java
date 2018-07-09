@@ -36,12 +36,13 @@ public abstract class WorldTextObject
         }
 
         // TODO don't remake each time
-        textWriter = new UITextWriter(getScene().getEngine(), image, font);
-        textWriter.clear();
+        textWriter = new UITextWriter(getScene().getEngine(), getScene(), image, font);
+//        textWriter.clear();
 
-        textWriter.write(text);
+        textWriter.setText(text);
+        image.load(getScene());
 
-        image.load();
+        getScene().addTextToWrite(textWriter);
     }
 
     public String getText() {

@@ -5,6 +5,9 @@ import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
+import com.raven.engine2d.graphics2d.shader.TextShader;
+import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
+import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2i;
 import org.lwjgl.system.CallbackI;
 
@@ -18,50 +21,64 @@ import java.util.Optional;
 
 public class UITextWriter {
 
-    private static BufferedImage alphabetImage, alphabetSmallImage;
+//    private static BufferedImage alphabetImage, alphabetSmallImage;
+//
+//    {
+//        try {
+//            alphabetImage = ImageIO.read(new File(
+//                    GameProperties.getMainDirectory() + File.separator +
+//                            "text" + File.separator +
+//                            "alphabet.png"));
+//
+//            alphabetSmallImage = ImageIO.read(new File(
+//                    GameProperties.getMainDirectory() + File.separator +
+//                            "text" + File.separator +
+//                            "alphabet_small.png"));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-    {
-        try {
-            alphabetImage = ImageIO.read(new File(
-                    GameProperties.getMainDirectory() + File.separator +
-                            "text" + File.separator +
-                            "alphabet.png"));
+    private SpriteSheet alphabetImage, alphabetSmallImage;
 
-            alphabetSmallImage = ImageIO.read(new File(
-                    GameProperties.getMainDirectory() + File.separator +
-                            "text" + File.separator +
-                            "alphabet_small.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private BufferedImage img;
-    private Graphics2D imgGraphics;
     private UIFont font;
     private UITexture uiImage;
     private GameEngine engine;
+    private String text, background;
 
     private int x = 0; // 8
     private int y = 0; // 10
 
-    public UITextWriter(GameEngine engine, UITexture image, UIFont font) {
+    public UITextWriter(GameEngine engine, Scene scene, UITexture image, UIFont font) {
         this.engine = engine;
 
         uiImage = image;
-        img = image.getImage();
         this.font = font;
+
+        alphabetImage = engine.getSpriteSheet("sprites/alphabet.png");
+        alphabetImage.load(scene);
+        alphabetSmallImage = engine.getSpriteSheet("sprites/alphabet_small.png");
+        alphabetSmallImage.load(scene);
     }
 
-    // Will overwrite any text on the image
-    public void drawBackground(String src) {
-        uiImage.drawImage(src);
+
+    public void setBackground(String src) {
+        background = src;
     }
 
+    public void setText(String text) {
+        this.text = text;
+    }
 
-    public void write(String text) {
-        if (imgGraphics == null)
-            imgGraphics = img.createGraphics();
+    public void write(TextShader shader) {
+        engine.getWindow().printErrors("rawr");
+        shader.setWriteDestination(uiImage);
+
+        if (background != null) {
+            shader.drawImage(engine.getSpriteSheet(background));
+        } else {
+            shader.clear();
+        }
 
         GameDataList alphabetLocation;
         if (font.isSmall())
@@ -82,19 +99,26 @@ public class UITextWriter {
 
         if (font.getSide() == UIFont.Side.LEFT) {
             for (Character c : text.toLowerCase().toCharArray()) {
-                writeChar(c, alphabetLocation);
+                writeChar(shader, c, alphabetLocation);
             }
         } else {
-            x = img.getWidth() - 1;
+            x = uiImage.getWidth() - 1;
 
             for (Character c : new StringBuilder(text.toLowerCase()).reverse().toString().toCharArray()) {
-                writeChar(c, alphabetLocation);
+                writeChar(shader, c, alphabetLocation);
             }
         }
+
     }
 
-    private void writeChar(Character c, GameDataList alphabetLocation) {
+    private Vector2i
+            size = new Vector2i(),
+            src = new Vector2i(),
+            des = new Vector2i();
 
+    private void writeChar(TextShader shader, Character c, GameDataList alphabetLocation) {
+
+        engine.getWindow().printErrors("meow");
         switch (c) {
             case ' ':
                 if (font.isSmall())
@@ -114,40 +138,72 @@ public class UITextWriter {
                         .filter(a -> a.getString("name").equals(c.toString()))
                         .findFirst();
 
+                des.x = x;
+                des.y = y;
+
                 if (optionalgdChar.isPresent()) {
                     GameData gdChar = optionalgdChar.get();
 
                     int cx = gdChar.getInteger("x");
                     int cw = gdChar.getInteger("width");
 
+                    size.x = cw;
+
                     if (!font.isSmall()) {
+
+                        size.y = 14;
+
                         if (font.getSide() == UIFont.Side.RIGHT) {
                             x -= cw;
                         }
 
                         if (font.isButton()) {
-                            imgGraphics.drawImage(alphabetImage,
-                                    x, y, x + cw, y + 14,
-                                    cx, 0, cx + cw, 14,
-                                    null);
+
+                            des.x = x;
+                            des.y = y;
+                            src.x = cx;
+                            src.y = 0;
+                            shader.write(size, src, des, alphabetImage);
+//                            imgGraphics.drawImage(alphabetImage,
+//                                    x, y, x + cw, y + 14,
+//                                    cx, 0, cx + cw, 14,
+//                                    null);
 
                             Vector2i o = font.getButtonOffset();
+                            des.x += o.x;
+                            des.y += o.y;
+                            src.y = 14;
+                            shader.write(size, src, des, alphabetImage);
 
-                            imgGraphics.drawImage(alphabetImage,
-                                    x + o.x, y + o.y, x + cw + o.x, y + o.y + 14,
-                                    cx, 14, cx + cw, 28,
-                                    null);
+//                            imgGraphics.drawImage(alphabetImage,
+//                                    x + o.x, y + o.y, x + cw + o.x, y + o.y + 14,
+//                                    cx, 14, cx + cw, 28,
+//                                    null);
                         } else {
                             if (font.isHighlight()) {
-                                imgGraphics.drawImage(alphabetImage,
-                                        x, y, x + cw, y + 14,
-                                        cx, 14, cx + cw, 28,
-                                        null);
+
+                                des.x = x;
+                                des.y = y;
+                                src.x = cx;
+                                src.y = 14;
+                                shader.write(size, src, des, alphabetImage);
+
+//                                imgGraphics.drawImage(alphabetImage,
+//                                        x, y, x + cw, y + 14,
+//                                        cx, 14, cx + cw, 28,
+//                                        null);
                             } else {
-                                imgGraphics.drawImage(alphabetImage,
-                                        x, y, x + cw, y + 14,
-                                        cx, 0, cx + cw, 14,
-                                        null);
+
+                                des.x = x;
+                                des.y = y;
+                                src.x = cx;
+                                src.y = 0;
+                                shader.write(size, src, des, alphabetImage);
+
+//                                imgGraphics.drawImage(alphabetImage,
+//                                        x, y, x + cw, y + 14,
+//                                        cx, 0, cx + cw, 14,
+//                                        null);
                             }
                         }
 
@@ -155,27 +211,47 @@ public class UITextWriter {
                             x += cw;
                         }
                     } else {
+
+                        size.y = 8;
+
                         if (font.getSide() == UIFont.Side.RIGHT) {
                             x -= cw - 1;
                         }
 
                         if (font.isButton()) {
-                            imgGraphics.drawImage(alphabetSmallImage,
-                                    x, y, x + cw, y + 8,
-                                    cx, 8, cx + cw, 16,
-                                    null);
+
+                            des.x = x;
+                            des.y = y;
+                            src.x = cx;
+                            src.y = 0;
+                            shader.write(size, src, des, alphabetSmallImage);
+
+//                            imgGraphics.drawImage(alphabetSmallImage,
+//                                    x, y, x + cw, y + 8,
+//                                    cx, 8, cx + cw, 16,
+//                                    null);
 
                             Vector2i o = font.getButtonOffset();
+                            des.x += o.x;
+                            des.y += o.y;
+                            src.y = 8;
+                            shader.write(size, src, des, alphabetSmallImage);
 
-                            imgGraphics.drawImage(alphabetSmallImage,
-                                    x + o.x, y + o.y, x + cw + o.x, y + o.y + 8,
-                                    cx, 8, cx + cw, 16,
-                                    null);
+//                            imgGraphics.drawImage(alphabetSmallImage,
+//                                    x + o.x, y + o.y, x + cw + o.x, y + o.y + 8,
+//                                    cx, 8, cx + cw, 16,
+//                                    null);
                         } else {
-                            imgGraphics.drawImage(alphabetSmallImage,
-                                    x, y, x + cw, y + 8,
-                                    cx, 8, cx + cw, 16,
-                                    null);
+
+                            des.x = x;
+                            des.y = y;
+                            src.x = cx;
+                            src.y = 8;
+                            shader.write(size, src, des, alphabetSmallImage);
+//                            imgGraphics.drawImage(alphabetSmallImage,
+//                                    x, y, x + cw, y + 8,
+//                                    cx, 8, cx + cw, 16,
+//                                    null);
                         }
 
                         if (font.getSide() == UIFont.Side.LEFT) {
@@ -186,13 +262,5 @@ public class UITextWriter {
                 break;
         }
 
-    }
-
-    public void clear() {
-        if (imgGraphics == null)
-            imgGraphics = img.createGraphics();
-
-        imgGraphics.setBackground(new Color(255, 255, 255, 0));
-        imgGraphics.clearRect(0, 0, img.getWidth(), img.getHeight());
     }
 }

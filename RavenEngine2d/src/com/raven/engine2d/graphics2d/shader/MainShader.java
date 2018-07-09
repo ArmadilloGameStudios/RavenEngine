@@ -38,7 +38,7 @@ public class MainShader extends Shader {
     private IntBuffer buffers;
 
     public MainShader(GameEngine engine, GameWindow window) {
-        super("vertex.glsl", "terrain_fragment.glsl", engine);
+        super("vertex.glsl", "fragment.glsl", engine);
 
         this.window = window;
 

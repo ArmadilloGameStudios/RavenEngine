@@ -2,20 +2,21 @@ package com.raven.engine2d.scene;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.shader.Shader;
+import com.raven.engine2d.graphics2d.shader.ShaderTexture;
+import com.raven.engine2d.graphics2d.shader.TextShader;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
-import com.raven.engine2d.ui.UIObject;
+import com.raven.engine2d.ui.UITextWriter;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
-import com.raven.engine2d.ui.UIContainer;
 import com.raven.engine2d.worldobject.GameObject;
 import com.raven.engine2d.worldobject.Parentable;
-import com.raven.engine2d.worldobject.WorldObject;
 
 import javax.sound.sampled.Clip;
 
@@ -29,6 +30,8 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     private Vector2f worldOffset = new Vector2f();
 
     private List<GameObject> children = new ArrayList<>();
+    private List<UITextWriter> toWrite = new ArrayList<>();
+    private List<ShaderTexture> textures = new CopyOnWriteArrayList<>();
 
     private boolean paused = false;
 
@@ -43,8 +46,23 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     }
 
     final public void draw(GameWindow window) {
-        // shader
+        // text
+        window.printErrors("pre t");
+        if (toWrite.size() > 0) {
+            TextShader textShader = window.getTexthader();
+            window.printErrors("rrr");
+            textShader.useProgram();
+            window.printErrors("lll");
 
+            toWrite.forEach(textWriter -> {
+                textWriter.write(textShader);
+                window.printErrors("Draw Text Error: ");
+            });
+
+            toWrite.clear();
+        }
+
+        // shader
         MainShader mainShader = window.getMainShader();
         mainShader.useProgram();
 
@@ -77,7 +95,9 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
             window.printErrors("Draw UI Error: ");
         }
 
+        window.printErrors("pre b");
         mainShader.blitToScreen();
+        window.printErrors("post b");
     }
 
     final public void update(float deltaTime) {
@@ -135,15 +155,29 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
         getLayer(go.getDestination()).removeChild(go);
     }
 
-    abstract public List<SpriteSheet> getSpriteSheets();
+    public void addTextToWrite(UITextWriter textWriter) {
+        toWrite.add(textWriter);
+    }
+
+    abstract public void loadShaderTextures();
+
+    public final List<ShaderTexture> getShaderTextures() {
+        return textures;
+    }
+
+    public final void addLoadedShaderTexture(ShaderTexture texture) {
+        if (!textures.contains(texture))
+            textures.add(texture);
+    }
 
     public Vector2f getWorldOffset() {
         return worldOffset;
     }
 
     public final void enterScene() {
-        for (SpriteSheet sheet : getSpriteSheets()) {
-            sheet.load();
+        loadShaderTextures();
+        for (ShaderTexture sheet : getShaderTextures()) {
+            sheet.load(this);
         }
 
         onEnterScene();
@@ -166,7 +200,7 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
             obj.release();
         }
 
-        for (SpriteSheet sheet : getSpriteSheets()) {
+        for (ShaderTexture sheet : getShaderTextures()) {
             sheet.release();
         }
 

@@ -42,16 +42,15 @@ public abstract class UIText<S extends Scene>
                 image = new UITexture(getScene().getEngine(), (int) getWidth(), (int) getHeight());
 
         // TODO don't remake each time
-        textWriter = new UITextWriter(getScene().getEngine(), image, font);
+        textWriter = new UITextWriter(getScene().getEngine(), getScene(), image, font);
 
         if (backgroundSrc != null)
-            textWriter.drawBackground(backgroundSrc);
-        else
-            textWriter.clear();
+            textWriter.setBackground(backgroundSrc);
 
-        textWriter.write(text);
+        textWriter.setText(text);
+        image.load(getScene());
 
-        image.load();
+        getScene().addTextToWrite(textWriter);
     }
 
     public void draw(MainShader shader) {
@@ -115,6 +114,7 @@ public abstract class UIText<S extends Scene>
     @Override
     public void release() {
         super.release();
+        image.release();
     }
 
     public void setText(String text) {

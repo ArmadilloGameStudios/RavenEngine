@@ -23,6 +23,7 @@ import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.database.GameDatable;
+import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
@@ -55,6 +56,8 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             PURPLE_CHANGING = new Highlight(.5f, .1f, .8f, .75f);
 
     private GameData loadGameData = null;
+
+    private List<ShaderTexture> models;
 
     private Menu menu;
     private UIActionSelect actionSelect;
@@ -117,17 +120,14 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     @Override
-    public List<SpriteSheet> getSpriteSheets() {
-        List<SpriteSheet> models = new ArrayList<>();
+    public void loadShaderTextures() {
+        List<ShaderTexture> textures = getShaderTextures();
 
-        // TODO
-        models.addAll(Terrain.getSpriteSheets(this));
-        models.addAll(Wall.getSpriteSheets(this));
-        models.addAll(Pawn.getSpriteSheets(this));
-        models.addAll(Effect.getSpriteSheets(this));
-        models.addAll(Weapon.getSpriteSheets(this));
-
-        return models;
+        textures.addAll(Terrain.getSpriteSheets(this));
+        textures.addAll(Wall.getSpriteSheets(this));
+        textures.addAll(Pawn.getSpriteSheets(this));
+        textures.addAll(Effect.getSpriteSheets(this));
+        textures.addAll(Weapon.getSpriteSheets(this));
     }
 
     private boolean isDownKey = false;
@@ -293,8 +293,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         // restore shield
         pawns.forEach(Pawn::restoreShield);
-
-        System.out.println(getChildren());
     }
 
     private void addPawns() {

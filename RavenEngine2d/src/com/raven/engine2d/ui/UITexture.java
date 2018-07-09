@@ -3,12 +3,7 @@ package com.raven.engine2d.ui;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
-import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
-import org.lwjgl.BufferUtils;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.nio.ByteBuffer;
+import com.raven.engine2d.scene.Scene;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -20,69 +15,15 @@ public class UITexture
     private int textureActiveLocation;
     private int width, height, texture;
 
-    private BufferedImage img;
-    private Graphics2D imgGraphics;
-
     public UITexture(GameEngine engine, int width, int height) {
         super(engine);
-
-        this.img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
         this.width = width;
         this.height = height;
     }
 
-    public UITexture(GameEngine engine, String src) {
-        super(engine);
-
-        drawImage(src);
-    }
-
-    public void drawImage(String src) {
-//        System.out.println(src);
-        SpriteSheet background = getEngine().getSpriteSheet(src);
-
-        if (this.img == null) {
-            this.img = new BufferedImage(
-                    background.getWidth(),
-                    background.getHeight(),
-                    BufferedImage.TYPE_INT_ARGB);
-
-            this.width = background.getWidth();
-            this.height = background.getHeight();
-        }
-
-
-        if (imgGraphics == null)
-            imgGraphics = img.createGraphics();
-
-        imgGraphics.setComposite(
-                AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
-
-        imgGraphics.drawImage(background.getImage(), 0, 0, null);
-    }
-
     @Override
-    public void load() {
-
-        // To Byte Array
-        int[] pixels = new int[width * height];
-        img.getRGB(0, 0, width, height, pixels, 0, width);
-
-        ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
-
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                int pixel = pixels[y * width + x];
-                buffer.put((byte) ((pixel >> 16) & 0xFF));    // Red component
-                buffer.put((byte) ((pixel >> 8) & 0xFF));     // Green component
-                buffer.put((byte) (pixel & 0xFF));            // Blue component
-                buffer.put((byte) ((pixel >> 24) & 0xFF));    // Alpha component.
-            }
-        }
-
-        buffer.flip();
-
+    public void load(Scene scene) {
         // Set Texture
         if (textureActiveLocation == 0)
             textureActiveLocation = Shader.getNextTextureID();
@@ -96,17 +37,24 @@ public class UITexture
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
                 width, height,
-                0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+                0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
         glActiveTexture(GL_TEXTURE0);
+
+        scene.addLoadedShaderTexture(this);
     }
 
     @Override
     public int getTextureActiveLocation() {
         return textureActiveLocation;
+    }
+
+    @Override
+    public int getTexture() {
+        return texture;
     }
 
     @Override
@@ -122,10 +70,8 @@ public class UITexture
     @Override
     public void release() {
         // TODO make sure this is correct
+        textureActiveLocation = 0;
+        texture = 0;
         glDeleteTextures(texture);
-    }
-
-    public BufferedImage getImage() {
-        return img;
     }
 }
