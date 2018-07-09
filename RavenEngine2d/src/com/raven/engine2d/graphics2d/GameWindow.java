@@ -19,7 +19,7 @@ import static org.lwjgl.opengl.ARBImaging.GL_TABLE_TOO_LARGE;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
+import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL45.GL_CONTEXT_LOST;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -50,8 +50,15 @@ public class GameWindow {
 
         // Configure GLFW
         glfwDefaultWindowHints();
+        if (System.getProperty("os.name").contains("mac")) {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        }
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+
 
         // Create the window
         window = glfwCreateWindow(GameProperties.getScreenWidth(),
@@ -130,8 +137,9 @@ public class GameWindow {
 
     public void drawQuad() {
         // Draw FBO
+
         glEnableVertexAttribArray(0);
-        ScreenQuad.getBlankModel().draw();
+        ScreenQuad.getBlankModel().draw(this);
         glDisableVertexAttribArray(0);
     }
 

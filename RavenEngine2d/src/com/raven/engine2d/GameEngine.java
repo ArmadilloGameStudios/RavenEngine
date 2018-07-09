@@ -110,7 +110,7 @@ public class GameEngine<G extends Game<G>> {
 
         // Archaic code, but it should be safe
         ScreenQuad.loadQuad();
-        ScreenQuad.compileBuffer();
+        ScreenQuad.compileBuffer(window);
 
         window.printErrors("Compile Buffer Error: ");
 

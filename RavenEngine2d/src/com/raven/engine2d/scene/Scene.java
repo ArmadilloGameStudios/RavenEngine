@@ -55,17 +55,19 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
         for (GameObject o : layerTerrain.getChildren()) {
             if (o.isVisible())
                 o.draw(mainShader);
-            window.printErrors("Draw World Object Error: ");
+            window.printErrors("Draw Terrain Error: ");
         }
 
         for (GameObject o : layerDetails.getChildren()) {
             if (o.isVisible())
                 o.draw(mainShader);
+            window.printErrors("Draw Details Error: ");
         }
 
         for (GameObject o : layerEffects.getChildren()) {
             if (o.isVisible())
                 o.draw(mainShader);
+            window.printErrors("Draw Effects Error: ");
         }
 
         // ui

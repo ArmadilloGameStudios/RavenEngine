@@ -199,6 +199,7 @@ public class MainShader extends Shader {
 
         glUniform1i(sprite_sheet_location, texture.getTextureActiveLocation());
 
+
         if (spriteAnimation != null) {
             if (!spriteAnimation.getFlip()) {
                 x += spriteAnimation.getXOffset();
