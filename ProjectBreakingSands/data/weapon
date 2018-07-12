@@ -44,6 +44,8 @@
         attack: "plasma_blade_sound.wav"
     },
 
+
+    effect: "blue blast",
     damage: 4,
     piercing: 1,
     range: [ 2, 4 ],
@@ -62,6 +64,8 @@
         attack: "plasma_blade_sound.wav"
     },
 
+
+    effect: "blue blast",
     damage: 3,
     piercing: 3,
     range: 3,
@@ -81,6 +85,8 @@
         attack: "plasma_blade_sound.wav"
     },
 
+
+    effect: "blue blast",
     damage: 4,
     piercing: 2,
     range: [ 3, 6 ],
@@ -119,6 +125,8 @@
         attack: "plasma_blade_sound.wav"
     },
 
+
+    effect: "blue blast",
     damage: 2,
     piercing: 1,
     range: 2,
