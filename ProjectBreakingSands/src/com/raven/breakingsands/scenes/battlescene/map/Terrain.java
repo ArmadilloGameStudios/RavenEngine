@@ -353,7 +353,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                 .filter(a -> a.type == Ability.Type.AURORA)
                 .forEach(a -> {
                     List<Terrain> inRange = selectRange(a.style, a.size);
-                    HashMap<Terrain, Float> rangeMap = filterCoverRange(inRange);
+                    HashMap<Terrain, Float> rangeMap = filterCoverRange(inRange, a.passesPawn);
 
                     for (Terrain n : rangeMap.keySet()) {
                         n.addAbility(a);
@@ -386,7 +386,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     public void removePawnAbility(Ability a) {
         List<Terrain> inRange = selectRange(a.style, a.size);
-        HashMap<Terrain, Float> rangeMap = filterCoverRange(inRange);
+        HashMap<Terrain, Float> rangeMap = filterCoverRange(inRange, a.passesPawn);
 
         for (Terrain n : rangeMap.keySet()) {
             n.removeAbility(a);
@@ -579,8 +579,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         return details;
     }
 
-    public boolean isPassable() {
-        return passable && getPawn() == null;
+    public boolean isPassable(boolean checkPawn) {
+        return passable && (!checkPawn || getPawn() == null);
     }
 
     public List<Terrain> selectRange(RangeStyle style, int rangeMax) {
@@ -676,11 +676,11 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         return withinRange;
     }
 
-    public HashMap<Terrain, Float> filterCoverRange(List<Terrain> inRange) {
-        return filterCoverRange(inRange, .75f);
+    public HashMap<Terrain, Float> filterCoverRange(List<Terrain> inRange, boolean passesPawn) {
+        return filterCoverRange(inRange, .75f, passesPawn);
     }
 
-    public HashMap<Terrain, Float> filterCoverRange(List<Terrain> inRange, float threshold) {
+    public HashMap<Terrain, Float> filterCoverRange(List<Terrain> inRange, float threshold, boolean passesPawn) {
         HashMap<Terrain, Float> map = new HashMap<>();
 
         int startX = this.getMapX();
@@ -701,7 +701,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                     if (!((x == startX && y == startY) || (x == endX && y == endY))) {
 
                         Optional<Terrain> o = getScene().getTerrainMap().get(x, y);
-                        if (!o.isPresent() || !o.get().isPassable()) {
+                        if (!o.isPresent() || !o.get().isPassable(!passesPawn)) {
 
                             float cover = linePointDist(a, b, c, x, y);
 

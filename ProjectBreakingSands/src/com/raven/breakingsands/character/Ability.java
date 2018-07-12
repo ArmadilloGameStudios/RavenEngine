@@ -26,7 +26,7 @@ public class Ability implements GameDatable {
     public Integer size, damage, turns, uses;
     public Integer remainingUses;
     public Integer hp, shield, movement, resistance;
-    public boolean taunt, push_blast, hook_pull, hack, remain;
+    public boolean taunt, push_blast, hook_pull, hack, remain, passesPawn;
 
     public Ability(GameData gameData) {
         this.gameData = gameData;
@@ -79,6 +79,7 @@ public class Ability implements GameDatable {
 
 
         gameData.ifHas("replace", r -> replace = r.asString());
+        gameData.ifHas("passes_pawn", p -> passesPawn = p.asBoolean());
         gameData.ifHas("upgrade", u -> upgrade = u.asString());
         gameData.ifHas("size", s -> size = s.asInteger());
         gameData.ifHas("damage", d -> damage = d.asInteger());

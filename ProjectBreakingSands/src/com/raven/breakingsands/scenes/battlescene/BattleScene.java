@@ -286,6 +286,9 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             // restore shield
             pawns.forEach(Pawn::restoreShield);
 
+            // make sure the abilites are correct
+            pawns.forEach(p -> p.getParent().setPawn(p));
+
             setActiveTeam(0);
         }
     }
@@ -303,7 +306,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 pawns.add(p);
 
                 Optional<Terrain> o = terrainList.stream()
-                        .filter(t -> t.isPassable() && t.isStart()).findAny();
+                        .filter(t -> t.isPassable(true) && t.isStart()).findAny();
 
                 o.ifPresent(t -> map.setPawn(t, p));
             }
@@ -314,7 +317,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 pawns.add(p);
 
                 Optional<Terrain> o = terrainList.stream()
-                        .filter(t -> t.isPassable() && t.isStart()).findAny();
+                        .filter(t -> t.isPassable(true) && t.isStart()).findAny();
 
                 o.ifPresent(t -> map.setPawn(t, p));
             });
@@ -335,7 +338,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     public void spawnPawn(int team, Terrain terrain) {
-        if (terrain.isPassable()) {
+        if (terrain.isPassable(true)) {
             PawnFactory pf = new PawnFactory(this);
             pf.setTeam(team);
             Pawn p = pf.getInstance();
@@ -677,7 +680,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         if (activePawn.canAttack()) {
             // find attack
             List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
-            rangeMap = parentTerrain.filterCoverRange(inRange);
+            rangeMap = parentTerrain.filterCoverRange(inRange, activePawn.getWeapon().getPassesPawn());
 
             if (rangeMap.size() > 0) {
                 for (Terrain n : rangeMap.keySet()) {
@@ -723,7 +726,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             Terrain parentTerrain = activePawn.getParent();
 
             List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
-            rangeMap = parentTerrain.filterCoverRange(inRange);
+            rangeMap = parentTerrain.filterCoverRange(inRange, activePawn.getWeapon().getPassesPawn());
 
             if (rangeMap.size() > 0) {
                 for (Terrain n : rangeMap.keySet()) {
@@ -744,7 +747,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             Terrain parentTerrain = activePawn.getParent();
 
             List<Terrain> inRange = parentTerrain.selectRange(activeAbility.style, activeAbility.size);
-            rangeMap = parentTerrain.filterCoverRange(inRange);
+            rangeMap = parentTerrain.filterCoverRange(inRange, activeAbility.passesPawn);
 
             if (rangeMap.size() > 0) {
                 for (Terrain n : rangeMap.keySet()) {
@@ -919,7 +922,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             int y = Integer.signum(p.getParent().getMapY() - activePawn.getParent().getMapY());
 
             map.get(p.getParent().getMapX() + x, p.getParent().getMapY() + y).ifPresent(t -> {
-                if (t.isPassable()) {
+                if (t.isPassable(true)) {
                     t.setPawn(p);
                 }
             });

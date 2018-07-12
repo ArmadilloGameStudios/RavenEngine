@@ -42,7 +42,6 @@ public abstract class WorldTextObject
 
             textWriter.setText(text);
 //            System.out.println(image.isLoaded());
-            System.out.println(getScene());
 
             getScene().addTextToWrite(textWriter);
         }

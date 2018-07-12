@@ -8,46 +8,44 @@
     name: "attack down start",
     width: 32,
     height: 32,
-    frames: [{ time: 100, x: 64, y: 32 },
-             { time: 100, x: 0, xoffset: -2, yoffset: 4 },
-             { time: 100, x: 32, xoffset: -2, yoffset: 4 },
-
-             { time: 100, x: 64, y: 0, xoffset: 5, yoffset: 6 },
-             { time: 100, x: 96, y: 0, xoffset: 5, yoffset: 6 },
-
-             { time: 100, x: 0, y: 32, xoffset: -26, yoffset: -8 },
-             { time: 100, x: 64, y: 32, xoffset: -26, yoffset: -8 },
-             { time: 100, x: 32, y: 32, xoffset: -26, yoffset: -8 },
-             { time: 100, x: 64, y: 32, xoffset: -26, yoffset: -8 },
-             { time: 100, x: 32, y: 32, xoffset: -26, yoffset: -8 },]
+    frames: [{ time: 200 }]
+},
+{
+    name: "attack down shot",
+    width: 32,
+    height: 32,
+    frames: [{ time: 100, y: 32 },
+             { time: 100, y: 64 },
+             { time: 300 }]
 },
 {
     name: "attack down end",
     width: 32,
     height: 32,
-    frames: [{ time: 200, x: 96, y: 32 }]
+    frames: [{ time: 100, y: 32 },
+             { time: 100, y: 64 },
+             { time: 300 }]
 },
 {
     name: "attack up start",
     width: 32,
     height: 32,
-    frames: [{ time: 100, x: 64, y: 32 },
-             { time: 100, x: 0, xoffset: -2, yoffset: 4 },
-             { time: 100, x: 32, xoffset: -2, yoffset: 4 },
-
-             { time: 100, x: 64, y: 0, xoffset: 5, yoffset: 18 },
-             { time: 100, x: 96, y: 0, xoffset: 5, yoffset: 18 },
-
-             { time: 100, x: 0, y: 32, xoffset: -26, yoffset: 12 },
-             { time: 100, x: 64, y: 32, xoffset: -26, yoffset: 12 },
-             { time: 100, x: 32, y: 32, xoffset: -26, yoffset: 12 },
-             { time: 100, x: 64, y: 32, xoffset: -26, yoffset: 12 },
-             { time: 100, x: 32, y: 32, xoffset: -26, yoffset: 12 },]
+    frames: [{ time: 200, x: 32 }]
+},
+{
+    name: "attack up shot",
+    width: 32,
+    height: 32,
+    frames: [{ time: 100, x: 32, y: 32 },
+             { time: 100, x: 32, y: 64 },
+             { time: 300, x: 32 }]
 },
 {
     name: "attack up end",
     width: 32,
     height: 32,
-    frames: [{ time: 200, x: 96, y: 32 }]
+    frames: [{ time: 100, x: 32, y: 32 },
+             { time: 100, x: 32, y: 64 },
+             { time: 300, x: 32 }]
 },
 

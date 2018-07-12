@@ -107,5 +107,5 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
         }
     }
 
-    public abstract List<GO> getParentGameObjectList();
+    public abstract List<? extends GO> getParentGameObjectList();
 }

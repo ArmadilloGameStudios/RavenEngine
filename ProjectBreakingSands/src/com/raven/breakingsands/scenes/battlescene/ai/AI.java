@@ -89,7 +89,8 @@ public class AI implements Runnable {
                         .collect(Collectors.toList());
             }
 
-            HashMap<Terrain, Float> rangeMap = scene.getActivePawn().getParent().filterCoverRange(inRange);
+            //TODO
+            HashMap<Terrain, Float> rangeMap = scene.getActivePawn().getParent().filterCoverRange(inRange, false);
 
             if (rangeMap.size() > 0) {
                 Optional<Terrain> optionalTerrain;

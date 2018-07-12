@@ -26,7 +26,7 @@
              { time: 100, x: 96 }]
 },
 {
-    name: "attack start",
+    name: "ranged start",
     width: 32,
     height: 32,
     frames: [{ time: 200, x: 0, y: 0 },
@@ -44,7 +44,7 @@
              { time: 100, x: 32, y: 128 }]
 },
 {
-    name: "attack end",
+    name: "ranged end",
     width: 32,
     height: 32,
     frames: [{ time: 400, x: 96, y: 128 },
@@ -58,10 +58,11 @@
     name: "die",
     width: 32,
     height: 32,
-    frames: [{ time: 100, x: 0,  y: 160 },
+    frames: [{ time: 100, x: 0,  y: 0 },
+             { time: 100, x: 0,  y: 160 },
              { time: 100, x: 32, y: 160 },
              { time: 100, x: 64, y: 160 },
              { time: 100, x: 96, y: 160 },
              { time: 100, x: 0, y: 192 },
              { time: 300, x: 32, y: 192 }]
-}
+},

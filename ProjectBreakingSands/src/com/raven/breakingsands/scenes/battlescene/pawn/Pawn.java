@@ -4,9 +4,9 @@ import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.character.Weapon;
+import com.raven.breakingsands.character.WeaponType;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
-import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
@@ -18,10 +18,10 @@ import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.WorldObject;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
@@ -482,23 +482,32 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         setFlip(target.getParent().getMapY() > getParent().getMapY() ||
                 target.getParent().getMapX() > getParent().getMapX());
 
+        if (weapon.getWeaponType() == WeaponType.MELEE) {
+            runMeleeAnimation(target, directional, directionUp, onAttackDone);
+        } else if (weapon.getWeaponType() == WeaponType.RANGED) {
+            runRangedAnimation(target, directional, directionUp, onAttackDone);
+        }
+    }
+
+    private void runMeleeAnimation(Pawn target, boolean directional, boolean directionUp, ActionFinishHandler onAttackDone) {
+
         if (directional)
             if (directionUp)
-                getAnimationState().setAction("attack up start");
+                getAnimationState().setAction("melee up start");
             else
-                getAnimationState().setAction("attack down start");
+                getAnimationState().setAction("melee down start");
         else
-            getAnimationState().setAction("attack start");
+            getAnimationState().setAction("melee start");
 
         getAnimationState().addActionFinishHandler(x -> {
 
             if (directional)
                 if (directionUp)
-                    getAnimationState().setAction("attack up end");
+                    getAnimationState().setAction("melee up end");
                 else
-                    getAnimationState().setAction("attack down end");
+                    getAnimationState().setAction("melee down end");
             else
-                getAnimationState().setAction("attack end");
+                getAnimationState().setAction("melee end");
 
             Effect effect = weapon.getEffect();
             if (effect != null) {
@@ -534,7 +543,23 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         });
 
         weapon.runAttackAnimation(directionUp);
+    }
 
+    private void runRangedAnimation(Pawn target, boolean directional, boolean directionUp, ActionFinishHandler onAttackDone) {
+
+        AtomicInteger shotCount = new AtomicInteger(weapon.getShots());
+
+        if (directional)
+            if (directionUp)
+                getAnimationState().setAction("ranged up start");
+            else
+                getAnimationState().setAction("ranged down start");
+        else
+            getAnimationState().setAction("ranged start");
+
+        getAnimationState().addActionFinishHandler(new PawnShotsActionFinishHandler(this, target, shotCount, directional, directionUp, onAttackDone));
+
+        weapon.runAttackAnimation(directionUp);
     }
 
     public int getDamage(int damage, int percing, int shots) {
