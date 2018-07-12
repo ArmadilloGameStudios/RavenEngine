@@ -82,5 +82,4 @@ public final class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObj
         super.release();
         texture.release();
     }
-
 }

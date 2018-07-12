@@ -57,7 +57,7 @@ public class AI implements Runnable {
 
     private void selectPawn() {
         List<Pawn> pawns = scene.getPawns().stream()
-                .filter(p -> p.getTeam() != 0 && (p.isReady() && (p.canAttack() || p.canMove())))
+                .filter(p -> p.getTeam(true) != 0 && (p.isReady() && (p.canAttack() || p.canMove())))
                 .collect(Collectors.toList());
 
         if (pawns.size() > 0) {
@@ -80,7 +80,7 @@ public class AI implements Runnable {
                     scene.getActivePawn().getWeapon().getRange());
             inRange = inRange.stream()
                     .filter(t -> t.getPawn() != null &&
-                            t.getPawn().getTeam() != scene.getActiveTeam())
+                            t.getPawn().getTeam(false) != scene.getActiveTeam())
                     .collect(Collectors.toList());
 
             if (taunters.size() > 0) {
@@ -115,12 +115,12 @@ public class AI implements Runnable {
         Optional<Path<Terrain>> oPath;
 
         if (taunters.size() > 0) {
-            oPath = taunters.stream().filter(p -> p.getTeam() == 0).map(p ->
+            oPath = taunters.stream().filter(p -> p.getTeam(false) == 0).map(p ->
                     pf.findTarget(scene.getActivePawn().getParent(), p.getParent()))
                     .filter(Objects::nonNull)
                     .min(AI::comparePaths);
         } else {
-            oPath = scene.getPawns().stream().filter(p -> p.getTeam() == 0).map(p ->
+            oPath = scene.getPawns().stream().filter(p -> p.getTeam(false) == 0).map(p ->
                     pf.findTarget(scene.getActivePawn().getParent(), p.getParent()))
                     .filter(Objects::nonNull)
                     .min(AI::comparePaths);

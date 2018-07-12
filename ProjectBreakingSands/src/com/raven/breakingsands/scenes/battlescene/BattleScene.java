@@ -11,13 +11,10 @@ import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
 import com.raven.breakingsands.scenes.battlescene.pawn.Hack;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
-import com.raven.breakingsands.scenes.battlescene.pawn.PawnMessage;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
 import com.raven.breakingsands.scenes.hud.UIBottomRightContainer;
 import com.raven.breakingsands.scenes.hud.UICenterContainer;
-import com.raven.engine2d.Game;
-import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
@@ -25,7 +22,6 @@ import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
-import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
@@ -287,12 +283,11 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
             addPawns();
 
+            // restore shield
+            pawns.forEach(Pawn::restoreShield);
+
             setActiveTeam(0);
-
         }
-
-        // restore shield
-        pawns.forEach(Pawn::restoreShield);
     }
 
     private void addPawns() {
@@ -468,7 +463,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         if (activePawn != null) {
             activePawn.getParent().updateText();
 
-            if (pawn.getTeam() == 0)
+            if (pawn.getTeam(true) == 0)
                 setActiveDetailText(activePawn.getParent().getDetails());
             else
                 clearActiveDetailText();
@@ -488,7 +483,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     private void updateActionSelect() {
-        if (activePawn != null && activePawn.getTeam() == 0)
+        if (activePawn != null && activePawn.getTeam(true) == 0)
             actionSelect.setPawn(activePawn);
         else
             actionSelect.setPawn(null);
@@ -507,10 +502,10 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         if (team != activeTeam) {
             pawns.forEach(pawn -> {
                 Hack hack = pawn.getHack();
-                if (hack != null && hack.getTeam() == activeTeam) {
+                if (hack != null && hack.getTeam() == team) {
                     hack.tick();
 
-                    if (hack.getRemainingTurnsTurns() <= 0) {
+                    if (hack.getRemainingTurns() <= 0) {
                         if (hack.getSelfDestruct() > 0) {
                             pawn.damage(5, null);
                         }
@@ -523,7 +518,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         this.activeTeam = team;
 
         pawns.stream()
-                .filter(p -> p.getTeam() == activeTeam)
+                .filter(p -> p.getTeam(true) == activeTeam)
                 .forEach(Pawn::ready);
 
         setActivePawn(null);
@@ -542,7 +537,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     private boolean doSpawn() {
-        int a = 10 - (int) pawns.stream().filter(p -> p.getTeam() != 0).count();
+        int a = 10 - (int) pawns.stream().filter(p -> p.getTeam(false) != 0).count();
         int b = random.nextInt(10);
 
         return a > b || true;
@@ -631,7 +626,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     private void setSelectablePawn() {
 
-        if (pawns.stream().noneMatch(p -> p.getTeam() == 0 && p.isReady())) {
+        if (pawns.stream().noneMatch(p -> p.getTeam(true) == 0 && p.isReady())) {
             if (activeTeam == 0) {
                 setActiveTeam(1);
             } else {
@@ -640,7 +635,9 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         } else {
             // selectable pawns
             for (Pawn pawn : pawns) {
-                if (pawn.getTeam() == 0 && pawn.isReady()) {
+                if ((pawn.getTeam(false) == 0 && pawn.isReady()) ||
+                        pawn.getTeam(true) == 0 && pawn.isReady() &&
+                        pawn.getParent().getState() == Terrain.State.UNSELECTABLE) {
                     pawn.getParent().setState(Terrain.State.SELECTABLE);
                 }
             }
@@ -681,7 +678,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
             if (rangeMap.size() > 0) {
                 for (Terrain n : rangeMap.keySet()) {
-                    if (n.getPawn() != null && n.getPawn().getTeam() != activePawn.getTeam()) {
+                    if (n.getPawn() != null && n.getPawn().getTeam(false) != activePawn.getTeam(true)) {
 
 //                    n.cover = rangeMap.get(n);
                         n.setState(Terrain.State.ATTACKABLE);
@@ -748,7 +745,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
             if (rangeMap.size() > 0) {
                 for (Terrain n : rangeMap.keySet()) {
-                    if (n.getPawn() == null || n.getPawn().getTeam() != activePawn.getTeam()) {
+                    if (n.getPawn() == null || n.getPawn().getTeam(false) != activePawn.getTeam(true)) {
                         n.setState(Terrain.State.ABILITYABLE);
                         n.updateText();
                     }
@@ -805,7 +802,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     public boolean checkVictory() {
         for (Pawn pawn : pawns) {
-            if (pawn.getTeam() != 0)
+            if (pawn.getTeam(false) != 0)
                 return false;
         }
 
@@ -814,7 +811,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     public void victory() {
-        getGame().prepTransitionScene(new BattleScene(getGame(), pawns.stream().filter(p -> p.getTeam() == 0 && p.getHack() == null).collect(Collectors.toList())));
+        getGame().prepTransitionScene(new BattleScene(getGame(), pawns.stream().filter(p -> p.getTeam(false) == 0).collect(Collectors.toList())));
     }
 
     private void clearActiveDetailText() {
@@ -840,7 +837,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     public void pawnEnd() {
         pawns.stream()
-                .filter(p -> p.getTeam() == 0)
+                .filter(p -> p.getTeam(true) == 0)
                 .forEach(p -> p.setReady(false));
         setActiveTeam(1);
     }
@@ -885,7 +882,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
             setActivePawn(activePawn);
         } else if (activeAbility.hack) {
-            pawn.hack(new Hack(0, activeAbility.turns, activeAbility.damage != null ? activeAbility.damage : 0));
+            pawn.hack(new Hack(activePawn, 0, activeAbility.turns, activeAbility.damage != null ? activeAbility.damage : 0));
             pawn.ready();
             activePawn.setUnmoved(activeAbility.remain);
             if (activePawn.isReady())
@@ -905,6 +902,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         if (activeAbility.uses != null) {
             activeAbility.remainingUses--;
         }
+        System.out.println(activeAbility.remainingUses);
 
         List<Pawn> pawns = this.pawns.stream()
                 .filter(p ->

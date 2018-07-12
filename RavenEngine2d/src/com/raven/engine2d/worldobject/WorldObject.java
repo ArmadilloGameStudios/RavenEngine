@@ -39,7 +39,7 @@ public abstract class WorldObject<
     private String animationName;
     private SpriteAnimationState spriteAnimationState;
 
-    P parent;
+    private P parent;
 
     public WorldObject(S scene, GameData data) {
         this.scene = scene;

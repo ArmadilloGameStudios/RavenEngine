@@ -23,26 +23,27 @@ public abstract class WorldTextObject
     }
 
     public void setText(String text) {
-        this.text = text;
+        if (this.text == null || !this.text.equals(text)) {
+            this.text = text;
 
-        if (image == null) {
-            if (font.isHighlight()) {
-                image = new UITexture(getScene().getEngine(), 160, 12 * 2);
-            } else {
-                image = new UITexture(getScene().getEngine(), 160, 12);
+            if (image == null) {
+                if (font.isHighlight()) {
+                    image = new UITexture(getScene().getEngine(), 160, 12 * 2);
+                } else {
+                    image = new UITexture(getScene().getEngine(), 160, 12);
+                }
+
+                spriteSheet = image;
             }
 
-            spriteSheet = image;
+            // TODO don't remake each time
+            textWriter = new UITextWriter(getScene().getEngine(), getScene(), image, font);
+
+            textWriter.setText(text);
+            image.load(getScene());
+
+            getScene().addTextToWrite(textWriter);
         }
-
-        // TODO don't remake each time
-        textWriter = new UITextWriter(getScene().getEngine(), getScene(), image, font);
-//        textWriter.clear();
-
-        textWriter.setText(text);
-        image.load(getScene());
-
-        getScene().addTextToWrite(textWriter);
     }
 
     public String getText() {

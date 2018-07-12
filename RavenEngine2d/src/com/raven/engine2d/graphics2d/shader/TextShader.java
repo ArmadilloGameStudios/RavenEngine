@@ -41,9 +41,12 @@ public class TextShader extends Shader {
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
         // Errors
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            System.out.println("Main Shader Failed: 0x"
+        int error = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (error != GL_FRAMEBUFFER_COMPLETE && error != GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
+            System.out.println("Text Shader Failed: 0x"
                     + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
+            // Ignore FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT (0x8cd7)
+            // The image is attached later
         }
     }
 

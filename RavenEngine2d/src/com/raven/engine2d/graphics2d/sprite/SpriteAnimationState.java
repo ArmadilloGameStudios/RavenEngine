@@ -119,6 +119,7 @@ public class SpriteAnimationState {
     }
 
     public void addActionFinishHandler(ActionFinishHandler handler) {
-        actionFinishHandlers.add(handler);
+        if (handler != null)
+            actionFinishHandlers.add(handler);
     }
 }

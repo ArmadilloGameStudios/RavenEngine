@@ -3,21 +3,17 @@ package com.raven.breakingsands.scenes.battlescene.map;
 import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.character.RangeStyle;
-import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.SelectionDetails;
 import com.raven.breakingsands.scenes.battlescene.decal.Wall;
-import com.raven.breakingsands.scenes.battlescene.decal.WallFactory;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
-import com.raven.engine2d.Game;
-import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.database.GameData;
-import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.util.Range;
+import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.pathfinding.PathAdjacentNode;
 import com.raven.engine2d.util.pathfinding.PathNode;
 import com.raven.engine2d.worldobject.MouseHandler;
@@ -27,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.DoubleStream;
 
 public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         implements MouseHandler, PathNode<Terrain>, GameDatable {
@@ -45,6 +40,10 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     public void setPawnIndex() {
         if (pawnIndex != null)
             setPawn(getScene().getPawns().get(pawnIndex));
+    }
+
+    public State getState() {
+        return state;
     }
 
     public enum State {
@@ -69,6 +68,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     private Pawn pawn;
     private boolean spawn = false;
     private boolean start = false;
+    private TerrainMessage terrainMessage;
 
     private List<Ability> abilities = new ArrayList<>();
 
@@ -102,6 +102,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                     break;
             }
         }));
+
+        initMessage();
     }
 
     public Terrain(BattleScene scene, Structure structure, GameData gdTerrain) {
@@ -120,6 +122,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         gdTerrain.ifHas("pawn", p -> pawnIndex = p.asInteger());
 
         this.addMouseHandler(this);
+
+        initMessage();
     }
 
     @Override
@@ -144,6 +148,16 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         return new GameData(map);
     }
 
+    private void initMessage() {
+        // message
+        terrainMessage = new TerrainMessage(getScene());
+        Vector2f pos = terrainMessage.getWorldPosition();
+        pos.x -= -.4;
+        pos.y += -.4;
+        terrainMessage.setPosition(pos);
+        addChild(terrainMessage);
+    }
+
     public int getMapX() {
         return x;
     }
@@ -165,9 +179,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                             if (pawn != null) {
                                 if (pawn == getScene().getActivePawn()) {
 
-                                } else if (pawn.getTeam() == getScene().getActiveTeam()) {
-//                                    if (getScene().getActivePawn() != null)
-//                                        getScene().getActivePawn().setReadyIsMoved(false);
+                                } else if (pawn.getTeam(true) == getScene().getActiveTeam()) {
                                     getScene().setActivePawn(pawn);
                                 }
                             }
@@ -187,6 +199,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                     }
                     break;
             }
+
+        terrainMessage.setState(state);
     }
 
     @Override
@@ -202,11 +216,11 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                             getScene().selectPath(this);
                             break;
                         case ATTACKABLE:
-                            if (pawn != null && pawn.getTeam() != getScene().getActivePawn().getTeam())
+                            if (pawn != null && pawn.getTeam(false) != getScene().getActivePawn().getTeam(true))
                                 setState(State.ATTACK);
                             break;
                         case ABILITYABLE:
-                            if (pawn != null && pawn.getTeam() != getScene().getActivePawn().getTeam())
+                            if (pawn != null && pawn.getTeam(false) != getScene().getActivePawn().getTeam(true))
                                 setState(State.ABILITY);
                             break;
                     }
@@ -214,7 +228,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             }
 
             selectHighlight();
-
+            terrainMessage.setState(state);
+            terrainMessage.setVisibility(true);
 
             getScene().setSelectedDetailText(getDetails());
         }
@@ -242,6 +257,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
             selectHighlight();
         }
+
+        terrainMessage.setVisibility(false);
     }
 
     @Override
@@ -398,6 +415,11 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     public void setState(State state) {
         this.state = state;
+
+        if (isMouseHovering() && state != State.UNSELECTABLE) {
+            terrainMessage.setState(state);
+            terrainMessage.setVisibility(true);
+        }
 
         switch (state) {
             case UNSELECTABLE:
