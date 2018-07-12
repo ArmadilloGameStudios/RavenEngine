@@ -2,7 +2,7 @@
     name: "tank",
 
     bonus: {
-        hp: 2,
+        hp: 5,
         shield: 5,
         resistance: 2,
         movement: -1,

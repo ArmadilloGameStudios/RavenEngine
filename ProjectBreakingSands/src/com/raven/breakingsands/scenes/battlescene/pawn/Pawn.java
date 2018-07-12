@@ -426,7 +426,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             if (a.shield != null)
                 this.bonusShield -= a.shield;
             if (a.resistance != null)
-                this.resistance -= a.resistance;
+                this.bonusResistance -= a.resistance;
 
             getParent().updateText();
         }
@@ -689,6 +689,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     public void restoreShield() {
         bonusHpLoss = 0;
         bonusShieldLoss = 0;
+        bonusResistance = 0;
         remainingShield = totalShield;
     }
 

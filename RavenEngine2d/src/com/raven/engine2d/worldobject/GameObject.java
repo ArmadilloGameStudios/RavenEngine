@@ -29,8 +29,7 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
 
     public GameObject() {
         // click id
-        id = last_id++;
-        gameObjectIDMap.put(id, this);
+        newID();
     }
 
     public final int getID() {
@@ -40,6 +39,11 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
     protected final void clearID() {
         gameObjectIDMap.remove(this.id);
         this.id = 0;
+    }
+
+    public final void newID() {
+        id = last_id++;
+        gameObjectIDMap.put(id, this);
     }
 
     public abstract Layer.Destination getDestination();

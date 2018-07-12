@@ -33,6 +33,7 @@ public abstract class WorldTextObject
                     image = new UITexture(getScene().getEngine(), 160, 12);
                 }
 
+                image.load(getScene());
                 spriteSheet = image;
             }
 
@@ -40,7 +41,8 @@ public abstract class WorldTextObject
             textWriter = new UITextWriter(getScene().getEngine(), getScene(), image, font);
 
             textWriter.setText(text);
-            image.load(getScene());
+//            System.out.println(image.isLoaded());
+            System.out.println(getScene());
 
             getScene().addTextToWrite(textWriter);
         }
@@ -52,5 +54,12 @@ public abstract class WorldTextObject
 
     public UIFont getFont() {
         return font;
+    }
+
+    @Override
+    public void setScene(S scene) {
+        image.load(scene);
+        this.text = null;
+        super.setScene(scene);
     }
 }

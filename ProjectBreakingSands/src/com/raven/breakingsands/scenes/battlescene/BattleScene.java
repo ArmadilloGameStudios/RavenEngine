@@ -309,6 +309,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             }
         else {
             playersPawns.forEach(p -> {
+                p.newID();
                 p.setScene(this);
                 pawns.add(p);
 
@@ -511,6 +512,8 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                         }
                         pawn.hack(null);
                     }
+
+                    pawn.getParent().setPawn(pawn);
                 }
             });
         }
