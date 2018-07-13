@@ -14,6 +14,7 @@
       <mapping pattern="text" type="PLAIN_TEXT" />
       <mapping pattern="corner_north" type="PLAIN_TEXT" />
       <mapping pattern="disk" type="PLAIN_TEXT" />
+      <mapping pattern="plasma blade red" type="PLAIN_TEXT" />
       <mapping pattern="connections" type="PLAIN_TEXT" />
       <mapping pattern="plasma blade" type="PLAIN_TEXT" />
       <mapping pattern="terrain" type="PLAIN_TEXT" />
