@@ -139,4 +139,7 @@ public abstract class UIButton<S extends Scene>
         if (!disable && !active) spriteAnimationState.setActionIdle();
     }
 
+    public boolean getActive() {
+        return active;
+    }
 }

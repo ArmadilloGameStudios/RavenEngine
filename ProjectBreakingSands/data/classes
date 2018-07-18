@@ -2,7 +2,7 @@
     name: "tank",
 
     bonus: {
-        hp: 2,
+        hp: 5,
         shield: 5,
         resistance: 2,
         movement: -1,
@@ -22,6 +22,7 @@
             type: "aurora",
             target: "ally",
 
+            passes_pawn: true,
             size: 2,
             shield: 2,
             resistance: 1,
@@ -32,6 +33,7 @@
             target: "enemy",
             requires_not: "Ext. Taunt",
 
+            passes_pawn: true,
             size: 4,
             taunt: true
         },
@@ -41,6 +43,7 @@
             target: "enemy",
             replace: "Taunt",
 
+            passes_pawn: true,
             size: 7,
             taunt: true
         },
@@ -48,7 +51,6 @@
             name: "Push Blast",
             type: "aurora",
             target: "enemy",
-
 
             uses: 1,
             damage: 4,
@@ -60,7 +62,6 @@
             name: "Hook",
             type: "target",
             target: "enemy",
-
 
             uses: 1,
             size: 5,
@@ -83,6 +84,7 @@
             type: "target",
             target: "enemy",
 
+            passes_pawn: true,
             uses: 1
             turns: 1,
             size: 1,

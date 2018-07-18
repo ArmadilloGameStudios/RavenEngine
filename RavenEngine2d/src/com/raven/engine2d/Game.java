@@ -5,6 +5,7 @@ import com.raven.engine2d.database.GameDataReader;
 import com.raven.engine2d.database.GameDataTable;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.scene.Scene;
+import com.raven.engine2d.worldobject.GameObject;
 
 import javax.sound.sampled.Clip;
 import java.io.File;
@@ -61,6 +62,7 @@ public abstract class Game<G extends Game<G>> {
             currentScene.exitScene();
         }
 
+        GameObject.resetObjectIDs();
 
         scene.enterScene();
         currentScene = scene;

@@ -3,6 +3,7 @@ package com.raven.engine2d.graphics2d.sprite;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.shader.Shader;
+import com.raven.engine2d.scene.Scene;
 import org.lwjgl.BufferUtils;
 
 import javax.imageio.ImageIO;
@@ -24,6 +25,7 @@ public class SpriteSheet extends ShaderTexture {
     private int height;
     private int width;
     private BufferedImage img;
+    private boolean loaded = false;
 
     public SpriteSheet(GameEngine engine, File f) {
         super(engine);
@@ -43,59 +45,71 @@ public class SpriteSheet extends ShaderTexture {
 
     }
 
-    public void load() {
-        try {
-            img = ImageIO.read(new File(filePath));
+    public void load(Scene scene) {
+        getEngine().getWindow().printErrors("pre load");
 
-            this.width = img.getWidth();
-            this.height = img.getHeight();
+        if (!loaded)
+            try {
+                img = ImageIO.read(new File(filePath));
 
-            // To Byte Array
-            int[] pixels = new int[width * height];
-            img.getRGB(0, 0, width, height, pixels, 0, width);
+                this.width = img.getWidth();
+                this.height = img.getHeight();
 
-            ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
+                // To Byte Array
+                int[] pixels = new int[width * height];
+                img.getRGB(0, 0, width, height, pixels, 0, width);
 
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    int pixel = pixels[y * width + x];
-                    buffer.put((byte) ((pixel >> 16) & 0xFF));    // Red component
-                    buffer.put((byte) ((pixel >> 8) & 0xFF));     // Green component
-                    buffer.put((byte) (pixel & 0xFF));            // Blue component
-                    buffer.put((byte) ((pixel >> 24) & 0xFF));    // Alpha component.
+                ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
+
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        int pixel = pixels[y * width + x];
+                        buffer.put((byte) ((pixel >> 16) & 0xFF));    // Red component
+                        buffer.put((byte) ((pixel >> 8) & 0xFF));     // Green component
+                        buffer.put((byte) (pixel & 0xFF));            // Blue component
+                        buffer.put((byte) ((pixel >> 24) & 0xFF));    // Alpha component.
+                    }
                 }
+
+                buffer.flip();
+
+                // Set Texture
+                textureActiveLocation = Shader.getNextTextureID();
+
+                glActiveTexture(GL_TEXTURE0 + textureActiveLocation);
+                textureName = glGenTextures();
+                glBindTexture(GL_TEXTURE_2D, textureName);
+
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+                        width, height,
+                        0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                scene.addLoadedShaderTexture(this);
+                loaded = true;
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-            buffer.flip();
-
-            // Set Texture
-            textureActiveLocation = Shader.getNextTextureID();
-
-            glActiveTexture(GL_TEXTURE0 + textureActiveLocation);
-            textureName = glGenTextures();
-            glBindTexture(GL_TEXTURE_2D, textureName);
-
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
-                    width, height,
-                    0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, 0);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        getEngine().getWindow().printErrors("post load");
     }
 
     public int getTextureActiveLocation() {
         return textureActiveLocation;
     }
 
+    @Override
+    public int getTexture() {
+        return textureName;
+    }
+
     // TODO
     public void release() {
+        loaded = false;
         glDeleteTextures(textureName);
     }
 
@@ -109,13 +123,5 @@ public class SpriteSheet extends ShaderTexture {
 
     public int getWidth() {
         return width;
-    }
-
-    public BufferedImage getImage() {
-        if (img == null) {
-            load();
-        }
-
-        return img;
     }
 }

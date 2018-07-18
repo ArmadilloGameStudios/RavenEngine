@@ -1,9 +1,15 @@
 package com.raven.breakingsands.scenes.mainmenuscene;
 
 import com.raven.breakingsands.BreakingSandsGame;
+import com.raven.breakingsands.character.Effect;
+import com.raven.breakingsands.character.Weapon;
+import com.raven.breakingsands.scenes.battlescene.decal.Wall;
+import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.MenuButton;
+import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
 import com.raven.engine2d.GameProperties;
+import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.ui.UIButton;
@@ -26,12 +32,10 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
     }
 
     @Override
-    public List<SpriteSheet> getSpriteSheets() {
-        List<SpriteSheet> modelDataList = new ArrayList<>();
+    public void loadShaderTextures() {
+        List<ShaderTexture> textures = getShaderTextures();
 
-        modelDataList.addAll(DisplayPawn.getSpriteSheets(this));
-
-        return modelDataList;
+        textures.addAll(DisplayPawn.getSpriteSheets(this));
     }
 
     private Vector3f tempVec = new Vector3f();

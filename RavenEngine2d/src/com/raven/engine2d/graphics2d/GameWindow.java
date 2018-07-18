@@ -4,6 +4,7 @@ import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.shader.TextShader;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -19,7 +20,7 @@ import static org.lwjgl.opengl.ARBImaging.GL_TABLE_TOO_LARGE;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
+import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL45.GL_CONTEXT_LOST;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -30,6 +31,7 @@ public class GameWindow {
     private long window;
 
     private MainShader mainShader;
+    private TextShader textShader;
 
     private GameEngine engine;
 
@@ -50,8 +52,15 @@ public class GameWindow {
 
         // Configure GLFW
         glfwDefaultWindowHints();
+//        if (System.getProperty("os.name").contains("mac")) {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+//        }
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+
 
         // Create the window
         window = glfwCreateWindow(GameProperties.getScreenWidth(),
@@ -81,7 +90,7 @@ public class GameWindow {
         glfwMakeContextCurrent(window);
 
         // Enable v-sync
-        glfwSwapInterval(1);
+        glfwSwapInterval(GL_TRUE);
 
         // Make the window visible
         glfwShowWindow(window);
@@ -97,6 +106,7 @@ public class GameWindow {
         GL.createCapabilities();
 
         mainShader = new MainShader(engine, this);
+        textShader = new TextShader(engine, this);
 
         // Enable depth test
         glEnable(GL_DEPTH_TEST);
@@ -128,10 +138,15 @@ public class GameWindow {
         return mainShader;
     }
 
+    public TextShader getTexthader() {
+        return textShader;
+    }
+
     public void drawQuad() {
         // Draw FBO
+
         glEnableVertexAttribArray(0);
-        ScreenQuad.getBlankModel().draw();
+        ScreenQuad.getBlankModel().draw(this);
         glDisableVertexAttribArray(0);
     }
 

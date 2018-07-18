@@ -21,9 +21,9 @@ import org.lwjgl.system.CallbackI;
 
 import javax.sound.sampled.*;
 
-public class GameEngine<G extends Game> {
+public class GameEngine<G extends Game<G>> {
 
-    public static <G extends Game> GameEngine Launch(G game) {
+    public static <G extends Game<G>> GameEngine Launch(G game) {
         GameEngine<G> engine = new GameEngine<>(game);
 
         engine.window = new GameWindow(engine);
@@ -86,8 +86,7 @@ public class GameEngine<G extends Game> {
         System.out.println("Started Run");
 
         System.out.println("Starting Steam API");
-        try
-        {
+        try {
             steamInit = SteamAPI.init();
         } catch (SteamException se) {
             System.out.println("Couldn't load steam native libraries");
@@ -110,7 +109,7 @@ public class GameEngine<G extends Game> {
 
         // Archaic code, but it should be safe
         ScreenQuad.loadQuad();
-        ScreenQuad.compileBuffer();
+        ScreenQuad.compileBuffer(window);
 
         window.printErrors("Compile Buffer Error: ");
 
@@ -167,8 +166,12 @@ public class GameEngine<G extends Game> {
 
         int id = window.getMainShader().getWorldObjectID();
 
+        GameObject hover = null;
         if (id != 0) {
-            GameObject hover = GameObject.getGameObjectFromID(id);
+            hover = GameObject.getGameObjectFromID(id);
+        }
+
+        if (hover != null) {
 
             newList.clear();
             newList.addAll(hover.getParentGameObjectList());
@@ -201,6 +204,7 @@ public class GameEngine<G extends Game> {
 
             oldMouseList.clear();
             oldMouseList.addAll(newList);
+
         } else {
             for (GameObject o : oldMouseList) {
                 o.checkMouseMovement(false, delta);
@@ -285,7 +289,7 @@ public class GameEngine<G extends Game> {
 
                 AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(f);
                 AudioFormat af = audioInputStream.getFormat();
-                int size = (int)(audioInputStream.getFrameLength() * af.getFrameSize());
+                int size = (int) (audioInputStream.getFrameLength() * af.getFrameSize());
                 byte[] audioBytes = new byte[size];
                 audioInputStream.read(audioBytes, 0, size);
                 Clip clip = (Clip) AudioSystem.getLine(new DataLine.Info(Clip.class, af, size));

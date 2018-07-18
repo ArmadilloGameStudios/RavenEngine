@@ -1,13 +1,14 @@
 {
     name: "Std. Pistol",
     type: "ranged",
-    sprite: "sprites/plasmablade.png",
-    animation: "plasma blade",
+    sprite: "sprites/pistol.png",
+    animation: "pistol",
 
     audio: {
         attack: "plasma_blade_sound.wav"
     },
 
+    effect: "blue blast",
     damage: 2,
     piercing: 1,
     range: 3,
@@ -35,14 +36,16 @@
 },
 {
     name: "Std. Rifle",
-    type: "range",
-    sprite: "sprites/plasmablade.png",
-    animation: "plasma blade",
+    type: "ranged",
+    sprite: "sprites/pistol.png",
+    animation: "pistol",
 
     audio: {
         attack: "plasma_blade_sound.wav"
     },
 
+
+    effect: "blue blast",
     damage: 4,
     piercing: 1,
     range: [ 2, 4 ],
@@ -53,15 +56,16 @@
 },
 {
     name: "Hand Cannon",
-    type: "range",
-    sprite: "sprites/plasmablade.png",
-    animation: "plasma blade",
-    style: "straight",
+    type: "ranged",
+    sprite: "sprites/pistol.png",
+    animation: "pistol",
 
     audio: {
         attack: "plasma_blade_sound.wav"
     },
 
+
+    effect: "blue blast",
     damage: 3,
     piercing: 3,
     range: 3,
@@ -72,14 +76,17 @@
 },
 {
     name: "Sniper",
-    type: "range",
-    sprite: "sprites/plasmablade.png",
-    animation: "plasma blade",
+    type: "ranged",
+    sprite: "sprites/pistol.png",
+    animation: "pistol",
+
 
     audio: {
         attack: "plasma_blade_sound.wav"
     },
 
+
+    effect: "blue blast",
     damage: 4,
     piercing: 2,
     range: [ 3, 6 ],
@@ -90,14 +97,15 @@
 },
 {
     name: "Machine Gun",
-    type: "range",
-    sprite: "sprites/plasmablade.png",
-    animation: "plasma blade",
+    type: "ranged",
+    sprite: "sprites/pistol.png",
+    animation: "pistol",
 
     audio: {
         attack: "plasma_blade_sound.wav"
     },
 
+    effect: "blue blast",
     damage: 2,
     piercing: 0,
     range: 3,
@@ -109,14 +117,16 @@
 },
 {
     name: "Quick Shot",
-    type: "range",
-    sprite: "sprites/plasmablade.png",
-    animation: "plasma blade",
+    type: "ranged",
+    sprite: "sprites/pistol.png",
+    animation: "pistol",
 
     audio: {
         attack: "plasma_blade_sound.wav"
     },
 
+
+    effect: "blue blast",
     damage: 2,
     piercing: 1,
     range: 2,

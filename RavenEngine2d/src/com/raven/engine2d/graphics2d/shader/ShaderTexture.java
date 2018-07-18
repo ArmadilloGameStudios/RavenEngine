@@ -1,7 +1,7 @@
 package com.raven.engine2d.graphics2d.shader;
 
-import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.scene.Scene;
 
 public abstract class ShaderTexture {
 
@@ -15,9 +15,11 @@ public abstract class ShaderTexture {
         return engine;
     }
 
-    public abstract void load();
+    public abstract void load(Scene scene);
 
     public abstract int getTextureActiveLocation();
+
+    public abstract int getTexture();
 
     public abstract void release();
 

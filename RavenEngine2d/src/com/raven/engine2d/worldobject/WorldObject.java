@@ -39,7 +39,7 @@ public abstract class WorldObject<
     private String animationName;
     private SpriteAnimationState spriteAnimationState;
 
-    P parent;
+    private P parent;
 
     public WorldObject(S scene, GameData data) {
         this.scene = scene;
@@ -221,6 +221,7 @@ public abstract class WorldObject<
 
     @Override
     public void addChild(C child) {
+
         child.setParent(this);
 
         children.add(child);
@@ -261,7 +262,9 @@ public abstract class WorldObject<
     }
 
     public void setScene(S scene) {
+        this.scene.removeGameObject(this);
         this.scene = scene;
+        scene.addGameObject(this);
 
         children.forEach(c -> c.setScene(scene));
     }

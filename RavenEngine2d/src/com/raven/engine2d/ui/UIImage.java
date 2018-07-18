@@ -3,6 +3,7 @@ package com.raven.engine2d.ui;
 import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
+import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
@@ -12,7 +13,7 @@ import com.raven.engine2d.worldobject.Parentable;
 public final class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObject>> {
 
     private Vector2f position = new Vector2f();
-    private UITexture texture;
+    private SpriteSheet texture;
 
     private int width, height;
     private SpriteAnimationState spriteAnimation;
@@ -23,8 +24,8 @@ public final class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObj
         this.width = width;
         this.height = height;
 
-        texture = new UITexture(scene.getEngine(), src);
-        texture.load();
+        texture = scene.getEngine().getSpriteSheet(src);
+        texture.load(scene);
     }
 
     @Override
@@ -74,5 +75,11 @@ public final class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObj
 
     public void setSpriteAnimation(SpriteAnimationState spriteAnimation) {
         this.spriteAnimation = spriteAnimation;
+    }
+
+    @Override
+    public void release() {
+        super.release();
+        texture.release();
     }
 }

@@ -8,17 +8,63 @@ import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.database.GameDatable;
+import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
+import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Weapon
         extends WorldObject<BattleScene, Pawn, WorldObject>
         implements GameDatable {
+
+    class WeaponShotsActionFinishHandler implements ActionFinishHandler {
+
+        private final boolean directionUp;
+        private final AtomicInteger shotCount;
+
+        public WeaponShotsActionFinishHandler(AtomicInteger shotCount, boolean directionUp) {
+            this.shotCount = shotCount;
+            this.directionUp = directionUp;
+        }
+
+        @Override
+        public void onActionFinish(SpriteAnimationState animationState) {
+
+            if (shotCount.get() > 1) {
+
+                shotCount.addAndGet(-1);
+
+                if (directional)
+                    if (directionUp)
+                        getAnimationState().setAction("attack up shot");
+                    else
+                        getAnimationState().setAction("attack down shot");
+                else
+                    getAnimationState().setAction("attack shot");
+
+                getAnimationState().addActionFinishHandler(new WeaponShotsActionFinishHandler(shotCount, directionUp));
+            } else {
+                if (directional)
+                    if (directionUp)
+                        getAnimationState().setAction("attack up end");
+                    else
+                        getAnimationState().setAction("attack down end");
+                else
+                    getAnimationState().setAction("attack end");
+
+                getAnimationState().addActionFinishHandler(r -> {
+                    getAnimationState().setActionIdle();
+//                    setVisibility(false);
+                });
+            }
+        }
+    }
 
     public static List<SpriteSheet> getSpriteSheets(BattleScene scene) {
         List<SpriteSheet> data = new ArrayList<>();
@@ -33,7 +79,8 @@ public class Weapon
 
     private GameData gameData;
     private int damage, piercing = 0, range, rangeMin, shots;
-    private boolean directional;
+    private boolean directional, passesPawn;
+    private WeaponType weaponType;
     private RangeStyle style;
     private String name;
     private Effect effect;
@@ -44,6 +91,8 @@ public class Weapon
         name = gameData.getString("name");
 
         damage = gameData.getInteger("damage");
+
+        gameData.ifHas("passes_pawn", p -> passesPawn = p.asBoolean());
 
         gameData.ifHas("style",
                 s -> {
@@ -60,6 +109,17 @@ public class Weapon
                     }
                 },
                 () -> style = RangeStyle.DIAMOND);
+
+        gameData.ifHas("type", t -> {
+            switch (t.asString()) {
+                case "melee":
+                    weaponType = WeaponType.MELEE;
+                    break;
+                case "ranged":
+                    weaponType = WeaponType.RANGED;
+                    break;
+            }
+        });
 
         if (gameData.getData("range").isInteger()) {
             range = gameData.getInteger("range");
@@ -97,6 +157,8 @@ public class Weapon
     public void runAttackAnimation(boolean directionUp) {
         if (getAnimationState() != null) {
 
+            AtomicInteger shotCount = new AtomicInteger(getShots());
+
             if (directional)
                 if (directionUp)
                     getAnimationState().setAction("attack up start");
@@ -105,20 +167,7 @@ public class Weapon
             else
                 getAnimationState().setAction("attack start");
 
-            getAnimationState().addActionFinishHandler(x -> {
-                if (directional)
-                    if (directionUp)
-                        getAnimationState().setAction("attack up end");
-                    else
-                        getAnimationState().setAction("attack down end");
-                else
-                    getAnimationState().setAction("attack end");
-
-                getAnimationState().addActionFinishHandler(r -> {
-                    getAnimationState().setActionIdle();
-//                    setVisibility(false);
-                });
-            });
+            getAnimationState().addActionFinishHandler(new WeaponShotsActionFinishHandler(shotCount, directionUp));
         }
     }
 
@@ -144,6 +193,10 @@ public class Weapon
 
     public RangeStyle getStyle() {
         return style;
+    }
+
+    public WeaponType getWeaponType() {
+        return weaponType;
     }
 
     public String getName() {
@@ -173,4 +226,7 @@ public class Weapon
         return directional;
     }
 
+    public boolean getPassesPawn() {
+        return passesPawn;
+    }
 }

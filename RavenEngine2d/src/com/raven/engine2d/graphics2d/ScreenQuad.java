@@ -10,9 +10,13 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_SHORT;
+import static org.lwjgl.opengl.GL12.GL_BGRA;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class ScreenQuad {
     private static ScreenQuad blank;
@@ -22,9 +26,9 @@ public class ScreenQuad {
     private static List<Float> vertex_list = new LinkedList<>();
     private static List<Float> texture_list = new LinkedList<>();
 
-    private static int vbo_vertex_handle, vbo_texture_handle;
+    private static int vbo_vertex_handle, vbo_texture_handle, vao_handel;
 
-    public static void compileBuffer() {
+    public static void compileBuffer(GameWindow window) {
         int size = vertex_list.size() / vertex_size;
 
         // put into buffers
@@ -37,6 +41,9 @@ public class ScreenQuad {
                 BufferUtils.createFloatBuffer(size * texture_size);
         texture_list.forEach(texture_list_buffer::put);
         texture_list_buffer.flip();
+
+        vao_handel = glGenVertexArrays();
+        glBindVertexArray(vao_handel);
 
         // create vbo
         vbo_vertex_handle = glGenBuffers();
@@ -53,9 +60,11 @@ public class ScreenQuad {
     }
 
     public static void clearBuffers() {
+        glDeleteVertexArrays(vao_handel);
         glDeleteBuffers(vbo_vertex_handle);
         glDeleteBuffers(vbo_texture_handle);
 
+        vao_handel = 0;
         vbo_vertex_handle = 0;
         vbo_texture_handle = 0;
 
@@ -67,19 +76,23 @@ public class ScreenQuad {
         int vertex_start = vertex_list.size();
 
         blank = new ScreenQuad();
-        blank.draw_mode = GL_QUADS;
+//        blank.draw_mode = GL_QUADS; // -- Was it a bug that it worked?
 
         vertex_list.addAll(Arrays.asList(
                 -1.0f, -1.0f, 0.0f,
-                 1.0f, -1.0f, 0.0f,
-                 1.0f,  1.0f, 0.0f,
-                -1.0f,  1.0f, 0.0f));
+                1.0f, -1.0f, 0.0f,
+                1.0f, 1.0f, 0.0f,
+                -1.0f, 1.0f, 0.0f,
+                -1.0f, -1.0f, 0.0f,
+                1.0f, 1.0f, 0.0f));
 
         texture_list.addAll(Arrays.asList(
                 0.0f, 1f,
                 1.0f, 1f,
                 1.0f, 0f,
-                0.0f, 0f));
+                0.0f, 0f,
+                0.0f, 1f,
+                1.0f, 0f));
 
         int vertex_count = vertex_list.size();
         blank.vertices = vertex_list.size() - vertex_start;
@@ -111,7 +124,7 @@ public class ScreenQuad {
     private ScreenQuad() {
     }
 
-    public void draw() {
+    public void draw(GameWindow window) {
         // glPolygonMode(GL_BACK, GL_FILL);
 
         // glFrontFace(GL_CW);

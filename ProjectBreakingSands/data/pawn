@@ -4,7 +4,7 @@
     animation: "character",
     standing: true,
     team: 0,
-    hp: 10,
+    hp: 5,
     shield: 5
     resistance: 0,
     movement: 3,

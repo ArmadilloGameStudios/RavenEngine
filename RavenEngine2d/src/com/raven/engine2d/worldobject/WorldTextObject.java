@@ -23,25 +23,30 @@ public abstract class WorldTextObject
     }
 
     public void setText(String text) {
-        this.text = text;
+        if (this.text == null || !this.text.equals(text)) {
+            this.text = text;
 
-        if (image == null) {
-            if (font.isHighlight()) {
-                image = new UITexture(getScene().getEngine(), 160, 12 * 2);
-            } else {
-                image = new UITexture(getScene().getEngine(), 160, 12);
+            if (image == null) {
+                if (font.isHighlight()) {
+                    image = new UITexture(getScene().getEngine(), 160, 12 * 2);
+                } else {
+                    image = new UITexture(getScene().getEngine(), 160, 12);
+                }
+
+                getScene().getEngine().getWindow().printErrors("pre cat (wt) ");
+                image.load(getScene());
+                getScene().getEngine().getWindow().printErrors("post cat (wt) ");
+                spriteSheet = image;
             }
 
-            spriteSheet = image;
+            // TODO don't remake each time
+            textWriter = new UITextWriter(getScene().getEngine(), getScene(), image, font);
+
+            textWriter.setText(text);
+//            System.out.println(image.isLoaded());
+
+            getScene().addTextToWrite(textWriter);
         }
-
-        // TODO don't remake each time
-        textWriter = new UITextWriter(getScene().getEngine(), image, font);
-        textWriter.clear();
-
-        textWriter.write(text);
-
-        image.load();
     }
 
     public String getText() {
@@ -50,5 +55,20 @@ public abstract class WorldTextObject
 
     public UIFont getFont() {
         return font;
+    }
+
+    @Override
+    public void setScene(S scene) {
+        if (image != null)
+            image.load(scene);
+        this.text = null;
+        super.setScene(scene);
+    }
+
+    @Override
+    public void release() {
+        super.release();
+        if (image != null)
+            image.release();
     }
 }

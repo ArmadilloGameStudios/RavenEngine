@@ -2,4 +2,9 @@
     name: "disk",
     sprite: "sprites/disk.png",
     animation: "disk"
-}
+},
+{
+    name: "blue blast",
+    sprite: "sprites/blue blast.png",
+    animation: "blue blast"
+},
