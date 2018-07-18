@@ -33,7 +33,9 @@ public abstract class WorldTextObject
                     image = new UITexture(getScene().getEngine(), 160, 12);
                 }
 
+                getScene().getEngine().getWindow().printErrors("pre cat (wt) ");
                 image.load(getScene());
+                getScene().getEngine().getWindow().printErrors("post cat (wt) ");
                 spriteSheet = image;
             }
 
@@ -57,8 +59,16 @@ public abstract class WorldTextObject
 
     @Override
     public void setScene(S scene) {
-        image.load(scene);
+        if (image != null)
+            image.load(scene);
         this.text = null;
         super.setScene(scene);
+    }
+
+    @Override
+    public void release() {
+        super.release();
+        if (image != null)
+            image.release();
     }
 }

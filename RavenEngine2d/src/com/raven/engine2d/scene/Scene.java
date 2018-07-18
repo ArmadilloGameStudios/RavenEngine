@@ -176,6 +176,7 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
 
     public final void enterScene() {
         loadShaderTextures();
+        getEngine().getWindow().printErrors("pre load (scene) ");
         for (ShaderTexture sheet : getShaderTextures()) {
             sheet.load(this);
         }

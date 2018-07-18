@@ -41,7 +41,10 @@ public abstract class UIText<S extends Scene>
             else
                 image = new UITexture(getScene().getEngine(), (int) getWidth(), (int) getHeight());
 
-            image.load(getScene());
+
+                getScene().getEngine().getWindow().printErrors("pre cat (ut) ");
+                image.load(getScene());
+                getScene().getEngine().getWindow().printErrors("post cat (ut) ");
         }
         // TODO don't remake each time
         textWriter = new UITextWriter(getScene().getEngine(), getScene(), image, font);
@@ -116,7 +119,8 @@ public abstract class UIText<S extends Scene>
     @Override
     public void release() {
         super.release();
-        image.release();
+        if (image != null)
+            image.release();
     }
 
     public void setText(String text) {

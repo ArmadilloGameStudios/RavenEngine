@@ -55,10 +55,15 @@ public class UITextWriter {
         uiImage = image;
         this.font = font;
 
+        engine.getWindow().printErrors("pre load (sprite 1) ");
         alphabetImage = engine.getSpriteSheet("sprites/alphabet.png");
+        engine.getWindow().printErrors("pre load (sprite 2) ");
         alphabetImage.load(scene);
+        engine.getWindow().printErrors("pre load (sprite 3) ");
         alphabetSmallImage = engine.getSpriteSheet("sprites/alphabet_small.png");
+        engine.getWindow().printErrors("pre load (sprite 4) ");
         alphabetSmallImage.load(scene);
+        engine.getWindow().printErrors("pre load (sprite 5) ");
     }
 
 
