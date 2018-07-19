@@ -41,7 +41,6 @@ public abstract class UIText<S extends Scene>
             else
                 image = new UITexture(getScene().getEngine(), (int) getWidth(), (int) getHeight());
 
-
                 getScene().getEngine().getWindow().printErrors("pre cat (ut) ");
                 image.load(getScene());
                 getScene().getEngine().getWindow().printErrors("post cat (ut) ");

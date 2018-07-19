@@ -10,7 +10,6 @@ import com.raven.engine2d.worldobject.WorldTextObject;
 
 public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
     private Terrain.State state;
-    private Ability ability;
 
     public TerrainMessage(BattleScene scene) {
         super(scene);
@@ -24,45 +23,43 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
     }
 
     public void setState(Terrain.State state) {
-        if (state == Terrain.State.SELECTABLE || this.state != state || this.ability != getScene().getActiveAbility()) {
-            this.state = state;
-            this.ability = getScene().getActiveAbility();
+        this.state = state;
+        Ability ability = getScene().getActiveAbility();
 
-            switch (state) {
-                case SELECTABLE:
-                    if (getParent().getPawn() == getScene().getActivePawn()) {
-                        setText("active");
-                    } else
-                        setText("select");
-                    break;
-                case MOVEABLE:
-                case MOVE:
-                    setText("move");
-                    break;
-                case ATTACKABLE:
-                case ATTACK:
-                    Pawn pawn = getParent().getPawn();
-                    if (pawn != null) {
-                        Weapon w = getScene().getActivePawn().getWeapon();
-                        int damage = pawn.getDamage(w.getDamage(), w.getPiercing(), w.getShots());
+        switch (state) {
+            case SELECTABLE:
+                if (getParent().getPawn() == getScene().getActivePawn()) {
+                    setText("active");
+                } else
+                    setText("select");
+                break;
+            case MOVEABLE:
+            case MOVE:
+                setText("move");
+                break;
+            case ATTACKABLE:
+            case ATTACK:
+                Pawn pawn = getParent().getPawn();
+                if (pawn != null) {
+                    Weapon w = getScene().getActivePawn().getWeapon();
+                    int damage = pawn.getDamage(w.getDamage(), w.getPiercing(), w.getShots());
 
-                        if (damage >= pawn.getRemainingHitPoints()) {
-                            setText("kill -" + damage);
-                        } else {
-                            setText("attack -" + damage);
-                        }
+                    if (damage >= pawn.getRemainingHitPoints()) {
+                        setText("kill -" + damage);
                     } else {
-                        setText("attack");
+                        setText("attack -" + damage);
                     }
-                    break;
-                case UNSELECTABLE:
-                    setText("");
-                    break;
-                case ABILITY:
-                case ABILITYABLE:
-                    setText(ability.name);
-                    break;
-            }
+                } else {
+                    setText("attack");
+                }
+                break;
+            case UNSELECTABLE:
+                setText("");
+                break;
+            case ABILITY:
+            case ABILITYABLE:
+                setText(ability.name);
+                break;
         }
     }
 

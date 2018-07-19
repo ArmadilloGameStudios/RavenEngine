@@ -6,6 +6,8 @@ import com.raven.engine2d.database.GameDatable;
 import org.lwjgl.system.CallbackI;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 public class Ability implements GameDatable {
 
@@ -17,16 +19,19 @@ public class Ability implements GameDatable {
 
     public enum Target {ALL, SELF, ALLY, ENEMY}
 
+    public enum UseRegainType {TURN, LEVEL}
+
     public String name, upgrade;
     public Type type;
     public Target target;
     public RangeStyle style;
+    public UseRegainType useRegainType = UseRegainType.TURN;
     public String replace;
 
     public Integer size, damage, turns, uses;
     public Integer remainingUses;
     public Integer hp, shield, movement, resistance;
-    public boolean taunt, push_blast, hook_pull, hack, remain, passesPawn;
+    public boolean taunt, push_blast, hook_pull, hack, remain, passesPawn, instant_hack, usedThisTurn;
 
     public Ability(GameData gameData) {
         this.gameData = gameData;
@@ -63,6 +68,17 @@ public class Ability implements GameDatable {
             }
         }, () -> target = Target.ALL);
 
+        gameData.ifHas("use_regain_type", t -> {
+            switch (t.asString()) {
+                case "turn":
+                    useRegainType = UseRegainType.TURN;
+                    break;
+                case "level":
+                    useRegainType = UseRegainType.LEVEL;
+                    break;
+            }
+        }, () -> useRegainType = UseRegainType.TURN);
+
         gameData.ifHas("style", s -> {
             switch (s.asString()) {
                 case "straight":
@@ -80,6 +96,7 @@ public class Ability implements GameDatable {
 
         gameData.ifHas("replace", r -> replace = r.asString());
         gameData.ifHas("passes_pawn", p -> passesPawn = p.asBoolean());
+        gameData.ifHas("passes_pawn", p -> passesPawn = p.asBoolean());
         gameData.ifHas("upgrade", u -> upgrade = u.asString());
         gameData.ifHas("size", s -> size = s.asInteger());
         gameData.ifHas("damage", d -> damage = d.asInteger());
@@ -88,23 +105,44 @@ public class Ability implements GameDatable {
         gameData.ifHas("movement", m -> movement = m.asInteger());
         gameData.ifHas("resistance", r -> resistance = r.asInteger());
         gameData.ifHas("turns", t -> turns = t.asInteger());
-        if (gameData.has("remainingUses")) {
-            gameData.ifHas("remainingUses", u -> remainingUses = u.asInteger());
+        if (gameData.has("remaining_uses")) {
+            gameData.ifHas("remaining_uses", u -> remainingUses = u.asInteger());
             gameData.ifHas("uses", u -> uses = u.asInteger());
-        } else
+        } else {
             gameData.ifHas("uses", u -> remainingUses = uses = u.asInteger());
-        gameData.ifHas("uses", u -> remainingUses = uses = u.asInteger());
+        }
+
+        gameData.ifHas("used_this_turn", u -> usedThisTurn = u.asBoolean());
         gameData.ifHas("remain", c -> remain = c.asBoolean());
         gameData.ifHas("taunt", t -> taunt = t.asBoolean());
         gameData.ifHas("push_blast", p -> push_blast = p.asBoolean());
         gameData.ifHas("hook_pull", h -> hook_pull = h.asBoolean());
         gameData.ifHas("hack", h -> hack = h.asBoolean());
+        gameData.ifHas("instant_hack", h -> instant_hack = h.asBoolean());
     }
 
     @Override
     public GameData toGameData() {
-        if (remainingUses != null)
-        gameData.asMap().put("remainingUses", new GameData(remainingUses));
+        if (remainingUses != null) {
+            gameData.asMap().put("remaining_uses", new GameData(remainingUses));
+        }
+        gameData.asMap().put("used_this_turn", new GameData(usedThisTurn));
+//        gameData.asMap().put("usedThisTurn", new GameData(usedThisTurn));
+
+//        if (size != null)
+//            gameData.asMap().put("size", new GameData(size));
+//        else gameData.asMap().remove("size");
+//
+//        if (damage != null)
+//            gameData.asMap().put("damage", new GameData(damage));
+//        else gameData.asMap().remove("damage");
+//
+//        if (turns != null)
+//            gameData.asMap().put("turns", new GameData(turns));
+//        else gameData.asMap().remove("turns");
+//
+//        if (size != null)
+//            gameData.asMap().put("size", new GameData(size));
 
         return gameData;
 

@@ -268,4 +268,9 @@ public abstract class WorldObject<
 
         children.forEach(c -> c.setScene(scene));
     }
+
+    protected void setSpriteSheet(String spriteSheetName) {
+        spriteSheet = scene.getEngine().getSpriteSheet(spriteSheetName);
+        spriteSheet.load(scene);
+    }
 }

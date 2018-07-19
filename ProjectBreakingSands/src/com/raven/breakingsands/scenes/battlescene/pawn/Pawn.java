@@ -43,7 +43,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     // instance
     private Weapon weapon;
-    private String name = "", charClass = "amateur";
+    private String name = "", charClass = "amateur", spriteHack, weaponHack;
     private int level = 0, xp, team,
             hitPoints, remainingHitPoints, bonusHp, bonusHpLoss,
             totalShield, remainingShield, bonusShield, bonusShieldLoss,
@@ -68,8 +68,11 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         gameData.ifHas("xp", x -> xp = x.asInteger());
         team = gameData.getInteger("team");
 
-        gameData.ifHas("bonusHpLoss", g -> bonusHpLoss = g.asInteger()); // TODO check after abilities
-        gameData.ifHas("remainingHitPoints",
+        gameData.ifHas("sprite_hack", h -> spriteHack = h.asString());
+        gameData.ifHas("weapon_hack", h -> weaponHack = h.asString());
+
+        gameData.ifHas("bonus_hp_loss", g -> bonusHpLoss = g.asInteger()); // TODO check after abilities
+        gameData.ifHas("remaining_hit_points",
                 r -> {
                     remainingHitPoints = r.asInteger();
                     hitPoints = gameData.getInteger("hp");
@@ -77,8 +80,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 () -> remainingHitPoints = hitPoints = gameData.getInteger("hp"));
 
 
-        gameData.ifHas("bonusShieldLoss", g -> bonusShieldLoss = g.asInteger()); // TODO check after abilities
-        gameData.ifHas("remainingShield",
+        gameData.ifHas("bonus_shield_loss", g -> bonusShieldLoss = g.asInteger()); // TODO check after abilities
+        gameData.ifHas("remaining_shield",
                 r -> {
                     remainingShield = r.asInteger();
                     totalShield = gameData.getInteger("shield");
@@ -87,13 +90,11 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         totalMovement = gameData.getInteger("movement");
 
-        gameData.ifHas("remainingMovement", m -> remainingMovement = m.asInteger());
+        gameData.ifHas("remaining_movement", m -> remainingMovement = m.asInteger());
         gameData.ifHas("resistance", m -> resistance = m.asInteger());
-        gameData.ifHas("totalAttacks", m -> totalAttacks = m.asInteger());
-        gameData.ifHas("remainingAttacks", m -> remainingAttacks = m.asInteger());
+        gameData.ifHas("total_attacks", m -> totalAttacks = m.asInteger());
+        gameData.ifHas("remaining_attacks", m -> remainingAttacks = m.asInteger());
         gameData.ifHas("xp_gain", x -> xpGain = x.asInteger());
-        gameData.ifHas("unmoved", x -> unmoved = x.asBoolean());
-        gameData.ifHas("ready", x -> ready = x.asBoolean());
 
         GameDatabase db = scene.getEngine().getGameDatabase();
 
@@ -125,7 +126,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         }
 
         // hack
-        gameData.ifHas("hack", h -> hack = new Hack(scene, h));
+        gameData.ifHas("hack", h -> hack(new Hack(scene, h)));
+
+        gameData.ifHas("unmoved", x -> unmoved = x.asBoolean());
+        gameData.ifHas("ready", x -> ready = x.asBoolean());
 
         // message
         pawnMessage = new PawnMessage(scene);
@@ -147,28 +151,32 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         map.put("name", new GameData(name));
         map.put("class", new GameData(charClass));
+        if (spriteHack != null)
+        map.put("sprite_hack", new GameData(spriteHack));
+        map.put("weapon_hack", new GameData(weaponHack));
         map.put("level", new GameData(level));
         map.put("xp", new GameData(xp));
         map.put("team", new GameData(team));
         map.put("hp", new GameData(hitPoints));
-        map.put("remainingHitPoints", new GameData(remainingHitPoints));
-        map.put("bonusHpLoss", new GameData(bonusHpLoss));
+        map.put("remaining_hit_points", new GameData(remainingHitPoints));
+        map.put("bonus_hp_loss", new GameData(bonusHpLoss));
         map.put("shield", new GameData(totalShield));
-        map.put("remainingShield", new GameData(remainingShield));
-        map.put("bonusShieldLoss", new GameData(bonusShieldLoss));
+        map.put("remaining_shield", new GameData(remainingShield));
+        map.put("bonus_shield_loss", new GameData(bonusShieldLoss));
         map.put("movement", new GameData(totalMovement));
-        map.put("remainingMovement", new GameData(remainingMovement));
+        map.put("remaining_movement", new GameData(remainingMovement));
         map.put("resistance", new GameData(resistance));
-        map.put("totalAttacks", new GameData(totalAttacks));
-        map.put("remainingAttacks", new GameData(remainingAttacks));
+        map.put("total_attacks", new GameData(totalAttacks));
+        map.put("remaining_attacks", new GameData(remainingAttacks));
         map.put("xp_gain", new GameData(xpGain));
-        map.put("unmoved", new GameData(unmoved));
-        map.put("ready", new GameData(ready));
         map.put("weapon", weapon.toGameData());
         map.put("abilities", new GameDataList(abilities).toGameData());
         if (hack != null) {
             map.put("hack", hack.toGameData());
         }
+
+        map.put("ready", new GameData(ready));
+        map.put("unmoved", new GameData(unmoved));
 
         return new GameData(map);
     }
@@ -193,6 +201,24 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     public void hack(Hack hack) {
         this.hack = hack;
+        if (hack.isInstant()) {
+            ready();
+        } else {
+            setReady(false);
+        }
+        if (this.spriteHack != null)
+            this.setSpriteSheet(spriteHack);
+        if (this.weaponHack != null) {
+
+            removeChild(weapon);
+
+            GameDatabase.all("weapon").stream()
+                    .filter(w -> w.getString("name").equals(weaponHack))
+                    .findFirst()
+                    .ifPresent(w -> weapon = new Weapon(getScene(), w));
+
+            addChild(weapon);
+        }
     }
 
     public Hack getHack() {
@@ -242,31 +268,35 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public boolean canAttack() {
-        boolean canMove = true;
+        final boolean[] canMove = {true};
 
-        canMove &= remainingAttacks == totalAttacks;
+        canMove[0] &= remainingAttacks == totalAttacks;
 
-        for (Ability a : abilities) {
-            canMove &= a.uses == null || (a.remainingUses == a.uses || a.remain);
-        }
+        abilities.stream().filter(a -> a.upgrade == null).forEach(a -> {
+            if (a.useRegainType == Ability.UseRegainType.TURN)
+                canMove[0] &= a.uses == null || (!a.usedThisTurn || a.remainingUses.equals(a.uses) || a.remain);
+            else
+                canMove[0] &= a.uses == null || (!a.usedThisTurn || a.remain);
+        });
 
-        return canMove;
+        return canMove[0];
     }
 
     public boolean canAbility(Ability ability) {
-        boolean canMove = true;
+        final boolean[] canMove = {true};
 
-        canMove &= remainingAttacks == totalAttacks || abilities.stream().anyMatch(a -> a.remain);
+        canMove[0] &= remainingAttacks == totalAttacks || abilities.stream().anyMatch(a -> a.remain);
 
-        for (Ability a : abilities) {
+        abilities.stream().filter(a -> a.upgrade == null).forEach(a -> {
             if (a == ability) {
-                canMove &= a.uses == null || (a.remainingUses > 0);
-            } else
-                canMove &= a.uses == null || (a.remainingUses == a.uses || a.remain);
+                canMove[0] &= a.uses == null || (a.remainingUses > 0);
+            } else if (a.useRegainType == Ability.UseRegainType.TURN)
+                canMove[0] &= a.uses == null || (!a.usedThisTurn || a.remainingUses.equals(a.uses) || a.remain);
+            else
+                canMove[0] &= a.uses == null || (!a.usedThisTurn || a.remain);
+        });
 
-        }
-
-        return canMove;
+        return canMove[0];
     }
 
     public int getTotalMovement() {
@@ -360,18 +390,21 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                                     a.size = ability.size;
                                 else
                                     a.size += ability.size;
+//                                ability.size = null;
                             }
                             if (ability.damage != null) {
                                 if (a.damage == null)
                                     a.damage = ability.damage;
                                 else
                                     a.damage += ability.damage;
+//                                ability.damage = null;
                             }
                             if (ability.turns != null) {
                                 if (a.turns == null)
                                     a.turns = ability.turns;
                                 else
                                     a.turns += ability.turns;
+//                                ability.turns = null;
                             }
                             if (ability.uses != null) {
                                 if (a.uses == null) {
@@ -381,6 +414,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                                     a.uses += ability.uses;
                                     a.remainingUses += ability.uses;
                                 }
+                                ability.remainingUses = 0;
+                            }
+                            if (ability.instant_hack) {
+                                a.instant_hack = true;
                             }
                             a.remain |= ability.remain;
                         });
@@ -391,9 +428,34 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             getParent().setPawn(this); // Shitty way of making sure the aurora effect is there
     }
 
-    public void removeAbility(Ability a) {
-        abilities.remove(a);
-        getParent().removePawnAbility(a);
+    public void removeAbility(Ability ability) {
+        abilities.remove(ability);
+        getParent().removePawnAbility(ability);
+
+        if (ability.upgrade != null)
+            abilities.stream()
+                    .filter(a -> a.name.equals(ability.upgrade))
+                    .forEach(a -> {
+                        if (ability.size != null) {
+                            a.size -= ability.size;
+                        }
+                        if (ability.damage != null) {
+                            a.damage -= ability.damage;
+                        }
+                        if (ability.turns != null) {
+                            a.turns -= ability.turns;
+                        }
+                        if (ability.uses != null) { // TODO
+                            a.uses -= ability.uses;
+                            a.remainingUses -= ability.uses;
+                        }
+                        if (ability.instant_hack) {
+                            a.instant_hack = false;
+                        }
+                        a.remain = false;
+                    });
+
+
     }
 
     public List<Ability> getAbilities() {
@@ -462,7 +524,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         remainingAttacks = totalAttacks;
 
         abilities.forEach(a -> {
-            if (a.uses != null) a.remainingUses = a.uses;
+            if (a.uses != null && a.useRegainType == Ability.UseRegainType.TURN) {
+                a.remainingUses = a.uses;
+            }
+            a.usedThisTurn = false;
         });
     }
 
@@ -707,15 +772,20 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         this.unmoved &= unmoved;
     }
 
-    public void setReadyIfUnmoved() {
-        //ready = unmoved;
-    }
-
-    public void restoreShield() {
+    public void prepLevel() {
         bonusHpLoss = 0;
         bonusShieldLoss = 0;
         bonusResistance = 0;
         remainingShield = totalShield;
+
+        abilities.forEach(a -> {
+            if (a.uses != null) {
+                a.remainingUses = a.uses;
+                a.usedThisTurn = false;
+            }
+        });
+
+        ready();
     }
 
     public int getXp() {

@@ -57,7 +57,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         ABILITY,
     }
 
-    private State state;
+    private State state = State.UNSELECTABLE;
 
     private int x, y;
 
@@ -385,11 +385,13 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     }
 
     public void removePawnAbility(Ability a) {
-        List<Terrain> inRange = selectRange(a.style, a.size);
-        HashMap<Terrain, Float> rangeMap = filterCoverRange(inRange, a.passesPawn);
+        if (a.size != null) {
+            List<Terrain> inRange = selectRange(a.style, a.size);
+            HashMap<Terrain, Float> rangeMap = filterCoverRange(inRange, a.passesPawn);
 
-        for (Terrain n : rangeMap.keySet()) {
-            n.removeAbility(a);
+            for (Terrain n : rangeMap.keySet()) {
+                n.removeAbility(a);
+            }
         }
     }
 

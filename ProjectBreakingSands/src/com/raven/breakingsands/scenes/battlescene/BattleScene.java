@@ -284,7 +284,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             addPawns();
 
             // restore shield
-            pawns.forEach(Pawn::restoreShield);
+            pawns.forEach(Pawn::prepLevel);
 
             // make sure the abilites are correct
             pawns.forEach(p -> p.getParent().setPawn(p));
@@ -367,7 +367,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 break;
             case SELECT_DEFAULT:
                 if (activeTeam != 0)
-                    if (aiFuture.isDone()) {
+                    if (aiFuture != null && aiFuture.isDone()) {
                         ai.resolve();
                     }
                 break;
@@ -458,10 +458,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         if (checkVictory()) return;
 
-        if (activePawn != null && activePawn != pawn) {
-            activePawn.setReadyIfUnmoved();
-        }
-
         this.activePawn = pawn;
 
         if (activePawn != null) {
@@ -503,23 +499,24 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     public void setActiveTeam(int team) {
 
-        if (team != activeTeam) {
-            pawns.forEach(pawn -> {
-                Hack hack = pawn.getHack();
-                if (hack != null && hack.getTeam() == team) {
-                    hack.tick();
-
-                    if (hack.getRemainingTurns() <= 0) {
-                        if (hack.getSelfDestruct() > 0) {
-                            pawn.damage(5, null);
-                        }
-                        pawn.hack(null);
-                    }
-
-                    pawn.getParent().setPawn(pawn);
-                }
-            });
-        }
+        // check hack
+//        if (team != activeTeam) {
+//            pawns.forEach(pawn -> {
+//                Hack hack = pawn.getHack();
+//                if (hack != null && hack.getTeam() == team) {
+//                    hack.tick();
+//
+//                    if (hack.getRemainingTurns() <= 0) {
+//                        if (hack.getSelfDestruct() > 0) {
+//                            pawn.damage(5, null);
+//                        }
+//                        pawn.hack(null);
+//                    }
+//
+//                    pawn.getParent().setPawn(pawn);
+//                }
+//            });
+//        }
 
         this.activeTeam = team;
 
@@ -641,9 +638,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         } else {
             // selectable pawns
             for (Pawn pawn : pawns) {
-                if ((pawn.getTeam(false) == 0 && pawn.isReady()) ||
-                        pawn.getTeam(true) == 0 && pawn.isReady() &&
-                        pawn.getParent().getState() == Terrain.State.UNSELECTABLE) {
+                if (pawn.getTeam(true) == 0 && pawn.isReady()) {
                     pawn.getParent().setState(Terrain.State.SELECTABLE);
                 }
             }
@@ -684,7 +679,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
             if (rangeMap.size() > 0) {
                 for (Terrain n : rangeMap.keySet()) {
-                    if (n.getPawn() != null && n.getPawn().getTeam(false) != activePawn.getTeam(true)) {
+                    if (n.getPawn() != null && n.getPawn().getTeam(true) != activePawn.getTeam(true)) {
 
 //                    n.cover = rangeMap.get(n);
                         n.setState(Terrain.State.ATTACKABLE);
@@ -751,7 +746,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
             if (rangeMap.size() > 0) {
                 for (Terrain n : rangeMap.keySet()) {
-                    if (n.getPawn() == null || n.getPawn().getTeam(false) != activePawn.getTeam(true)) {
+                    if (n.getPawn() == null || n.getPawn().getTeam(true) != activePawn.getTeam(true)) {
                         n.setState(Terrain.State.ABILITYABLE);
                         n.updateText();
                     }
@@ -808,7 +803,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     public boolean checkVictory() {
         for (Pawn pawn : pawns) {
-            if (pawn.getTeam(false) != 0)
+            if (pawn.getTeam(true) != 0) // TODO give xp for hacked pawns
                 return false;
         }
 
@@ -864,6 +859,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     public void pawnAbility(Pawn pawn) {
         if (activeAbility.uses != null) {
             activeAbility.remainingUses--;
+            activeAbility.usedThisTurn = true;
         }
 
         if (activeAbility.hook_pull) {
@@ -888,8 +884,8 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
             setActivePawn(activePawn);
         } else if (activeAbility.hack) {
-            pawn.hack(new Hack(activePawn, 0, activeAbility.turns, activeAbility.damage != null ? activeAbility.damage : 0));
-            pawn.ready();
+            pawn.hack(new Hack(activePawn, 0, activeAbility.damage != null ? activeAbility.damage : 0, activeAbility.instant_hack));
+//            pawn.ready();
             activePawn.setUnmoved(activeAbility.remain);
             if (activePawn.isReady())
                 setActivePawn(activePawn);
@@ -908,7 +904,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         if (activeAbility.uses != null) {
             activeAbility.remainingUses--;
         }
-        System.out.println(activeAbility.remainingUses);
 
         List<Pawn> pawns = this.pawns.stream()
                 .filter(p ->

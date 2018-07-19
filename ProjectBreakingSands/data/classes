@@ -85,18 +85,12 @@
             target: "enemy",
 
             passes_pawn: true,
+            use_regain_type: "level",
             uses: 1
             turns: 1,
             size: 1,
             style: "diamond",
             hack: true,
-        },
-        {
-            name: "Remote Hack",
-            type: "self",
-            upgrade: "Hack",
-
-            size: 3,
         },
         {
             name: "Self Destruct",
@@ -109,22 +103,34 @@
             name: "Quick Hack",
             type: "self",
             upgrade: "Hack",
+            requires_not: "Instant Hack",
 
             remain: true,
         },
         {
-            name: "Extended Hack",
+            name: "Instant Hack",
             type: "self",
+            replace: "Quick Hack",
             upgrade: "Hack",
 
-            turns: 1,
+            instant_hack: true,
+            remain: true,
         },
         {
-            name: "Double Hack",
+            name: "Remote Hack",
             type: "self",
             upgrade: "Hack",
+            requires_not: "Extended Hack",
 
-            uses: 1,
-        }
+            size: 1,
+        },
+        {
+            name: "Extended Hack",
+            type: "self",
+            replace: "Remote Hack",
+            upgrade: "Hack",
+
+            size: 3,
+        },
     ]
 }

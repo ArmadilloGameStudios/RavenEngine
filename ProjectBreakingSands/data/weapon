@@ -35,6 +35,23 @@
     tags: [ "common" ]
 },
 {
+    name: "Red Plasma Blade",
+    type: "melee",
+    sprite: "sprites/plasmablade.png",
+    animation: "plasma blade red",
+
+    audio: {
+        attack: "plasma_blade_sound.wav"
+    },
+
+    damage: 4,
+    piercing: 2,
+    range: 1,
+    directional: true,
+
+    tags: [ ]
+},
+{
     name: "Std. Rifle",
     type: "ranged",
     sprite: "sprites/pistol.png",
@@ -63,7 +80,6 @@
     audio: {
         attack: "plasma_blade_sound.wav"
     },
-
 
     effect: "blue blast",
     damage: 3,
@@ -150,6 +166,22 @@
     piercing: 1,
     style: "diamond",
     effect: "disk",
+
+    tags: [ ],
+}
+{
+    name: "Blue Guard Disk",
+    type: "ranged",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    damage: 2,
+    range: 2,
+    piercing: 1,
+    style: "diamond",
+    effect: "blue disk",
 
     tags: [ ],
 }
