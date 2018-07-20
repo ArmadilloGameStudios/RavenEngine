@@ -29,10 +29,15 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
     private int i = 0;
     private int tries = 0;
 
-    public Map(BattleScene scene, int size) {
+    public Map(BattleScene scene, int level) {
         super(scene);
 
-        this.size = Math.min(size, 8);
+        if (level % 3 == 0) {
+            this.size = 1;
+        } else {
+            this.size = Math.min(level / 2 + 1, 8);
+        }
+
     }
 
     public Map(BattleScene scene, GameData gameData) {

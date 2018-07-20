@@ -107,6 +107,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         map.put("pawns", new GameDataList(pawns).toGameData());
         map.put("map", this.map.toGameData());
+        map.put("difficulty", new GameData(difficulty));
         map.put("activeTeam", new GameData(activeTeam));
         map.put("activePawn", new GameData(pawns.indexOf(activePawn)));
 
@@ -191,6 +192,9 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 pawns.add(new Pawn(this, p));
             });
 
+            // dif
+            difficulty = loadGameData.getInteger("difficulty");
+
             // Terrain
             map = new Map(this, loadGameData.getData("map"));
             addChild(map);
@@ -238,7 +242,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         } else {
 
             // Terrain
-            map = new Map(this, Math.max(difficulty / 2, 1));
+            map = new Map(this, difficulty);
             map.generate();
             addChild(map);
 
@@ -317,10 +321,33 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             });
         }
 
+        // add enemies
+        // create xp to burn
+        int xpBank = 30 * Math.max(difficulty, 1) * Math.max(difficulty / 2, 1);
+
+        // create and populate map
+        HashMap<Terrain, Integer> mapSpawn = new HashMap<>();
+        List<Terrain> terrainSpawn = new ArrayList<>();
+
         terrainList.forEach(t -> {
             if (t.isSpawn()) {
-                spawnPawn(1, t);
+                mapSpawn.put(t, 0);
+                terrainSpawn.add(t);
             }
+        });
+
+        // add from xp bank
+        while (xpBank > 0) {
+            int r = getRandom().nextInt(terrainSpawn.size());
+            Terrain t = terrainSpawn.get(r);
+            int xp = mapSpawn.get(t) + 30;
+            xpBank -= 30;
+            mapSpawn.put(t, xp);
+        }
+
+        // spawn from xp cost
+        terrainSpawn.forEach(t -> {
+            spawnPawn(1, t, mapSpawn.get(t));
         });
 
         setActivePawn(null);
@@ -331,14 +358,19 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         return pawns;
     }
 
-    public void spawnPawn(int team, Terrain terrain) {
+    public void spawnPawn(int team, Terrain terrain, int xp) {
+        System.out.println("XP: " + xp);
+
         if (terrain.isPassable(true)) {
             PawnFactory pf = new PawnFactory(this);
             pf.setTeam(team);
+            pf.setMaxXp(xp);
             Pawn p = pf.getInstance();
 
-            pawns.add(p);
-            map.setPawn(terrain, p);
+            if (p != null) {
+                pawns.add(p);
+                map.setPawn(terrain, p);
+            }
         }
     }
 
@@ -534,13 +566,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     public void setTargetPawn(Pawn targetPawn) {
         this.targetPawn = targetPawn;
-    }
-
-    private boolean doSpawn() {
-        int a = 10 - (int) pawns.stream().filter(p -> p.getTeam(false) != 0).count();
-        int b = random.nextInt(10);
-
-        return a > b || true;
     }
 
     public void setState(State state) {

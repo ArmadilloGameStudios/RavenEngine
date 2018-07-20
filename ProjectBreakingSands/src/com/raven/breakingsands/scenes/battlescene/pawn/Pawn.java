@@ -46,7 +46,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     private Weapon weapon;
     private String name = "", charClass = "amateur", spriteNormal, spriteHack, weaponHack;
     private GameData weaponNormal;
-    private int level = 0, xp = 10000, team,
+    private int level = 0, xp, team,
             hitPoints, remainingHitPoints, bonusHp, bonusHpLoss,
             totalShield, remainingShield, bonusShield, bonusShieldLoss,
             totalMovement, remainingMovement,
@@ -818,7 +818,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     public void prepLevel() {
         bonusHpLoss = 0;
         bonusShieldLoss = 0;
-        bonusResistance = 0;
         remainingShield = totalShield;
 
         abilities.forEach(a -> {
