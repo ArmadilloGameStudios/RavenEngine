@@ -226,6 +226,63 @@ public class Ability implements GameDatable {
 //        return new GameData(map);
     }
 
+    public void upgrade(Ability ability, boolean add) {
+        if (ability.size != null) {
+            if (this.size == null)
+                this.size = ability.size;
+            else
+                this.size += ability.size;
+        }
+        if (ability.shield != null) {
+            if (this.shield == null)
+                this.shield = ability.shield;
+            else
+                this.shield += ability.shield;
+        }
+        if (ability.hp != null) {
+            if (this.hp == null)
+                this.hp = ability.hp;
+            else
+                this.hp += ability.hp;
+        }
+        if (ability.damage != null) {
+            if (this.damage == null)
+                this.damage = ability.damage;
+            else
+                this.damage += ability.damage;
+        }
+        if (ability.resistance != null) {
+            if (this.resistance == null)
+                this.resistance = ability.resistance;
+            else
+                this.resistance += ability.resistance;
+        }
+        if (ability.uses != null) {
+            if (this.uses == null) {
+                this.uses = ability.uses;
+                if (add)
+                    this.remainingUses = ability.uses;
+            } else {
+                this.uses += ability.uses;
+                if (add)
+                    this.remainingUses += ability.uses;
+            }
+            ability.remainingUses = 0;
+        }
+        if (ability.instant_hack) {
+            this.instant_hack = true;
+        }
+        if (ability.transferable) {
+            this.transferable = true;
+        }
+        if (ability.target != 0) {
+            this.target |= ability.target;
+        }
+        this.remain |= ability.remain;
+        this.passesPawn |= ability.passesPawn;
+        this.passesWall |= ability.passesWall;
+    }
+
     @Override
     public String toString() {
         return gameData.toString();

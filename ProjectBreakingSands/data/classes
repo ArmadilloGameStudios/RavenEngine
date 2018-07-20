@@ -30,12 +30,13 @@
         {
             name: "Guardian",
             type: "self",
+            target: "ally",
             upgrade: "Protector",
 
             passes_wall: true,
             size: 2,
+            hp: 2
             shield: 2,
-            resistance: 1,
         },
         {
             name: "Taunt",

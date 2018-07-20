@@ -78,6 +78,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     private Pawn activePawn;
     private Pawn targetPawn;
 
+    private int difficulty;
     private int activeTeam = 0;
     private Ability activeAbility;
 
@@ -87,9 +88,10 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     private AI ai = new AI(this);
     private Future aiFuture;
 
-    public BattleScene(BreakingSandsGame game, List<Pawn> playersPawns) {
+    public BattleScene(BreakingSandsGame game, List<Pawn> playersPawns, int difficulty) {
         super(game);
 
+        this.difficulty = difficulty;
         this.playersPawns = playersPawns;
     }
 
@@ -234,13 +236,9 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             } else
                 setActivePawn(null);
         } else {
-            int difficulty = 1;
-            if (playersPawns != null) {
-                difficulty = (int) (Math.max(playersPawns.stream().mapToInt(Pawn::getLevel).sum() / 1.5 - 2, 1.0));
-            }
 
             // Terrain
-            map = new Map(this, difficulty);
+            map = new Map(this, Math.max(difficulty / 2, 1));
             map.generate();
             addChild(map);
 
@@ -835,7 +833,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     public void victory() {
-        getGame().prepTransitionScene(new BattleScene(getGame(), pawns.stream().filter(p -> p.getTeam(false) == 0).collect(Collectors.toList())));
+        getGame().prepTransitionScene(new BattleScene(getGame(), pawns.stream().filter(p -> p.getTeam(false) == 0).collect(Collectors.toList()), difficulty + 1));
     }
 
     private void clearActiveDetailText() {
@@ -925,13 +923,16 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             terrain.getPawn().hack(new Hack(terrain.getPawn(), activePawn, 0, activeAbility));
 //            pawn.ready();
             activePawn.setUnmoved(activeAbility.remain);
-            if (activePawn.isReady())
-                setActivePawn(activePawn);
-            else
-                setActivePawn(null);
+
             if (activeAbility.cure) {
                 activePawn.hack(null);
                 setActivePawn(null);
+            } else {
+                if (activePawn.isReady()) {
+                    setActivePawn(activePawn);
+                } else {
+                    setActivePawn(null);
+                }
             }
         } else if (activeAbility.blink) {
             Pawn pawn = terrain.getPawn();

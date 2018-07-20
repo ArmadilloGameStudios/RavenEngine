@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class Hack implements GameDatable {
 
-    private int team, hp, shield;
+    private int team, hp, shield, resistance;
     private boolean instant, transferable;
     private Pawn hacker, pawn;
 
@@ -24,6 +24,8 @@ public class Hack implements GameDatable {
             this.hp = ability.hp;
         if (ability.shield != null)
             this.shield = ability.shield;
+        if (ability.resistance != null)
+            this.resistance = ability.resistance;
         this.instant = ability.instant_hack;
         this.transferable = ability.transferable;
         if (this.transferable) initTransferable();
@@ -88,6 +90,10 @@ public class Hack implements GameDatable {
 
     public int getShield() {
         return shield;
+    }
+
+    public int getResistance() {
+        return resistance;
     }
 
     public void setInstant(boolean instant) {

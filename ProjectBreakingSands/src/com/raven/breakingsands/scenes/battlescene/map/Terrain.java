@@ -574,7 +574,10 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             else
                 details.movement = Integer.toString(pawn.getTotalMovement());
 
-            details.resistance = Integer.toString(pawn.getResistance());
+            details.resistance = Integer.toString(pawn.getResistance(false));
+            if (pawn.getBonusResistance() > 0) {
+                details.resistance += "+" + pawn.getBonusResistance();
+            }
 
             details.weapon = pawn.getWeapon().getName();
             details.damage = Integer.toString(pawn.getWeapon().getDamage());

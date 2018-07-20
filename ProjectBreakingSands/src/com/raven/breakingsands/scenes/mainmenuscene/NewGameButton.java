@@ -24,6 +24,6 @@ public class NewGameButton
     public void handleMouseClick() {
         BreakingSandsGame game = getScene().getGame();
 
-        game.prepTransitionScene(new BattleScene(game, (List<Pawn>) null));
+        game.prepTransitionScene(new BattleScene(game, (List<Pawn>) null, 1));
     }
 }
