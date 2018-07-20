@@ -20,7 +20,6 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 public class SpriteSheet extends ShaderTexture {
 
     private int textureName;
-    private int textureActiveLocation;
     private String filePath;
     private int height;
     private int width;
@@ -74,11 +73,10 @@ public class SpriteSheet extends ShaderTexture {
                 buffer.flip();
 
                 // Set Texture
-                textureActiveLocation = Shader.getNextTextureID();
-
-                glActiveTexture(GL_TEXTURE0 + textureActiveLocation);
+                glActiveTexture(GL_TEXTURE0);
                 textureName = glGenTextures();
                 glBindTexture(GL_TEXTURE_2D, textureName);
+//                System.out.println("Gen SpriteSheet: " + textureName);
 
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
                         width, height,
@@ -87,7 +85,6 @@ public class SpriteSheet extends ShaderTexture {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-                glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, 0);
                 scene.addLoadedShaderTexture(this);
                 loaded = true;
@@ -98,10 +95,6 @@ public class SpriteSheet extends ShaderTexture {
         getEngine().getWindow().printErrors("post load");
     }
 
-    public int getTextureActiveLocation() {
-        return textureActiveLocation;
-    }
-
     @Override
     public int getTexture() {
         return textureName;
@@ -110,11 +103,11 @@ public class SpriteSheet extends ShaderTexture {
     // TODO
     public void release() {
         loaded = false;
-        glDeleteTextures(textureName);
-    }
-
-    public int getTextureName() {
-        return textureName;
+        if (textureName != 0) {
+//            System.out.println("Del SpriteSheet: " + textureName);
+            glDeleteTextures(textureName);
+            textureName = 0;
+        }
     }
 
     public int getHeight() {

@@ -21,13 +21,10 @@ public abstract class Shader {
 
     private static int nextTexture = 0;
 
-    public static int getNextTextureID() {
+    protected static int getNextTextureID(String request) {
         nextTexture++;
+//        System.out.println("New Active Texture Location, " + request + ": " + nextTexture);
         return nextTexture;
-    }
-
-    public static void clearTextureID() {
-        nextTexture = 0;
     }
 
     int vertex_handel, fragment_handel, program_handel;

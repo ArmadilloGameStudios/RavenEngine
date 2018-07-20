@@ -21,7 +21,7 @@
     movement: 3,
     weapon: "Guard Disk",
     weapon_hack: "Blue Guard Disk",
-    xp_gain: 30000,
+    xp_gain: 30,
 
     weight: 50,
 },
@@ -37,7 +37,7 @@
     movement: 4,
     weapon: "Red Plasma Blade",
     weapon_hack: "Plasma Blade",
-    xp_gain: 70000,
+    xp_gain: 80,
 
     weight: 20
 }

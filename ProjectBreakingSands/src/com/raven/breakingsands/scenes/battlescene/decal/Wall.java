@@ -38,7 +38,7 @@ public class Wall extends WorldObject<BattleScene, Terrain, WorldObject> impleme
     public Wall(BattleScene scene, GameData gameData) {
         super(scene, gameData);
 
-        this.gameData = gameData;
+        this.gameData = new GameData(gameData);
 
         name = gameData.getString("name");
     }

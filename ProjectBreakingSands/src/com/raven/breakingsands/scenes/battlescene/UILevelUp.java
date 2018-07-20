@@ -169,6 +169,10 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
                                                         valid &= existing.contains(a.getString("replace"));
                                                     }
 
+                                                    if (a.has("upgrade")) {
+                                                        valid &= existing.contains(a.getString("upgrade"));
+                                                    }
+
                                                     return valid;
                                                 })
                                                 .collect(Collectors.toList());

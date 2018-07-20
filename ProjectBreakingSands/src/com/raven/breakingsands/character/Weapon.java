@@ -88,7 +88,10 @@ public class Weapon
     public Weapon(BattleScene scene, GameData gameData) {
         super(scene, gameData);
 
-        name = gameData.getString("name");
+        gameData.ifHas("display",
+                d -> name = d.asString(),
+                () -> name = gameData.getString("name"));
+
 
         damage = gameData.getInteger("damage");
 
@@ -151,7 +154,7 @@ public class Weapon
             }
         }
 
-        this.gameData = gameData;
+        this.gameData = new GameData(gameData);
     }
 
     public void runAttackAnimation(boolean directionUp) {

@@ -6,10 +6,7 @@ import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.util.pathfinding.Path;
 import com.raven.engine2d.util.pathfinding.PathFinder;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -75,9 +72,10 @@ public class AI implements Runnable {
 
         // check if can attack
         if (scene.getActivePawn().canAttack()) {
-            List<Terrain> inRange = scene.getActivePawn().getParent().selectRange(
+            Collection<Terrain> inRange = scene.getActivePawn().getParent().selectRange(
                     scene.getActivePawn().getWeapon().getStyle(),
-                    scene.getActivePawn().getWeapon().getRange());
+                    scene.getActivePawn().getWeapon().getRange(),
+                    false, false);
             inRange = inRange.stream()
                     .filter(t -> t.getPawn() != null &&
                             t.getPawn().getTeam(true) != scene.getActiveTeam())
@@ -89,25 +87,12 @@ public class AI implements Runnable {
                         .collect(Collectors.toList());
             }
 
-            //TODO
-            HashMap<Terrain, Float> rangeMap = scene.getActivePawn().getParent().filterCoverRange(inRange, false);
+//            //TODO
+//            HashMap<Terrain, Float> rangeMap = scene.getActivePawn().getParent().filterCoverRange(inRange, false);
 
-            if (rangeMap.size() > 0) {
-                Optional<Terrain> optionalTerrain;
-
-                if (rangeMap.size() > 1) {
-                    optionalTerrain = rangeMap.keySet().stream()
-                            .filter(Objects::nonNull)
-                            .max((a, b) -> (int) (rangeMap.get(a) - rangeMap.get(b)));
-
-                    if (optionalTerrain.isPresent()) {
-                        attack = optionalTerrain.get();
-                        return;
-                    }
-                } else {
-                    attack = rangeMap.keySet().stream().findFirst().get();
-                    return;
-                }
+            if (inRange.size() > 0) {
+                inRange.stream().findFirst().ifPresent(t -> attack = t);
+                return;
             }
         }
 

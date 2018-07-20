@@ -36,6 +36,7 @@
 },
 {
     name: "Red Plasma Blade",
+    display: "Plasma Blade",
     type: "melee",
     sprite: "sprites/plasmablade.png",
     animation: "plasma blade red",
@@ -171,6 +172,7 @@
 }
 {
     name: "Blue Guard Disk",
+    display: "Guard Disk",
     type: "ranged",
 
     audio: {

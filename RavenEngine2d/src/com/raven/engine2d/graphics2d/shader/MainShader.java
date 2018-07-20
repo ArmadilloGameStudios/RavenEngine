@@ -24,9 +24,10 @@ import static org.lwjgl.opengl.GL40.glBlendFuncSeparatei;
 public class MainShader extends Shader {
 
     public static final int
-            COLOR = getNextTextureID(),
-            ID = getNextTextureID(),
-            DEPTH = getNextTextureID();
+            COLOR = getNextTextureID("Color"),
+            ID = getNextTextureID("ID"),
+            DEPTH = getNextTextureID("Depth"),
+            TEXTURE = Shader.getNextTextureID("Texture");
 
     private GameWindow window;
 
@@ -197,7 +198,12 @@ public class MainShader extends Shader {
                 x / GameProperties.getScreenWidth() / GameProperties.getScaling() + .5f,
                 y / GameProperties.getScreenHeight() / GameProperties.getScaling() + .5f);
 
-        glUniform1i(sprite_sheet_location, texture.getTextureActiveLocation());
+
+
+        glActiveTexture(GL_TEXTURE0 + TEXTURE);
+        glBindTexture(GL_TEXTURE_2D, texture.getTexture());
+        glActiveTexture(GL_TEXTURE0);
+        glUniform1i(sprite_sheet_location, TEXTURE);
 
 
         if (spriteAnimation != null) {
@@ -244,7 +250,10 @@ public class MainShader extends Shader {
     private void drawUI(ShaderTexture texture, SpriteAnimationState spriteAnimation, Vector2f position) {
         glDisable(GL_DEPTH_TEST);
 
-        glUniform1i(sprite_sheet_location, texture.getTextureActiveLocation());
+        glActiveTexture(GL_TEXTURE0 + TEXTURE);
+        glBindTexture(GL_TEXTURE_2D, texture.getTexture());
+        glActiveTexture(GL_TEXTURE0);
+        glUniform1i(sprite_sheet_location, TEXTURE);
 
         float x = position.x;
         float y = position.y;
@@ -263,7 +272,6 @@ public class MainShader extends Shader {
                     (float) spriteAnimation.getHeight() / (float) texture.getHeight());
         } else {
             glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), texture.getWidth(), texture.getHeight());
-
 
             glUniform4f(rect_location,
                     0,

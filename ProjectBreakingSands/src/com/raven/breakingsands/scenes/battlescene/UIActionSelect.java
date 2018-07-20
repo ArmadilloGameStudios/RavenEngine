@@ -15,7 +15,7 @@ import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELEC
 
 public class UIActionSelect extends UIRightContainer<BattleScene> {
 
-    private UIAbilityButton btnPushBlast, btnHookPull, btnHack;
+    private UIAbilityButton btnPushBlast, btnHookPull, btnHack, btnBlink, btnRecall;
     private UIButton<BattleScene> btnMove, btnAttack, btnSkip, btnCancel, btnLevel, btnEnd;
     private List<UIButton<BattleScene>> btns = new ArrayList<>();
     private boolean disable;
@@ -25,6 +25,102 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
 
     public UIActionSelect(BattleScene scene) {
         super(scene);
+
+        btnBlink = new UIAbilityButton(scene,
+                "sprites/push icon.png",
+                "iconbutton") {
+
+            @Override
+            public void handleMouseClick() {
+                if (!isDisabled()) {
+                    if (isActive()) {
+                        setActive(false);
+                        getScene().setActiveAbility(null);
+                        scene.setState(oldState = SELECT_DEFAULT);
+                    } else {
+                        btns.forEach(b -> b.setActive(false));
+                        setActive(true);
+                        getScene().setActiveAbility(getAbility());
+                        scene.setState(oldState = BattleScene.State.SELECT_ABILITY);
+                    }
+                }
+            }
+
+            @Override
+            public void handleMouseEnter() {
+                super.handleMouseEnter();
+
+                if (!isDisabled())
+                    if (!isActive()) {
+                        oldAbility = scene.getActiveAbility();
+                        scene.setActiveAbility(getAbility());
+                        oldState = scene.getState();
+                        scene.setState(BattleScene.State.SELECT_ABILITY);
+                    }
+            }
+
+            @Override
+            public void handleMouseLeave() {
+                super.handleMouseLeave();
+
+                if (!isDisabled())
+                    if (!isActive()) {
+                        scene.setActiveAbility(oldAbility);
+                        scene.setState(oldState);
+                    }
+            }
+        };
+        btnBlink.setVisibility(false);
+        addChild(btnBlink);
+        btns.add(btnBlink);
+
+        btnRecall = new UIAbilityButton(scene,
+                "sprites/icon hook.png",
+                "iconbutton") {
+
+            @Override
+            public void handleMouseClick() {
+                if (!isDisabled()) {
+                    if (isActive()) {
+                        setActive(false);
+                        getScene().setActiveAbility(null);
+                        scene.setState(oldState = SELECT_DEFAULT);
+                    } else {
+                        btns.forEach(b -> b.setActive(false));
+                        setActive(true);
+                        getScene().setActiveAbility(getAbility());
+                        scene.setState(oldState = BattleScene.State.SELECT_ABILITY);
+                    }
+                }
+            }
+
+            @Override
+            public void handleMouseEnter() {
+                super.handleMouseEnter();
+
+                if (!isDisabled())
+                    if (!isActive()) {
+                        oldAbility = scene.getActiveAbility();
+                        scene.setActiveAbility(getAbility());
+                        oldState = scene.getState();
+                        scene.setState(BattleScene.State.SELECT_ABILITY);
+                    }
+            }
+
+            @Override
+            public void handleMouseLeave() {
+                super.handleMouseLeave();
+
+                if (!isDisabled())
+                    if (!isActive()) {
+                        scene.setActiveAbility(oldAbility);
+                        scene.setState(oldState);
+                    }
+            }
+        };
+        btnRecall.setVisibility(false);
+        addChild(btnRecall);
+        btns.add(btnRecall);
 
         btnPushBlast = new UIAbilityButton(scene,
                 "sprites/push icon.png",
@@ -315,7 +411,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
     }
 
     public void setPawn(Pawn pawn) {
-        if (pawn == null) {
+        if (pawn == null || (getScene().getActiveAbility() != null && getScene().getActiveAbility().recall_unit)) {
             this.disable = true;
 
             btnAttack.setDisable(disable);
@@ -338,6 +434,12 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             btnHack.setDisable(disable);
             btnHack.setActive(false);
             btnHack.setVisibility(false);
+            btnBlink.setDisable(disable);
+            btnBlink.setActive(false);
+            btnBlink.setVisibility(false);
+            btnRecall.setDisable(disable);
+            btnRecall.setActive(false);
+            btnRecall.setVisibility(false);
         } else /*if (pawn != this.pawn)*/ {
             btnCancel.setDisable(!(pawn.getTotalMovement() == pawn.getRemainingMovement()));
 
@@ -366,6 +468,26 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
                 btnPushBlast.setAbility(ability.get());
             } else {
                 btnPushBlast.setVisibility(false);
+            }
+
+            ability = pawn.getAbilities().stream().filter(a -> a.blink).findFirst();
+            if (ability.isPresent()) {
+                btnBlink.setVisibility(true);
+                btnBlink.setDisable(!pawn.canAbility(ability.get()));
+                btnBlink.setActive(btnBlink.getActive() && pawn == this.pawn);
+                btnBlink.setAbility(ability.get());
+            } else {
+                btnBlink.setVisibility(false);
+            }
+
+            ability = pawn.getAbilities().stream().filter(a -> a.recall).findFirst();
+            if (ability.isPresent()) {
+                btnRecall.setVisibility(true);
+                btnRecall.setDisable(!pawn.canAbility(ability.get()));
+                btnRecall.setActive(btnRecall.getActive() && pawn == this.pawn);
+                btnRecall.setAbility(ability.get());
+            } else {
+                btnRecall.setVisibility(false);
             }
 
             ability = pawn.getAbilities().stream().filter(a -> a.hook_pull).findFirst();

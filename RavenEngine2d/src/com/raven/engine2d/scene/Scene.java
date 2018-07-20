@@ -204,8 +204,6 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
         for (ShaderTexture sheet : getShaderTextures()) {
             sheet.release();
         }
-
-        Shader.clearTextureID();
     }
 
     abstract public void onExitScene();

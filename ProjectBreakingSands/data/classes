@@ -28,6 +28,16 @@
             resistance: 1,
         },
         {
+            name: "Guardian",
+            type: "self",
+            upgrade: "Protector",
+
+            passes_wall: true,
+            size: 2,
+            shield: 2,
+            resistance: 1,
+        },
+        {
             name: "Taunt",
             type: "aurora",
             target: "enemy",
@@ -87,17 +97,32 @@
             passes_pawn: true,
             use_regain_type: "level",
             uses: 1
-            turns: 1,
             size: 1,
             style: "diamond",
             hack: true,
         },
         {
-            name: "Self Destruct",
+            name: "Boost Hack",
             type: "self",
             upgrade: "Hack",
 
-            damage: 5,
+            hp: 2,
+            shield: 2,
+            resistance: 1,
+        },
+        {
+            name: "Double Hack",
+            type: "self",
+            upgrade: "Hack",
+
+            uses: 1
+        },
+        {
+            name: "Transferable Hack",
+            type: "self",
+            upgrade: "Hack",
+
+            transferable: true,
         },
         {
             name: "Quick Hack",
@@ -132,5 +157,89 @@
 
             size: 3,
         },
+    ]
+},
+{
+    name: "blinker",
+
+    bonus: {
+        ability: "Blink",
+    }
+
+    abilities: [
+        {
+            name: "Blink"
+
+            type: "target",
+            target: "empty",
+            passes_pawn: true,
+            blink: true,
+
+            uses: 1,
+            size: 2,
+        },
+        {
+            name: "Double Blink",
+            type: "self",
+            upgrade: "Blink",
+
+            uses: 1,
+        },
+        {
+            name: "Further Blink",
+            type: "self",
+            upgrade: "Blink",
+
+            size: 2,
+        },
+        {
+            name: "Quick Blink",
+            type: "self",
+            upgrade: "Blink",
+
+            remain: true,
+        },
+        {
+            name: "Swap Blink",
+            type: "self",
+            upgrade: "Blink",
+
+            target: "all",
+        },
+        {
+            name: "Wall Blink",
+            type: "self",
+            upgrade: "Blink",
+
+            passes_wall: true
+        },
+        {
+            name: "Recall"
+            type: "target",
+            target: "empty",
+
+            uses: 1,
+            size: 1,
+            recall: true,
+
+            ability: {
+                name: "Recall Unit"
+                type: "target",
+                target: "ally",
+                size: -1,
+
+
+                passes_wall: true,
+                recall_unit: true,
+            }
+        },
+        {
+            name: "Quick Recall"
+            type: "self",
+            upgrade: "Recall",
+
+            passes_wall: true,
+            remain: true,
+        }
     ]
 }

@@ -17,24 +17,31 @@ public class Ability implements GameDatable {
 
     public enum Type {SELF, AURORA, TARGET}
 
-    public enum Target {ALL, SELF, ALLY, ENEMY}
+    public static class Target {
+        static final public int ALL = 0b1111, SELF = 0b1000, ALLY = 0b0001, ENEMY = 0b0010, EMPTY = 0b0100;
+    }
 
     public enum UseRegainType {TURN, LEVEL}
 
     public String name, upgrade;
     public Type type;
-    public Target target;
+    public int target;
     public RangeStyle style;
     public UseRegainType useRegainType = UseRegainType.TURN;
     public String replace;
 
-    public Integer size, damage, turns, uses;
+    public Integer size, damage, uses;
     public Integer remainingUses;
     public Integer hp, shield, movement, resistance;
-    public boolean taunt, push_blast, hook_pull, hack, remain, passesPawn, instant_hack, usedThisTurn;
+    public boolean remain, passesPawn, passesWall, usedThisTurn,
+            taunt, push_blast, hook_pull,
+            hack, instant_hack, transferable, cure,
+            blink, recall, recall_unit;
+
+    public Ability bonusAbility;
 
     public Ability(GameData gameData) {
-        this.gameData = gameData;
+        this.gameData = new GameData(gameData);
 
         name = gameData.getString("name");
 
@@ -65,8 +72,11 @@ public class Ability implements GameDatable {
                 case "enemy":
                     target = Target.ENEMY;
                     break;
+                case "empty":
+                    target = Target.EMPTY;
+                    break;
             }
-        }, () -> target = Target.ALL);
+        });
 
         gameData.ifHas("use_regain_type", t -> {
             switch (t.asString()) {
@@ -96,7 +106,8 @@ public class Ability implements GameDatable {
 
         gameData.ifHas("replace", r -> replace = r.asString());
         gameData.ifHas("passes_pawn", p -> passesPawn = p.asBoolean());
-        gameData.ifHas("passes_pawn", p -> passesPawn = p.asBoolean());
+        gameData.ifHas("passes_wall", p -> passesWall = p.asBoolean());
+        gameData.ifHas("transferable", t -> transferable = t.asBoolean());
         gameData.ifHas("upgrade", u -> upgrade = u.asString());
         gameData.ifHas("size", s -> size = s.asInteger());
         gameData.ifHas("damage", d -> damage = d.asInteger());
@@ -104,7 +115,7 @@ public class Ability implements GameDatable {
         gameData.ifHas("shield", s -> shield = s.asInteger());
         gameData.ifHas("movement", m -> movement = m.asInteger());
         gameData.ifHas("resistance", r -> resistance = r.asInteger());
-        gameData.ifHas("turns", t -> turns = t.asInteger());
+
         if (gameData.has("remaining_uses")) {
             gameData.ifHas("remaining_uses", u -> remainingUses = u.asInteger());
             gameData.ifHas("uses", u -> uses = u.asInteger());
@@ -119,6 +130,11 @@ public class Ability implements GameDatable {
         gameData.ifHas("hook_pull", h -> hook_pull = h.asBoolean());
         gameData.ifHas("hack", h -> hack = h.asBoolean());
         gameData.ifHas("instant_hack", h -> instant_hack = h.asBoolean());
+        gameData.ifHas("cure", h -> cure = h.asBoolean());
+        gameData.ifHas("blink", h -> blink = h.asBoolean());
+        gameData.ifHas("recall", h -> recall = h.asBoolean());
+        gameData.ifHas("recall_unit", h -> recall_unit = h.asBoolean());
+        gameData.ifHas("ability", h -> bonusAbility = new Ability(h));
     }
 
     @Override
@@ -208,5 +224,10 @@ public class Ability implements GameDatable {
 //        map.put("hack", new GameData(hack));
 //
 //        return new GameData(map);
+    }
+
+    @Override
+    public String toString() {
+        return gameData.toString();
     }
 }

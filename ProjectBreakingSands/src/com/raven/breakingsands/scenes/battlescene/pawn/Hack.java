@@ -1,55 +1,77 @@
 package com.raven.breakingsands.scenes.battlescene.pawn;
 
+import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.scene.Scene;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 public class Hack implements GameDatable {
 
-    private int team;
-    private int selfDestruct;
-    private boolean instant;
-    private Pawn hacker;
+    private int team, hp, shield;
+    private boolean instant, transferable;
+    private Pawn hacker, pawn;
 
-    public Hack(Pawn hacker, int team, int selfDestruct, boolean instant) {
-        this.hacker = hacker;
+    public Hack(Pawn pawn, Pawn hacker, int team, Ability ability) {
+        this.hacker = hacker.getHack() != null ? hacker.getHack().getHacker() : hacker;
+        this.pawn = pawn;
         this.team = team;
-        this.selfDestruct = selfDestruct;
-        this.instant = instant;
+        if (ability.hp != null)
+            this.hp = ability.hp;
+        if (ability.shield != null)
+            this.shield = ability.shield;
+        this.instant = ability.instant_hack;
+        this.transferable = ability.transferable;
+        if (this.transferable) initTransferable();
     }
 
-    public Hack(BattleScene scene, GameData data) {
-        if (data.has("pawn") && data.getInteger("pawn") != -1) {
-            hacker = scene.getPawns().get(data.getInteger("pawn"));
+    public Hack(BattleScene scene, Pawn pawn, GameData data) {
+        if (data.has("hacker") && data.getInteger("hacker") != -1) {
+            System.out.println(data.getInteger("hacker"));
+            hacker = scene.getPawns().get(data.getInteger("hacker"));
         } else {
             hacker = scene.getPawns().get(0);
         }
+        this.pawn = pawn;
         this.team = data.getInteger("team");
-        this.selfDestruct = data.getInteger("selfDestruct");
+        this.hp = data.getInteger("hp");
+        this.shield = data.getInteger("shield");
         this.instant = data.getBoolean("instant");
+        this.transferable = data.getBoolean("transferable");
+        if (this.transferable) initTransferable();
     }
 
     @Override
     public GameData toGameData() {
         HashMap<String, GameData> map = new HashMap<>();
 
-        map.put("pawn", new GameData(hacker.getScene().getPawns().indexOf(hacker)));
+        map.put("hacker", new GameData(hacker.getScene().getPawns().indexOf(hacker)));
         map.put("team", new GameData(team));
-        map.put("selfDestruct", new GameData(selfDestruct));
+        map.put("hp", new GameData(hp));
+        map.put("shield", new GameData(shield));
         map.put("instant", new GameData(instant));
+        map.put("transferable", new GameData(transferable));
 
         return new GameData(map);
     }
 
-    public int getTeam() {
-        return team;
+    private void initTransferable() {
+        Optional<Optional<GameData>> o = GameDatabase.all("classes").stream()
+                .filter(c -> c.getString("name").equals("hacker"))
+                .map(c -> c.getList("abilities").stream().filter(a -> a.getString("name").equals("Hack")).findFirst()).findFirst();
+
+        o.ifPresent(oo -> oo.ifPresent(gdAbility -> { // lol...
+            gdAbility.asMap().put("cure", new GameData(true));
+            pawn.addAbility(new Ability(gdAbility));
+        }));
     }
 
-    public int getSelfDestruct() {
-        return selfDestruct;
+    public int getTeam() {
+        return team;
     }
 
     public Pawn getHacker() {
@@ -58,5 +80,17 @@ public class Hack implements GameDatable {
 
     public boolean isInstant() {
         return instant;
+    }
+
+    public int getHP() {
+        return hp;
+    }
+
+    public int getShield() {
+        return shield;
+    }
+
+    public void setInstant(boolean instant) {
+        this.instant = instant;
     }
 }

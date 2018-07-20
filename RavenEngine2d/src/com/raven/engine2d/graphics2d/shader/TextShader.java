@@ -10,12 +10,17 @@ import com.raven.engine2d.util.math.Vector2i;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL32.glFramebufferTexture;
 import static org.lwjgl.opengl.GL40.glBlendFuncSeparatei;
 
 public class TextShader extends Shader {
+
+    public static final int
+            TEXTURE = Shader.getNextTextureID("Text Texture");
 
     private GameWindow window;
 
@@ -75,7 +80,10 @@ public class TextShader extends Shader {
     }
 
     public void drawImage(SpriteSheet img) {
-        glUniform1i(sprite_sheet_location, img.getTextureActiveLocation());
+        glActiveTexture(GL_TEXTURE0 + TEXTURE);
+        glBindTexture(GL_TEXTURE_2D, img.getTexture());
+        glActiveTexture(GL_TEXTURE0);
+        glUniform1i(sprite_sheet_location, TEXTURE);
         glUniform4f(rect_location,
                 0,
                 0,
@@ -100,7 +108,14 @@ public class TextShader extends Shader {
         glViewport(des.x, des.y, size.x, size.y);
         window.printErrors("cat");
 
-        glUniform1i(sprite_sheet_location, srcImage.getTextureActiveLocation());
+        glActiveTexture(GL_TEXTURE0 + TEXTURE);
+        window.printErrors("cata");
+        glBindTexture(GL_TEXTURE_2D, srcImage.getTexture());
+        window.printErrors("catb");
+        glActiveTexture(GL_TEXTURE0);
+        window.printErrors("catc");
+
+        glUniform1i(sprite_sheet_location, TEXTURE);
         window.printErrors("dog");
 
         glUniform4f(rect_location,

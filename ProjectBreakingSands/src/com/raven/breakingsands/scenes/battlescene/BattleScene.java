@@ -53,8 +53,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     private GameData loadGameData = null;
 
-    private List<ShaderTexture> models;
-
     private Menu menu;
     private UIActionSelect actionSelect;
     private UILevelUp uiLevelUp;
@@ -74,8 +72,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     private int pathIndex = 0;
     private float pathSpeed = 4f * 100f;
     private float pathMoveTime = 0f;
-
-    private HashMap<Terrain, Float> rangeMap;
 
     private List<Pawn> pawns = new CopyOnWriteArrayList<>();
     private List<Pawn> playersPawns;
@@ -469,7 +465,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 clearActiveDetailText();
 
 
-            Vector2f pos = pawn.getWorldPosition();
+//            Vector2f pos = pawn.getWorldPosition();
             // TODO focus on pawn
 
 //            System.out.println("Pawn -");
@@ -499,6 +495,9 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     public void setActiveTeam(int team) {
 
+        if (team != activeTeam) {
+            activeAbility = null;
+        }
         // check hack
 //        if (team != activeTeam) {
 //            pawns.forEach(pawn -> {
@@ -638,7 +637,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         } else {
             // selectable pawns
             for (Pawn pawn : pawns) {
-                if (pawn.getTeam(true) == 0 && pawn.isReady()) {
+                if (pawn.getTeam(true) == 0 && pawn.isReady() && pawn.getParent().getState() == Terrain.State.UNSELECTABLE) {
                     pawn.getParent().setState(Terrain.State.SELECTABLE);
                 }
             }
@@ -674,11 +673,10 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         if (activePawn.canAttack()) {
             // find attack
-            List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
-            rangeMap = parentTerrain.filterCoverRange(inRange, activePawn.getWeapon().getPassesPawn());
+            Collection<Terrain> range = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange(), false, false);
 
-            if (rangeMap.size() > 0) {
-                for (Terrain n : rangeMap.keySet()) {
+            if (range.size() > 0) {
+                for (Terrain n : range) {
                     if (n.getPawn() != null && n.getPawn().getTeam(true) != activePawn.getTeam(true)) {
 
 //                    n.cover = rangeMap.get(n);
@@ -720,13 +718,14 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             // find attack
             Terrain parentTerrain = activePawn.getParent();
 
-            List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
-            rangeMap = parentTerrain.filterCoverRange(inRange, activePawn.getWeapon().getPassesPawn());
+            Collection<Terrain> range = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange(), false, false);
 
-            if (rangeMap.size() > 0) {
-                for (Terrain n : rangeMap.keySet()) {
-                    n.setState(Terrain.State.ATTACKABLE);
-                    n.updateText();
+            if (range.size() > 0) {
+                for (Terrain n : range) {
+                    if (n.getPawn() == null || n.getPawn().getTeam(true) != activeTeam) {
+                        n.setState(Terrain.State.ATTACKABLE);
+                        n.updateText();
+                    }
                 }
             }
         }
@@ -741,19 +740,43 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             // find target
             Terrain parentTerrain = activePawn.getParent();
 
-            List<Terrain> inRange = parentTerrain.selectRange(activeAbility.style, activeAbility.size);
-            rangeMap = parentTerrain.filterCoverRange(inRange, activeAbility.passesPawn);
+            Collection<Terrain> range = parentTerrain.selectRange(activeAbility.style, activeAbility.size, activeAbility.passesWall, activeAbility.passesPawn);
 
-            if (rangeMap.size() > 0) {
-                for (Terrain n : rangeMap.keySet()) {
-                    if (n.getPawn() == null || n.getPawn().getTeam(true) != activePawn.getTeam(true)) {
-                        n.setState(Terrain.State.ABILITYABLE);
-                        n.updateText();
+            if (range.size() > 0) {
+                for (Terrain n : range) {
+                    if ((activeAbility.target & Ability.Target.EMPTY) != 0) {
+                        if (n.getPawn() == null) {
+                            n.setState(Terrain.State.ABILITYABLE);
+                            n.updateText();
+                        }
+                    }
+
+                    if ((activeAbility.target & Ability.Target.ENEMY) != 0) {
+                        if ((n.getPawn() == null && activeAbility.size >= 0) || n.getPawn() != null && n.getPawn().getTeam(true) != activePawn.getTeam(true)) {
+                            n.setState(Terrain.State.ABILITYABLE);
+                            n.updateText();
+                        }
+                    }
+
+                    if ((activeAbility.target & Ability.Target.ALLY) != 0) {
+                        if (n.getPawn() != null) {
+                            System.out.println("Check Ally");
+                            System.out.println(n.getPawn().getName());
+                            System.out.println((n.getPawn() == null && activeAbility.size >= 0));
+                            System.out.println(n.getPawn() != null);
+                            System.out.println(n.getPawn() != activePawn);
+                            System.out.println(n.getPawn().getTeam(true) == activePawn.getTeam(true));
+                        }
+                        if ((n.getPawn() == null && activeAbility.size >= 0) || n.getPawn() != null && n.getPawn() != activePawn && n.getPawn().getTeam(true) == activePawn.getTeam(true)) {
+                            n.setState(Terrain.State.ABILITYABLE);
+                            n.updateText();
+                        }
                     }
                 }
             }
         }
 
+//        if (!activeAbility.recall_unit)
         setSelectablePawn();
     }
 
@@ -833,7 +856,8 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     // actions - should be the prime way of interacting with the battle scene state
     public void pawnWait() {
         activePawn.setReady(false);
-        setActivePawn(null);
+
+        pawnDeselect();
     }
 
     public void pawnEnd() {
@@ -844,6 +868,16 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     public void pawnDeselect() {
+        if (activePawn != null && activeAbility != null && activeAbility.recall_unit) {
+            activePawn.getAbilities().forEach(a -> {
+                if (a.recall) {
+                    a.remainingUses = a.uses;
+                }
+            });
+        }
+
+        activeAbility = null;
+
         setActivePawn(null);
     }
 
@@ -856,15 +890,19 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         setState(BattleScene.State.ATTACKING);
     }
 
-    public void pawnAbility(Pawn pawn) {
+    private Terrain abilityTerrain = null;
+
+    public void pawnAbility(Terrain terrain) {
         if (activeAbility.uses != null) {
             activeAbility.remainingUses--;
             activeAbility.usedThisTurn = true;
         }
 
+        actionSelect.setPawn(null);
+
         if (activeAbility.hook_pull) {
             Terrain base = activePawn.getParent();
-            Terrain from = pawn.getParent();
+            Terrain from = terrain;
             Optional<Terrain> to = Optional.empty();
 
             if (base.getMapX() > from.getMapX()) {
@@ -880,17 +918,42 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 to = map.get(base.getMapX(), base.getMapY() + 1);
             }
 
-            to.ifPresent(t -> t.setPawn(pawn));
+            to.ifPresent(t -> t.setPawn(terrain.getPawn()));
 
             setActivePawn(activePawn);
         } else if (activeAbility.hack) {
-            pawn.hack(new Hack(activePawn, 0, activeAbility.damage != null ? activeAbility.damage : 0, activeAbility.instant_hack));
+            terrain.getPawn().hack(new Hack(terrain.getPawn(), activePawn, 0, activeAbility));
 //            pawn.ready();
             activePawn.setUnmoved(activeAbility.remain);
             if (activePawn.isReady())
                 setActivePawn(activePawn);
             else
                 setActivePawn(null);
+            if (activeAbility.cure) {
+                activePawn.hack(null);
+                setActivePawn(null);
+            }
+        } else if (activeAbility.blink) {
+            Pawn pawn = terrain.getPawn();
+            Terrain oldTerrain = activePawn.getParent();
+            terrain.setPawn(activePawn);
+
+            if (pawn != null) {
+                oldTerrain.setPawn(pawn);
+            }
+
+            setActivePawn(activePawn);
+        } else if (activeAbility.recall) {
+            abilityTerrain = terrain;
+            map.setState(Terrain.State.UNSELECTABLE);
+            abilityTerrain.setState(Terrain.State.ABILITY_UNSELECTABLE);
+            setActiveAbility(activeAbility.bonusAbility);
+            actionSelect.setPawn(activePawn);
+            setStateSelectAbility();
+        } else if (activeAbility.recall_unit) {
+            abilityTerrain.setPawn(terrain.getPawn());
+            activeAbility = null;
+            setActivePawn(activePawn);
         }
     }
 

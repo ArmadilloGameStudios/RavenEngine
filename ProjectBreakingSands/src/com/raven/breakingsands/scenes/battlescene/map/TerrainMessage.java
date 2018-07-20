@@ -29,7 +29,7 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
         switch (state) {
             case SELECTABLE:
                 if (getParent().getPawn() == getScene().getActivePawn()) {
-                    setText("active");
+                    setText("deselect");
                 } else
                     setText("select");
                 break;
