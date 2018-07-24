@@ -253,6 +253,10 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
             getScene().setSelectedDetailText(getDetails());
         }
+
+        if (pawn != null) {
+            terrainMessage.setVisibility(true);
+        }
     }
 
     @Override

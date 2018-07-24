@@ -77,7 +77,7 @@ public class PathFinder<N extends PathNode<N, E>, E extends Enum<E>> {
 
     // TODO fix this shitty code - but does it work?
     public Path<N> findTarget(N start, N target, EnumSet<E> flags) {
-        HashMap<N, Path<N>> catMap = findDistance(start, 100);
+        HashMap<N, Path<N>> catMap = findDistance(start, 100, flags);
 
         Path<N> cat = catMap.get(target);
 

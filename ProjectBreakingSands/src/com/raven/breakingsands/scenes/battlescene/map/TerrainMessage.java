@@ -37,10 +37,15 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
             case MOVE:
                 setText("move");
                 break;
+            case UNSELECTABLE:
+                if (getParent().getPawn() == null || getParent().getPawn().getTeam(true) != 1 || getScene().getActiveTeam() == 1) {
+                    setText("");
+                    break;
+                }
             case ATTACKABLE:
             case ATTACK:
                 Pawn pawn = getParent().getPawn();
-                if (pawn != null) {
+                if (pawn != null && getScene().getActivePawn() != null) {
                     Weapon w = getScene().getActivePawn().getWeapon();
                     int damage = pawn.getDamage(w.getDamage(), w.getPiercing(), w.getShots());
 
@@ -53,9 +58,6 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
                     setText("attack");
                 }
                 break;
-            case UNSELECTABLE:
-                setText("");
-                break;
             case ABILITY:
             case ABILITYABLE:
                 setText(ability.name);
@@ -65,7 +67,7 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
 
     @Override
     public void setVisibility(boolean visibility) {
-        super.setVisibility(visibility && state != Terrain.State.UNSELECTABLE);
+        super.setVisibility(visibility && (state != Terrain.State.UNSELECTABLE || getParent().getPawn() != null));
     }
 
     @Override

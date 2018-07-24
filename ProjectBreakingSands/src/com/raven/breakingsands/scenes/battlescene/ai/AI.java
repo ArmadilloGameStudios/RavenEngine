@@ -33,7 +33,7 @@ public class AI implements Runnable {
 
     @Override
     public void run() {
-        System.out.println();
+        //System.out.println();
 
         try {
             clean();
@@ -84,7 +84,7 @@ public class AI implements Runnable {
         getAllEnemyPawns().forEach(e -> {
             Weapon w = e.getWeapon();
 
-            Collection<Terrain> cat = e.getParent().selectRange(w.getStyle(), w.getRangeMin(), w.getRange(), false, false);
+            Collection<Terrain> cat = e.getParent().selectRange(w.getStyle(), w.getRangeMin(), w.getRange(), false, true);
 
             enemyAttackTerrain.put(e, cat);
         });
@@ -105,16 +105,16 @@ public class AI implements Runnable {
                 .collect(Collectors.toList());
 
         if (pawns.size() == 0) {
-            System.out.println("None to Select");
+            //System.out.println("None to Select");
             return;
         } else {
-            System.out.println(Integer.toString(pawns.size()) + " to Select");
+            //System.out.println(Integer.toString(pawns.size()) + " to Select");
         }
 
         AtomicInteger cost = new AtomicInteger(Integer.MAX_VALUE);
         select = null;
 
-        System.out.println("Finding Unblocked Path");
+        //System.out.println("Finding Unblocked Path");
         pawns.forEach(pawn -> attackableUnblockedTerrain.get(pawn).forEach((aTerrain, path) -> {
             if (pawn.getParent() != aTerrain) {
                 // if cant attack, check path cost
@@ -134,9 +134,9 @@ public class AI implements Runnable {
 
         // if no unblocked paths, find a blocked path to improve
         if (select == null) {
-            System.out.println("Finding Blocked Path");
+            //System.out.println("Finding Blocked Path");
             pawns.forEach(pawn -> attackableTerrain.get(pawn).forEach((aTerrain, path) -> {
-                System.out.println(path);
+                //System.out.println(path);
                 if (path != null) {
                     int c = 0;
 
@@ -155,12 +155,13 @@ public class AI implements Runnable {
         }
 
         if (select == null) {
-            System.out.println("No Pawns?");
+            //System.out.println("No Pawns?");
         }
     }
 
     private void selectMove() {
-        System.out.println("Selecting Move");
+        //System.out.println("Selecting Move");
+        //System.out.println(scene.getTerrainMap().getTerrainList().size());
 
         // check if taunted
         List<Pawn> taunters = scene.getActivePawn().getAbilityAffects().stream()
@@ -169,7 +170,7 @@ public class AI implements Runnable {
                 .collect(Collectors.toList());
 
         // check if can attack
-        System.out.println("Attack? " + scene.getActivePawn().canAttack());
+        //System.out.println("Attack? " + scene.getActivePawn().canAttack());
         if (scene.getActivePawn().canAttack()) {
             Collection<Terrain> inRange = scene.getActivePawn().getParent().selectRange(
                     scene.getActivePawn().getWeapon().getStyle(),
@@ -193,7 +194,7 @@ public class AI implements Runnable {
         }
 
         // end if no movement
-        System.out.println("Move? " + scene.getActivePawn().canMove());
+        //System.out.println("Move? " + scene.getActivePawn().canMove());
         if (!scene.getActivePawn().canMove()) {
             return;
         }
@@ -209,7 +210,7 @@ public class AI implements Runnable {
         } else {
             if (scene.getActivePawn().canAttack() && scene.getActivePawn().isReady()) {
 //              if it can attack still, get closer
-                System.out.println("Move Toward");
+                //System.out.println("Move Toward");
                 oPath = attackableUnblockedTerrain
                         .get(scene
                                 .getActivePawn())
@@ -217,7 +218,7 @@ public class AI implements Runnable {
                         .stream()
                         .filter(Objects::nonNull)
                         .min((Comparator.comparingInt(Path::getCost)));
-                System.out.println("Blocked? " + !oPath.isPresent());
+                //System.out.println("Blocked? " + !oPath.isPresent());
 
                 if (!oPath.isPresent()) {
                     oPath = attackableTerrain
@@ -227,12 +228,12 @@ public class AI implements Runnable {
                             .stream()
                             .filter(Objects::nonNull)
                             .min((Comparator.comparingInt(Path::getCost)));
-                    System.out.println("Blocked 2? " + !oPath.isPresent());
+                    //System.out.println("Blocked 2? " + !oPath.isPresent());
 
                 }
             } else if (scene.getActivePawn().canMove() && scene.getActivePawn().isReady()) {
                 // move further away (to least blocking space)
-                System.out.println("Move Away");
+                //System.out.println("Move Away");
 
                 HashMap<Terrain, Path<Terrain>> terrainOptions = terrainPathFinder.findDistance(scene.getActivePawn().getParent(), scene.getActivePawn().getRemainingMovement());
 
@@ -253,7 +254,7 @@ public class AI implements Runnable {
                                         path.contains(end) &&
                                         path.getCostTo(end) <= p.getRemainingMovement()) {
                                     blockers.addAndGet(2);
-                                    System.out.println("Blocked Zone");
+                                    //System.out.println("Blocked Zone");
                                 }
 
                             }));
@@ -264,21 +265,22 @@ public class AI implements Runnable {
                                         path.contains(end) &&
                                         path.getCostTo(end) <= p.getRemainingMovement()) {
                                     blockers.addAndGet(3);
-                                    System.out.println("Unblocked Zone");
+                                    //System.out.println("Unblocked Zone");
                                 }
                             }));
 
                     // check were enemies are
                     getAllEnemyPawns().forEach(e -> {
                         Collection<Terrain> dangerTerrain = enemyAttackTerrain.get(e);
+                        //System.out.println(dangerTerrain);
 
                         if (dangerTerrain != null && dangerTerrain.contains(end)) {
                             blockers.addAndGet(6);
-                            System.out.println("Danger Zone");
+                            //System.out.println("Danger Zone");
                         }
                     });
 
-                    System.out.println(end.getMapX() + ", " + end.getMapY() + ": " + blockers.get());
+                    //System.out.println(end.getMapX() + ", " + end.getMapY() + ": " + blockers.get());
 
                     if (blockers.get() < smallestBlockers || (scene.getActivePawn().getParent() == end && blockers.get() == smallestBlockers)) {
                         smallestBlockers = blockers.get();
@@ -288,25 +290,26 @@ public class AI implements Runnable {
                         else {
                             oPath = Optional.empty();
                         }
+                        //System.out.println("Updating");
                     }
                 }
 
             } else {
                 // if it can't move or attack, end
-                System.out.println("None");
+                //System.out.println("None");
                 oPath = Optional.empty();
             }
         }
 
         if (!oPath.isPresent()) {
-            System.out.println("No Path");
+            //System.out.println("No Path");
             return;
         }
 
         // find the furthest it can go
         Path<Terrain> closestPath = oPath.get();
         Terrain end = closestPath.getLast().getNode();
-        System.out.println(end.getMapX() + ", " + end.getMapY());
+        //System.out.println(end.getMapX() + ", " + end.getMapY());
 
         int dist = -1;
         for (PathAdjacentNode<Terrain> a : closestPath) {
@@ -316,26 +319,26 @@ public class AI implements Runnable {
             } else break;
         }
 
-        System.out.println("D: " + dist + ", " + closestPath.size());
+        //System.out.println("D: " + dist + ", " + closestPath.size());
         if (dist < closestPath.size()) {
             closestPath.subList(dist + 1, closestPath.size()).clear();
         }
 
-        if (closestPath.size() == 0) {
-            System.out.println("Map Size 0");
+        if (closestPath.size() <= 1) {
+            //System.out.println("Map Size " + closestPath.size());
             return;
         }
 
-        System.out.println("Map Size " + closestPath.size());
+        //System.out.println("Map Size " + closestPath.size());
 
         moving = true;
         currentPath = closestPath;
 
-        System.out.println(moving);
+        //System.out.println(moving);
     }
 
     private void clean() {
-        System.out.println("Clean");
+        //System.out.println("Clean");
         currentPath = null;
         moving = false;
         attack = null;
@@ -346,7 +349,7 @@ public class AI implements Runnable {
     }
 
     public void resolve() {
-        System.out.println("" + attack + " " + moving + " " + select);
+        //System.out.println("" + attack + " " + moving + " " + select);
         if (attack != null) {
             scene.setTargetPawn(attack.getPawn());
 //            scene.getActivePawn().setReady(false);
