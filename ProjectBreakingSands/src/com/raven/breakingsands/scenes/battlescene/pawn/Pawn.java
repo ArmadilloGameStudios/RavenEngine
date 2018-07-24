@@ -312,23 +312,18 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             return false;
         }
 
-        System.out.println(ability.name);
 
         final boolean[] canMove = {true};
 
         canMove[0] &= remainingAttacks == totalAttacks || abilities.stream().anyMatch(a -> a.remain);
-        System.out.println("CA: attacks & any remain " + canMove[0]);
 
         abilities.stream().filter(a -> a.upgrade == null).forEach(a -> {
             if (a == ability) {
                 canMove[0] &= a.uses == null || (a.remainingUses > 0);
-                System.out.println("this ability " + canMove[0]);
             } else if (a.useRegainType == Ability.UseRegainType.TURN) {
                 canMove[0] &= a.uses == null || (!a.usedThisTurn || a.remainingUses.equals(a.uses) || a.remain);
-                System.out.println("other ability: turn " + canMove[0]);
             } else {
                 canMove[0] &= a.uses == null || (!a.usedThisTurn || a.remain);
-                System.out.println("other ability: level " + canMove[0]);
             }
         });
 

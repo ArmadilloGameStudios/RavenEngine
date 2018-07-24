@@ -164,7 +164,7 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
 
         Terrain start = terrain.stream().filter(Terrain::isStart).findFirst().get();
 
-        PathFinder<Terrain> terrainPathFinder = new PathFinder<>();
+        PathFinder<Terrain, Terrain.PathFlag> terrainPathFinder = new PathFinder<>();
 
         terrain.forEach(t -> {
             Path<Terrain> path = terrainPathFinder.findTarget(t, start);

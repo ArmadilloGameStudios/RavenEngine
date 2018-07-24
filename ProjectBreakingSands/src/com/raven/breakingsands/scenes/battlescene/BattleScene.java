@@ -683,7 +683,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         if (activePawn.canMove()) {
             // find movement
-            PathFinder<Terrain> pf = new PathFinder<>();
+            PathFinder<Terrain, Terrain.PathFlag> pf = new PathFinder<>();
 
             pathMap = pf.findDistance(parentTerrain, activePawn.getRemainingMovement());
 
@@ -720,7 +720,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             // find movement
             Terrain parentTerrain = activePawn.getParent();
 
-            PathFinder<Terrain> pf = new PathFinder<>();
+            PathFinder<Terrain, Terrain.PathFlag> pf = new PathFinder<>();
 
             pathMap = pf.findDistance(parentTerrain, activePawn.getRemainingMovement());
 

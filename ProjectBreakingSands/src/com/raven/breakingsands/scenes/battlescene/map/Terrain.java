@@ -22,7 +22,7 @@ import com.raven.engine2d.worldobject.WorldObject;
 import java.util.*;
 
 public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
-        implements MouseHandler, PathNode<Terrain>, GameDatable {
+        implements MouseHandler, PathNode<Terrain, Terrain.PathFlag>, GameDatable {
 
     public static List<SpriteSheet> getSpriteSheets(BattleScene scene) {
         List<SpriteSheet> data = new ArrayList<>();
@@ -53,6 +53,10 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         ABILITYABLE,
         ABILITY,
         ABILITY_UNSELECTABLE,
+    }
+
+    public enum PathFlag {
+        PASS_PAWN
     }
 
     private State state = State.UNSELECTABLE;
@@ -283,19 +287,25 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     }
 
     @Override
-    public List<PathAdjacentNode<Terrain>> getAdjacentNodes() {
+    public EnumSet<PathFlag> getEmptyNodeEnumSet() {
+        return EnumSet.noneOf(PathFlag.class);
+    }
+
+    @Override
+    public List<PathAdjacentNode<Terrain>> getAdjacentNodes(EnumSet<PathFlag> flags) {
+
         switch (getScene().getState()) {
             case SELECT_DEFAULT:
             case SELECT_ATTACK:
             case SELECT_MOVE:
             case SELECT_ABILITY:
-                return getMovementNodes();
+                return getMovementNodes(flags);
         }
 
         return new ArrayList<>();
     }
 
-    private List<PathAdjacentNode<Terrain>> getMovementNodes() {
+    private List<PathAdjacentNode<Terrain>> getMovementNodes(EnumSet<PathFlag> flags) {
         List<PathAdjacentNode<Terrain>> neighbors = new ArrayList<>();
 
         Map map = getScene().getTerrainMap();
@@ -304,7 +314,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         if (o.isPresent()) {
             Terrain n = o.get();
 
-            if (n.passable && n.pawn == null) {
+            if (flags.contains(PathFlag.PASS_PAWN) || n.passable && n.pawn == null) {
                 neighbors.add(new PathAdjacentNode<>(n, 1));
             }
         }
@@ -313,7 +323,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         if (o.isPresent()) {
             Terrain n = o.get();
 
-            if (n.passable && n.pawn == null) {
+            if (flags.contains(PathFlag.PASS_PAWN) || n.passable && n.pawn == null) {
                 neighbors.add(new PathAdjacentNode<>(n, 1));
             }
         }
@@ -322,7 +332,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         if (o.isPresent()) {
             Terrain n = o.get();
 
-            if (n.passable && n.pawn == null) {
+            if (flags.contains(PathFlag.PASS_PAWN) || n.passable && n.pawn == null) {
                 neighbors.add(new PathAdjacentNode<>(n, 1));
             }
         }
@@ -331,7 +341,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         if (o.isPresent()) {
             Terrain n = o.get();
 
-            if (n.passable && n.pawn == null) {
+            if (flags.contains(PathFlag.PASS_PAWN) || n.passable && n.pawn == null) {
                 neighbors.add(new PathAdjacentNode<>(n, 1));
             }
         }
@@ -778,4 +788,5 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     public float getZ() {
         return ZLayer.TERRAIN.getValue();
     }
+
 }
