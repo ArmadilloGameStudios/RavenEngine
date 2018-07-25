@@ -35,7 +35,7 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
         if (level % 3 == 0) {
             this.size = 1;
         } else {
-            this.size = Math.min(level / 2 + 1, 8);
+            this.size = Math.min(level / 3 + 1, 8);
         }
 
     }

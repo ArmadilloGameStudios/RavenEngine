@@ -323,7 +323,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         // add enemies
         // create xp to burn
-        int xpBank = 30 * Math.max(difficulty, 1) * Math.max(difficulty / 2, 1);
+        int xpBank = 30 * Math.max(difficulty, 1) * Math.max(difficulty / 3, 1);
 
         // create and populate map
         HashMap<Terrain, Integer> mapSpawn = new HashMap<>();
