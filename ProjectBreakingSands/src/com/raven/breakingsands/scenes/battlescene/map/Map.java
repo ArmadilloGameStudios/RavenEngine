@@ -57,6 +57,12 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
 
     public void generate() {
         while (structures.size() == 0 || !structures.contains(firstStructure) || terrain.stream().noneMatch(Terrain::isSpawn)) {
+
+            removeAllChildren();
+            structures.clear();
+            terrain.clear();
+            firstStructure = null;
+
             i = size;
             startGeneration();
             removeIslands();

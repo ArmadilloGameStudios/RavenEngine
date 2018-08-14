@@ -1,13 +1,19 @@
 package com.raven.breakingsands.scenes.battlescene;
 
+import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
+import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
+import com.raven.engine2d.input.Mouse;
 import com.raven.engine2d.ui.*;
 import com.raven.engine2d.util.math.Vector2f;
+import com.raven.engine2d.worldobject.MouseHandler;
 
 public class UIDetailText
-        extends UIObject<BattleScene, UIContainer<BattleScene>> {
+        extends UIObject<BattleScene, UIContainer<BattleScene>>
+        implements MouseHandler {
 
     private static final String bcgImgRightSrc = "sprites/character ui.png";
     private static final String bcgImgLeftSrc = "sprites/selected ui.png";
+    private final Pawn pawn;
 
     private Vector2f position = new Vector2f();
 
@@ -24,20 +30,27 @@ public class UIDetailText
             uiRng, uiLblRng,
             uiShots, uiLblShots;
 
-    public UIDetailText(BattleScene scene, int style) {
+    public UIDetailText(BattleScene scene, Pawn pawn, int style) {
         super(scene);
 
-        if (style == UIContainer.BOTTOM_RIGHT) {
-            initRight();
-        } else {
+        this.addMouseHandler(this);
+
+        this.pawn = pawn;
+        pawn.setUIDetailText(this);
+
+        if (style == UIContainer.UPPER_LEFT) {
             initLeft();
+        } else {
+            initRight();
         }
     }
 
-    private void initRight() {
+    private void initLeft() {
         backgroundImg = new UIImage<>(getScene(),
-                (int) getWidth(), (int) getHeight(),
+                116, 48,
                 bcgImgRightSrc);
+
+        backgroundImg.setSpriteAnimation(new SpriteAnimationState(getScene().getEngine().getAnimation("details")));
 
         addChild(backgroundImg);
 
@@ -45,8 +58,8 @@ public class UIDetailText
         UIFont font = uiName.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiName.setX(350);
-        uiName.setY(122);
+        uiName.setX(58);
+        uiName.setY(56);
         uiName.load();
 
         addChild(uiName);
@@ -56,8 +69,8 @@ public class UIDetailText
         font.setSmall(true);
         font.setSide(UIFont.Side.RIGHT);
         font.setHighlight(false);
-        uiLvl.setX(442);
-        uiLvl.setY(122);
+        uiLvl.setX(150);
+        uiLvl.setY(56);
         uiLvl.load();
 
         addChild(uiLvl);
@@ -67,8 +80,8 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiHP.setX(370);
-        uiHP.setY(94);
+        uiHP.setX(156);
+        uiHP.setY(26);
         uiHP.load();
 
         addChild(uiHP);
@@ -77,8 +90,8 @@ public class UIDetailText
         font = uiLblHP.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblHP.setX(340);
-        uiLblHP.setY(94);
+        uiLblHP.setX(4);
+        uiLblHP.setY(26);
         uiLblHP.load();
 
         addChild(uiLblHP);
@@ -130,8 +143,8 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiSld.setX(480);
-        uiSld.setY(74);
+        uiSld.setX(156);
+        uiSld.setY(6);
         uiSld.load();
 
         addChild(uiSld);
@@ -140,8 +153,8 @@ public class UIDetailText
         font = uiLblSld.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblSld.setX(450);
-        uiLblSld.setY(74);
+        uiLblSld.setX(4);
+        uiLblSld.setY(6);
         uiLblSld.load();
 
         addChild(uiLblSld);
@@ -246,7 +259,7 @@ public class UIDetailText
         addChild(uiLblShots);
     }
 
-    private void initLeft() {
+    private void initRight() {
 
         backgroundImg = new UIImage<>(getScene(),
                 (int) getWidth(), (int) getHeight(),
@@ -460,6 +473,10 @@ public class UIDetailText
         addChild(uiLblShots);
     }
 
+    public void setAnimationAction(String animation) {
+        backgroundImg.setAnimationAction(animation);
+    }
+
     @Override
     public Vector2f getPosition() {
         return position;
@@ -472,12 +489,12 @@ public class UIDetailText
 
     @Override
     public float getHeight() {
-        return 280;
+        return 50;
     }
 
     @Override
     public float getWidth() {
-        return 280;
+        return 140;
     }
 
     @Override
@@ -557,5 +574,30 @@ public class UIDetailText
             uiShots.setText(details.shots);
             uiShots.load();
         }
+    }
+
+    @Override
+    public void handleMouseClick() {
+        if (!getScene().isPaused())
+            pawn.getParent().handleMouseClick();
+    }
+
+    @Override
+    public void handleMouseEnter() {
+        if (!getScene().isPaused())
+            pawn.getParent().handleMouseEnter();
+    }
+
+    @Override
+    public void handleMouseLeave() {
+        if (!getScene().isPaused())
+            pawn.getParent().handleMouseLeave();
+    }
+
+    @Override
+    public void handleMouseHover(float delta) {
+        if (!getScene().isPaused())
+            pawn.getParent().handleMouseHover(delta);
+
     }
 }

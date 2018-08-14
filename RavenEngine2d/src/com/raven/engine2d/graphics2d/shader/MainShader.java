@@ -199,7 +199,6 @@ public class MainShader extends Shader {
                 y / GameProperties.getScreenHeight() / GameProperties.getScaling() + .5f);
 
 
-
         glActiveTexture(GL_TEXTURE0 + TEXTURE);
         glBindTexture(GL_TEXTURE_2D, texture.getTexture());
         glActiveTexture(GL_TEXTURE0);
@@ -298,6 +297,7 @@ public class MainShader extends Shader {
                 GL_RGB, GL_UNSIGNED_BYTE,
                 pixelReadBuffer);
 
+
         int id = pixelReadBuffer.get();
 
         pixelReadBuffer.flip();
@@ -337,5 +337,13 @@ public class MainShader extends Shader {
                 GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight(),
                 GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    }
+
+    @Override
+    public void release() {
+        super.release();
+        glDeleteTextures(color_texture);
+        glDeleteTextures(id_texture);
+        glDeleteTextures(depth_texture);
     }
 }

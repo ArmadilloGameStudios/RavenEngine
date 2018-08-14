@@ -77,6 +77,10 @@ public final class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObj
         this.spriteAnimation = spriteAnimation;
     }
 
+    public void setAnimationAction(String action) {
+        this.spriteAnimation.setAction(action);
+    }
+
     @Override
     public void release() {
         super.release();

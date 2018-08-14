@@ -4,7 +4,6 @@ import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.character.RangeStyle;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
-import com.raven.breakingsands.scenes.battlescene.SelectionDetails;
 import com.raven.breakingsands.scenes.battlescene.decal.Wall;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.database.GameData;
@@ -64,7 +63,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     private int x, y;
 
     private boolean passable = true;
-    private SelectionDetails details = new SelectionDetails();
     private Wall wall;
     private Integer pawnIndex;
     private Pawn pawn;
@@ -87,8 +85,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         this.addMouseHandler(this);
 
         this.setState(State.UNSELECTABLE);
-
-        updateText();
 
         if (terrainData.has("passable")) {
             this.passable = terrainData.getBoolean("passable");
@@ -196,7 +192,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                             getScene().pawnAbility(this);
                             break;
                         default:
-                            getScene().setSelectedDetailText(getDetails());
                             break;
                     }
                     break;
@@ -213,6 +208,10 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                 case SELECT_ATTACK:
                 case SELECT_ABILITY:
                 case SELECT_DEFAULT:
+                    if (pawn != null) {
+                        pawn.updateDetailText();
+                    }
+
                     switch (state) {
                         case MOVEABLE:
                             getScene().selectPath(this);
@@ -250,8 +249,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             selectHighlight();
             terrainMessage.setState(state);
             terrainMessage.setVisibility(true);
-
-            getScene().setSelectedDetailText(getDetails());
         }
 
         if (pawn != null) {
@@ -267,6 +264,10 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                 case SELECT_ATTACK:
                 case SELECT_ABILITY:
                 case SELECT_DEFAULT:
+                    if (pawn != null) {
+                        pawn.updateDetailText();
+                    }
+
                     getScene().clearPath();
 
                     if (state == State.ATTACK) {
@@ -293,6 +294,11 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     @Override
     public EnumSet<PathFlag> getEmptyNodeEnumSet() {
         return EnumSet.noneOf(PathFlag.class);
+    }
+
+    @Override
+    public boolean isMouseHovering() {
+        return super.isMouseHovering() || (pawn != null && pawn.getUIDetailText() != null && pawn.getUIDetailText().isMouseHovering());
     }
 
     @Override
@@ -362,8 +368,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         this.wall.setHighlight(BattleScene.OFF);
 
         this.addChild(wall);
-
-        updateText();
     }
 
     public void setPawn(Pawn pawn) {
@@ -390,8 +394,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                 });
 
         abilities.forEach(pawn::addAbilityAffect);
-
-        updateText();
     }
 
     public Pawn getPawn() {
@@ -409,8 +411,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
         this.removeChild(this.pawn);
         this.pawn = null;
-
-        updateText();
     }
 
     public void removePawnAbility(Ability a) {
@@ -563,56 +563,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     public boolean isSpawn() {
         return spawn;
-    }
-
-    public void updateText() {
-
-        if (pawn != null) {
-            details.name = pawn.getName();
-            if (pawn.getTeam(false) == 0)
-                details.level = Integer.toString(pawn.getLevel()) + "," + pawn.getXp() + "/" + pawn.getNextLevelXp();
-            else
-                details.level = "";
-            details.hp = pawn.getRemainingHitPoints() + "/" + pawn.getHitPoints();
-            if (pawn.getBonusHp() > 0) {
-                details.hp += "+" + pawn.getBonusHp();
-            }
-
-            details.shield = pawn.getRemainingShield() + "/" + pawn.getTotalShield();
-            if (pawn.getBonusShield() > 0) {
-                details.shield += "+" + pawn.getBonusShield();
-            }
-
-            if (pawn == getScene().getActivePawn())
-                details.movement = pawn.getRemainingMovement() + "/" + pawn.getTotalMovement();
-            else
-                details.movement = Integer.toString(pawn.getTotalMovement());
-
-            details.resistance = Integer.toString(pawn.getResistance(false));
-            if (pawn.getBonusResistance() > 0) {
-                details.resistance += "+" + pawn.getBonusResistance();
-            }
-
-            details.weapon = pawn.getWeapon().getName();
-            details.damage = Integer.toString(pawn.getWeapon().getDamage());
-            details.piercing = Integer.toString(pawn.getWeapon().getPiercing());
-            if (pawn.getWeapon().getRange() != pawn.getWeapon().getRangeMin()) {
-                details.range =
-                        Integer.toString(pawn.getWeapon().getRangeMin()) +
-                                "-" +
-                                Integer.toString(pawn.getWeapon().getRange());
-            } else {
-                details.range = Integer.toString(pawn.getWeapon().getRange());
-            }
-            details.shots = Integer.toString(pawn.getWeapon().getShots());
-        } else {
-            details.clear();
-            details.name = "floor";
-        }
-    }
-
-    public SelectionDetails getDetails() {
-        return details;
     }
 
     public boolean isPassable(boolean checkPawn) {

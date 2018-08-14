@@ -1,6 +1,7 @@
 package com.raven.engine2d.scene;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -8,10 +9,8 @@ import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.shader.MainShader;
-import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.shader.TextShader;
-import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.ui.UITextWriter;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
@@ -46,10 +45,11 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     }
 
     final public void draw(GameWindow window) {
+
         // text
         window.printErrors("pre t");
         if (toWrite.size() > 0) {
-            TextShader textShader = window.getTexthader();
+            TextShader textShader = window.getTextShader();
             window.printErrors("rrr");
             textShader.useProgram();
             window.printErrors("lll");

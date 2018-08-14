@@ -6,6 +6,8 @@ import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.character.WeaponType;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
+import com.raven.breakingsands.scenes.battlescene.SelectionDetails;
+import com.raven.breakingsands.scenes.battlescene.UIDetailText;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
@@ -58,6 +60,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     private List<Ability> abilities = new ArrayList<>();
     private List<Ability> abilityAffects = new ArrayList<>();
 
+    private SelectionDetails details = new SelectionDetails();
+    private UIDetailText uiDetailText;
     private PawnMessage pawnMessage;
     private float messageShowTime;
 
@@ -230,8 +234,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         this.hack = hack;
 
-        if (getParent() != null)
-            getParent().updateText();
+        updateDetailText();
     }
 
     public Hack getHack() {
@@ -487,7 +490,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             if (a.resistance != null)
                 this.bonusResistance += a.resistance;
 
-            getParent().updateText();
+            updateDetailText();
         }
     }
 
@@ -504,7 +507,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 if (a.resistance != null)
                     this.bonusResistance -= a.resistance;
 
-                getParent().updateText();
+                updateDetailText();
             }
         }
     }
@@ -739,7 +742,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             onAttackDone.onActionFinish(getAnimationState());
         }
 
-        this.getParent().updateText();
+        this.updateDetailText();
 
         this.showMessage("-" + Integer.toString(dealtDamage));
 
@@ -833,4 +836,71 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         return (level * (level + 1) + 1) * 50;
     }
 
+    public void setUIDetailText(UIDetailText uiDetailText) {
+        this.uiDetailText = uiDetailText;
+    }
+
+
+    public void updateDetailText() {
+        if (uiDetailText != null) {
+
+            if (getScene().getActivePawn() == this) {
+                uiDetailText.setAnimationAction("active");
+            } else {
+                if (this.isReady() && team == getScene().getActiveTeam())
+                    if (getParent().isMouseHovering()) {
+                        uiDetailText.setAnimationAction("hover");
+                    } else {
+                        uiDetailText.setAnimationAction("idle");
+                    }
+                else {
+                    uiDetailText.setAnimationAction("disable");
+                }
+            }
+
+            details.name = getName();
+            if (getTeam(false) == 0)
+                details.level = Integer.toString(getLevel()) + "," + getXp() + "/" + getNextLevelXp();
+            else
+                details.level = "";
+            details.hp = getRemainingHitPoints() + "/" + getHitPoints();
+            if (getBonusHp() > 0) {
+                details.hp += "+" + getBonusHp();
+            }
+
+            details.shield = getRemainingShield() + "/" + getTotalShield();
+            if (getBonusShield() > 0) {
+                details.shield += "+" + getBonusShield();
+            }
+
+            if (this == getScene().getActivePawn())
+                details.movement = getRemainingMovement() + "/" + getTotalMovement();
+            else
+                details.movement = Integer.toString(getTotalMovement());
+
+            details.resistance = Integer.toString(getResistance(false));
+            if (getBonusResistance() > 0) {
+                details.resistance += "+" + getBonusResistance();
+            }
+
+            details.weapon = getWeapon().getName();
+            details.damage = Integer.toString(getWeapon().getDamage());
+            details.piercing = Integer.toString(getWeapon().getPiercing());
+            if (getWeapon().getRange() != getWeapon().getRangeMin()) {
+                details.range =
+                        Integer.toString(getWeapon().getRangeMin()) +
+                                "-" +
+                                Integer.toString(getWeapon().getRange());
+            } else {
+                details.range = Integer.toString(getWeapon().getRange());
+            }
+            details.shots = Integer.toString(getWeapon().getShots());
+
+            uiDetailText.setDetails(details);
+        }
+    }
+
+    public UIDetailText getUIDetailText() {
+        return uiDetailText;
+    }
 }

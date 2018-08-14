@@ -15,6 +15,7 @@ import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
 import com.raven.breakingsands.scenes.hud.UIBottomRightContainer;
 import com.raven.breakingsands.scenes.hud.UICenterContainer;
+import com.raven.breakingsands.scenes.hud.UIUpperLeftContainer;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
@@ -56,8 +57,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     private Menu menu;
     private UIActionSelect actionSelect;
     private UILevelUp uiLevelUp;
-    private UIDetailText uiActiveDetailText;
-    private UIDetailText uiSelectedDetailText;
+    private List<UIDetailText> uiActiveDetailTextList = new ArrayList<>();
 
     public enum State {
         MOVING, ATTACKING, SELECT_DEFAULT, SELECT_MOVE, SELECT_ATTACK, SELECT_ABILITY
@@ -199,40 +199,33 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             map = new Map(this, loadGameData.getData("map"));
             addChild(map);
             map.getTerrainList().forEach(Terrain::setPawnIndex);
+        } else {
+            // Terrain
+            map = new Map(this, difficulty);
+            map.generate();
+            addChild(map);
+        }
 
-            // Bottom UI
-            UIBottomRightContainer<BattleScene> bottomRightContainer = new UIBottomRightContainer<>(this);
-            addChild(bottomRightContainer);
-            uiActiveDetailText = new UIDetailText(this, bottomRightContainer.getStyle());
-            bottomRightContainer.addChild(uiActiveDetailText);
-            bottomRightContainer.pack();
+        // Action Select
+        actionSelect = new UIActionSelect(this);
+        addChild(actionSelect);
 
-            UIBottomLeftContainer<BattleScene> bottomLeftContainer = new UIBottomLeftContainer<>(this);
-            addChild(bottomLeftContainer);
-            uiSelectedDetailText = new UIDetailText(this, bottomLeftContainer.getStyle());
-            bottomLeftContainer.addChild(uiSelectedDetailText);
-            bottomLeftContainer.pack();
+        // Level UP
+        UICenterContainer<BattleScene> centerContainer = new UICenterContainer<>(this);
+        addChild(centerContainer);
+        uiLevelUp = new UILevelUp(this);
+        centerContainer.addChild(uiLevelUp);
+        centerContainer.pack();
+        uiLevelUp.setVisibility(false);
 
-            // Action Select
-            actionSelect = new UIActionSelect(this);
-            addChild(actionSelect);
+        // Menu
+        menu = new Menu(this);
+        menu.pack();
+        addChild(menu);
+        menu.setVisibility(false);
 
-            // Level UP
-            UICenterContainer<BattleScene> centerContainer = new UICenterContainer<>(this);
-            addChild(centerContainer);
-            uiLevelUp = new UILevelUp(this);
-            centerContainer.addChild(uiLevelUp);
-            centerContainer.pack();
-            uiLevelUp.setVisibility(false);
 
-            // Menu
-            menu = new Menu(this);
-            menu.pack();
-            addChild(menu);
-            menu.setVisibility(false);
-
-//          victory();
-
+        if (loadGameData != null) {
             activeTeam = loadGameData.getInteger("activeTeam");
             if (loadGameData.getInteger("activePawn") >= 0) {
                 Pawn a = pawns.get(loadGameData.getInteger("activePawn"));
@@ -240,45 +233,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             } else
                 setActivePawn(null);
         } else {
-
-            // Terrain
-            map = new Map(this, difficulty);
-            map.generate();
-            addChild(map);
-
-            // Bottom UI
-            UIBottomRightContainer<BattleScene> bottomRightContainer = new UIBottomRightContainer<>(this);
-            addChild(bottomRightContainer);
-            uiActiveDetailText = new UIDetailText(this, bottomRightContainer.getStyle());
-            bottomRightContainer.addChild(uiActiveDetailText);
-            bottomRightContainer.pack();
-
-            UIBottomLeftContainer<BattleScene> bottomLeftContainer = new UIBottomLeftContainer<>(this);
-            addChild(bottomLeftContainer);
-            uiSelectedDetailText = new UIDetailText(this, bottomLeftContainer.getStyle());
-            bottomLeftContainer.addChild(uiSelectedDetailText);
-            bottomLeftContainer.pack();
-
-            // Action Select
-            actionSelect = new UIActionSelect(this);
-            addChild(actionSelect);
-
-            // Level UP
-            UICenterContainer<BattleScene> centerContainer = new UICenterContainer<>(this);
-            addChild(centerContainer);
-            uiLevelUp = new UILevelUp(this);
-            centerContainer.addChild(uiLevelUp);
-            centerContainer.pack();
-            uiLevelUp.setVisibility(false);
-
-            // Menu
-            menu = new Menu(this);
-            menu.pack();
-            addChild(menu);
-            menu.setVisibility(false);
-
-//          victory();
-
             addPawns();
 
             // restore shield
@@ -289,6 +243,19 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
             setActiveTeam(0);
         }
+
+        // Left UI Details
+        UIUpperLeftContainer<BattleScene> bottomRightContainer = new UIUpperLeftContainer<>(this);
+        addChild(bottomRightContainer);
+
+        for (Pawn p : pawns) {
+            UIDetailText uiActiveDetailText = new UIDetailText(this, p, bottomRightContainer.getStyle());
+            bottomRightContainer.addChild(uiActiveDetailText);
+            uiActiveDetailTextList.add(uiActiveDetailText);
+            p.updateDetailText();
+        }
+
+        bottomRightContainer.pack();
     }
 
     private void addPawns() {
@@ -484,25 +451,16 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         if (checkVictory()) return;
 
+        Pawn oldPawn = this.activePawn;
+
         this.activePawn = pawn;
 
+        if (oldPawn != null) {
+            oldPawn.updateDetailText();
+        }
+
         if (activePawn != null) {
-            activePawn.getParent().updateText();
-
-            if (pawn.getTeam(true) == 0)
-                setActiveDetailText(activePawn.getParent().getDetails());
-            else
-                clearActiveDetailText();
-
-
-//            Vector2f pos = pawn.getWorldPosition();
-            // TODO focus on pawn
-
-//            System.out.println("Pawn -");
-//            pawn.getAbilities().forEach(a -> System.out.println(a.name));
-//            System.out.println("Terrain -");
-//            pawn.getParent().getAbilities().forEach(a -> System.out.println(a.name));
-
+            activePawn.updateDetailText();
         }
 
         setState(SELECT_DEFAULT);
@@ -552,6 +510,10 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         pawns.stream()
                 .filter(p -> p.getTeam(true) == activeTeam)
                 .forEach(Pawn::ready);
+
+        for (Pawn pawn : pawns) {
+            pawn.updateDetailText();
+        }
 
         setActivePawn(null);
     }
@@ -704,7 +666,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
 //                    n.cover = rangeMap.get(n);
                         n.setState(Terrain.State.ATTACKABLE);
-                        n.updateText();
                     }
                 }
             }
@@ -747,7 +708,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 for (Terrain n : range) {
                     if (n.getPawn() == null || n.getPawn().getTeam(true) != activeTeam) {
                         n.setState(Terrain.State.ATTACKABLE);
-                        n.updateText();
                     }
                 }
             }
@@ -770,14 +730,12 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                     if ((activeAbility.target & Ability.Target.EMPTY) != 0) {
                         if (n.getPawn() == null) {
                             n.setState(Terrain.State.ABILITYABLE);
-                            n.updateText();
                         }
                     }
 
                     if ((activeAbility.target & Ability.Target.ENEMY) != 0) {
                         if ((n.getPawn() == null && activeAbility.size >= 0) || n.getPawn() != null && n.getPawn().getTeam(true) != activePawn.getTeam(true)) {
                             n.setState(Terrain.State.ABILITYABLE);
-                            n.updateText();
                         }
                     }
 
@@ -792,7 +750,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                         }
                         if ((n.getPawn() == null && activeAbility.size >= 0) || n.getPawn() != null && n.getPawn() != activePawn && n.getPawn().getTeam(true) == activePawn.getTeam(true)) {
                             n.setState(Terrain.State.ABILITYABLE);
-                            n.updateText();
                         }
                     }
                 }
@@ -859,21 +816,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     public void victory() {
         getGame().prepTransitionScene(new BattleScene(getGame(), pawns.stream().filter(p -> p.getTeam(false) == 0).collect(Collectors.toList()), difficulty + 1));
-    }
-
-    private void clearActiveDetailText() {
-        if (uiActiveDetailText != null)
-            uiActiveDetailText.setDetails(new SelectionDetails());
-    }
-
-    public void setActiveDetailText(SelectionDetails details) {
-        if (uiActiveDetailText != null)
-            uiActiveDetailText.setDetails(details);
-    }
-
-    public void setSelectedDetailText(SelectionDetails details) {
-        if (uiSelectedDetailText != null)
-            uiSelectedDetailText.setDetails(details);
     }
 
     // actions - should be the prime way of interacting with the battle scene state

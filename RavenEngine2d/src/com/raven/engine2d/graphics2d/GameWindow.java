@@ -1,5 +1,8 @@
 package com.raven.engine2d.graphics2d;
 
+import com.codedisaster.steamworks.SteamAPI;
+import com.codedisaster.steamworks.SteamException;
+import com.codedisaster.steamworks.SteamUtils;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.shader.Shader;
@@ -52,11 +55,12 @@ public class GameWindow {
 
         // Configure GLFW
         glfwDefaultWindowHints();
+        // this has caused so many problems, including with the steam overlay
 //        if (System.getProperty("os.name").contains("mac")) {
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+//        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+//        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+//        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+//        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 //        }
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
@@ -135,10 +139,12 @@ public class GameWindow {
     }
 
     public MainShader getMainShader() {
+//        mainShader.release();
+//        mainShader = new MainShader(engine, this);
         return mainShader;
     }
 
-    public TextShader getTexthader() {
+    public TextShader getTextShader() {
         return textShader;
     }
 
