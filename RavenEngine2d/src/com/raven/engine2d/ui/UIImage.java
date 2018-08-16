@@ -73,6 +73,19 @@ public final class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObj
         shader.draw(texture, spriteAnimation, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), true, null, DrawStyle.UI);
     }
 
+    @Override
+    public void update(float deltaTime) {
+        if (spriteAnimation != null) {
+            spriteAnimation.update(deltaTime);
+        }
+
+        this.onUpdate(deltaTime);
+
+        for (UIObject c : getChildren()) {
+            c.update(deltaTime);
+        }
+    }
+
     public void setSpriteAnimation(SpriteAnimationState spriteAnimation) {
         this.spriteAnimation = spriteAnimation;
     }

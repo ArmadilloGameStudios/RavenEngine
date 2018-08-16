@@ -18,7 +18,10 @@ public class UIDetailText
     private Vector2f position = new Vector2f();
 
     private UIImage<BattleScene> backgroundImg;
+    private UIImage<BattleScene> pawnImg;
+
     private SelectionDetails details;
+
     private UILabel<BattleScene>
             uiName, uiLvl, uiWeapon,
             uiHP, uiLblHP,
@@ -30,15 +33,14 @@ public class UIDetailText
             uiRng, uiLblRng,
             uiShots, uiLblShots;
 
-    public UIDetailText(BattleScene scene, Pawn pawn, int style) {
+    public UIDetailText(BattleScene scene, Pawn pawn) {
         super(scene);
 
         this.addMouseHandler(this);
 
         this.pawn = pawn;
-        pawn.setUIDetailText(this);
 
-        if (style == UIContainer.UPPER_LEFT) {
+        if (0 == pawn.getTeam(true)) {
             initLeft();
         } else {
             initRight();
@@ -47,12 +49,20 @@ public class UIDetailText
 
     private void initLeft() {
         backgroundImg = new UIImage<>(getScene(),
-                116, 48,
+                116, 54,
                 bcgImgRightSrc);
-
         backgroundImg.setSpriteAnimation(new SpriteAnimationState(getScene().getEngine().getAnimation("details")));
-
         addChild(backgroundImg);
+
+        pawnImg = new UIImage<>(getScene(),
+                32, 32,
+                pawn.getSpriteSheetName());
+        SpriteAnimationState sas = new SpriteAnimationState(getScene().getEngine().getAnimation(pawn.getAnimationName()));
+        pawnImg.setSpriteAnimation(sas);
+        sas.setFlip(true);
+        pawnImg.setX(-4);
+        pawnImg.setY(50);
+        addChild(pawnImg);
 
         uiName = new UILabel<>(getScene(), "-", 128, 10);
         UIFont font = uiName.getFont();
@@ -69,7 +79,7 @@ public class UIDetailText
         font.setSmall(true);
         font.setSide(UIFont.Side.RIGHT);
         font.setHighlight(false);
-        uiLvl.setX(150);
+        uiLvl.setX(152);
         uiLvl.setY(56);
         uiLvl.load();
 
@@ -80,7 +90,7 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiHP.setX(156);
+        uiHP.setX(160);
         uiHP.setY(26);
         uiHP.load();
 
@@ -143,7 +153,7 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiSld.setX(156);
+        uiSld.setX(160);
         uiSld.setY(6);
         uiSld.load();
 
@@ -262,17 +272,29 @@ public class UIDetailText
     private void initRight() {
 
         backgroundImg = new UIImage<>(getScene(),
-                (int) getWidth(), (int) getHeight(),
-                bcgImgLeftSrc);
-
+                116, 54,
+                bcgImgRightSrc);
+        SpriteAnimationState backgroundSAS = new SpriteAnimationState(getScene().getEngine().getAnimation("details"));
+        backgroundImg.setSpriteAnimation(backgroundSAS);
+        backgroundSAS.setFlip(true);
         addChild(backgroundImg);
+
+        pawnImg = new UIImage<>(getScene(),
+                32, 32,
+                pawn.getSpriteSheetName());
+        SpriteAnimationState sas = new SpriteAnimationState(getScene().getEngine().getAnimation(pawn.getAnimationName()));
+        pawnImg.setSpriteAnimation(sas);
+        sas.setFlip(false);
+        pawnImg.setX(172);
+        pawnImg.setY(50);
+        addChild(pawnImg);
 
         uiName = new UILabel<>(getScene(), "-", 128, 10);
         UIFont font = uiName.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiName.setX(54);
-        uiName.setY(122);
+        uiName.setX(20);
+        uiName.setY(56);
         uiName.load();
 
         addChild(uiName);
@@ -282,20 +304,19 @@ public class UIDetailText
         font.setSmall(true);
         font.setSide(UIFont.Side.RIGHT);
         font.setHighlight(false);
-        uiLvl.setX(146);
-        uiLvl.setY(122);
+        uiLvl.setX(150);
+        uiLvl.setY(56);
         uiLvl.load();
 
         addChild(uiLvl);
-
 
         uiHP = new UILabel<>(getScene(), "-", 30, 10);
         font = uiHP.getFont();
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiHP.setX(370 - 334);
-        uiHP.setY(94);
+        uiHP.setX(168);
+        uiHP.setY(26);
         uiHP.load();
 
         addChild(uiHP);
@@ -304,8 +325,8 @@ public class UIDetailText
         font = uiLblHP.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblHP.setX(6);
-        uiLblHP.setY(94);
+        uiLblHP.setX(12);
+        uiLblHP.setY(26);
         uiLblHP.load();
 
         addChild(uiLblHP);
@@ -315,7 +336,7 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiMov.setX(480 - 334);
+        uiMov.setX(480);
         uiMov.setY(94);
         uiMov.load();
 
@@ -325,7 +346,7 @@ public class UIDetailText
         font = uiLblMov.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblMov.setX(450 - 334);
+        uiLblMov.setX(450);
         uiLblMov.setY(94);
         uiLblMov.load();
 
@@ -336,7 +357,7 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiRes.setX(370 - 334);
+        uiRes.setX(370);
         uiRes.setY(74);
         uiRes.load();
 
@@ -346,7 +367,7 @@ public class UIDetailText
         font = uiLblRes.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblRes.setX(340 - 334);
+        uiLblRes.setX(340);
         uiLblRes.setY(74);
         uiLblRes.load();
 
@@ -357,8 +378,8 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiSld.setX(480 - 334);
-        uiSld.setY(74);
+        uiSld.setX(168);
+        uiSld.setY(6);
         uiSld.load();
 
         addChild(uiSld);
@@ -367,8 +388,8 @@ public class UIDetailText
         font = uiLblSld.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblSld.setX(450 - 334);
-        uiLblSld.setY(74);
+        uiLblSld.setX(12);
+        uiLblSld.setY(6);
         uiLblSld.load();
 
         addChild(uiLblSld);
@@ -378,7 +399,7 @@ public class UIDetailText
         font = uiWeapon.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiWeapon.setX(6);
+        uiWeapon.setX(350);
         uiWeapon.setY(46);
         uiWeapon.load();
 
@@ -390,7 +411,7 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiDmg.setX(370 - 334);
+        uiDmg.setX(370);
         uiDmg.setY(18);
         uiDmg.load();
 
@@ -400,7 +421,7 @@ public class UIDetailText
         font = uiLblDmg.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblDmg.setX(340 - 334);
+        uiLblDmg.setX(340);
         uiLblDmg.setY(18);
         uiLblDmg.load();
 
@@ -412,7 +433,7 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiPir.setX(480 - 334);
+        uiPir.setX(480);
         uiPir.setY(18);
         uiPir.load();
 
@@ -422,7 +443,7 @@ public class UIDetailText
         font = uiLblPir.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblPir.setX(450 - 334);
+        uiLblPir.setX(450);
         uiLblPir.setY(18);
         uiLblPir.load();
 
@@ -434,7 +455,7 @@ public class UIDetailText
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiRng.setX(370 - 334);
+        uiRng.setX(370);
         uiRng.setY(-2);
         uiRng.load();
 
@@ -444,19 +465,19 @@ public class UIDetailText
         font = uiLblRng.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblRng.setX(340 - 334);
+        uiLblRng.setX(340);
         uiLblRng.setY(-2);
         uiLblRng.load();
 
         addChild(uiLblRng);
 
-        // Accuracy
+        // Shots
         uiShots = new UILabel<>(getScene(), "-", 30, 10);
         font = uiShots.getFont();
         font.setSmall(true);
         font.setHighlight(false);
         font.setSide(UIFont.Side.RIGHT);
-        uiShots.setX(480 - 334);
+        uiShots.setX(480);
         uiShots.setY(-2);
         uiShots.load();
 
@@ -466,7 +487,7 @@ public class UIDetailText
         font = uiLblShots.getFont();
         font.setSmall(true);
         font.setHighlight(false);
-        uiLblShots.setX(450 - 334);
+        uiLblShots.setX(450);
         uiLblShots.setY(-2);
         uiLblShots.load();
 
@@ -475,6 +496,10 @@ public class UIDetailText
 
     public void setAnimationAction(String animation) {
         backgroundImg.setAnimationAction(animation);
+    }
+
+    public Pawn getPawn() {
+        return pawn;
     }
 
     @Override
@@ -489,12 +514,12 @@ public class UIDetailText
 
     @Override
     public float getHeight() {
-        return 50;
+        return 56;
     }
 
     @Override
     public float getWidth() {
-        return 140;
+        return 116;
     }
 
     @Override
@@ -584,6 +609,8 @@ public class UIDetailText
 
     @Override
     public void handleMouseEnter() {
+
+        System.out.println(pawnImg.getID());
         if (!getScene().isPaused())
             pawn.getParent().handleMouseEnter();
     }

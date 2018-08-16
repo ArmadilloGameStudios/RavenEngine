@@ -262,13 +262,23 @@ public class MainShader extends Shader {
                 y / GameProperties.getScreenHeight() / GameProperties.getScaling() + .5f);
 
         if (spriteAnimation != null) {
-            glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), spriteAnimation.getWidth(), spriteAnimation.getHeight());
+            if (!spriteAnimation.getFlip()) {
+                glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), spriteAnimation.getWidth(), spriteAnimation.getHeight());
 
-            glUniform4f(rect_location,
-                    (float) spriteAnimation.getX() / (float) texture.getWidth(),
-                    (float) spriteAnimation.getY() / (float) texture.getHeight(),
-                    (float) spriteAnimation.getWidth() / (float) texture.getWidth(),
-                    (float) spriteAnimation.getHeight() / (float) texture.getHeight());
+                glUniform4f(rect_location,
+                        (float) spriteAnimation.getX() / (float) texture.getWidth(),
+                        (float) spriteAnimation.getY() / (float) texture.getHeight(),
+                        (float) spriteAnimation.getWidth() / (float) texture.getWidth(),
+                        (float) spriteAnimation.getHeight() / (float) texture.getHeight());
+            } else {
+                glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), spriteAnimation.getWidth(), spriteAnimation.getHeight());
+
+                glUniform4f(rect_location,
+                        (float) (spriteAnimation.getX() + spriteAnimation.getWidth()) / (float) texture.getWidth(),
+                        (float) spriteAnimation.getY() / (float) texture.getHeight(),
+                        (float) -spriteAnimation.getWidth() / (float) texture.getWidth(),
+                        (float) spriteAnimation.getHeight() / (float) texture.getHeight());
+            }
         } else {
             glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), texture.getWidth(), texture.getHeight());
 

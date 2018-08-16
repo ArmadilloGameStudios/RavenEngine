@@ -37,16 +37,33 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
     @Override
     public void update(float deltaTime) {
 
+        this.onUpdate(deltaTime);
+
+        for (UIObject c : children) {
+            c.update(deltaTime);
+        }
+    }
+
+    public void onUpdate(float deltaTime) {
+
     }
 
     @Override
-    public void addChild(UIObject obj) {
+    public final void addChild(UIObject obj) {
         obj.parentIsUIObject = true;
 
-        obj.setParent(this);
-        children.add(obj);
+        if (obj.getParent() != this)
+            obj.setParent(this);
+
+        if (!children.contains(obj))
+            children.add(obj);
+        else
+            System.out.println("dup");
     }
 
+    public void removeChild(UIObject obj) {
+        children.remove(obj);
+    }
 
     @Override
     public final Layer.Destination getDestination() {
@@ -54,7 +71,7 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
     }
 
     @Override
-    public List<UIObject> getChildren() {
+    public final List<UIObject> getChildren() {
         return children;
     }
 

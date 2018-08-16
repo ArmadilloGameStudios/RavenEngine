@@ -68,7 +68,6 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
 
         mainShader.clear(backgroundColor);
 
-
         // drawImage
         for (GameObject o : layerTerrain.getChildren()) {
             if (o.isVisible())
@@ -149,10 +148,24 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
 
     public void addGameObject(GameObject go) {
         getLayer(go.getDestination()).addChild(go);
+
+        go.getChildren().forEach(c -> {
+            if (c instanceof GameObject)
+                addGameObject((GameObject) c);
+        });
     }
 
     public void removeGameObject(GameObject go) {
-        getLayer(go.getDestination()).removeChild(go);
+        Layer layer = getLayer(go.getDestination());
+
+        if (layer != null) {
+            layer.removeChild(go);
+        }
+
+        go.getChildren().forEach(c -> {
+            if (c instanceof GameObject)
+                removeGameObject((GameObject) c);
+        });
     }
 
     public void addTextToWrite(UITextWriter textWriter) {
@@ -227,6 +240,8 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     }
 
     public abstract void inputKey(int key, int action, int mods);
+
+    public static List catty = new ArrayList();
 
     public Clip getClip(String name) {
         return null;

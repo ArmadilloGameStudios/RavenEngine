@@ -12,10 +12,7 @@ import com.raven.breakingsands.scenes.battlescene.menu.Menu;
 import com.raven.breakingsands.scenes.battlescene.pawn.Hack;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
-import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
-import com.raven.breakingsands.scenes.hud.UIBottomRightContainer;
-import com.raven.breakingsands.scenes.hud.UICenterContainer;
-import com.raven.breakingsands.scenes.hud.UIUpperLeftContainer;
+import com.raven.breakingsands.scenes.hud.*;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
@@ -55,9 +52,10 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     private GameData loadGameData = null;
 
     private Menu menu;
+    private UIUpperLeftContainer<BattleScene> bottomLeftContainer;
+    private UIUpperRightContainer<BattleScene> bottomRightContainer;
     private UIActionSelect actionSelect;
     private UILevelUp uiLevelUp;
-    private List<UIDetailText> uiActiveDetailTextList = new ArrayList<>();
 
     public enum State {
         MOVING, ATTACKING, SELECT_DEFAULT, SELECT_MOVE, SELECT_ATTACK, SELECT_ABILITY
@@ -244,17 +242,19 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             setActiveTeam(0);
         }
 
-        // Left UI Details
-        UIUpperLeftContainer<BattleScene> bottomRightContainer = new UIUpperLeftContainer<>(this);
+        // Left/Right UI Details
+        bottomLeftContainer = new UIUpperLeftContainer<>(this);
+        addChild(bottomLeftContainer);
+
+        bottomRightContainer = new UIUpperRightContainer<>(this);
         addChild(bottomRightContainer);
 
         for (Pawn p : pawns) {
-            UIDetailText uiActiveDetailText = new UIDetailText(this, p, bottomRightContainer.getStyle());
-            bottomRightContainer.addChild(uiActiveDetailText);
-            uiActiveDetailTextList.add(uiActiveDetailText);
+            p.setUIDetailText(new UIDetailText(this, p));
             p.updateDetailText();
         }
 
+        bottomLeftContainer.pack();
         bottomRightContainer.pack();
     }
 
@@ -435,7 +435,39 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     public void removePawn(Pawn pawn) {
+        removeUIDetails(pawn.getUIDetailText());
         pawns.remove(pawn);
+    }
+
+    public void removeUIDetails(UIDetailText object) {
+        if (bottomLeftContainer != null && bottomRightContainer != null) {
+
+            bottomLeftContainer.removeChild(object);
+            bottomRightContainer.removeChild(object);
+
+            bottomLeftContainer.pack();
+            bottomRightContainer.pack();
+        }
+
+        if (object != null) {
+//            object.release();
+            removeGameObject(object);
+//            object.setVisibility(false);  // This works but remove should work
+        }
+    }
+
+    public void addUIDetails(UIDetailText object) {
+        if (bottomLeftContainer != null && bottomRightContainer != null) {
+
+            if (object.getPawn().getTeam(true) == 0) {
+                bottomLeftContainer.addChild(object);
+            } else {
+                bottomRightContainer.addChild(object);
+            }
+
+            bottomLeftContainer.pack();
+            bottomRightContainer.pack();
+        }
     }
 
     public UILevelUp getUILevelUp() {
@@ -741,12 +773,12 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
                     if ((activeAbility.target & Ability.Target.ALLY) != 0) {
                         if (n.getPawn() != null) {
-                            System.out.println("Check Ally");
-                            System.out.println(n.getPawn().getName());
-                            System.out.println((n.getPawn() == null && activeAbility.size >= 0));
-                            System.out.println(n.getPawn() != null);
-                            System.out.println(n.getPawn() != activePawn);
-                            System.out.println(n.getPawn().getTeam(true) == activePawn.getTeam(true));
+//                            System.out.println("Check Ally");
+//                            System.out.println(n.getPawn().getName());
+//                            System.out.println((n.getPawn() == null && activeAbility.size >= 0));
+//                            System.out.println(n.getPawn() != null);
+//                            System.out.println(n.getPawn() != activePawn);
+//                            System.out.println(n.getPawn().getTeam(true) == activePawn.getTeam(true));
                         }
                         if ((n.getPawn() == null && activeAbility.size >= 0) || n.getPawn() != null && n.getPawn() != activePawn && n.getPawn().getTeam(true) == activePawn.getTeam(true)) {
                             n.setState(Terrain.State.ABILITYABLE);

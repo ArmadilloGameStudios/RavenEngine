@@ -199,44 +199,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         team = i;
     }
 
-    public void hack(Hack hack) {
-        if (hack != null) {
-
-            bonusHp += hack.getHP();
-            bonusShield += hack.getShield();
-            bonusResistance += hack.getResistance();
-
-            if (hack.isInstant()) {
-                ready();
-            } else {
-                setReady(false);
-            }
-            hack.setInstant(false);
-
-            if (this.spriteHack != null)
-                this.setSpriteSheet(spriteHack);
-            if (this.weaponHack != null) {
-                setWeapon(this.weaponHack);
-            }
-        } else if (this.hack != null) {
-            bonusHp -= this.hack.getHP();
-            bonusShield -= this.hack.getShield();
-            bonusResistance -= this.hack.getResistance();
-
-            setReady(false);
-
-            if (this.spriteNormal != null)
-                this.setSpriteSheet(spriteNormal);
-            if (this.weaponNormal != null) {
-                setWeapon(this.weaponNormal);
-            }
-        }
-
-        this.hack = hack;
-
-        updateDetailText();
-    }
-
     public Hack getHack() {
         return hack;
     }
@@ -754,6 +716,46 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         messageShowTime = 0;
     }
 
+    public void hack(Hack hack) {
+        if (hack != null) {
+
+            bonusHp += hack.getHP();
+            bonusShield += hack.getShield();
+            bonusResistance += hack.getResistance();
+
+            if (hack.isInstant()) {
+                ready();
+            } else {
+                setReady(false);
+            }
+            hack.setInstant(false);
+
+            if (this.spriteHack != null)
+                this.setSpriteSheet(spriteHack);
+            if (this.weaponHack != null) {
+                setWeapon(this.weaponHack);
+            }
+        } else if (this.hack != null) {
+            bonusHp -= this.hack.getHP();
+            bonusShield -= this.hack.getShield();
+            bonusResistance -= this.hack.getResistance();
+
+            setReady(false);
+
+            if (this.spriteNormal != null)
+                this.setSpriteSheet(spriteNormal);
+            if (this.weaponNormal != null) {
+                setWeapon(this.weaponNormal);
+            }
+        }
+
+        this.hack = hack;
+
+        setUIDetailText(new UIDetailText(getScene(), this));
+
+        updateDetailText();
+    }
+
     public void die(ActionFinishHandler onAttackDone) {
         if (getAnimationState().hasAction("die")) {
             getAnimationState().setAction("die");
@@ -837,9 +839,12 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public void setUIDetailText(UIDetailText uiDetailText) {
-        this.uiDetailText = uiDetailText;
-    }
+        if (this.uiDetailText != null)
+            getScene().removeUIDetails(this.uiDetailText);
 
+        this.uiDetailText = uiDetailText;
+        getScene().addUIDetails(this.uiDetailText);
+    }
 
     public void updateDetailText() {
         if (uiDetailText != null) {
@@ -847,8 +852,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             if (getScene().getActivePawn() == this) {
                 uiDetailText.setAnimationAction("active");
             } else {
-                if (this.isReady() && team == getScene().getActiveTeam())
-                    if (getParent().isMouseHovering()) {
+                if (this.isReady() && getTeam(true) == getScene().getActiveTeam())
+                    if (getParent() != null && getParent().isMouseHovering()) {
                         uiDetailText.setAnimationAction("hover");
                     } else {
                         uiDetailText.setAnimationAction("idle");

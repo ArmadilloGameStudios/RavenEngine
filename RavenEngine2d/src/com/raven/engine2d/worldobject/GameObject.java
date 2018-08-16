@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class GameObject<GO extends GameObject, P extends Parentable, C extends GameObject>
+public abstract class GameObject<GO extends GameObject, P extends Parentable<? extends GameObject>, C extends GameObject>
         implements Childable<P>, Parentable<C> {
 
     private static int last_id = 0;

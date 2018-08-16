@@ -99,6 +99,14 @@ public abstract class WorldObject<
         return new GameData(map);
     }
 
+    public String getSpriteSheetName() {
+        return spriteSheetName;
+    }
+
+    public String getAnimationName() {
+        return animationName;
+    }
+
     public float getX() {
         return position.x;
     }

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public abstract class UIContainer<S extends Scene>
         extends UIObject<S, Scene<? extends Game>> {
 
-    public static final int CENTER = 0, UPPER_LEFT = 1, BOTTOM_LEFT = 2, BOTTOM = 3, BOTTOM_RIGHT = 4, RIGHT = 5;
+    public static final int CENTER = 0, UPPER_LEFT = 1, BOTTOM_LEFT = 2, BOTTOM = 3, UPPER_RIGHT = 4, BOTTOM_RIGHT = 5, RIGHT = 6;
 
     protected float width, height;
     private Vector2f position = new Vector2f();
@@ -31,12 +31,6 @@ public abstract class UIContainer<S extends Scene>
     public UIContainer(S scene) {
         super(scene);
     }
-
-    @Override
-    public void addChild(UIObject child) {
-        super.addChild(child);
-    }
-
 
     @Override
     public final float getY() {
@@ -126,6 +120,32 @@ public abstract class UIContainer<S extends Scene>
 //                    obj.setX(offset);
                     yOffset -= obj.getHeight() * 2f;
                     obj.setY(yOffset);
+
+//                    offset += obj.getWidth() * 2f;
+                }
+                break;
+            case UPPER_RIGHT:
+                width = 0;
+                height = 0f;
+
+                for (UIObject obj : children) {
+                    height = Math.max(obj.getHeight(), height);
+                    width += obj.getWidth();
+                }
+
+                // Get Offset
+//                offset = 0f;
+                yOffset = GameProperties.getScreenHeight() * 2f / GameProperties.getScaling();
+
+                for (int i = 0; i < children.size(); i++) {
+                    UIObject obj = children.get(i);
+
+                    float xOffset = GameProperties.getScreenWidth() * 2f / GameProperties.getScaling() - obj.getWidth() * 2f;
+
+//                    obj.setX(offset);
+                    yOffset -= obj.getHeight() * 2f;
+                    obj.setY(yOffset);
+                    obj.setX(xOffset);
 
 //                    offset += obj.getWidth() * 2f;
                 }

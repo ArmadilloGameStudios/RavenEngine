@@ -1,24 +1,24 @@
 {
     name: "idle",
     width: 116,
-    height: 48,
+    height: 55,
     frames: [{ time: 1000, y: 0 }]
 },
 {
     name: "hover",
     width: 116,
-    height: 48,
-    frames: [{ time: 1000, y: 96 }]
+    height: 55,
+    frames: [{ time: 1000, y: 110 }]
 },
 {
     name: "active",
     width: 116,
-    height: 48,
-    frames: [{ time: 1000, y: 48 }]
+    height: 55,
+    frames: [{ time: 1000, y: 55 }]
 },
 {
     name: "disable",
     width: 116,
-    height: 48,
-    frames: [{ time: 1000, y: 144 }]
+    height: 55,
+    frames: [{ time: 1000, y: 165 }]
 }
