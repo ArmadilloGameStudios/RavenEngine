@@ -2,6 +2,7 @@ package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
+import com.raven.breakingsands.scenes.hud.UIBottomCenterContainer;
 import com.raven.breakingsands.scenes.hud.UIRightContainer;
 import com.raven.engine2d.ui.UIButton;
 
@@ -13,7 +14,7 @@ import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.ATTAC
 import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.MOVING;
 import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_DEFAULT;
 
-public class UIActionSelect extends UIRightContainer<BattleScene> {
+public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
     private UIAbilityButton btnPushBlast, btnHookPull, btnHack, btnBlink, btnRecall;
     private UIButton<BattleScene> btnMove, btnAttack, btnSkip, btnCancel, btnLevel, btnEnd;
@@ -394,7 +395,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
 
         btnEnd = new UIButton<BattleScene>(scene,
                 "sprites/icon end turn.png",
-                "iconbutton") {
+                "endbutton") {
 
             @Override
             public void handleMouseClick() {

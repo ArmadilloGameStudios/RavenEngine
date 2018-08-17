@@ -864,10 +864,15 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             }
 
             details.name = getName();
-            if (getTeam(false) == 0)
-                details.level = Integer.toString(getLevel()) + "," + getXp() + "/" + getNextLevelXp();
-            else
+
+            if (getTeam(false) == 0) {
+                details.name = getName() + " " + getLevel();
+                details.level = getXp() + "/" + getNextLevelXp();
+
+            } else {
                 details.level = "";
+            }
+
             details.hp = getRemainingHitPoints() + "/" + getHitPoints();
             if (getBonusHp() > 0) {
                 details.hp += "+" + getBonusHp();
@@ -878,7 +883,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 details.shield += "+" + getBonusShield();
             }
 
-            if (this == getScene().getActivePawn())
+            if (getTeam(true) == getScene().getActiveTeam())
                 details.movement = getRemainingMovement() + "/" + getTotalMovement();
             else
                 details.movement = Integer.toString(getTotalMovement());

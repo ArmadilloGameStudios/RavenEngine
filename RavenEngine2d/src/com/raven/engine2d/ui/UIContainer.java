@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public abstract class UIContainer<S extends Scene>
         extends UIObject<S, Scene<? extends Game>> {
 
-    public static final int CENTER = 0, UPPER_LEFT = 1, BOTTOM_LEFT = 2, BOTTOM = 3, UPPER_RIGHT = 4, BOTTOM_RIGHT = 5, RIGHT = 6;
+    public static final int CENTER = 0, UPPER_LEFT = 1, BOTTOM_LEFT = 2, BOTTOM = 3, UPPER_RIGHT = 4, BOTTOM_RIGHT = 5, RIGHT = 6, BOTTOM_CENTER = 7;
 
     protected float width, height;
     private Vector2f position = new Vector2f();
@@ -189,6 +189,31 @@ public abstract class UIContainer<S extends Scene>
 
                     obj.setY(height - offset + GameProperties.getScreenHeight() / GameProperties.getScaling());
                     obj.setX(GameProperties.getScreenWidth() / GameProperties.getScaling() * 2f - obj.getWidth() * 2f);
+                }
+                break;
+            case BOTTOM_CENTER:
+                width = 0;
+                height = 0f;
+
+                for (UIObject obj : children) {
+                    height = Math.max(obj.getHeight(), height);
+                    width += obj.getWidth();
+                }
+
+                // Get Offset
+                offset = GameProperties.getScreenWidth() * 2f / GameProperties.getScaling();
+
+                for (int i = 0; i < children.size(); i++) {
+                    UIObject obj = children.get(children.size() - i - 1);
+
+                    offset -= obj.getWidth() * 2f;
+
+                    obj.setX(offset);
+                }
+
+                for (int i = 0; i < children.size(); i++) {
+                    UIObject obj = children.get(i);
+                    obj.setX(obj.getX() - GameProperties.getScreenWidth() / GameProperties.getScaling() + width);
                 }
                 break;
             case CENTER: // center
