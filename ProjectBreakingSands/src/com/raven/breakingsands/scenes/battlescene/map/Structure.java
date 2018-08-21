@@ -195,6 +195,6 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject>
 
     @Override
     public float getZ() {
-        return .5f;
+        return 0f;
     }
 }

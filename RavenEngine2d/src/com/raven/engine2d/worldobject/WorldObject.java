@@ -158,6 +158,13 @@ public abstract class WorldObject<
         this.position.y = position.y;
     }
 
+    public float getWorldZ() {
+        if (getParent() instanceof WorldObject) {
+            return getZ() + (((WorldObject) getParent()).getWorldZ());
+        }
+        return getZ();
+    }
+
     public S getScene() {
         return scene;
     }
@@ -199,7 +206,7 @@ public abstract class WorldObject<
 
     public void draw(MainShader shader) {
         if (spriteSheet != null)
-            shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), standing, getHighlight(), DrawStyle.ISOMETRIC);
+            shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getWorldZ(), getHighlight(), DrawStyle.ISOMETRIC);
     }
 
     public void setParent(P parent) {

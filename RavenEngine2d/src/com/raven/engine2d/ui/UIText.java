@@ -41,9 +41,9 @@ public abstract class UIText<S extends Scene>
             else
                 image = new UITexture(getScene().getEngine(), (int) getWidth(), (int) getHeight());
 
-                getScene().getEngine().getWindow().printErrors("pre cat (ut) ");
-                image.load(getScene());
-                getScene().getEngine().getWindow().printErrors("post cat (ut) ");
+            getScene().getEngine().getWindow().printErrors("pre cat (ut) ");
+            image.load(getScene());
+            getScene().getEngine().getWindow().printErrors("post cat (ut) ");
         }
         // TODO don't remake each time
         textWriter = new UITextWriter(getScene().getEngine(), getScene(), image, font);
@@ -58,7 +58,12 @@ public abstract class UIText<S extends Scene>
     }
 
     public void draw(MainShader shader) {
-        shader.draw(image, getSpriteAnimationState(), getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), true, null, DrawStyle.UI);
+        shader.draw(image, getSpriteAnimationState(), getWorldPosition(), null, getID(), getWorldZ(), null, DrawStyle.UI);
+    }
+
+    @Override
+    public float getZ() {
+        return .02f;
     }
 
     public void setAnimationAction(String action) {

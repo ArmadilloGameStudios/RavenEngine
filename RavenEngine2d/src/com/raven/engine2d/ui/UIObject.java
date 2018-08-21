@@ -5,7 +5,9 @@ import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.GameObject;
+import com.raven.engine2d.worldobject.MouseHandler;
 import com.raven.engine2d.worldobject.Parentable;
+import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +17,11 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
 
     private List<UIObject> children = new ArrayList<>();
 
+    private float z = .01f;
     private S scene;
     private P parent;
     private boolean parentIsUIObject = false;
+    private Layer.Destination destination = Layer.Destination.UI;
 
     public UIObject(S scene) {
         this.scene = scene;
@@ -65,9 +69,13 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
         children.remove(obj);
     }
 
+    public final void setDestination(Layer.Destination destination) {
+        this.destination = destination;
+    }
+
     @Override
     public final Layer.Destination getDestination() {
-        return Layer.Destination.UI;
+        return destination;
     }
 
     @Override
@@ -96,8 +104,9 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
     public Vector2f getWorldPosition() {
         if (this.parentIsUIObject) {
             return getPosition().add(((UIObject) getParent()).getWorldPosition(), worldPos);
+        } else {
+            return getPosition();
         }
-        return worldPos;
     }
 
     public S getScene() {
@@ -110,20 +119,61 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
 
     @Override
     public float getZ() {
-        return 0.0f;
+        return z;
+    }
+
+    public void setZ(float z) {
+        this.z = z;
+    }
+
+    public float getWorldZ() {
+        if (getParent() instanceof UIObject) {
+            return getZ() + (((UIObject) getParent()).getWorldZ());
+        }
+        return getZ();
+    }
+
+    private MouseHandler tooltipHandler;
+    private String tooltipSrc;
+
+    public void setToolTip(String tooltip) {
+        this.tooltipSrc = tooltip;
+
+        if (tooltipHandler == null)
+            this.addMouseHandler(tooltipHandler = new MouseHandler() {
+                @Override
+                public void handleMouseClick() {
+
+                }
+
+                @Override
+                public void handleMouseEnter() {
+                    scene.showToolTip(tooltipSrc);
+                }
+
+                @Override
+                public void handleMouseLeave() {
+                    scene.hideToolTip();
+                }
+
+                @Override
+                public void handleMouseHover(float delta) {
+
+                }
+            });
     }
 
     public abstract int getStyle();
 
-    public abstract float getHeight();
+    public abstract float getX();
 
-    public abstract float getWidth();
+    public abstract void setX(float x);
 
     public abstract float getY();
 
     public abstract void setY(float y);
 
-    public abstract float getX();
+    public abstract float getWidth();
 
-    public abstract void setX(float x);
+    public abstract float getHeight();
 }

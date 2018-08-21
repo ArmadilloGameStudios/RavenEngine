@@ -6,6 +6,7 @@ import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.input.Mouse;
+import com.raven.engine2d.ui.UIToolTip;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.worldobject.Highlight;
@@ -34,9 +35,9 @@ public class MainShader extends Shader {
     private int framebuffer_handle;
     private int color_texture, id_texture, depth_texture;
 
-    private int sprite_sheet_location, standing_location, position_location, rect_location, id_location, highlight_location, z_location;
+    private int sprite_sheet_location, position_location, rect_location, id_location, highlight_location, z_location;
 
-    private IntBuffer buffers;
+    private int[] buffers;
 
     public MainShader(GameEngine engine, GameWindow window) {
         super("vertex.glsl", "fragment.glsl", engine);
@@ -52,17 +53,11 @@ public class MainShader extends Shader {
         sprite_sheet_location = glGetUniformLocation(getProgramHandel(), "spriteSheet");
         rect_location = glGetUniformLocation(getProgramHandel(), "rect");
         position_location = glGetUniformLocation(getProgramHandel(), "position");
-        standing_location = glGetUniformLocation(getProgramHandel(), "standing");
 
-        int bfs[] = {
+        buffers = new int[] {
                 GL_COLOR_ATTACHMENT0, // Color
                 GL_COLOR_ATTACHMENT1, // ID
         };
-
-        buffers = BufferUtils.createIntBuffer(bfs.length);
-        for (int i = 0; i < bfs.length; i++)
-            buffers.put(bfs[i]);
-        buffers.flip();
 
         // fbo
         framebuffer_handle = glGenFramebuffers();
@@ -114,7 +109,6 @@ public class MainShader extends Shader {
         glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_texture, 0);
 
         // Draw buffers
-        buffers.rewind();
         glDrawBuffers(buffers);
 
         // Errors
@@ -136,6 +130,7 @@ public class MainShader extends Shader {
 
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
+        glDepthFunc(GL_GREATER);
         glBlendFuncSeparatei(0, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
         glEnableVertexAttribArray(0);
@@ -150,6 +145,7 @@ public class MainShader extends Shader {
                 GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight());
 
+        glClearDepth(0.0);
         glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -160,15 +156,26 @@ public class MainShader extends Shader {
         glDrawBuffers(buffers);
     }
 
+    public void clearDepthBuffer() {
+
+        glViewport(0, 0,
+                GameProperties.getScreenWidth(),
+                GameProperties.getScreenHeight());
+
+        glClearDepth(0.0);
+        glClear(GL_DEPTH_BUFFER_BIT);
+
+//        glDrawBuffers(buffers);
+    }
+
     @Override
     public void endProgram() {
         glDisable(GL_BLEND);
     }
 
-    public void draw(ShaderTexture texture, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset, int id, float z, boolean standing, Highlight highlight, DrawStyle style) {
+    public void draw(ShaderTexture texture, SpriteAnimationState spriteAnimation, Vector2f position, Vector2f offset, int id, float z, Highlight highlight, DrawStyle style) {
         setWorldObjectID(id);
 
-        glUniform1i(standing_location, standing ? 1 : 0);
         glUniform1f(z_location, z);
 
         if (highlight != null)
@@ -176,14 +183,71 @@ public class MainShader extends Shader {
         else
             glUniform4f(highlight_location, 0f, 0f, 0f, 0f);
 
+        float x;
+        float y;
+
         switch (style) {
+            default:
             case ISOMETRIC:
-                drawIsometric(texture, spriteAnimation, position, offset);
+                x =  position.y * isoWidth + position.x * isoWidth + offset.x;
+                y = position.y * isoHeight - position.x * isoHeight + offset.y;
                 break;
             case UI:
-                drawUI(texture, spriteAnimation, position);
+                if (offset != null) {
+                    x = position.x + offset.x * 2f;
+                    y = position.y + offset.y * 2f;
+                } else {
+                    x = position.x;
+                    y = position.y;
+                }
                 break;
         }
+
+        glUniform2f(position_location,
+                x / GameProperties.getScreenWidth() / GameProperties.getScaling() + .5f,
+                y / GameProperties.getScreenHeight() / GameProperties.getScaling() + .5f);
+
+
+        glActiveTexture(GL_TEXTURE0 + TEXTURE);
+        glBindTexture(GL_TEXTURE_2D, texture.getTexture());
+        glActiveTexture(GL_TEXTURE0);
+        glUniform1i(sprite_sheet_location, TEXTURE);
+
+        if (spriteAnimation != null) {
+            if (!spriteAnimation.getFlip()) {
+                x += spriteAnimation.getXOffset();
+                y += spriteAnimation.getYOffset();
+
+                glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), spriteAnimation.getWidth(), spriteAnimation.getHeight());
+
+                glUniform4f(rect_location,
+                        (float) spriteAnimation.getX() / (float) texture.getWidth(),
+                        (float) spriteAnimation.getY() / (float) texture.getHeight(),
+                        (float) spriteAnimation.getWidth() / (float) texture.getWidth(),
+                        (float) spriteAnimation.getHeight() / (float) texture.getHeight());
+            } else {
+                x -= spriteAnimation.getXOffset();
+                y += spriteAnimation.getYOffset();
+
+                glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), spriteAnimation.getWidth(), spriteAnimation.getHeight());
+
+                glUniform4f(rect_location,
+                        (float) (spriteAnimation.getX() + spriteAnimation.getWidth()) / (float) texture.getWidth(),
+                        (float) spriteAnimation.getY() / (float) texture.getHeight(),
+                        (float) -spriteAnimation.getWidth() / (float) texture.getWidth(),
+                        (float) spriteAnimation.getHeight() / (float) texture.getHeight());
+            }
+        } else {
+            glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), texture.getWidth(), texture.getHeight());
+
+            glUniform4f(rect_location,
+                    0,
+                    0,
+                    1,
+                    1);
+        }
+
+        window.drawQuad();
     }
 
     private float isoHeight = 16, isoWidth = 32;
@@ -204,6 +268,57 @@ public class MainShader extends Shader {
         glActiveTexture(GL_TEXTURE0);
         glUniform1i(sprite_sheet_location, TEXTURE);
 
+        if (spriteAnimation != null) {
+            if (!spriteAnimation.getFlip()) {
+                x += spriteAnimation.getXOffset();
+                y += spriteAnimation.getYOffset();
+
+                glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), spriteAnimation.getWidth(), spriteAnimation.getHeight());
+
+                glUniform4f(rect_location,
+                        (float) spriteAnimation.getX() / (float) texture.getWidth(),
+                        (float) spriteAnimation.getY() / (float) texture.getHeight(),
+                        (float) spriteAnimation.getWidth() / (float) texture.getWidth(),
+                        (float) spriteAnimation.getHeight() / (float) texture.getHeight());
+            } else {
+                x -= spriteAnimation.getXOffset();
+                y += spriteAnimation.getYOffset();
+
+                glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), spriteAnimation.getWidth(), spriteAnimation.getHeight());
+
+                glUniform4f(rect_location,
+                        (float) (spriteAnimation.getX() + spriteAnimation.getWidth()) / (float) texture.getWidth(),
+                        (float) spriteAnimation.getY() / (float) texture.getHeight(),
+                        (float) -spriteAnimation.getWidth() / (float) texture.getWidth(),
+                        (float) spriteAnimation.getHeight() / (float) texture.getHeight());
+            }
+        } else {
+            glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), texture.getWidth(), texture.getHeight());
+
+            glUniform4f(rect_location,
+                    0,
+                    0,
+                    1,
+                    1);
+        }
+
+        window.drawQuad();
+    }
+
+    private void drawUI(ShaderTexture texture, SpriteAnimationState spriteAnimation, Vector2f position) {
+        glEnable(GL_DEPTH_TEST);
+
+        float x = position.x;
+        float y = position.y;
+
+        glUniform2f(position_location,
+                x / GameProperties.getScreenWidth() / GameProperties.getScaling() + .5f,
+                y / GameProperties.getScreenHeight() / GameProperties.getScaling() + .5f);
+
+        glActiveTexture(GL_TEXTURE0 + TEXTURE);
+        glBindTexture(GL_TEXTURE_2D, texture.getTexture());
+        glActiveTexture(GL_TEXTURE0);
+        glUniform1i(sprite_sheet_location, TEXTURE);
 
         if (spriteAnimation != null) {
             if (!spriteAnimation.getFlip()) {
@@ -217,60 +332,10 @@ public class MainShader extends Shader {
                         (float) spriteAnimation.getY() / (float) texture.getHeight(),
                         (float) spriteAnimation.getWidth() / (float) texture.getWidth(),
                         (float) spriteAnimation.getHeight() / (float) texture.getHeight());
-
-                window.drawQuad();
             } else {
                 x -= spriteAnimation.getXOffset();
                 y += spriteAnimation.getYOffset();
 
-                glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), spriteAnimation.getWidth(), spriteAnimation.getHeight());
-
-                glUniform4f(rect_location,
-                        (float) (spriteAnimation.getX() + spriteAnimation.getWidth()) / (float) texture.getWidth(),
-                        (float) spriteAnimation.getY() / (float) texture.getHeight(),
-                        (float) -spriteAnimation.getWidth() / (float) texture.getWidth(),
-                        (float) spriteAnimation.getHeight() / (float) texture.getHeight());
-
-                window.drawQuad();
-            }
-        } else {
-            glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), texture.getWidth(), texture.getHeight());
-
-            glUniform4f(rect_location,
-                    0,
-                    0,
-                    1,
-                    1);
-
-            window.drawQuad();
-        }
-    }
-
-    private void drawUI(ShaderTexture texture, SpriteAnimationState spriteAnimation, Vector2f position) {
-        glDisable(GL_DEPTH_TEST);
-
-        glActiveTexture(GL_TEXTURE0 + TEXTURE);
-        glBindTexture(GL_TEXTURE_2D, texture.getTexture());
-        glActiveTexture(GL_TEXTURE0);
-        glUniform1i(sprite_sheet_location, TEXTURE);
-
-        float x = position.x;
-        float y = position.y;
-
-        glUniform2f(position_location,
-                x / GameProperties.getScreenWidth() / GameProperties.getScaling() + .5f,
-                y / GameProperties.getScreenHeight() / GameProperties.getScaling() + .5f);
-
-        if (spriteAnimation != null) {
-            if (!spriteAnimation.getFlip()) {
-                glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), spriteAnimation.getWidth(), spriteAnimation.getHeight());
-
-                glUniform4f(rect_location,
-                        (float) spriteAnimation.getX() / (float) texture.getWidth(),
-                        (float) spriteAnimation.getY() / (float) texture.getHeight(),
-                        (float) spriteAnimation.getWidth() / (float) texture.getWidth(),
-                        (float) spriteAnimation.getHeight() / (float) texture.getHeight());
-            } else {
                 glViewport((int) Math.floor(x / 2), (int) Math.floor(y / 2), spriteAnimation.getWidth(), spriteAnimation.getHeight());
 
                 glUniform4f(rect_location,
@@ -316,19 +381,19 @@ public class MainShader extends Shader {
     }
 
     public void setWorldObjectID(int id) {
-        if (getEngine().getWindow().getActiveShader() == this) {
-            if (id != 0) {
-                int r = (id & 0x000000FF) >> 0;
-                int g = (id & 0x0000FF00) >> 8;
-                int b = (id & 0x00FF0000) >> 16;
+//        if (getEngine().getWindow().getActiveShader() == this) {
+        if (id != 0) {
+            int r = (id & 0x000000FF) >> 0;
+            int g = (id & 0x0000FF00) >> 8;
+            int b = (id & 0x00FF0000) >> 16;
 
-                glUniform3f(id_location, r / 255.0f, g / 255.0f, b / 255.0f);
+            glUniform3f(id_location, r / 255.0f, g / 255.0f, b / 255.0f);
 
-                buffers.rewind();
-                glDrawBuffers(buffers);
-            } else {
-                glDrawBuffers(GL_COLOR_ATTACHMENT0);
-            }
+            glEnable(GL_DEPTH_TEST);
+            glDrawBuffers(buffers);
+        } else {
+            glDisable(GL_DEPTH_TEST);
+            glDrawBuffer(GL_COLOR_ATTACHMENT0);
         }
     }
 

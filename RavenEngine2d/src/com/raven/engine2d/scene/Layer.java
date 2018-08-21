@@ -9,7 +9,8 @@ import com.raven.engine2d.worldobject.GameObject;
 
 public class Layer {
 
-    public enum Destination {Terrain, UI, Details, Effects;
+    public enum Destination {
+        Terrain, UI, Details, Effects, TOOLTIP
     }
 
     private Destination destination;

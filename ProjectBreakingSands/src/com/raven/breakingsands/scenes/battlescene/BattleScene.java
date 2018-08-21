@@ -21,6 +21,7 @@ import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.scene.Scene;
+import com.raven.engine2d.ui.UIToolTip;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.util.pathfinding.Path;
@@ -183,6 +184,12 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         Vector2f wo = this.getWorldOffset();
         wo.x = GameProperties.getScreenWidth() / GameProperties.getScaling();
         wo.y = GameProperties.getScreenHeight() / GameProperties.getScaling();
+
+        this.setToolTip(new UIToolTip<>(this,
+                120, 120,
+                "sprites/tooltip.png",
+                "tooltip",
+                GameDatabase.all("tooltip")));
 
         if (loadGameData != null) {
             // Pawns

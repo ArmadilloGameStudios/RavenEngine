@@ -6,6 +6,7 @@ import com.raven.breakingsands.character.RangeStyle;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.decal.Wall;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
+import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.database.GameDatable;
@@ -203,6 +204,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     @Override
     public void handleMouseEnter() {
         if (!getScene().isPaused()) {
+//            getScene().showToolTip("damage");
+
             switch (getScene().getState()) {
                 case SELECT_MOVE:
                 case SELECT_ATTACK:
@@ -259,6 +262,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     @Override
     public void handleMouseLeave() {
         if (!getScene().isPaused()) {
+            getScene().hideToolTip();
             switch (getScene().getState()) {
                 case SELECT_MOVE:
                 case SELECT_ATTACK:
@@ -740,7 +744,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     @Override
     public float getZ() {
-        return ZLayer.TERRAIN.getValue();
+        return ZLayer.TERRAIN.getValue() - (getMapY() - getMapX()) / 1000f;
     }
 
 }

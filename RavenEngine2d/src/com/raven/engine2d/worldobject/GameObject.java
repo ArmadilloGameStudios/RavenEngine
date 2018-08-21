@@ -36,13 +36,13 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable<? e
         return id;
     }
 
-    protected final void clearID() {
+    public final void clearID() {
         gameObjectIDMap.remove(this.id);
         this.id = 0;
     }
 
     public final void newID() {
-        id = last_id++;
+        id = last_id += 20;
         gameObjectIDMap.put(id, this);
     }
 

@@ -1,0 +1,55 @@
+{
+    src: "name",
+    title: "class and level",
+    text: "the class and the level of the unit"
+},
+{
+    src: "xp",
+    title: "experience",
+    text: "the current amount of experience and the amount needed to level up"
+},
+{
+    src: "damage",
+    title: "damage",
+    text: "how much damage is done per shot, is reduced by resistance"
+},
+{
+    src: "health",
+    title: "health",
+    text: "how much damage a unit can take before it dies"
+},
+{
+    src: "shield",
+    title: "shield",
+    text: "takes damage before health, is restored each floor"
+},
+{
+    src: "movement",
+    title: "movement",
+    text: "how far a unit can move each turn"
+},
+{
+    src: "resistance",
+    title: "resistance",
+    text: "how much damage is reduced per shot, is reduced by piercing"
+},
+{
+    src: "weapon",
+    title: "weapon name",
+    text: "The name of the weapon the unit has"
+},
+{
+    src: "range",
+    title: "range",
+    text: "The min and max distance the weapon can shoot"
+},
+{
+    src: "shots",
+    title: "shots",
+    text: "How many times the weapon shoots per attack"
+},
+{
+    src: "piercing",
+    title: "piercing",
+    text: "How much resistance is ignored per shot"
+},

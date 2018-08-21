@@ -44,6 +44,8 @@ public class UIDetailText
         } else {
             initRight();
         }
+
+        init();
     }
 
     private void initLeft() {
@@ -58,6 +60,7 @@ public class UIDetailText
         pawnImg = new UIImage<>(getScene(),
                 32, 32,
                 pawn.getSpriteSheetName());
+        pawnImg.setZ(.02f);
         state = new SpriteAnimationState(getScene().getEngine().getAnimation(pawn.getAnimationName()));
         state.setFlip(true);
         pawnImg.setSpriteAnimation(state);
@@ -284,6 +287,7 @@ public class UIDetailText
         pawnImg = new UIImage<>(getScene(),
                 32, 32,
                 pawn.getSpriteSheetName());
+        pawnImg.setZ(.02f);
         state = new SpriteAnimationState(getScene().getEngine().getAnimation(pawn.getAnimationName()));
         state.setFlip(false);
         pawnImg.setSpriteAnimation(state);
@@ -494,6 +498,32 @@ public class UIDetailText
         uiLblShots.load();
 
         addChild(uiLblShots);
+    }
+
+    private void init() {
+        uiName.setToolTip("name");
+        uiLvl.setToolTip("xp");
+
+        uiLblHP.setToolTip("health");
+        uiHP.setToolTip("health");
+        uiLblSld.setToolTip("shield");
+        uiSld.setToolTip("shield");
+        uiLblMov.setToolTip("movement");
+        uiMov.setToolTip("movement");
+        uiLblRes.setToolTip("resistance");
+        uiRes.setToolTip("resistance");
+
+
+        uiWeapon.setToolTip("weapon");
+
+        uiLblDmg.setToolTip("damage");
+        uiDmg.setToolTip("damage");
+        uiLblRng.setToolTip("range");
+        uiRng.setToolTip("range");
+        uiLblShots.setToolTip("shots");
+        uiShots.setToolTip("shots");
+        uiLblPir.setToolTip("piercing");
+        uiPir.setToolTip("piercing");
     }
 
     public void setAnimationAction(String animation) {

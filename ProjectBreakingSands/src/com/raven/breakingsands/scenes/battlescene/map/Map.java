@@ -72,7 +72,7 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
 
         System.out.println(tries + ", " + size + ", " + structures.size());
 
-        // show all connections
+        // setText all connections
 
     }
 

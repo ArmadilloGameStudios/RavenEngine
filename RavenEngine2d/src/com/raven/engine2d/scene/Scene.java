@@ -1,7 +1,6 @@
 package com.raven.engine2d.scene;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -12,6 +11,7 @@ import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.shader.TextShader;
 import com.raven.engine2d.ui.UITextWriter;
+import com.raven.engine2d.ui.UIToolTip;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.worldobject.GameObject;
@@ -24,9 +24,12 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     private Layer layerDetails = new Layer(Layer.Destination.Details);
     private Layer layerEffects = new Layer(Layer.Destination.Effects);
     private Layer layerUI = new Layer(Layer.Destination.UI);
+    private Layer layerToolTip = new Layer(Layer.Destination.TOOLTIP);
 
     private Vector3f backgroundColor = new Vector3f();
     private Vector2f worldOffset = new Vector2f();
+
+    private UIToolTip toolTip;
 
     private List<GameObject> children = new ArrayList<>();
     private List<UITextWriter> toWrite = new ArrayList<>();
@@ -88,10 +91,18 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
         }
 
         // ui
+        mainShader.clearDepthBuffer();
+
         for (GameObject o : layerUI.getChildren()) {
             if (o.isVisible())
                 o.draw(mainShader);
             window.printErrors("Draw UI Error: ");
+        }
+
+        for (GameObject o : layerToolTip.getChildren()) {
+            if (o.isVisible())
+                o.draw(mainShader);
+            window.printErrors("Draw ToolTip Error: ");
         }
 
         window.printErrors("pre b");
@@ -108,18 +119,6 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
         }
     }
 
-    private Layer getLayerTerrain() {
-        return layerTerrain;
-    }
-
-    private Layer getLayerDetails() {
-        return layerDetails;
-    }
-
-    private Layer getLayerUI() {
-        return layerUI;
-    }
-
     public Layer getLayer(Layer.Destination destination) {
         switch (destination) {
             case Terrain:
@@ -130,6 +129,8 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
                 return layerEffects;
             case UI:
                 return layerUI;
+            case TOOLTIP:
+                return layerToolTip;
         }
 
         return null;
@@ -241,9 +242,34 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
 
     public abstract void inputKey(int key, int action, int mods);
 
-    public static List catty = new ArrayList();
-
     public Clip getClip(String name) {
         return null;
+    }
+
+    protected void setToolTip(UIToolTip toolTip) {
+        if (this.toolTip != null)
+        removeGameObject(this.toolTip);
+
+        this.toolTip = toolTip;
+
+        this.layerUI.addChild(toolTip);
+        addGameObject(toolTip);
+    }
+
+    public void showToolTip(String src) {
+        if (toolTip != null) {
+            toolTip.setText(src);
+            toolTip.setVisibility(true);
+        }
+    }
+
+    public void hideToolTip() {
+        if (toolTip != null) {
+            toolTip.setVisibility(false);
+        }
+    }
+
+    public UIToolTip getToolTip() {
+        return toolTip;
     }
 }
