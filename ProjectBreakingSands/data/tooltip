@@ -53,3 +53,58 @@
     title: "piercing",
     text: "How much resistance is ignored per shot"
 },
+{
+    src: "end turn",
+    title: "end turn",
+    text: "Ends your turn, letting the enemy go"
+},
+{
+    src: "level up",
+    title: "level up",
+    text: "level up the unit. giving the unit access to new weapons and abilities"
+},
+{
+    src: "deselect",
+    title: "deselect",
+    text: "deselect the unit, letting you pick a different one"
+},
+{
+    src: "skip",
+    title: "finish",
+    text: "declare that you are done using the unit this turn, you won't be able to select them any more"
+},
+{
+    src: "attack",
+    title: "attack",
+    text: "show all possible areas this unit can attack"
+},
+{
+    src: "move",
+    title: "move",
+    text: "show all possible areas this unit can move"
+},
+{
+    src: "hack",
+    title: "hack",
+    text: "hack an enemy unit so you can control them"
+},
+{
+    src: "hook",
+    title: "hook",
+    text: "pull an enemy unit closer"
+},
+{
+    src: "pushblast",
+    title: "pushblast",
+    text: "push all the enemy units away, dealing damage"
+},
+{
+    src: "recall",
+    title: "recall",
+    text: "recalls another unit next to this one"
+},
+{
+    src: "blink",
+    title: "blink",
+    text: "blink to another space"
+},

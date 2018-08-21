@@ -72,6 +72,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             }
         };
         btnBlink.setVisibility(false);
+        btnBlink.setToolTip("blink");
         addChild(btnBlink);
         btns.add(btnBlink);
 
@@ -120,6 +121,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             }
         };
         btnRecall.setVisibility(false);
+        btnRecall.setToolTip("recall");
         addChild(btnRecall);
         btns.add(btnRecall);
 
@@ -161,6 +163,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             }
         };
         btnPushBlast.setVisibility(false);
+        btnPushBlast.setToolTip("pushblast");
         addChild(btnPushBlast);
         btns.add(btnPushBlast);
 
@@ -213,6 +216,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             }
         };
         btnHookPull.setVisibility(false);
+        btnHookPull.setToolTip("hook");
         addChild(btnHookPull);
         btns.add(btnHookPull);
 
@@ -264,6 +268,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             }
         };
         btnHack.setVisibility(false);
+        btnHack.setToolTip("hack");
         addChild(btnHack);
         btns.add(btnHack);
 
@@ -306,6 +311,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
             }
         };
+        btnMove.setToolTip("move");
         addChild(btnMove);
         btns.add(btnMove);
 
@@ -348,6 +354,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
             }
         };
+        btnAttack.setToolTip("attack");
         addChild(btnAttack);
         btns.add(btnAttack);
 
@@ -362,6 +369,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                 }
             }
         };
+        btnSkip.setToolTip("skip");
         addChild(btnSkip);
         btns.add(btnSkip);
 
@@ -376,6 +384,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                 }
             }
         };
+        btnCancel.setToolTip("deselect");
         addChild(btnCancel);
         btns.add(btnCancel);
 
@@ -390,6 +399,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                 }
             }
         };
+        btnLevel.setToolTip("level up");
         addChild(btnLevel);
         btns.add(btnLevel);
 
@@ -405,6 +415,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
             }
         };
+        btnEnd.setToolTip("end turn");
         addChild(btnEnd);
         btns.add(btnEnd);
 
