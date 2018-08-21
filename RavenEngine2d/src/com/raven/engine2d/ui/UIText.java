@@ -34,7 +34,12 @@ public abstract class UIText<S extends Scene>
         return font;
     }
 
+
     public void load() {
+        this.load(null);
+    }
+
+    public void load(UITextWriterHandler handler) {
         if (image == null) {
             if (font.isButton())
                 image = new UITexture(getScene().getEngine(), (int) getWidth(), (int) getHeight() * 2);
@@ -46,7 +51,7 @@ public abstract class UIText<S extends Scene>
             getScene().getEngine().getWindow().printErrors("post cat (ut) ");
         }
         // TODO don't remake each time
-        textWriter = new UITextWriter(getScene().getEngine(), getScene(), image, font);
+        textWriter = new UITextWriter(getScene().getEngine(), getScene(), image, font, handler);
 
         if (backgroundSrc != null)
             textWriter.setBackground(backgroundSrc);

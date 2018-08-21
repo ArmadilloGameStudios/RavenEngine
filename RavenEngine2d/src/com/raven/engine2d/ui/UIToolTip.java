@@ -34,15 +34,14 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
 
         if (backgroundSrc != null) {
             background = new UIMultipartImage<>(scene, backgroundSrc, animation);
-            addChild(background);
             background.setDestination(Layer.Destination.TOOLTIP);
             background.clearID();
+            addChild(background);
 
             background.setY(getHeight() * 2f - background.getHeight() * 2f);
         }
 
         title = new UILabel<>(scene, "", width, height);
-        addChild(title);
         UIFont font = title.getFont();
         font.setSmall(true);
         title.setY(title.getY() - 10);
@@ -50,16 +49,18 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
         title.load();
         title.setDestination(Layer.Destination.TOOLTIP);
         title.clearID();
+        addChild(title);
 
-        text = new UILabel<>(scene, "", width, height);
-        addChild(text);
+        text = new UILabel<>(scene, "", 100, height);
         font = text.getFont();
         font.setSmall(true);
+        font.setWrap(true);
         text.setY(text.getY() - 38);
         text.setX(text.getX() + 10);
         text.load();
         text.setDestination(Layer.Destination.TOOLTIP);
         text.clearID();
+        addChild(text);
     }
 
     public void setText(String src) {
@@ -67,7 +68,7 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
             title.setText(tip.getString("title"));
             title.load();
             text.setText(tip.getString("text"));
-            text.load();
+            text.load(lines -> background.setRows(lines));
         });
     }
 

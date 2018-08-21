@@ -9,6 +9,7 @@ public class UIFont {
     private boolean highlight = true;
     private boolean small = false;
     private boolean button = false;
+    private boolean wrap = false;
     private Vector2i buttonOffset = new Vector2i(0, 32);
 
     private int x, y;
@@ -61,6 +62,14 @@ public class UIFont {
 
     public Vector2i getButtonOffset() {
         return buttonOffset;
+    }
+
+    public void setWrap(boolean wrap) {
+        this.wrap = wrap;
+    }
+
+    public boolean isWrap() {
+        return wrap;
     }
 
     public void setSide(Side side) {

@@ -248,7 +248,7 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
 
     protected void setToolTip(UIToolTip toolTip) {
         if (this.toolTip != null)
-        removeGameObject(this.toolTip);
+            removeGameObject(this.toolTip);
 
         this.toolTip = toolTip;
 

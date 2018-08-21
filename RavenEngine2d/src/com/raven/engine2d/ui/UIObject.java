@@ -141,6 +141,10 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
 
         if (tooltipHandler == null)
             this.addMouseHandler(tooltipHandler = new MouseHandler() {
+
+                float totalTime = 0f;
+                boolean showing = false;
+
                 @Override
                 public void handleMouseClick() {
 
@@ -148,17 +152,24 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
 
                 @Override
                 public void handleMouseEnter() {
-                    scene.showToolTip(tooltipSrc);
+                    totalTime = 0;
+                    showing = false;
                 }
 
                 @Override
                 public void handleMouseLeave() {
                     scene.hideToolTip();
+                    showing = false;
                 }
 
                 @Override
                 public void handleMouseHover(float delta) {
+                    totalTime += delta;
 
+                    if (totalTime > 500f && !showing) {
+                        scene.showToolTip(tooltipSrc);
+                        showing = true;
+                    }
                 }
             });
     }

@@ -55,4 +55,8 @@ public class UIMultipartImage<S extends Scene> extends UIImage<S> {
     public void setSpriteAnimation(SpriteAnimationState spriteAnimation) {
         throw new UnsupportedOperationException();
     }
+
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
 }
