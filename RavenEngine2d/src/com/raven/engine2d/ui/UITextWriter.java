@@ -114,7 +114,6 @@ public class UITextWriter {
 
                 if (font.isWrap()) {
                     // get next word length, if total is greater than width, new line;
-                    System.out.println(lastChar);
 
                     if (lastChar != null &&
                             !(Character.isAlphabetic(lastChar) || Character.isDigit(lastChar)) &&
@@ -122,7 +121,6 @@ public class UITextWriter {
 
                         int next = nextWordLength(index, chars, alphabetLocation);
                         if (next + x >= uiImage.getWidth()) {
-                            System.out.println("new line " + (next + x));
 
                             x = font.getX();
                             y += 10;
@@ -167,8 +165,6 @@ public class UITextWriter {
 
             i++;
         }
-
-        System.out.println(wordLen.get());
 
         return wordLen.get();
     }

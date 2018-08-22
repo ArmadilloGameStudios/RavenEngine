@@ -102,7 +102,18 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
 
     @Override
     public float getY() {
-        return GameProperties.getScreenHeight() - height * 2f - (float) (getScene().getEngine().getMouse().getY() * 2f / GameProperties.getScaling());
+
+        float y = GameProperties.getScreenHeight() - height * 2f - (float) (getScene().getEngine().getMouse().getY() * 2f / GameProperties.getScaling());
+
+        if (background != null) {
+            if (y - background.getHeight() * 2f < 0)
+            {
+                y += background.getHeight() * 2f;
+            }
+        }
+
+        return y;
+
     }
 
     @Override
@@ -112,7 +123,16 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
 
     @Override
     public float getX() {
-        return (float) (getScene().getEngine().getMouse().getX() * 2f / GameProperties.getScaling());
+        float x = (float) (getScene().getEngine().getMouse().getX() * 2f / GameProperties.getScaling());
+
+        if (background != null) {
+            if (background.getWidth() * 2f + x > GameProperties.getScreenWidth() * 2f / GameProperties.getScaling())
+            {
+                x -= background.getWidth() * 2f;
+            }
+        }
+
+        return x;
     }
 
     @Override

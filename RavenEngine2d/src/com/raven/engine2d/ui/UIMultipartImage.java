@@ -39,8 +39,10 @@ public class UIMultipartImage<S extends Scene> extends UIImage<S> {
 
     @Override
     public void draw(MainShader shader) {
-        offset.y = getHeight() - spriteAnimationTop.getHeight();
+        offset.y = getHeight();
+        offset.y -= spriteAnimationTop.getHeight();
         shader.draw(getTexture(), spriteAnimationTop, getWorldPosition(), offset, getID(), getWorldZ(), null, DrawStyle.UI);
+
 
         for (int i = 0; i < rows; i++) {
             offset.y -= spriteAnimationMid.getHeight();
@@ -58,5 +60,13 @@ public class UIMultipartImage<S extends Scene> extends UIImage<S> {
 
     public void setRows(int rows) {
         this.rows = rows;
+
+        this.setHeight(spriteAnimationTop.getHeight() +
+                spriteAnimationMid.getHeight() * rows +
+                spriteAnimationBottom.getHeight());
+
+        setY(((UIObject) getParent()).getHeight() * 2f - getHeight() * 2f);
+
+        System.out.println(getHeight());
     }
 }
