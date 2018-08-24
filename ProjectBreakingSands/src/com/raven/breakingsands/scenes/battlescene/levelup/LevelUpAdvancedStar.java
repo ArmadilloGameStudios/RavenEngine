@@ -6,10 +6,8 @@ import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.util.math.Vector2f;
 import javafx.util.Pair;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class LevelUpAdvancedStar extends LevelUpStar {
@@ -137,6 +135,9 @@ public class LevelUpAdvancedStar extends LevelUpStar {
             btn.setDisable(true);
         });
 
+        startButton.setLocked(false);
+        startButton.setDisable(false);
+        startButton.setActive(true);
         if (pawn.getCharacterClass().equals("amateur")) {
             startButton.setDisable(true);
             startButton.setLocked(true);
@@ -223,5 +224,13 @@ public class LevelUpAdvancedStar extends LevelUpStar {
             LevelUpHexButton button = remainingCanGo.get(i);
             button.setAbility(a);
         }
+    }
+
+    @Override
+    public void clear() {
+        startButton.clear();
+        startButton.setDisable(false);
+//        startButton.setActive(true);
+        abilityButtonList.forEach(LevelUpHexButton::clear);
     }
 }

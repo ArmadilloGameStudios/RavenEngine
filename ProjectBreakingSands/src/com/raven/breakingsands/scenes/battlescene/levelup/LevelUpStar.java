@@ -11,4 +11,6 @@ public abstract class LevelUpStar extends UIObject<BattleScene, UILevelUp2> {
     }
 
     public abstract void setPawn(Pawn pawn);
+
+    public abstract void clear();
 }

@@ -54,6 +54,10 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable<? e
         this.clickHandlers.add(c);
     }
 
+    public void removeMouseHandler(MouseHandler c) {
+        this.clickHandlers.remove(c);
+    }
+
     public boolean isMouseHovering() {
         return mouseHovering;
     }

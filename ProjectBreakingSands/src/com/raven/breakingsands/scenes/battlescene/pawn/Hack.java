@@ -62,14 +62,14 @@ public class Hack implements GameDatable {
     }
 
     private void initTransferable() {
-        Optional<Optional<GameData>> o = GameDatabase.all("classes").stream()
-                .filter(c -> c.getString("name").equals("hacker"))
-                .map(c -> c.getList("abilities").stream().filter(a -> a.getString("name").equals("Hack")).findFirst()).findFirst();
+        Optional<GameData> o = GameDatabase.all("abilities").stream()
+                .filter(c -> c.getString("name").equals("Hack"))
+                .findFirst();
 
-        o.ifPresent(oo -> oo.ifPresent(gdAbility -> { // lol...
+        o.ifPresent(gdAbility -> { // lol...
             gdAbility.asMap().put("cure", new GameData(true));
             pawn.addAbility(new Ability(gdAbility));
-        }));
+        });
     }
 
     public int getTeam() {

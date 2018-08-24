@@ -113,7 +113,7 @@
 {
     name: "Guardian",
     class: "tank",
-    type: "self",
+    type: "aurora",
     target: "ally",
     replace: "Protector",
 
@@ -320,9 +320,24 @@
 {
     name: "Quick Recall",
     class: "blinker",
-    type: "self",
-    upgrade: "Recall",
+    type: "target",
+    target: "empty",
+    replace: "Recall",
 
+    uses: 1,
+    size: 1,
+    recall: true,
     passes_wall: true,
     remain: true,
+
+    ability: {
+        name: "Recall Unit"
+        type: "target",
+        target: "ally",
+        size: -1,
+
+
+        passes_wall: true,
+        recall_unit: true,
+    }
 }

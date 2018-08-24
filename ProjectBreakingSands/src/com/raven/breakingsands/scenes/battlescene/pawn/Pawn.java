@@ -364,11 +364,18 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public void addAbility(Ability ability) {
-        addAbility(ability, true);
+        addAbility(ability, true, -1);
     }
 
     public void addAbility(Ability ability, boolean add) {
+        addAbility(ability, add, -1);
+    }
 
+    public void addAbility(Ability ability, int index) {
+        addAbility(ability, true, index);
+    }
+
+    public void addAbility(Ability ability, boolean add, int index) {
         ability.owner = this;
 
         if (ability.replace != null) {
@@ -401,21 +408,25 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                         .collect(Collectors.toList());
 
                 as.forEach(a -> {
-                    removeAbility(a);
+                    int i = removeAbility(a);
 
                     a.upgrade(ability, add);
 
-                    addAbility(a);
+                    addAbility(a, i);
                 });
             }
         }
-        abilities.add(ability);
+        if (index >= 0) {
+            abilities.add(index, ability);
+        } else
+            abilities.add(ability);
 
         if (getParent() != null)
             getParent().setPawn(this); // Shitty way of making sure the aurora effect is there
     }
 
-    public void removeAbility(Ability ability) {
+    public int removeAbility(Ability ability) {
+        int index = abilities.indexOf(ability);
         abilities.remove(ability);
         if (getParent() != null)
             getParent().removePawnAbility(ability);
@@ -440,11 +451,11 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                         a.remain = false;
                     });
 
-
+        return index;
     }
 
     public List<Ability> getAbilities() {
-        return abilities;
+        return new ArrayList<>(abilities);
     }
 
     public void addAbilityAffect(Ability a) {

@@ -96,6 +96,9 @@ public class UILevelUp2 extends UIObject<BattleScene, UIContainer<BattleScene>> 
         // TODO split into multiple methods
         this.pawn = pawn;
 
+        starBasic.clear();
+        starAdvanced.clear();
+
         starBasic.setPawn(pawn);
         starAdvanced.setPawn(pawn);
     }

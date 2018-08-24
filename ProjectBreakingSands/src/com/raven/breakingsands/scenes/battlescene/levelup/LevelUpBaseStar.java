@@ -6,7 +6,6 @@ import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
-import com.raven.engine2d.ui.UIObject;
 import com.raven.engine2d.util.math.Vector2f;
 
 import java.util.ArrayList;
@@ -246,5 +245,14 @@ public class LevelUpBaseStar extends LevelUpStar {
             LevelUpHexButton button = classButtonList.get(i);
             button.setClass(a);
         }
+    }
+
+    @Override
+    public void clear() {
+        startButton.clear();
+        startButton.setDisable(false);
+        startButton.setActive(true);
+        abilityButtonList.forEach(LevelUpHexButton::clear);
+        classButtonList.forEach(LevelUpHexButton::clear);
     }
 }

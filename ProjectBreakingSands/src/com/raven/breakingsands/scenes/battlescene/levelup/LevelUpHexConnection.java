@@ -70,6 +70,8 @@ public class LevelUpHexConnection extends UIImage<BattleScene> {
 
     public void checkConnection() {
 
+        setAnimationAction("idle");
+
         Ability a = buttonA.getAbility();
         Ability b = buttonB.getAbility();
 
@@ -104,8 +106,6 @@ public class LevelUpHexConnection extends UIImage<BattleScene> {
                 buttonA.setDisable(false);
             }
             setAnimationAction("connected partial");
-        } else {
-            setAnimationAction("idle");
         }
     }
 }

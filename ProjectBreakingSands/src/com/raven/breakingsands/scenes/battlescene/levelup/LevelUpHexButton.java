@@ -65,7 +65,7 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
                     break;
             }
 
-            pawn.setLevel(pawn.getLevel() + 1);
+//            pawn.setLevel(pawn.getLevel() + 1);
 
             star.getParent().close();
         }
@@ -79,9 +79,11 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
     public void setAbility(Ability ability) {
         this.ability = ability;
 
+        Pawn pawn = star.getParent().getPawn();
+
         if (ability.weapon != null) {
             type = Type.WEAPON;
-            boolean active = star.getParent().getPawn().getWeapon().getName().equals(ability.weapon);
+            boolean active = pawn.getWeapon().getName().equals(ability.weapon);
             if (active) {
                 setDisable(false);
                 setActive(true);
@@ -89,7 +91,7 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
         } else {
             type = Type.ABILITY;
 
-            boolean active = star.getParent().getPawn().getAbilities().stream().anyMatch(a -> a.name.equals(ability.name));
+            boolean active = pawn.getAbilities().stream().anyMatch(a -> a.name.equals(ability.name) || (a.replace != null && a.replace.equals(ability.name)));
             if (active) {
                 setDisable(false);
                 setActive(true);
@@ -135,5 +137,18 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
 
     public void addConnection(LevelUpHexConnection connection) {
         this.connections.add(connection);
+    }
+
+    public void clear() {
+        ability = null;
+        pawnClass = null;
+
+        setLocked(false);
+        setDisable(true);
+        setActive(false);
+
+        connections.forEach(LevelUpHexConnection::checkConnection);
+
+        this.removeToolTip();
     }
 }
