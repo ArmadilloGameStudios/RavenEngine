@@ -78,6 +78,6 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
 
     @Override
     public float getZ() {
-        return .1f;
+        return 1.9f;
     }
 }

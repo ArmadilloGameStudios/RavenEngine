@@ -1,8 +1,8 @@
 package com.raven.engine2d.ui;
 
 import com.raven.engine2d.GameProperties;
+import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDataTable;
-import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
@@ -22,7 +22,7 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
 
     public UIToolTip(S scene, int width, int height, String backgroundSrc, String animation, GameDataTable tips) {
         super(scene);
-        setDestination(Layer.Destination.TOOLTIP);
+        setDestination(Layer.Destination.ToolTip);
         clearID();
 
         setVisibility(false);
@@ -34,7 +34,7 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
 
         if (backgroundSrc != null) {
             background = new UIMultipartImage<>(scene, backgroundSrc, animation);
-            background.setDestination(Layer.Destination.TOOLTIP);
+            background.setDestination(Layer.Destination.ToolTip);
             background.clearID();
             addChild(background);
 
@@ -47,7 +47,7 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
         title.setY(title.getY() - 10);
         title.setX(title.getX() + 14);
         title.load();
-        title.setDestination(Layer.Destination.TOOLTIP);
+        title.setDestination(Layer.Destination.ToolTip);
         title.clearID();
         addChild(title);
 
@@ -58,18 +58,23 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
         text.setY(text.getY() - 38);
         text.setX(text.getX() + 10);
         text.load();
-        text.setDestination(Layer.Destination.TOOLTIP);
+        text.setDestination(Layer.Destination.ToolTip);
         text.clearID();
         addChild(text);
     }
 
-    public void setText(String src) {
-        tips.stream().filter(gd -> gd.getString("src").equals(src)).findFirst().ifPresent(tip -> {
-            title.setText(tip.getString("title"));
-            title.load();
-            text.setText(tip.getString("text"));
-            text.load(lines -> background.setRows(lines));
-        });
+    public GameDataTable getTips() {
+        return tips;
+    }
+
+    public void setText(String text) {
+        this.text.setText(text);
+        this.text.load(lines -> background.setRows(lines));
+    }
+
+    public void setTitle(String title) {
+        this.title.setText(title);
+        this.title.load();
     }
 
     @Override

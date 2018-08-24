@@ -6,6 +6,7 @@ import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.ai.AI;
 import com.raven.breakingsands.scenes.battlescene.decal.Wall;
+import com.raven.breakingsands.scenes.battlescene.levelup.UILevelUp2;
 import com.raven.breakingsands.scenes.battlescene.map.Map;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
@@ -56,7 +57,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     private UIUpperLeftContainer<BattleScene> bottomLeftContainer;
     private UIUpperRightContainer<BattleScene> bottomRightContainer;
     private UIActionSelect actionSelect;
-    private UILevelUp uiLevelUp;
+    private UILevelUp2 uiLevelUp;
 
     public enum State {
         MOVING, ATTACKING, SELECT_DEFAULT, SELECT_MOVE, SELECT_ATTACK, SELECT_ABILITY
@@ -218,7 +219,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         // Level UP
         UICenterContainer<BattleScene> centerContainer = new UICenterContainer<>(this);
         addChild(centerContainer);
-        uiLevelUp = new UILevelUp(this);
+        uiLevelUp = new UILevelUp2(this);
         centerContainer.addChild(uiLevelUp);
         centerContainer.pack();
         uiLevelUp.setVisibility(false);
@@ -477,7 +478,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         }
     }
 
-    public UILevelUp getUILevelUp() {
+    public UILevelUp2 getUILevelUp() {
         return uiLevelUp;
     }
 

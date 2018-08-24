@@ -133,7 +133,7 @@
     tags: [ "common" ]
 },
 {
-    name: "Quick Shot",
+    name: "X2 Barrel Shotgun",
     type: "ranged",
     sprite: "sprites/pistol.png",
     animation: "pistol",
@@ -142,10 +142,9 @@
         attack: "plasma_blade_sound.wav"
     },
 
-
     effect: "blue blast",
-    damage: 2,
-    piercing: 1,
+    damage: 3,
+    piercing: 0,
     range: 2,
     shots: 2,
     style: "straight",

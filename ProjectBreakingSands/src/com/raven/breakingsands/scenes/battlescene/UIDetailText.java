@@ -2,7 +2,6 @@ package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
-import com.raven.engine2d.input.Mouse;
 import com.raven.engine2d.ui.*;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.MouseHandler;
@@ -501,29 +500,29 @@ public class UIDetailText
     }
 
     private void init() {
-        uiName.setToolTip("name");
-        uiLvl.setToolTip("xp");
+        uiName.setToolTipSrc("name");
+        uiLvl.setToolTipSrc("xp");
 
-        uiLblHP.setToolTip("health");
-        uiHP.setToolTip("health");
-        uiLblSld.setToolTip("shield");
-        uiSld.setToolTip("shield");
-        uiLblMov.setToolTip("movement");
-        uiMov.setToolTip("movement");
-        uiLblRes.setToolTip("resistance");
-        uiRes.setToolTip("resistance");
+        uiLblHP.setToolTipSrc("health");
+        uiHP.setToolTipSrc("health");
+        uiLblSld.setToolTipSrc("shield");
+        uiSld.setToolTipSrc("shield");
+        uiLblMov.setToolTipSrc("movement");
+        uiMov.setToolTipSrc("movement");
+        uiLblRes.setToolTipSrc("resistance");
+        uiRes.setToolTipSrc("resistance");
 
 
-        uiWeapon.setToolTip("weapon");
+        uiWeapon.setToolTipSrc("weapon");
 
-        uiLblDmg.setToolTip("damage");
-        uiDmg.setToolTip("damage");
-        uiLblRng.setToolTip("range");
-        uiRng.setToolTip("range");
-        uiLblShots.setToolTip("shots");
-        uiShots.setToolTip("shots");
-        uiLblPir.setToolTip("piercing");
-        uiPir.setToolTip("piercing");
+        uiLblDmg.setToolTipSrc("damage");
+        uiDmg.setToolTipSrc("damage");
+        uiLblRng.setToolTipSrc("range");
+        uiRng.setToolTipSrc("range");
+        uiLblShots.setToolTipSrc("shots");
+        uiShots.setToolTipSrc("shots");
+        uiLblPir.setToolTipSrc("piercing");
+        uiPir.setToolTipSrc("piercing");
     }
 
     public void setAnimationAction(String animation) {

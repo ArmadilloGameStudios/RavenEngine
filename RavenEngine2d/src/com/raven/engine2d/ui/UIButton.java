@@ -20,7 +20,7 @@ public abstract class UIButton<S extends Scene>
     private Vector2f position = new Vector2f();
     private SpriteAnimationState spriteAnimationState;
     private UIImage<S> image;
-    private boolean disable, active;
+    private boolean disable, active, locked;
 
     public UIButton(S scene, String btnImgSrc, String animation) {
         super(scene);
@@ -28,24 +28,44 @@ public abstract class UIButton<S extends Scene>
         spriteAnimationState = new SpriteAnimationState(scene.getEngine().getAnimation(animation));
 
         image = new UIImage<>(scene, (int) getWidth(), (int) getHeight() * 2, btnImgSrc);
-
         image.setSpriteAnimation(spriteAnimationState);
+
         addChild(image);
 
         this.addMouseHandler(this);
     }
 
-    public void setDisable(boolean disable) {
-        this.disable = disable;
+    public void setSprite(String src) {
+        removeChild(image);
+        getScene().removeGameObject(image);
 
-        if (disable) {
-            spriteAnimationState.setAction("disable");
-        } else if (active) {
-            spriteAnimationState.setAction("active");
-        } else if (isMouseHovering()) {
-            spriteAnimationState.setAction("hover");
-        } else {
-            spriteAnimationState.setActionIdle();
+        image = new UIImage<>(getScene(), (int) getWidth(), (int) getHeight() * 2, src);
+        image.setSpriteAnimation(spriteAnimationState);
+
+        addChild(image);
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setDisable(boolean disable) {
+        if (!locked) {
+            this.disable = disable;
+
+            if (disable) {
+                spriteAnimationState.setAction("disable");
+            } else if (active) {
+                spriteAnimationState.setAction("active");
+            } else if (isMouseHovering()) {
+                spriteAnimationState.setAction("hover");
+            } else {
+                spriteAnimationState.setActionIdle();
+            }
         }
     }
 
@@ -54,20 +74,22 @@ public abstract class UIButton<S extends Scene>
     }
 
     public void setActive(boolean active) {
-        if (!disable) {
-            this.active = active;
+        if (!locked) {
+            if (!disable) {
+                this.active = active;
 
-            if (active)
-                spriteAnimationState.setAction("active");
-            else {
-                if (isMouseHovering()) {
-                    spriteAnimationState.setAction("hover");
-                } else {
-                    spriteAnimationState.setActionIdle();
+                if (active)
+                    spriteAnimationState.setAction("active");
+                else {
+                    if (isMouseHovering()) {
+                        spriteAnimationState.setAction("hover");
+                    } else {
+                        spriteAnimationState.setActionIdle();
+                    }
                 }
+            } else if (!active) {
+                this.active = false;
             }
-        } else if (!active) {
-            this.active = false;
         }
     }
 

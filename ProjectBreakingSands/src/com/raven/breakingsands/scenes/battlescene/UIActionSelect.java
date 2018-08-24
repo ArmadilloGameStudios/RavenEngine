@@ -3,7 +3,6 @@ package com.raven.breakingsands.scenes.battlescene;
 import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.hud.UIBottomCenterContainer;
-import com.raven.breakingsands.scenes.hud.UIRightContainer;
 import com.raven.engine2d.ui.UIButton;
 
 import java.util.ArrayList;
@@ -72,7 +71,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             }
         };
         btnBlink.setVisibility(false);
-        btnBlink.setToolTip("blink");
+        btnBlink.setToolTipSrc("blink");
         addChild(btnBlink);
         btns.add(btnBlink);
 
@@ -121,7 +120,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             }
         };
         btnRecall.setVisibility(false);
-        btnRecall.setToolTip("recall");
+        btnRecall.setToolTipSrc("recall");
         addChild(btnRecall);
         btns.add(btnRecall);
 
@@ -163,7 +162,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             }
         };
         btnPushBlast.setVisibility(false);
-        btnPushBlast.setToolTip("pushblast");
+        btnPushBlast.setToolTipSrc("pushblast");
         addChild(btnPushBlast);
         btns.add(btnPushBlast);
 
@@ -216,7 +215,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             }
         };
         btnHookPull.setVisibility(false);
-        btnHookPull.setToolTip("hook");
+        btnHookPull.setToolTipSrc("hook");
         addChild(btnHookPull);
         btns.add(btnHookPull);
 
@@ -268,7 +267,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             }
         };
         btnHack.setVisibility(false);
-        btnHack.setToolTip("hack");
+        btnHack.setToolTipSrc("hack");
         addChild(btnHack);
         btns.add(btnHack);
 
@@ -311,7 +310,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
             }
         };
-        btnMove.setToolTip("move");
+        btnMove.setToolTipSrc("move");
         addChild(btnMove);
         btns.add(btnMove);
 
@@ -354,7 +353,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
             }
         };
-        btnAttack.setToolTip("attack");
+        btnAttack.setToolTipSrc("attack");
         addChild(btnAttack);
         btns.add(btnAttack);
 
@@ -369,7 +368,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                 }
             }
         };
-        btnSkip.setToolTip("skip");
+        btnSkip.setToolTipSrc("skip");
         addChild(btnSkip);
         btns.add(btnSkip);
 
@@ -384,7 +383,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                 }
             }
         };
-        btnCancel.setToolTip("deselect");
+        btnCancel.setToolTipSrc("deselect");
         addChild(btnCancel);
         btns.add(btnCancel);
 
@@ -399,7 +398,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                 }
             }
         };
-        btnLevel.setToolTip("level up");
+        btnLevel.setToolTipSrc("level up");
         addChild(btnLevel);
         btns.add(btnLevel);
 
@@ -415,7 +414,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
             }
         };
-        btnEnd.setToolTip("end turn");
+        btnEnd.setToolTipSrc("end turn");
         addChild(btnEnd);
         btns.add(btnEnd);
 

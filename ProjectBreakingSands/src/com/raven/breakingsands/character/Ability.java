@@ -2,6 +2,8 @@ package com.raven.breakingsands.character;
 
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDataList;
+import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.database.GameDatable;
 import org.lwjgl.system.CallbackI;
 
@@ -24,6 +26,8 @@ public class Ability implements GameDatable {
     public enum UseRegainType {TURN, LEVEL}
 
     public String name, upgrade;
+    public String description = "";
+    public String weapon;
     public Type type;
     public int target;
     public RangeStyle style;
@@ -44,6 +48,42 @@ public class Ability implements GameDatable {
         this.gameData = new GameData(gameData);
 
         name = gameData.getString("name");
+
+        gameData.ifHas("desc", d -> description = d.asString());
+        gameData.ifHas("weapon", w -> weapon = w.asString());
+
+        if (weapon != null) {
+            if (!description.equals("")) {
+                description += "\n";
+            }
+
+            GameData gdWeapon = GameDatabase.all("weapon").stream()
+                    .filter(gd -> gd.getString("name").equals(weapon))
+                    .findFirst().get();
+
+            description += "damage: " + gdWeapon.getInteger("damage") + "\n";
+            gdWeapon.ifHas("piercing",
+                    gd -> description += "piercing: " + gd.asInteger() + "\n",
+                    () -> description += "piercing: 0\n");
+            gdWeapon.ifHas("shots",
+                    gd -> description += "shots: " + gd.asInteger() + "\n",
+                    () -> description += "shots: 1\n");
+
+            if (gdWeapon.getString("type").equals("ranged")) {
+                if (gdWeapon.has("range")) {
+                    if (gdWeapon.getData("range").isList()) {
+                        GameDataList rl = gdWeapon.getList("range");
+                        description += "range: " + rl.get(0) + "-" + rl.get(1) + "\nranged";
+                    } else {
+                        description += "range: 1-" + gdWeapon.getInteger("range") + "\nranged";
+                    }
+                } else {
+                    description += "range: 1\nranged";
+                }
+            } else {
+                description += "range: 1\nmelee";
+            }
+        }
 
         switch (gameData.getString("type")) {
             default:

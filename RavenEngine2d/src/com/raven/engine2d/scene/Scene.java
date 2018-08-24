@@ -24,7 +24,7 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     private Layer layerDetails = new Layer(Layer.Destination.Details);
     private Layer layerEffects = new Layer(Layer.Destination.Effects);
     private Layer layerUI = new Layer(Layer.Destination.UI);
-    private Layer layerToolTip = new Layer(Layer.Destination.TOOLTIP);
+    private Layer layerToolTip = new Layer(Layer.Destination.ToolTip);
 
     private Vector3f backgroundColor = new Vector3f();
     private Vector2f worldOffset = new Vector2f();
@@ -129,7 +129,7 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
                 return layerEffects;
             case UI:
                 return layerUI;
-            case TOOLTIP:
+            case ToolTip:
                 return layerToolTip;
         }
 
@@ -256,9 +256,12 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
         addGameObject(toolTip);
     }
 
-    public void showToolTip(String src) {
+    public void showToolTip(String title, String text) {
         if (toolTip != null) {
-            toolTip.setText(src);
+
+            toolTip.setTitle(title);
+            toolTip.setText(text);
+
             toolTip.setVisibility(true);
         }
     }

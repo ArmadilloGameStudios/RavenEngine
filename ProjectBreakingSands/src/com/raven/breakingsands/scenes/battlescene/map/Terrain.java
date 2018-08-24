@@ -204,7 +204,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     @Override
     public void handleMouseEnter() {
         if (!getScene().isPaused()) {
-//            getScene().showToolTip("damage");
+//            getScene().showToolTipSrc("damage");
 
             switch (getScene().getState()) {
                 case SELECT_MOVE:

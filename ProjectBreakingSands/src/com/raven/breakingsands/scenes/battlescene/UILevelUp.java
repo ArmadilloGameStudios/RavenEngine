@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
 
     public enum RewardType {
@@ -195,7 +196,7 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
                 GameData choice = choices.get(r.nextInt(choices.size()));
                 choices.remove(choice);
 
-                levelUpButtons.get(i).setReward(pawn, type, choice);
+//                levelUpButtons.get(i).setReward(pawn, type, choice);
             } else {
                 levelUpButtons.get(i).clear();
             }

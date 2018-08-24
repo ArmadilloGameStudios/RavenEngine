@@ -1,0 +1,328 @@
+{
+    name: "Fast",
+    type: "self",
+    desc: "movement +1",
+
+    movement: 1
+},
+{
+    name: "Defensive",
+    type: "self",
+    desc: "resistance +1",
+
+    resistance: 1
+},
+{
+    name: "Shielded",
+    type: "self",
+    desc: "shield +3",
+
+    shield: 3
+},
+{
+    name: "Tough",
+    type: "self",
+    desc: "health +5",
+
+    hp: 5
+},
+{
+    name: "Accurate",
+    type: "self",
+    desc: "piercing +1",
+
+    piercing: 1
+},
+{
+    name: "Sharpshooter",
+    type: "self",
+    desc: "range +1",
+
+    range: 1
+},
+{
+    name: "Intelligent",
+    type: "self",
+    desc: "xp gain x2",
+
+    xp_modifier: 2
+},
+{
+    name: "First Aid",
+    type: "self",
+    desc: "all allies restore 1 health each floor",
+
+    restore: 1
+},
+{
+    name: "Plasma Blade",
+    type: "self",
+
+    weapon: "Plasma Blade"
+},
+{
+    name: "Std. Rifle",
+    type: "self",
+
+    weapon: "Std. Rifle"
+},
+{
+    name: "Hand Cannon",
+    type: "self",
+
+    weapon: "Hand Cannon"
+},
+{
+    name: "Sniper",
+    type: "self",
+
+    weapon: "Sniper"
+},
+{
+    name: "Machine Gun",
+    type: "self",
+
+    weapon: "Machine Gun",
+},
+{
+    name: "X2 Barrel Shotgun",
+    type: "self",
+
+    weapon: "X2 Barrel Shotgun",
+},
+{
+    name: "Impenetrable",
+    class: "tank",
+    type: "self",
+
+    hp: 3,
+    shield: 5,
+    resistance: 1,
+},
+{
+    name: "Protector",
+    class: "tank",
+    type: "aurora",
+    target: "ally",
+
+    passes_pawn: true,
+    size: 2,
+    shield: 2,
+    resistance: 1,
+},
+{
+    name: "Guardian",
+    class: "tank",
+    type: "self",
+    target: "ally",
+    replace: "Protector",
+
+    passes_wall: true,
+    size: 4,
+    hp: 2
+    shield: 4,
+    resistance: 1,
+},
+{
+    name: "Taunt",
+    class: "tank",
+    type: "aurora",
+    target: "enemy",
+    requires_not: "Ext. Taunt",
+
+    passes_pawn: true,
+    size: 4,
+    taunt: true
+},
+{
+    name: "Ext. Taunt",
+    class: "tank",
+    type: "aurora",
+    target: "enemy",
+    replace: "Taunt",
+
+    passes_pawn: true,
+    size: 7,
+    taunt: true
+},
+{
+    name: "Push Blast",
+    class: "tank",
+    type: "aurora",
+    target: "enemy",
+
+    uses: 1,
+    damage: 4,
+    style: "square"
+    size: 1,
+    push_blast: true,
+},
+{
+    name: "Hook",
+    class: "tank",
+    type: "target",
+    target: "enemy",
+
+    uses: 1,
+    size: 5,
+    style: "straight",
+    remain: true,
+    hook_pull: true,
+},
+{
+    name: "Hack",
+    class: "hacker",
+    type: "target",
+    target: "enemy",
+
+    passes_pawn: true,
+    use_regain_type: "level",
+    uses: 1
+    size: 1,
+    style: "diamond",
+    hack: true,
+},
+{
+    name: "Boost Hack",
+    class: "hacker",
+    type: "self",
+    upgrade: "Hack",
+
+    hp: 2,
+    shield: 2,
+    resistance: 1,
+},
+{
+    name: "Double Hack",
+    class: "hacker",
+    type: "self",
+    upgrade: "Hack",
+
+    uses: 1
+},
+{
+    name: "Transferable Hack",
+    class: "hacker",
+    type: "self",
+    upgrade: "Hack",
+
+    transferable: true,
+},
+{
+    name: "Quick Hack",
+    class: "hacker",
+    type: "self",
+    upgrade: "Hack",
+    requires_not: "Instant Hack",
+
+    remain: true,
+},
+{
+    name: "Instant Hack",
+    class: "hacker",
+    type: "self",
+    replace: "Quick Hack",
+    upgrade: "Hack",
+
+    instant_hack: true,
+    remain: true,
+},
+{
+    name: "Remote Hack",
+    class: "hacker",
+    type: "self",
+    upgrade: "Hack",
+    requires_not: "Extended Hack",
+
+    size: 1,
+},
+{
+    name: "Extended Hack",
+    class: "hacker",
+    type: "self",
+    replace: "Remote Hack",
+    upgrade: "Hack",
+
+    size: 3,
+},
+{
+    name: "Blink",
+    class: "blinker",
+    type: "target",
+    target: "empty",
+    passes_pawn: true,
+    blink: true,
+
+    uses: 1,
+    size: 2,
+},
+{
+    name: "Double Blink",
+    class: "blinker",
+    type: "self",
+    upgrade: "Blink",
+
+    uses: 1,
+},
+{
+    name: "Further Blink",
+    class: "blinker",
+    type: "self",
+    upgrade: "Blink",
+
+    size: 2,
+},
+{
+    name: "Quick Blink",
+    class: "blinker",
+    type: "self",
+    upgrade: "Blink",
+
+    remain: true,
+},
+{
+    name: "Swap Blink",
+    class: "blinker",
+    type: "self",
+    upgrade: "Blink",
+
+    target: "all",
+},
+{
+    name: "Wall Blink",
+    class: "blinker",
+    type: "self",
+    upgrade: "Blink",
+
+    passes_wall: true
+},
+{
+    name: "Recall",
+    class: "blinker",
+    type: "target",
+    target: "empty",
+
+    uses: 1,
+    size: 1,
+    recall: true,
+
+    ability: {
+        name: "Recall Unit"
+        type: "target",
+        target: "ally",
+        size: -1,
+
+
+        passes_wall: true,
+        recall_unit: true,
+    }
+},
+{
+    name: "Quick Recall",
+    class: "blinker",
+    type: "self",
+    upgrade: "Recall",
+
+    passes_wall: true,
+    remain: true,
+}

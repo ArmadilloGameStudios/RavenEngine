@@ -2,6 +2,7 @@ package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.character.Weapon;
+import com.raven.breakingsands.scenes.battlescene.levelup.UILevelUp2;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.ui.UIFont;
@@ -10,7 +11,7 @@ import com.raven.engine2d.ui.UITextButton;
 public class UILevelUpButton extends UITextButton<BattleScene> {
 
     private Pawn pawn;
-    private UILevelUp.RewardType type;
+    private UILevelUp2.RewardType type;
     private GameData reward;
 
     public UILevelUpButton(BattleScene scene, String text) {
@@ -44,7 +45,7 @@ public class UILevelUpButton extends UITextButton<BattleScene> {
         }
     }
 
-    public void setReward(Pawn pawn, UILevelUp.RewardType type, GameData reward) {
+    public void setReward(Pawn pawn, UILevelUp2.RewardType type, GameData reward) {
         this.pawn = pawn;
         this.type = type;
         this.reward = reward;

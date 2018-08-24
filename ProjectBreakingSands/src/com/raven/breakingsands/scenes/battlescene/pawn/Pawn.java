@@ -23,6 +23,7 @@ import com.raven.engine2d.worldobject.WorldObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -57,6 +58,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     private Hack hack;
     private boolean unmoved = true;
     private boolean ready = true;
+    private int abilityOrder = 0;
     private List<Ability> abilities = new ArrayList<>();
     private List<Ability> abilityAffects = new ArrayList<>();
 
@@ -72,6 +74,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         gameData.ifHas("class", c -> charClass = c.asString());
         gameData.ifHas("level", l -> level = l.asInteger());
         gameData.ifHas("xp", x -> xp = x.asInteger());
+        gameData.ifHas("ability_order",
+                o -> abilityOrder = o.asInteger(),
+                () -> abilityOrder = new Random().nextInt());
         team = gameData.getInteger("team");
 
         gameData.ifHas("sprite", s -> spriteNormal = s.asString());
@@ -156,6 +161,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         map.put("weapon_normal", new GameData(weaponNormal));
         map.put("level", new GameData(level));
         map.put("xp", new GameData(xp));
+        map.put("ability_order", new GameData(abilityOrder));
         map.put("team", new GameData(team));
         map.put("hp", new GameData(hitPoints));
         map.put("remaining_hit_points", new GameData(remainingHitPoints));
@@ -193,6 +199,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 return hack.getTeam();
         } else
             return team;
+    }
+
+    public int getAbilityOrder() {
+        return abilityOrder;
     }
 
     public void setTeam(int i) {
@@ -345,12 +355,11 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         // add ability to the pawn if it is part of the class upgrade
         bonus.ifHas("ability", a -> {
-            GameDatabase.all("classes").stream()
-                    .filter(c -> c.getString("name").equals(this.charClass))
-                    .map(c -> c.getList("abilities"))
+            GameDatabase.all("abilities").stream()
+                    .filter(c -> c.has("class") && c.getString("class").equals(this.charClass))
+                    .filter(ab -> ab.getString("name").equals(a.asString()))
                     .findFirst()
-                    .map(aa -> aa.stream().filter(ab -> ab.getString("name").equals(a.asString())).findFirst())
-                    .ifPresent(x -> x.ifPresent(ability -> addAbility(new Ability(ability))));
+                    .ifPresent(ability -> addAbility(new Ability(ability)));
         });
     }
 
@@ -582,7 +591,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             AtomicReference<Boolean> a = new AtomicReference<>(false);
             AtomicReference<Boolean> b = new AtomicReference<>(false);
 
-            Pawn p = this;
             ActionFinishHandler handlerA = animationState -> {
                 a.set(true);
 
@@ -630,36 +638,36 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         return Math.max(Math.max(damage - remainingResistance, 0) * shots, 1);
     }
 
-    public void attack(Pawn pawn, int damage, int percing, int shots, ActionFinishHandler onAttackDone) {
+    public void attack(Pawn target, int damage, int percing, int shots, ActionFinishHandler onAttackDone) {
         reduceAttacks();
 
-        int dealtDamage = pawn.getDamage(damage, percing, shots);
+        int dealtDamage = target.getDamage(damage, percing, shots);
         System.out.println(damage + " " + dealtDamage);
 
         setUnmoved(false);
 
         if (hack != null) {
-            if (pawn.damage(dealtDamage, onAttackDone) && getTeam(true) == 0) {
-                hack.getHacker().xp += pawn.xpGain;
-                hack.getHacker().showMessage("+" + Integer.toString(pawn.xpGain) + "xp");
+            if (target.damage(dealtDamage, onAttackDone) && getTeam(true) == 0) {
+                hack.getHacker().xp += target.xpGain;
+                hack.getHacker().showMessage("+" + Integer.toString(target.xpGain) + "xp");
 
                 getScene().getPawns().stream()
                         .filter(p -> p.getTeam(false) == 0 && p != hack.getHacker())
                         .forEach(p -> {
-                            p.xp += pawn.xpGain / 3;
-                            p.showMessage("+" + Integer.toString(pawn.xpGain / 3) + "xp");
+                            p.xp += target.xpGain / 3;
+                            p.showMessage("+" + Integer.toString(target.xpGain / 3) + "xp");
                         });
             }
         } else {
-            if (pawn.damage(dealtDamage, onAttackDone) && getTeam(false) == 0) {
-                xp += pawn.xpGain;
-                showMessage("+" + Integer.toString(pawn.xpGain) + "xp");
+            if (target.damage(dealtDamage, onAttackDone) && getTeam(false) == 0) {
+                xp += target.xpGain;
+                showMessage("+" + Integer.toString(target.xpGain) + "xp");
 
                 getScene().getPawns().stream()
                         .filter(p -> p.getTeam(false) == 0 && p != this)
                         .forEach(p -> {
-                            p.xp += pawn.xpGain / 3;
-                            p.showMessage("+" + Integer.toString(pawn.xpGain / 3) + "xp");
+                            p.xp += target.xpGain / 3;
+                            p.showMessage("+" + Integer.toString(target.xpGain / 3) + "xp");
                         });
             }
         }
@@ -790,7 +798,11 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     @Override
     public float getZ() {
-        return ZLayer.PAWN.getValue();
+        Vector2f wPos = getWorldPosition();
+
+        return ZLayer.PAWN.getValue() +
+                ((getParent().getMapY() - getParent().getMapX()) / 1000f) +
+                -(wPos.y - wPos.x) / 1000f;
     }
 
     public void setFlip(boolean flip) {

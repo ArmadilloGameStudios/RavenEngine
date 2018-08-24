@@ -7,7 +7,6 @@ import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.GameObject;
 import com.raven.engine2d.worldobject.MouseHandler;
 import com.raven.engine2d.worldobject.Parentable;
-import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,10 +133,21 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
     }
 
     private MouseHandler tooltipHandler;
-    private String tooltipSrc;
+    private String tooltipTitle;
+    private String tooltipText;
 
-    public void setToolTip(String tooltip) {
-        this.tooltipSrc = tooltip;
+    public void setToolTipSrc(String src) {
+        getScene().getToolTip().getTips().stream()
+                .filter(gd -> gd.getString("src").equals(src))
+                .findFirst()
+                .ifPresent(tip -> {
+                    setToolTip(tip.getString("title"), tip.getString("text"));
+                });
+    }
+
+    public void setToolTip(String title, String text) {
+        tooltipTitle = title;
+        tooltipText = text;
 
         if (tooltipHandler == null)
             this.addMouseHandler(tooltipHandler = new MouseHandler() {
@@ -167,7 +177,7 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
                     totalTime += delta;
 
                     if (totalTime > 500f && !showing) {
-                        scene.showToolTip(tooltipSrc);
+                        scene.showToolTip(tooltipTitle, tooltipText);
                         showing = true;
                     }
                 }
