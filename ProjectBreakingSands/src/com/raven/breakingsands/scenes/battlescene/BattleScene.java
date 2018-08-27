@@ -698,7 +698,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         if (activePawn.canAttack()) {
             // find attack
-            Collection<Terrain> range = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange(), false, false);
+            Collection<Terrain> range = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRangeMax() + activePawn.getBonusMaxRange(), false, false);
 
             if (range.size() > 0) {
                 for (Terrain n : range) {
@@ -742,7 +742,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             // find attack
             Terrain parentTerrain = activePawn.getParent();
 
-            Collection<Terrain> range = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange(), false, false);
+            Collection<Terrain> range = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRangeMax() + activePawn.getBonusMaxRange(), false, false);
 
             if (range.size() > 0) {
                 for (Terrain n : range) {

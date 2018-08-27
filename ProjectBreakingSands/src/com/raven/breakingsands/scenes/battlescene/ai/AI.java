@@ -60,7 +60,7 @@ public class AI implements Runnable {
                             e.getParent().selectRange(
                                     p.getWeapon().getStyle(),
                                     p.getWeapon().getRangeMin(),
-                                    p.getWeapon().getRange(),
+                                    p.getWeapon().getRangeMax() + p.getBonusMaxRange(),
                                     false,
                                     false)));
 
@@ -85,7 +85,7 @@ public class AI implements Runnable {
         getAllEnemyPawns().forEach(e -> {
             Weapon w = e.getWeapon();
 
-            Collection<Terrain> cat = e.getParent().selectRange(w.getStyle(), w.getRangeMin(), w.getRange(), false, true);
+            Collection<Terrain> cat = e.getParent().selectRange(w.getStyle(), w.getRangeMin(), w.getRangeMax() + e.getBonusMaxRange(), false, true);
 
             enemyAttackTerrain.put(e, cat);
         });
@@ -175,7 +175,7 @@ public class AI implements Runnable {
         if (activePawn.canAttack()) {
             Collection<Terrain> inRange = activePawn.getParent().selectRange(
                     activePawn.getWeapon().getStyle(),
-                    activePawn.getWeapon().getRange(),
+                    activePawn.getWeapon().getRangeMax() + activePawn.getBonusMaxRange(),
                     false, false);
             inRange = inRange.stream()
                     .filter(t -> t.getPawn() != null &&
@@ -239,7 +239,7 @@ public class AI implements Runnable {
                             e.getParent().selectRange(
                                     activePawn.getWeapon().getStyle(),
                                     activePawn.getWeapon().getRangeMin(),
-                                    activePawn.getWeapon().getRange(),
+                                    activePawn.getWeapon().getRangeMax() + activePawn.getBonusMaxRange(),
                                     false,
                                     false)));
 

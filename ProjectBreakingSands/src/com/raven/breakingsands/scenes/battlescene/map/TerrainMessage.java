@@ -48,7 +48,7 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
                 Pawn pawn = getParent().getPawn();
                 if (pawn != null && getScene().getActivePawn() != null) {
                     Weapon w = getScene().getActivePawn().getWeapon();
-                    int damage = pawn.getDamage(w.getDamage(), w.getPiercing(), w.getShots());
+                    int damage = pawn.getDamage(w.getDamage(), w.getPiercing() + getScene().getActivePawn().getBonusPiercing(), w.getShots());
 
                     if (damage >= pawn.getRemainingHitPoints()) {
                         setText("kill -" + damage);

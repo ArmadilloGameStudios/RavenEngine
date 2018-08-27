@@ -5,11 +5,6 @@ import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.database.GameDatable;
-import org.lwjgl.system.CallbackI;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
 
 public class Ability implements GameDatable {
 
@@ -36,7 +31,7 @@ public class Ability implements GameDatable {
 
     public Integer size, damage, uses;
     public Integer remainingUses;
-    public Integer hp, shield, movement, resistance;
+    public Integer hp, shield, movement, resistance, piercing, maxRange, minRange;
     public boolean remain, passesPawn, passesWall, usedThisTurn,
             taunt, push_blast, hook_pull,
             hack, instant_hack, transferable, cure,
@@ -155,6 +150,9 @@ public class Ability implements GameDatable {
         gameData.ifHas("shield", s -> shield = s.asInteger());
         gameData.ifHas("movement", m -> movement = m.asInteger());
         gameData.ifHas("resistance", r -> resistance = r.asInteger());
+        gameData.ifHas("piercing", r -> piercing = r.asInteger());
+        gameData.ifHas("max_range", r -> maxRange = r.asInteger());
+        gameData.ifHas("min_range", r -> minRange = r.asInteger());
 
         if (gameData.has("remaining_uses")) {
             gameData.ifHas("remaining_uses", u -> remainingUses = u.asInteger());
@@ -183,87 +181,8 @@ public class Ability implements GameDatable {
             gameData.asMap().put("remaining_uses", new GameData(remainingUses));
         }
         gameData.asMap().put("used_this_turn", new GameData(usedThisTurn));
-//        gameData.asMap().put("usedThisTurn", new GameData(usedThisTurn));
-
-//        if (size != null)
-//            gameData.asMap().put("size", new GameData(size));
-//        else gameData.asMap().remove("size");
-//
-//        if (damage != null)
-//            gameData.asMap().put("damage", new GameData(damage));
-//        else gameData.asMap().remove("damage");
-//
-//        if (turns != null)
-//            gameData.asMap().put("turns", new GameData(turns));
-//        else gameData.asMap().remove("turns");
-//
-//        if (size != null)
-//            gameData.asMap().put("size", new GameData(size));
 
         return gameData;
-
-
-//        HashMap<String, GameData> map = new HashMap<>();
-//
-//        map.put("name", new GameData(name));
-//
-//        switch (type) {
-//            default:
-//            case SELF:
-//                map.put("type", new GameData("self"));
-//                break;
-//            case AURORA:
-//                map.put("type", new GameData("aurora"));
-//                break;
-//            case TARGET:
-//                map.put("type", new GameData("target"));
-//                break;
-//        }
-//
-//        switch (target) {
-//            case ALL:
-//                map.put("target", new GameData("all"));
-//                break;
-//            case SELF:
-//                map.put("target", new GameData("self"));
-//                break;
-//            case ALLY:
-//                map.put("target", new GameData("ally"));
-//                break;
-//            case ENEMY:
-//                map.put("target", new GameData("enemy"));
-//                break;
-//        }
-//
-//        switch (style) {
-//            case STRAIGHT:
-//                map.put("style", new GameData("straight"));
-//                break;
-//            case SQUARE:
-//                map.put("style", new GameData("square"));
-//                break;
-//            case DIAMOND:
-//                map.put("style", new GameData("diamond"));
-//                break;
-//        }
-//
-//        map.put("replace", new GameData(replace));
-//        map.put("upgrade", new GameData(upgrade));
-//        map.put("size", new GameData(size));
-//        map.put("damage", new GameData(damage));
-//        map.put("hp", new GameData(hp));
-//        map.put("shield", new GameData(shield));
-//        map.put("movement", new GameData(movement));
-//        map.put("resistance", new GameData(resistance));
-//        map.put("turns", new GameData(turns));
-//        map.put("uses", new GameData(uses));
-//        map.put("remain", new GameData(remain));
-//        map.put("taunt", new GameData(taunt));
-//        map.put("push_blast", new GameData(push_blast));
-//        map.put("hook_pull", new GameData(hook_pull));
-//        map.put("hack", new GameData(hack));
-//
-//        return new GameData(map);
     }
 
     public void upgrade(Ability ability, boolean add) {
@@ -296,6 +215,12 @@ public class Ability implements GameDatable {
                 this.resistance = ability.resistance;
             else
                 this.resistance += ability.resistance;
+        }
+        if (ability.movement != null) {
+            if (this.movement == null)
+                this.movement = ability.movement;
+            else
+                this.movement += ability.movement;
         }
         if (ability.uses != null) {
             if (this.uses == null) {

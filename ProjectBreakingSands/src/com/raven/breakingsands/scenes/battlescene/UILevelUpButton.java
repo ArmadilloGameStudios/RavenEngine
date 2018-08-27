@@ -13,9 +13,12 @@ public class UILevelUpButton extends UITextButton<BattleScene> {
     private Pawn pawn;
     private UILevelUp2.RewardType type;
     private GameData reward;
+    private UILevelUp2 uiLevelUp;
 
-    public UILevelUpButton(BattleScene scene, String text) {
-        super(scene, text, "sprites/button.png", "mainbutton");
+    public UILevelUpButton(UILevelUp2 uiLevelUp, String text) {
+        super(uiLevelUp.getScene(), text, "sprites/button.png", "mainbutton");
+
+        this.uiLevelUp = uiLevelUp;
 
         UIFont font = getFont();
         font.setSmall(true);
@@ -24,6 +27,7 @@ public class UILevelUpButton extends UITextButton<BattleScene> {
 
     @Override
     public void handleMouseClick() {
+
         if (!isDisabled()) {
             switch (type) {
                 case WEAPON:
@@ -42,19 +46,9 @@ public class UILevelUpButton extends UITextButton<BattleScene> {
             getScene().getUILevelUp().close();
 
             getScene().setActivePawn(pawn);
+
+
         }
-    }
-
-    public void setReward(Pawn pawn, UILevelUp2.RewardType type, GameData reward) {
-        this.pawn = pawn;
-        this.type = type;
-        this.reward = reward;
-
-        setVisibility(true);
-        setDisable(false);
-
-        setText(reward.getString("name"));
-        load();
     }
 
     public void clear() {

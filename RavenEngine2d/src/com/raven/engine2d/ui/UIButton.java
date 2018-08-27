@@ -151,6 +151,11 @@ public abstract class UIButton<S extends Scene>
         return spriteAnimationState;
     }
 
+    public void setSpriteAnimation(String animation) {
+        spriteAnimationState = new SpriteAnimationState(getScene().getEngine().getAnimation(animation));
+        image.setSpriteAnimation(spriteAnimationState);
+    }
+
     @Override
     public void handleMouseEnter() {
         if (!disable && !active) spriteAnimationState.setAction("hover");

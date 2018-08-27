@@ -42,23 +42,6 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
         font.setHighlight(true);
         lblLevelUp.load();
         addChild(lblLevelUp);
-
-        btnA = new UILevelUpButton(getScene(), "-");
-        btnA.load();
-        addChild(btnA);
-        levelUpButtons.add(btnA);
-
-        btnB = new UILevelUpButton(getScene(), "-");
-        btnB.setY(64);
-        btnB.load();
-        addChild(btnB);
-        levelUpButtons.add(btnB);
-
-        btnC = new UILevelUpButton(getScene(), "-");
-        btnC.setY(64 * 2);
-        btnC.load();
-        addChild(btnC);
-        levelUpButtons.add(btnC);
     }
 
     @Override

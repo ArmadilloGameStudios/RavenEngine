@@ -31,138 +31,138 @@ public class LevelUpBaseStar extends LevelUpStar {
 
     private Pawn pawn;
 
-    public LevelUpBaseStar(BattleScene scene) {
-        super(scene);
+    public LevelUpBaseStar(UILevelUp2 uiLevelUp2) {
+        super(uiLevelUp2.getScene());
 
-        startButton = new LevelUpHexButton(this, LevelUpHexButton.Type.START);
+        startButton = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.START);
         addChild(startButton);
         startButton.setDisable(false);
         startButton.setActive(true);
 
         // abilities
-        abilityButton1 = new LevelUpHexButton(this, LevelUpHexButton.Type.ABILITY);
+        abilityButton1 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.ABILITY);
         abilityButton1.setY(40);
         addChild(abilityButton1);
         abilityButtonList.add(abilityButton1);
 
-        abilityButton2 = new LevelUpHexButton(this, LevelUpHexButton.Type.ABILITY);
+        abilityButton2 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.ABILITY);
         abilityButton2.setY(20);
         abilityButton2.setX(30);
         addChild(abilityButton2);
         abilityButtonList.add(abilityButton2);
 
-        abilityButton3 = new LevelUpHexButton(this, LevelUpHexButton.Type.ABILITY);
+        abilityButton3 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.ABILITY);
         abilityButton3.setY(-20);
         abilityButton3.setX(30);
         addChild(abilityButton3);
         abilityButtonList.add(abilityButton3);
 
-        abilityButton4 = new LevelUpHexButton(this, LevelUpHexButton.Type.ABILITY);
+        abilityButton4 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.ABILITY);
         abilityButton4.setY(-40);
         addChild(abilityButton4);
         abilityButtonList.add(abilityButton4);
 
-        abilityButton5 = new LevelUpHexButton(this, LevelUpHexButton.Type.ABILITY);
+        abilityButton5 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.ABILITY);
         abilityButton5.setY(-20);
         abilityButton5.setX(-30);
         addChild(abilityButton5);
         abilityButtonList.add(abilityButton5);
 
-        abilityButton6 = new LevelUpHexButton(this, LevelUpHexButton.Type.ABILITY);
+        abilityButton6 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.ABILITY);
         abilityButton6.setY(20);
         abilityButton6.setX(-30);
         addChild(abilityButton6);
         abilityButtonList.add(abilityButton6);
 
-        abilityButton7 = new LevelUpHexButton(this, LevelUpHexButton.Type.WEAPON);
+        abilityButton7 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.WEAPON);
         abilityButton7.setY(60);
         abilityButton7.setX(30);
         addChild(abilityButton7);
         abilityButtonList.add(abilityButton7);
 
-        abilityButton8 = new LevelUpHexButton(this, LevelUpHexButton.Type.WEAPON);
+        abilityButton8 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.WEAPON);
         abilityButton8.setY(0);
         abilityButton8.setX(60);
         addChild(abilityButton8);
         abilityButtonList.add(abilityButton8);
 
-        abilityButton9 = new LevelUpHexButton(this, LevelUpHexButton.Type.WEAPON);
+        abilityButton9 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.WEAPON);
         abilityButton9.setY(-60);
         abilityButton9.setX(30);
         addChild(abilityButton9);
         abilityButtonList.add(abilityButton9);
 
-        abilityButton10 = new LevelUpHexButton(this, LevelUpHexButton.Type.WEAPON);
+        abilityButton10 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.WEAPON);
         abilityButton10.setY(-60);
         abilityButton10.setX(-30);
         addChild(abilityButton10);
         abilityButtonList.add(abilityButton10);
 
-        abilityButton11 = new LevelUpHexButton(this, LevelUpHexButton.Type.WEAPON);
+        abilityButton11 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.WEAPON);
         abilityButton11.setY(0);
         abilityButton11.setX(-60);
         addChild(abilityButton11);
         abilityButtonList.add(abilityButton11);
 
-        abilityButton12 = new LevelUpHexButton(this, LevelUpHexButton.Type.WEAPON);
+        abilityButton12 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.WEAPON);
         abilityButton12.setY(60);
         abilityButton12.setX(-30);
         addChild(abilityButton12);
         abilityButtonList.add(abilityButton12);
 
         // class
-        classButton1 = new LevelUpHexButton(this, LevelUpHexButton.Type.CLASS);
+        classButton1 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.CLASS);
         classButton1.setY(80);
         classButton1.setX(0);
         addChild(classButton1);
         classButtonList.add(classButton1);
 
-        classButton2 = new LevelUpHexButton(this, LevelUpHexButton.Type.CLASS);
+        classButton2 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.CLASS);
         classButton2.setY(-40);
         classButton2.setX(60);
         addChild(classButton2);
         classButtonList.add(classButton2);
 
-        classButton3 = new LevelUpHexButton(this, LevelUpHexButton.Type.CLASS);
+        classButton3 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.CLASS);
         classButton3.setY(-40);
         classButton3.setX(-60);
         addChild(classButton3);
         classButtonList.add(classButton3);
 
         // Connections
-        addChild(new LevelUpHexConnection(scene, startButton, abilityButton1));
-        addChild(new LevelUpHexConnection(scene, startButton, abilityButton2));
-        addChild(new LevelUpHexConnection(scene, startButton, abilityButton3));
-        addChild(new LevelUpHexConnection(scene, startButton, abilityButton4));
-        addChild(new LevelUpHexConnection(scene, startButton, abilityButton5));
-        addChild(new LevelUpHexConnection(scene, startButton, abilityButton6));
+        addChild(new LevelUpHexConnection(getScene(), startButton, abilityButton1));
+        addChild(new LevelUpHexConnection(getScene(), startButton, abilityButton2));
+        addChild(new LevelUpHexConnection(getScene(), startButton, abilityButton3));
+        addChild(new LevelUpHexConnection(getScene(), startButton, abilityButton4));
+        addChild(new LevelUpHexConnection(getScene(), startButton, abilityButton5));
+        addChild(new LevelUpHexConnection(getScene(), startButton, abilityButton6));
 
-        addChild(new LevelUpHexConnection(scene, abilityButton1, abilityButton2));
-        addChild(new LevelUpHexConnection(scene, abilityButton2, abilityButton3));
-        addChild(new LevelUpHexConnection(scene, abilityButton3, abilityButton4));
-        addChild(new LevelUpHexConnection(scene, abilityButton4, abilityButton5));
-        addChild(new LevelUpHexConnection(scene, abilityButton5, abilityButton6));
-        addChild(new LevelUpHexConnection(scene, abilityButton6, abilityButton1));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton1, abilityButton2));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton2, abilityButton3));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton3, abilityButton4));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton4, abilityButton5));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton5, abilityButton6));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton6, abilityButton1));
 
-        addChild(new LevelUpHexConnection(scene, abilityButton12, abilityButton6));
-        addChild(new LevelUpHexConnection(scene, abilityButton12, abilityButton1));
-        addChild(new LevelUpHexConnection(scene, abilityButton7, abilityButton1));
-        addChild(new LevelUpHexConnection(scene, abilityButton7, abilityButton2));
-        addChild(new LevelUpHexConnection(scene, abilityButton8, abilityButton2));
-        addChild(new LevelUpHexConnection(scene, abilityButton8, abilityButton3));
-        addChild(new LevelUpHexConnection(scene, abilityButton9, abilityButton3));
-        addChild(new LevelUpHexConnection(scene, abilityButton9, abilityButton4));
-        addChild(new LevelUpHexConnection(scene, abilityButton10, abilityButton4));
-        addChild(new LevelUpHexConnection(scene, abilityButton10, abilityButton5));
-        addChild(new LevelUpHexConnection(scene, abilityButton11, abilityButton5));
-        addChild(new LevelUpHexConnection(scene, abilityButton11, abilityButton6));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton12, abilityButton6));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton12, abilityButton1));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton7, abilityButton1));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton7, abilityButton2));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton8, abilityButton2));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton8, abilityButton3));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton9, abilityButton3));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton9, abilityButton4));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton10, abilityButton4));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton10, abilityButton5));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton11, abilityButton5));
+        addChild(new LevelUpHexConnection(getScene(), abilityButton11, abilityButton6));
 
-        addChild(new LevelUpHexConnection(scene, classButton1, abilityButton12));
-        addChild(new LevelUpHexConnection(scene, classButton1, abilityButton7));
-        addChild(new LevelUpHexConnection(scene, classButton2, abilityButton8));
-        addChild(new LevelUpHexConnection(scene, classButton2, abilityButton9));
-        addChild(new LevelUpHexConnection(scene, classButton3, abilityButton10));
-        addChild(new LevelUpHexConnection(scene, classButton3, abilityButton11));
+        addChild(new LevelUpHexConnection(getScene(), classButton1, abilityButton12));
+        addChild(new LevelUpHexConnection(getScene(), classButton1, abilityButton7));
+        addChild(new LevelUpHexConnection(getScene(), classButton2, abilityButton8));
+        addChild(new LevelUpHexConnection(getScene(), classButton2, abilityButton9));
+        addChild(new LevelUpHexConnection(getScene(), classButton3, abilityButton10));
+        addChild(new LevelUpHexConnection(getScene(), classButton3, abilityButton11));
     }
 
     @Override
@@ -182,7 +182,7 @@ public class LevelUpBaseStar extends LevelUpStar {
 
     @Override
     public void setX(float x) {
-        pos.x = x;
+        pos.x = x - startButton.getWidth();
     }
 
     @Override
@@ -192,7 +192,7 @@ public class LevelUpBaseStar extends LevelUpStar {
 
     @Override
     public void setY(float y) {
-        pos.y = y;
+        pos.y = y - startButton.getHeight();
     }
 
     @Override

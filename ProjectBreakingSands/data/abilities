@@ -38,7 +38,7 @@
     type: "self",
     desc: "range +1",
 
-    range: 1
+    max_range: 1
 },
 {
     name: "Intelligent",

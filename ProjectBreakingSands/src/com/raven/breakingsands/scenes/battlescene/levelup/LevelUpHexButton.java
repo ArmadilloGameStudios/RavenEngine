@@ -16,7 +16,7 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
     }
 
     private Type type;
-    private LevelUpStar star;
+    private UILevelUp2 uiLevelUp;
     private List<LevelUpHexConnection> connections = new ArrayList<>();
 
     private static String getSprite(Type type) {
@@ -36,38 +36,40 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
     private Ability ability;
     private GameData pawnClass;
 
-    public LevelUpHexButton(LevelUpStar star, Type type) {
-        super(star.getScene(), getSprite(type), "hexbutton");
+    private String description;
+
+    public LevelUpHexButton(UILevelUp2 uiLevelUp2, Type type) {
+        super(uiLevelUp2.getScene(), getSprite(type), "hexbutton");
 
         setDisable(true);
 
         this.type = type;
-        this.star = star;
+        uiLevelUp = uiLevelUp2;
     }
 
     @Override
     public void handleMouseClick() {
-        Pawn pawn = star.getParent().getPawn();
-
         if (!isActive() && !isDisabled()) {
             switch (type) {
                 default:
                 case START:
                     break;
                 case CLASS:
-                    pawn.setCharacterClass(pawnClass);
+                    uiLevelUp.setReward(type, pawnClass, description, this);
                     break;
                 case WEAPON:
-                    pawn.setWeapon(ability.weapon);
+                    uiLevelUp.setReward(type, ability.weapon, description, this);
                     break;
                 case ABILITY:
-                    pawn.addAbility(ability);
+                    uiLevelUp.setReward(type, ability, description, this);
                     break;
             }
 
 //            pawn.setLevel(pawn.getLevel() + 1);
-
-            star.getParent().close();
+//
+//            uiLevelUp.close();
+        } else if (!isDisabled()) {
+            uiLevelUp.clearReward();
         }
     }
 
@@ -79,7 +81,7 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
     public void setAbility(Ability ability) {
         this.ability = ability;
 
-        Pawn pawn = star.getParent().getPawn();
+        Pawn pawn = uiLevelUp.getPawn();
 
         if (ability.weapon != null) {
             type = Type.WEAPON;
@@ -100,6 +102,7 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
 
         setSprite(getSprite(type));
 
+        description = ability.name + "\n" + ability.description;
         this.setToolTip(ability.name, ability.description);
 
         connections.forEach(LevelUpHexConnection::checkConnection);
@@ -112,7 +115,7 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
     public void setClass(GameData pawnClass) {
         this.pawnClass = pawnClass;
 
-        Pawn pawn = star.getParent().getPawn();
+        Pawn pawn = uiLevelUp.getPawn();
         boolean active = pawn.getCharacterClass().equals(pawnClass.getString("name"));
         setDisable(!active);
         setActive(active);
@@ -126,7 +129,8 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
 //        setDisable(disable);
 //        setLocked(disable);
 
-        this.setToolTip(pawnClass.getString("name"), "");
+        description = "";
+        this.setToolTip(pawnClass.getString("name"), description);
 
         connections.forEach(LevelUpHexConnection::checkConnection);
     }

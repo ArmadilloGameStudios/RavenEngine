@@ -99,7 +99,7 @@ public class PawnShotsActionFinishHandler implements ActionFinishHandler {
                 }
             };
 
-            from.attack(target, from.getWeapon().getDamage(), from.getWeapon().getPiercing(), from.getWeapon().getShots(), handlerB);
+            from.attack(target, from.getWeapon().getDamage(), from.getWeapon().getPiercing() + from.getBonusPiercing(), from.getWeapon().getShots(), handlerB);
             from.getAnimationState().addActionFinishHandler(handlerA);
             from.getAnimationState().addActionFinishHandler(cat -> cat.setActionIdle(false));
         }

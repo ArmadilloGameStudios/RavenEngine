@@ -54,6 +54,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             totalShield, remainingShield, bonusShield, bonusShieldLoss,
             totalMovement, remainingMovement,
             resistance, bonusResistance, totalAttacks = 1, remainingAttacks,
+            bonusPiercing, bonusMinRange, bonusMaxRange,
             xpGain;
     private Hack hack;
     private boolean unmoved = true;
@@ -104,6 +105,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         gameData.ifHas("remaining_movement", m -> remainingMovement = m.asInteger());
         gameData.ifHas("resistance", m -> resistance = m.asInteger());
+        gameData.ifHas("bonus_piercing", m -> bonusPiercing = m.asInteger());
+        gameData.ifHas("bonus_min_range", m -> bonusMinRange = m.asInteger());
+        gameData.ifHas("bonus_max_range", m -> bonusMaxRange = m.asInteger());
         gameData.ifHas("total_attacks", m -> totalAttacks = m.asInteger());
         gameData.ifHas("remaining_attacks", m -> remainingAttacks = m.asInteger());
         gameData.ifHas("xp_gain", x -> xpGain = x.asInteger());
@@ -172,6 +176,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         map.put("movement", new GameData(totalMovement));
         map.put("remaining_movement", new GameData(remainingMovement));
         map.put("resistance", new GameData(resistance));
+        map.put("bonus_piercing", new GameData(bonusPiercing));
+        map.put("bonus_min_range", new GameData(bonusMinRange));
+        map.put("bonus_max_range", new GameData(bonusMaxRange));
         map.put("total_attacks", new GameData(totalAttacks));
         map.put("remaining_attacks", new GameData(remainingAttacks));
         map.put("xp_gain", new GameData(xpGain));
@@ -325,6 +332,18 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         return bonusResistance;
     }
 
+    public int getBonusPiercing() {
+        return bonusPiercing;
+    }
+
+    public int getBonusMinRange() {
+        return getWeapon().getWeaponType() == WeaponType.MELEE ? 0 : bonusMinRange;
+    }
+
+    public int getBonusMaxRange() {
+        return getWeapon().getWeaponType() == WeaponType.MELEE ? 0 : bonusMaxRange;
+    }
+
     public int getResistance(boolean b) {
         if (b) return getResistance();
         else return resistance;
@@ -401,6 +420,15 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 }
                 if (ability.resistance != null) {
                     resistance += ability.resistance;
+                }
+                if (ability.piercing != null) {
+                    bonusPiercing += ability.piercing;
+                }
+                if (ability.maxRange != null) {
+                    bonusMaxRange += ability.maxRange;
+                }
+                if (ability.minRange != null) {
+                    bonusMinRange += ability.minRange;
                 }
             } else { // upgrade existing ability
                 List<Ability> as = abilities.stream()
@@ -618,7 +646,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 }
             };
 
-            attack(target, weapon.getDamage(), weapon.getPiercing(), weapon.getShots(), handlerB);
+            attack(target, weapon.getDamage(), weapon.getPiercing() + getBonusPiercing(), weapon.getShots(), handlerB);
             getAnimationState().addActionFinishHandler(handlerA);
             getAnimationState().addActionFinishHandler(cat -> cat.setActionIdle(false));
 
@@ -919,13 +947,23 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             details.weapon = getWeapon().getName();
             details.damage = Integer.toString(getWeapon().getDamage());
             details.piercing = Integer.toString(getWeapon().getPiercing());
-            if (getWeapon().getRange() != getWeapon().getRangeMin()) {
-                details.range =
-                        Integer.toString(getWeapon().getRangeMin()) +
-                                "-" +
-                                Integer.toString(getWeapon().getRange());
+            if (getBonusPiercing() > 0) {
+                details.piercing += "+" + getBonusPiercing();
+            }
+            if (getWeapon().getRangeMax() != getWeapon().getRangeMin()) {
+                details.range = Integer.toString(getWeapon().getRangeMin());
+
+                if (getBonusMinRange() > 0) {
+                    details.range += "+" + getBonusMinRange();
+                }
+
+                details.range += "-" + Integer.toString(getWeapon().getRangeMax());
+
+                if (getBonusMaxRange() > 0) {
+                    details.range += "+" + getBonusMaxRange();
+                }
             } else {
-                details.range = Integer.toString(getWeapon().getRange());
+                details.range = Integer.toString(getWeapon().getRangeMax());
             }
             details.shots = Integer.toString(getWeapon().getShots());
 
