@@ -63,6 +63,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     private UIUpperRightContainer<BattleScene> bottomRightContainer;
     private UIActionSelect actionSelect;
     private UILevelUp uiLevelUp;
+    private UIFloorDisplay uiFloorDisplay;
 
     public enum State {
         MOVING, ATTACKING, SELECT_DEFAULT, SELECT_MOVE, SELECT_ATTACK, SELECT_ABILITY
@@ -236,6 +237,13 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         addChild(menu);
         menu.setVisibility(false);
 
+        // floor display
+        uiFloorDisplay = new UIFloorDisplay(this);
+        uiFloorDisplay.setFloor(difficulty);
+        UIUpperContainer<BattleScene> topContainer = new UIUpperContainer<>(this);
+        addChild(topContainer);
+        topContainer.addChild(uiFloorDisplay);
+        topContainer.pack();
 
         if (loadGameData != null) {
             activeTeam = loadGameData.getInteger("activeTeam");
@@ -309,7 +317,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         // add enemies
         // create xp to burn
-        int xpBank = 30 * Math.max(difficulty, 1) * Math.max(difficulty / 3, 1);
+        int xpBank = 3 * Math.max(difficulty, 1) * Math.max(difficulty / 3, 1);
 
         // create and populate map
         HashMap<Terrain, Integer> mapSpawn = new HashMap<>();
@@ -326,8 +334,8 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         while (xpBank > 0) {
             int r = getRandom().nextInt(terrainSpawn.size());
             Terrain t = terrainSpawn.get(r);
-            int xp = mapSpawn.get(t) + 30;
-            xpBank -= 30;
+            int xp = mapSpawn.get(t) + 3;
+            xpBank -= 3;
             mapSpawn.put(t, xp);
         }
 

@@ -90,6 +90,7 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
                 setDisable(false);
                 setActive(true);
             }
+            description = ability.name + "\n\n" + ability.description;
         } else {
             type = Type.ABILITY;
 
@@ -98,11 +99,11 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
                 setDisable(false);
                 setActive(true);
             }
+            description = ability.name + "\n" + ability.description;
         }
 
         setSprite(getSprite(type));
 
-        description = ability.name + "\n" + ability.description;
         this.setToolTip(ability.name, ability.description);
 
         connections.forEach(LevelUpHexConnection::checkConnection);

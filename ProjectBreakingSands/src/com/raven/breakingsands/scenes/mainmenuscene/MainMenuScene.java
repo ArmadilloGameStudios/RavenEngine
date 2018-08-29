@@ -52,7 +52,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         // World Offset
         Vector2f wo = getWorldOffset();
 
-        wo.x = GameProperties.getScreenWidth() / GameProperties.getScaling();
+        wo.x = GameProperties.getScreenWidth() / GameProperties.getScaling() - 32;
         wo.y = GameProperties.getScreenHeight() / GameProperties.getScaling();
 
         // UI

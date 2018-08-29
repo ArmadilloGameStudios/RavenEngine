@@ -33,7 +33,7 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
         this.addChild(background);
 
         lblLevelUp = new UILabel<>(getScene(), "level up!", 256, 14);
-        lblLevelUp.setX(100);
+        lblLevelUp.setX(90);
         lblLevelUp.setY(472);
         UIFont font = lblLevelUp.getFont();
         font.setSmall(false);
@@ -128,6 +128,9 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
         // TODO split into multiple methods
         this.pawn = pawn;
 
+        lblLevelUp.setText(pawn.getName() + " leveled up!");
+        lblLevelUp.load();
+
         starBasic.clear();
         starAdvanced.clear();
 
@@ -156,7 +159,7 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
         if (rewardButton != null) {
             rewardButton.setSpriteAnimation("hexbutton");
             rewardButton.setActive(false);
-            rewardButton.setDisable(true);
+//            rewardButton.setDisable(true);
         }
 
         this.rewardType = null;

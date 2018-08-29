@@ -969,7 +969,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public int getNextLevelXp() {
-        return (level * (level + 1) + 1) * 50;
+        return (level * (level + 1) + 1) * 5;
     }
 
     public void setUIDetailText(UIDetailText uiDetailText) {
