@@ -49,8 +49,9 @@
 },
 {
     name: "First Aid",
-    type: "self",
-    desc: "all allies restore 1 health each floor",
+    type: "floor",
+    target: "ally",
+    desc: "all allies restore 1 health each new floor",
 
     restore: 1
 },
@@ -118,10 +119,9 @@
     replace: "Protector",
 
     passes_wall: true,
-    size: 4,
-    hp: 2
+    size: 3,
     shield: 4,
-    resistance: 1,
+    resistance: 2,
 },
 {
     name: "Taunt",

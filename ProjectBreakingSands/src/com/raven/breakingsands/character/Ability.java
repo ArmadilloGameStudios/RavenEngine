@@ -12,7 +12,7 @@ public class Ability implements GameDatable {
 
     public Pawn owner;
 
-    public enum Type {SELF, AURORA, TARGET}
+    public enum Type {SELF, AURORA, TARGET, FLOOR}
 
     public static class Target {
         static final public int ALL = 0b1111, SELF = 0b1000, ALLY = 0b0001, ENEMY = 0b0010, EMPTY = 0b0100;
@@ -31,7 +31,7 @@ public class Ability implements GameDatable {
 
     public Integer size, damage, uses;
     public Integer remainingUses;
-    public Integer hp, shield, movement, resistance, piercing, maxRange, minRange;
+    public Integer hp, shield, movement, resistance, piercing, maxRange, minRange, xpModifier, restore;
     public boolean remain, passesPawn, passesWall, usedThisTurn,
             taunt, push_blast, hook_pull,
             hack, instant_hack, transferable, cure,
@@ -70,7 +70,10 @@ public class Ability implements GameDatable {
                         GameDataList rl = gdWeapon.getList("range");
                         description += "range: " + rl.get(0) + "-" + rl.get(1) + "\nranged";
                     } else {
-                        description += "range: 1-" + gdWeapon.getInteger("range") + "\nranged";
+                        if (gdWeapon.getInteger("range") == 1)
+                            description += "range: 1\nranged";
+                        else
+                            description += "range: 1-" + gdWeapon.getInteger("range") + "\nranged";
                     }
                 } else {
                     description += "range: 1\nranged";
@@ -90,6 +93,9 @@ public class Ability implements GameDatable {
                 break;
             case "target":
                 type = Type.TARGET;
+                break;
+            case "floor":
+                type = Type.FLOOR;
                 break;
         }
 
@@ -153,6 +159,8 @@ public class Ability implements GameDatable {
         gameData.ifHas("piercing", r -> piercing = r.asInteger());
         gameData.ifHas("max_range", r -> maxRange = r.asInteger());
         gameData.ifHas("min_range", r -> minRange = r.asInteger());
+        gameData.ifHas("xp_modifier", r -> xpModifier = r.asInteger());
+        gameData.ifHas("restore", r -> restore = r.asInteger());
 
         if (gameData.has("remaining_uses")) {
             gameData.ifHas("remaining_uses", u -> remainingUses = u.asInteger());

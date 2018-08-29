@@ -34,7 +34,7 @@
     team: 1,
     hp: 6,
     resistance: 1,
-    movement: 4,
+    movement: 3,
     weapon: "Red Plasma Blade",
     weapon_hack: "Plasma Blade",
     xp_gain: 80,

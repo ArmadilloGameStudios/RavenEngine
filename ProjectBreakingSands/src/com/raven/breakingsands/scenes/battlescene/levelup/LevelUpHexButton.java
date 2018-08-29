@@ -16,7 +16,7 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
     }
 
     private Type type;
-    private UILevelUp2 uiLevelUp;
+    private UILevelUp uiLevelUp;
     private List<LevelUpHexConnection> connections = new ArrayList<>();
 
     private static String getSprite(Type type) {
@@ -38,13 +38,13 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
 
     private String description;
 
-    public LevelUpHexButton(UILevelUp2 uiLevelUp2, Type type) {
-        super(uiLevelUp2.getScene(), getSprite(type), "hexbutton");
+    public LevelUpHexButton(UILevelUp uiLevelUp, Type type) {
+        super(uiLevelUp.getScene(), getSprite(type), "hexbutton");
 
         setDisable(true);
 
         this.type = type;
-        uiLevelUp = uiLevelUp2;
+        this.uiLevelUp = uiLevelUp;
     }
 
     @Override

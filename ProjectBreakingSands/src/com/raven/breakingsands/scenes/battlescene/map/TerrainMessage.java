@@ -73,7 +73,7 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
 
     @Override
     public Layer.Destination getDestination() {
-        return Layer.Destination.Details;
+        return Layer.Destination.UI;
     }
 
     @Override

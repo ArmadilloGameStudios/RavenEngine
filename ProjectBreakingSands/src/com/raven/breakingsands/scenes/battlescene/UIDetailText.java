@@ -654,6 +654,5 @@ public class UIDetailText
     public void handleMouseHover(float delta) {
         if (!getScene().isPaused())
             pawn.getParent().handleMouseHover(delta);
-
     }
 }

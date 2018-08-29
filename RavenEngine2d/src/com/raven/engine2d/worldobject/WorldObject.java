@@ -238,6 +238,7 @@ public abstract class WorldObject<
     public void addChild(C child) {
 
         child.setParent(this);
+        child.setScene(getScene());
 
         children.add(child);
 
@@ -285,6 +286,7 @@ public abstract class WorldObject<
     }
 
     protected void setSpriteSheet(String spriteSheetName) {
+        this.spriteSheetName = spriteSheetName;
         spriteSheet = scene.getEngine().getSpriteSheet(spriteSheetName);
         spriteSheet.load(scene);
     }

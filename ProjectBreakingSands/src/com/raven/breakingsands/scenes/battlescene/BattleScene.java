@@ -6,7 +6,7 @@ import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.ai.AI;
 import com.raven.breakingsands.scenes.battlescene.decal.Wall;
-import com.raven.breakingsands.scenes.battlescene.levelup.UILevelUp2;
+import com.raven.breakingsands.scenes.battlescene.levelup.UILevelUp;
 import com.raven.breakingsands.scenes.battlescene.map.Map;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
@@ -40,16 +40,21 @@ import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELEC
 public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable {
     public static Highlight
             OFF = new Highlight(),
-            BLUE = new Highlight(.2f, .6f, 1f, .75f),
-            BLUE_CHANGING = new Highlight(.2f, .6f, 1f, .5f),
-            RED = new Highlight(1f, .1f, .05f, .75f),
-            RED_CHANGING = new Highlight(1f, .3f, .2f, .5f),
-            YELLOW = new Highlight(1f, .8f, .2f, .75f),
-            YELLOW_CHANGING = new Highlight(1f, .8f, .2f, .5f),
-            GREEN = new Highlight(.3f, 1f, .2f, .75f),
-            GREEN_CHANGING = new Highlight(.3f, 1f, .2f, .5f),
-            PURPLE = new Highlight(.5f, .1f, .8f, .75f),
-            PURPLE_CHANGING = new Highlight(.5f, .1f, .8f, .75f);
+
+            BLUE = new Highlight(.1f, .45f, .9f, .4f),
+            BLUE_CHANGING = new Highlight(.2f, .6f, 1f, .75f),
+
+            RED = new Highlight(.9f, .05f, .0f, .4f),
+            RED_CHANGING = new Highlight(1f, .2f, .15f, .75f),
+
+            YELLOW = new Highlight(1f, .8f, .2f, .4f),
+            YELLOW_CHANGING = new Highlight(1f, .9f, .4f, .75f),
+
+            GREEN = new Highlight(.2f, .9f, .1f, .4f),
+            GREEN_CHANGING = new Highlight(.4f, 1f, .4f, .75f),
+
+            PURPLE = new Highlight(.4f, .1f, .8f, .4f),
+            PURPLE_CHANGING = new Highlight(.7f, .0f, .9f, .75f);
 
     private GameData loadGameData = null;
 
@@ -57,7 +62,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     private UIUpperLeftContainer<BattleScene> bottomLeftContainer;
     private UIUpperRightContainer<BattleScene> bottomRightContainer;
     private UIActionSelect actionSelect;
-    private UILevelUp2 uiLevelUp;
+    private UILevelUp uiLevelUp;
 
     public enum State {
         MOVING, ATTACKING, SELECT_DEFAULT, SELECT_MOVE, SELECT_ATTACK, SELECT_ABILITY
@@ -219,7 +224,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         // Level UP
         UICenterContainer<BattleScene> centerContainer = new UICenterContainer<>(this);
         addChild(centerContainer);
-        uiLevelUp = new UILevelUp2(this);
+        uiLevelUp = new UILevelUp(this);
         centerContainer.addChild(uiLevelUp);
         centerContainer.pack();
         uiLevelUp.setVisibility(false);
@@ -246,6 +251,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
             // make sure the abilites are correct
             pawns.forEach(p -> p.getParent().setPawn(p));
+            pawns.forEach(Pawn::runFloorAbilities);
 
             setActiveTeam(0);
         }
@@ -478,7 +484,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         }
     }
 
-    public UILevelUp2 getUILevelUp() {
+    public UILevelUp getUILevelUp() {
         return uiLevelUp;
     }
 

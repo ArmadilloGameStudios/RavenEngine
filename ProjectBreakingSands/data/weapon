@@ -125,7 +125,7 @@
     effect: "blue blast",
     damage: 2,
     piercing: 0,
-    range: 3,
+    range: 2,
     shots: 3,
     directional: true,
     style: "straight",
@@ -145,7 +145,7 @@
     effect: "blue blast",
     damage: 3,
     piercing: 0,
-    range: 2,
+    range: 1,
     shots: 2,
     style: "straight",
 
@@ -161,10 +161,10 @@
         attack: "guard_drone_attack.wav"
     },
 
-    damage: 2,
-    range: 2,
-    piercing: 1,
-    style: "diamond",
+    damage: 3,
+    range: [2, 3],
+    piercing: 0,
+    style: "straight",
     effect: "disk",
 
     tags: [ ],
@@ -178,10 +178,10 @@
         attack: "guard_drone_attack.wav"
     },
 
-    damage: 2,
-    range: 2,
-    piercing: 1,
-    style: "diamond",
+    damage: 3,
+    range: [2, 3],
+    piercing: 0,
+    style: "straight",
     effect: "blue disk",
 
     tags: [ ],

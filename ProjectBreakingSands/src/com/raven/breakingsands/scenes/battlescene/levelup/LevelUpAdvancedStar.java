@@ -1,7 +1,6 @@
 package com.raven.breakingsands.scenes.battlescene.levelup;
 
 import com.raven.breakingsands.character.Ability;
-import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.util.math.Vector2f;
@@ -23,50 +22,50 @@ public class LevelUpAdvancedStar extends LevelUpStar {
 
     private Pawn pawn;
 
-    public LevelUpAdvancedStar(UILevelUp2 uiLevelUp2) {
-        super(uiLevelUp2.getScene());
+    public LevelUpAdvancedStar(UILevelUp uiLevelUp) {
+        super(uiLevelUp.getScene());
 
-        startButton = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.CLASS);
+        startButton = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.CLASS);
         startButton.setY(-40);
         addChild(startButton);
         startButton.setDisable(false);
         startButton.setActive(true);
 
         // abilities
-        abilityButton1 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.ABILITY);
+        abilityButton1 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.ABILITY);
         abilityButton1.setY(-20);
         abilityButton1.setX(-30);
         addChild(abilityButton1);
         abilityButtonList.add(abilityButton1);
 
-        abilityButton2 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.ABILITY);
+        abilityButton2 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.ABILITY);
         addChild(abilityButton2);
         abilityButtonList.add(abilityButton2);
 
-        abilityButton3 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.ABILITY);
+        abilityButton3 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.ABILITY);
         abilityButton3.setY(-20);
         abilityButton3.setX(30);
         addChild(abilityButton3);
         abilityButtonList.add(abilityButton3);
 
-        abilityButton4 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.ABILITY);
+        abilityButton4 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.ABILITY);
         abilityButton4.setY(20);
         abilityButton4.setX(-30);
         addChild(abilityButton4);
         abilityButtonList.add(abilityButton4);
 
-        abilityButton5 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.ABILITY);
+        abilityButton5 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.ABILITY);
         abilityButton5.setY(40);
         addChild(abilityButton5);
         abilityButtonList.add(abilityButton5);
 
-        abilityButton6 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.ABILITY);
+        abilityButton6 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.ABILITY);
         abilityButton6.setY(20);
         abilityButton6.setX(30);
         addChild(abilityButton6);
         abilityButtonList.add(abilityButton6);
 
-        abilityButton7 = new LevelUpHexButton(uiLevelUp2, LevelUpHexButton.Type.ABILITY);
+        abilityButton7 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.ABILITY);
         abilityButton7.setY(80);
         addChild(abilityButton7);
         abilityButtonList.add(abilityButton7);

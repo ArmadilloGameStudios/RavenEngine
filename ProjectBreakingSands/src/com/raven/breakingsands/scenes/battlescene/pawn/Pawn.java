@@ -20,10 +20,7 @@ import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.WorldObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -55,7 +52,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             totalMovement, remainingMovement,
             resistance, bonusResistance, totalAttacks = 1, remainingAttacks,
             bonusPiercing, bonusMinRange, bonusMaxRange,
-            xpGain;
+            xpModifier = 1, xpGain;
     private Hack hack;
     private boolean unmoved = true;
     private boolean ready = true;
@@ -111,6 +108,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         gameData.ifHas("total_attacks", m -> totalAttacks = m.asInteger());
         gameData.ifHas("remaining_attacks", m -> remainingAttacks = m.asInteger());
         gameData.ifHas("xp_gain", x -> xpGain = x.asInteger());
+        gameData.ifHas("xp_modifier", x -> xpModifier = x.asInteger());
 
         GameDatabase db = scene.getEngine().getGameDatabase();
 
@@ -146,6 +144,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         pos.y += 1.3;
         pawnMessage.setPosition(pos);
         addChild(pawnMessage);
+
+        setHighlight(BattleScene.OFF);
     }
 
     @Override
@@ -165,6 +165,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         map.put("weapon_normal", new GameData(weaponNormal));
         map.put("level", new GameData(level));
         map.put("xp", new GameData(xp));
+        map.put("xp_modifier", new GameData(xpModifier));
         map.put("ability_order", new GameData(abilityOrder));
         map.put("team", new GameData(team));
         map.put("hp", new GameData(hitPoints));
@@ -430,6 +431,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 if (ability.minRange != null) {
                     bonusMinRange += ability.minRange;
                 }
+                if (ability.xpModifier != null) {
+                    xpModifier *= ability.xpModifier;
+                }
             } else { // upgrade existing ability
                 List<Ability> as = abilities.stream()
                         .filter(a -> a.name.equals(ability.upgrade))
@@ -486,23 +490,61 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         return new ArrayList<>(abilities);
     }
 
+    public void doAbilityAffect(Ability a) {
+        if ((a.target & Ability.Target.ALL) == Ability.Target.ALL ||
+                ((a.target & Ability.Target.ALLY) == Ability.Target.ALLY && getTeam(true) == 0) ||
+                ((a.target & Ability.Target.ENEMY) == Ability.Target.ENEMY && getTeam(true) == 1)) {
+
+            if (a.restore != null) {
+                this.remainingHitPoints += a.restore;
+                this.remainingHitPoints =
+                        this.remainingHitPoints > this.hitPoints ?
+                                this.hitPoints : this.remainingHitPoints;
+            }
+        }
+    }
+
     public void addAbilityAffect(Ability a) {
         if ((a.target & Ability.Target.ALL) == Ability.Target.ALL ||
                 ((a.target & Ability.Target.ALLY) == Ability.Target.ALLY && getTeam(true) == 0) ||
-                ((a.target & Ability.Target.ENEMY) == Ability.Target.ENEMY && getTeam(false) == 1)) {
+                ((a.target & Ability.Target.ENEMY) == Ability.Target.ENEMY && getTeam(true) == 1)) {
+
+            if (abilityAffects.stream().noneMatch(e -> e.name.equals(a.name))) {
+                if (abilityAffects.stream().anyMatch(e -> a.name.equals(e.replace))) {
+                    // if already replaced, do nothing
+                } else {
+                    Optional<Ability> o = abilityAffects.stream()
+                            .filter(e -> e.name.equals(a.replace))
+                            .findFirst();
+
+                    if (o.isPresent()) {
+                        // if will replace, add difference
+                        Ability existing = o.get();
+
+                        if (a.hp != null)
+                            this.bonusHp += a.hp - (existing.hp != null ? existing.hp : 0);
+                        if (a.shield != null)
+                            this.bonusShield += a.shield - (existing.shield != null ? existing.shield : 0);
+                        if (a.resistance != null)
+                            this.bonusResistance += a.resistance - (existing.resistance != null ? existing.resistance : 0);
+                    } else {
+                        // otherwise, add normally
+                        if (a.hp != null)
+                            this.bonusHp += a.hp;
+                        if (a.shield != null)
+                            this.bonusShield += a.shield;
+                        if (a.resistance != null)
+                            this.bonusResistance += a.resistance;
+                    }
+                }
+
+                updateDetailText();
+            }
 
             abilityAffects.add(a);
-
-            if (a.hp != null)
-                this.bonusHp += a.hp;
-            if (a.shield != null)
-                this.bonusShield += a.shield;
-            if (a.resistance != null)
-                this.bonusResistance += a.resistance;
-
-            updateDetailText();
         }
     }
+
 
     public void removeAbilityAffect(Ability a) {
         if (abilityAffects.remove(a)) {
@@ -510,20 +552,51 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                     ((a.target & Ability.Target.ALLY) == Ability.Target.ALLY && getTeam(true) == 0) ||
                     ((a.target & Ability.Target.ENEMY) == Ability.Target.ENEMY && getTeam(false) == 1)) {
 
-                if (a.hp != null)
-                    this.bonusHp -= a.hp;
-                if (a.shield != null)
-                    this.bonusShield -= a.shield;
-                if (a.resistance != null)
-                    this.bonusResistance -= a.resistance;
+                if (abilityAffects.stream().noneMatch(e -> e.name.equals(a.name))) {
+                    if (abilityAffects.stream().anyMatch(e -> a.name.equals(e.replace))) {
+                        // if already replaced, do nothing
+                    } else {
+                        Optional<Ability> o = abilityAffects.stream()
+                                .filter(e -> e.name.equals(a.replace))
+                                .findFirst();
 
-                updateDetailText();
+                        if (o.isPresent()) {
+                            // if was replacing, subtract difference
+                            Ability existing = o.get();
+
+                            if (a.hp != null)
+                                this.bonusHp -= a.hp - (existing.hp != null ? existing.hp : 0);
+                            if (a.shield != null)
+                                this.bonusShield -= a.shield - (existing.shield != null ? existing.shield : 0);
+                            if (a.resistance != null)
+                                this.bonusResistance -= a.resistance - (existing.resistance != null ? existing.resistance : 0);
+
+
+                        } else {
+                            // otherwise, remove normally
+                            if (a.hp != null)
+                                this.bonusHp -= a.hp;
+                            if (a.shield != null)
+                                this.bonusShield -= a.shield;
+                            if (a.resistance != null)
+                                this.bonusResistance -= a.resistance;
+
+                            updateDetailText();
+                        }
+                    }
+                }
             }
         }
     }
 
     public List<Ability> getAbilityAffects() {
         return abilityAffects;
+    }
+
+    public void runFloorAbilities() {
+        abilities.stream()
+                .filter(a -> a.type == Ability.Type.FLOOR)
+                .forEach(a -> getScene().getPawns().forEach(p -> p.doAbilityAffect(a)));
     }
 
     public int getLevel() {
@@ -687,26 +760,22 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         if (hack != null) {
             if (target.damage(dealtDamage, onAttackDone) && getTeam(true) == 0) {
-                hack.getHacker().xp += target.xpGain;
-                hack.getHacker().showMessage("+" + Integer.toString(target.xpGain) + "xp");
+                hack.getHacker().gainXP(target.xpGain, false);
 
                 getScene().getPawns().stream()
                         .filter(p -> p.getTeam(false) == 0 && p != hack.getHacker())
                         .forEach(p -> {
-                            p.xp += target.xpGain / 3;
-                            p.showMessage("+" + Integer.toString(target.xpGain / 3) + "xp");
+                            p.gainXP(target.xpGain, true);
                         });
             }
         } else {
             if (target.damage(dealtDamage, onAttackDone) && getTeam(false) == 0) {
-                xp += target.xpGain;
-                showMessage("+" + Integer.toString(target.xpGain) + "xp");
+                gainXP(target.xpGain, false);
 
                 getScene().getPawns().stream()
                         .filter(p -> p.getTeam(false) == 0 && p != this)
                         .forEach(p -> {
-                            p.xp += target.xpGain / 3;
-                            p.showMessage("+" + Integer.toString(target.xpGain / 3) + "xp");
+                            p.gainXP(target.xpGain, true);
                         });
             }
         }
@@ -761,6 +830,20 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     public void showMessage(String msg) {
         pawnMessage.setText(msg);
         messageShowTime = 0;
+    }
+
+    public void gainXP(int xp, boolean indirect) {
+        int gain;
+
+        if (indirect) {
+            gain = (xp / 3) * xpModifier;
+        } else {
+            gain = xp * xpModifier;
+        }
+
+        this.xp += gain;
+
+        showMessage("+" + Integer.toString(gain) + "xp");
     }
 
     public void hack(Hack hack) {

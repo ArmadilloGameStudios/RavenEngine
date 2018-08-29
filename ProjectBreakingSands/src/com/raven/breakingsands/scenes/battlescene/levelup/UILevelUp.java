@@ -7,7 +7,7 @@ import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.ui.*;
 import com.raven.engine2d.util.math.Vector2f;
 
-public class UILevelUp2 extends UIObject<BattleScene, UIContainer<BattleScene>> {
+public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
 
     public enum RewardType {
         WEAPON, CLASS, ABILITY
@@ -30,7 +30,7 @@ public class UILevelUp2 extends UIObject<BattleScene, UIContainer<BattleScene>> 
 
     private String message = "Pick a new ability, weapon, or class.";
 
-    public UILevelUp2(BattleScene scene) {
+    public UILevelUp(BattleScene scene) {
         super(scene);
 
         background = new UIImage<>(scene, 256, 256, "sprites/level up.png");
@@ -122,6 +122,7 @@ public class UILevelUp2 extends UIObject<BattleScene, UIContainer<BattleScene>> 
     }
 
     public void close() {
+        clearReward();
         setVisibility(false);
         getScene().setPaused(false);
         getScene().setActivePawn(pawn);
@@ -159,6 +160,7 @@ public class UILevelUp2 extends UIObject<BattleScene, UIContainer<BattleScene>> 
         if (rewardButton != null) {
             rewardButton.setSpriteAnimation("hexbutton");
             rewardButton.setActive(false);
+            rewardButton.setDisable(true);
         }
 
         this.rewardType = null;
@@ -188,7 +190,7 @@ public class UILevelUp2 extends UIObject<BattleScene, UIContainer<BattleScene>> 
                 break;
         }
 
-        pawn.setLevel(pawn.getLevel() + 1);
+//        pawn.setLevel(pawn.getLevel() + 1);
 
         close();
     }
