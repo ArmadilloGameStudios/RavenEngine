@@ -51,21 +51,24 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
         Scene scene = getCurrentScene();
 
         if (scene instanceof BattleScene) {
-            gdtToSave.add(new GameDataTable("current_save", ((BattleScene) getCurrentScene())));
+            gdtToSave.add(new GameDataTable("current_save", ((BattleScene) scene)));
 
             return saveDataTables(gdtToSave);
         } else {
+            System.out.println("Saving Failed");
             return false;
         }
     }
 
     @Override
     public boolean loadGame() {
+
         List<GameData> currentSave = loadSavedGameData("current_save");
         if (currentSave != null && currentSave.size() > 0) {
             prepTransitionScene(new BattleScene(this, loadSavedGameData("current_save").get(0)));
             return true;
         } else {
+            System.out.println("Loading Failed");
             return false;
         }
     }

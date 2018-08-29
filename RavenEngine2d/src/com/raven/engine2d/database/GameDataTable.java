@@ -27,15 +27,32 @@ public class GameDataTable extends GameDataList {
 
 	@Override
 	public String toString() {
-	    List<String> lines = new ArrayList<>();
+		List<String> lines = new ArrayList<>();
 
+		for (GameData gameData : this) {
+			lines.add(gameData.toString());
+		}
 
-	    for (GameData gameData : this) {
-            lines.add(gameData.toString());
-        }
+		String f = String.join(",\n", lines);
 
-        String f = String.join(",\n", lines);
+		return f;
+	}
 
-        return f;
-    }
+	public String toFileString() {
+		List<String> lines = new ArrayList<>();
+
+		for (GameData gameData : this) {
+			lines.add(gameData.toString());
+		}
+
+        List<String> fixedLines = new ArrayList<>();
+
+		lines.forEach(line -> {
+		    fixedLines.add(line.replace("\\", "\\\\").replace("\n", "\\n"));
+        });
+
+        String f = String.join(",\n", fixedLines);
+
+		return f;
+	}
 }

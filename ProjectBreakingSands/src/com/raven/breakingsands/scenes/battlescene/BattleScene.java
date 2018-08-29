@@ -187,8 +187,9 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     public void onEnterScene() {
         setBackgroundColor(new Vector3f(0f, 0f, 0f));
 
+        // center the view
         Vector2f wo = this.getWorldOffset();
-        wo.x = GameProperties.getScreenWidth() / GameProperties.getScaling();
+        wo.x = GameProperties.getScreenWidth() / GameProperties.getScaling() - 64 * 2;
         wo.y = GameProperties.getScreenHeight() / GameProperties.getScaling();
 
         this.setToolTip(new UIToolTip<>(this,
@@ -270,6 +271,10 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         bottomLeftContainer.pack();
         bottomRightContainer.pack();
+
+        System.out.println(getTerrainMap().getTerrainList().stream().filter(t -> t.getPawn() != null).count());
+
+        getGame().saveGame();
     }
 
     private void addPawns() {
@@ -493,8 +498,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     public void setActivePawn(Pawn pawn) {
-        getGame().saveGame();
-
         if (checkVictory()) return;
 
         Pawn oldPawn = this.activePawn;
@@ -508,6 +511,8 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         if (activePawn != null) {
             activePawn.updateDetailText();
         }
+
+        getGame().saveGame();
 
         setState(SELECT_DEFAULT);
     }

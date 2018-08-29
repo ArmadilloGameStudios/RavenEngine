@@ -51,7 +51,7 @@
     name: "First Aid",
     type: "floor",
     target: "ally",
-    desc: "all allies restore 1 health each new floor",
+    desc: "all allies restore 1 hp each new floor",
 
     restore: 1
 },
@@ -93,6 +93,8 @@
 },
 {
     name: "Impenetrable",
+    desc: "become even more resilient to damage.\n\nhealth +3\nshield +5\nresistance +1",
+
     class: "tank",
     type: "self",
 
@@ -102,6 +104,8 @@
 },
 {
     name: "Protector",
+    desc: "protect allies close to you.\n\nsize 2\nshield +2\nresistance +1",
+
     class: "tank",
     type: "aurora",
     target: "ally",
@@ -113,6 +117,8 @@
 },
 {
     name: "Guardian",
+    desc: "protect allies close to you.\n\nsize 3\nshield +4\nresistance +2",
+
     class: "tank",
     type: "aurora",
     target: "ally",
@@ -125,6 +131,8 @@
 },
 {
     name: "Taunt",
+    desc: "taunt enemies into attacking you over your allies.\n\nsize 4",
+
     class: "tank",
     type: "aurora",
     target: "enemy",
@@ -136,6 +144,8 @@
 },
 {
     name: "Ext. Taunt",
+    desc: "taunt enemies into attacking you over your allies.\n\nsize 7",
+
     class: "tank",
     type: "aurora",
     target: "enemy",
@@ -147,24 +157,28 @@
 },
 {
     name: "Push Blast",
+    desc: "push all enemies away for you.\n\ndamage 5",
+
     class: "tank",
     type: "aurora",
     target: "enemy",
 
     uses: 1,
-    damage: 4,
+    damage: 5,
     style: "square"
     size: 1,
     push_blast: true,
 },
 {
     name: "Hook",
+    desc: "pull an enemy closer to you.\ncan attack and use other abilities.\n\nrange 6",
+
     class: "tank",
     type: "target",
     target: "enemy",
 
     uses: 1,
-    size: 5,
+    size: 6,
     style: "straight",
     remain: true,
     hook_pull: true,
@@ -184,6 +198,8 @@
 },
 {
     name: "Boost Hack",
+    desc: "hacked units have improved stats.\n\nhealth +2\nshield +2\nresistance +1",
+
     class: "hacker",
     type: "self",
     upgrade: "Hack",
@@ -194,6 +210,8 @@
 },
 {
     name: "Double Hack",
+    desc: "allows two units to be hacked a floor",
+
     class: "hacker",
     type: "self",
     upgrade: "Hack",
@@ -202,6 +220,8 @@
 },
 {
     name: "Transferable Hack",
+    desc: "hacked units can transfer the hack to and adjacent one, the original unit will no longer be hacked.",
+
     class: "hacker",
     type: "self",
     upgrade: "Hack",
@@ -210,6 +230,8 @@
 },
 {
     name: "Quick Hack",
+    desc: "can attack and use other abilities after hacking.",
+
     class: "hacker",
     type: "self",
     upgrade: "Hack",
@@ -219,6 +241,8 @@
 },
 {
     name: "Instant Hack",
+    desc: "the hacked unit can move and attack the same turn it was hacked.",
+
     class: "hacker",
     type: "self",
     replace: "Quick Hack",
@@ -229,6 +253,8 @@
 },
 {
     name: "Remote Hack",
+    desc: "can hack units that aren't adjacent.\n\nrange 2",
+
     class: "hacker",
     type: "self",
     upgrade: "Hack",
@@ -238,6 +264,8 @@
 },
 {
     name: "Extended Hack",
+    desc: "can hack units even further away.\n\nrange 4",
+
     class: "hacker",
     type: "self",
     replace: "Remote Hack",
@@ -258,6 +286,8 @@
 },
 {
     name: "Double Blink",
+    desc: "can blink twice a turn.",
+
     class: "blinker",
     type: "self",
     upgrade: "Blink",
@@ -266,6 +296,8 @@
 },
 {
     name: "Further Blink",
+    desc: "can blink further away.\n\nrange 4",
+
     class: "blinker",
     type: "self",
     upgrade: "Blink",
@@ -274,6 +306,8 @@
 },
 {
     name: "Quick Blink",
+    desc: "can attack and use other abilities after blinking.",
+
     class: "blinker",
     type: "self",
     upgrade: "Blink",
@@ -282,6 +316,8 @@
 },
 {
     name: "Swap Blink",
+    desc: "can switch places with other units.",
+
     class: "blinker",
     type: "self",
     upgrade: "Blink",
@@ -290,6 +326,8 @@
 },
 {
     name: "Wall Blink",
+    desc: "can blink through walls.",
+
     class: "blinker",
     type: "self",
     upgrade: "Blink",
@@ -298,6 +336,8 @@
 },
 {
     name: "Recall",
+    desc: "can blink allies to an adjacent space.",
+
     class: "blinker",
     type: "target",
     target: "empty",
@@ -319,6 +359,8 @@
 },
 {
     name: "Quick Recall",
+    desc: "can attack and use other abilities after recalling.",
+
     class: "blinker",
     type: "target",
     target: "empty",

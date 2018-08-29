@@ -9,10 +9,6 @@ import com.raven.engine2d.util.math.Vector2f;
 
 public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
 
-    public enum RewardType {
-        WEAPON, CLASS, ABILITY
-    }
-
     private Vector2f position = new Vector2f();
 
     private Pawn pawn;

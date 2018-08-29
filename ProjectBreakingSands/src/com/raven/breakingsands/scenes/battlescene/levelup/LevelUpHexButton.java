@@ -129,7 +129,7 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
 //        setDisable(disable);
 //        setLocked(disable);
 
-        description = "";
+        pawnClass.ifHas("desc", d -> description = d.asString(), () -> description = "");
         this.setToolTip(pawnClass.getString("name"), description);
 
         connections.forEach(LevelUpHexConnection::checkConnection);

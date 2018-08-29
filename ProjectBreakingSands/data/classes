@@ -1,5 +1,6 @@
 {
     name: "tank",
+    desc: "while slow-moving, this unit can take lots of damage and keep others safe.\n\nhealth +5\nshield +5\nresistance +2\nmovement -1",
 
     bonus: {
         hp: 5,
@@ -10,6 +11,7 @@
 },
 {
     name: "hacker",
+    desc: "hack enemies, allowing you to move and attack with them.\n\ngain ability: hack"
 
     bonus: {
         ability: "Hack",
@@ -17,6 +19,7 @@
 },
 {
     name: "blinker",
+    desc: "learn the ability to teleport, letting this unit quickly travel the map.\n\ngain ability: blink"
 
     bonus: {
         ability: "Blink",

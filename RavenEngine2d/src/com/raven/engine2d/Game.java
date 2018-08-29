@@ -65,8 +65,8 @@ public abstract class Game<G extends Game<G>> {
 
         GameObject.resetObjectIDs();
 
-        scene.enterScene();
         currentScene = scene;
+        scene.enterScene();
         readyTransitionScene = null;
     }
 
@@ -128,7 +128,7 @@ public abstract class Game<G extends Game<G>> {
                 if (!f.exists())
                     f.createNewFile();
 
-                Files.write(p, table.toString().getBytes(), StandardOpenOption.CREATE);
+                Files.write(p, table.toFileString().getBytes(), StandardOpenOption.CREATE);
             }
         } catch (IOException e) {
             e.printStackTrace();
