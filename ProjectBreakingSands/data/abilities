@@ -163,6 +163,8 @@
     type: "aurora",
     target: "enemy",
 
+    action: true,
+
     uses: 1,
     damage: 5,
     style: "square"
@@ -177,6 +179,8 @@
     type: "target",
     target: "enemy",
 
+    action: true,
+
     uses: 1,
     size: 6,
     style: "straight",
@@ -185,9 +189,13 @@
 },
 {
     name: "Hack",
+    desc: "hacked enemy units.",
+
     class: "hacker",
     type: "target",
     target: "enemy",
+
+    action: true,
 
     passes_pawn: true,
     use_regain_type: "level",
@@ -207,6 +215,8 @@
     hp: 2,
     shield: 2,
     resistance: 1,
+
+    action: true,
 },
 {
     name: "Double Hack",
@@ -217,6 +227,8 @@
     upgrade: "Hack",
 
     uses: 1
+
+    action: true,
 },
 {
     name: "Transferable Hack",
@@ -227,6 +239,8 @@
     upgrade: "Hack",
 
     transferable: true,
+
+    action: true,
 },
 {
     name: "Quick Hack",
@@ -238,6 +252,8 @@
     requires_not: "Instant Hack",
 
     remain: true,
+
+    action: true,
 },
 {
     name: "Instant Hack",
@@ -250,6 +266,8 @@
 
     instant_hack: true,
     remain: true,
+
+    action: true,
 },
 {
     name: "Remote Hack",
@@ -261,6 +279,8 @@
     requires_not: "Extended Hack",
 
     size: 1,
+
+    action: true,
 },
 {
     name: "Extended Hack",
@@ -272,9 +292,13 @@
     upgrade: "Hack",
 
     size: 3,
+
+    action: true,
 },
 {
     name: "Blink",
+    desc: "teleport to another space.",
+
     class: "blinker",
     type: "target",
     target: "empty",
@@ -283,6 +307,8 @@
 
     uses: 1,
     size: 2,
+
+    action: true,
 },
 {
     name: "Double Blink",
@@ -293,6 +319,8 @@
     upgrade: "Blink",
 
     uses: 1,
+
+    action: true,
 },
 {
     name: "Further Blink",
@@ -303,6 +331,8 @@
     upgrade: "Blink",
 
     size: 2,
+
+    action: true,
 },
 {
     name: "Quick Blink",
@@ -313,6 +343,8 @@
     upgrade: "Blink",
 
     remain: true,
+
+    action: true,
 },
 {
     name: "Swap Blink",
@@ -323,6 +355,8 @@
     upgrade: "Blink",
 
     target: "all",
+
+    action: true,
 },
 {
     name: "Wall Blink",
@@ -333,6 +367,8 @@
     upgrade: "Blink",
 
     passes_wall: true
+
+    action: true,
 },
 {
     name: "Recall",
@@ -371,6 +407,8 @@
     recall: true,
     passes_wall: true,
     remain: true,
+
+    action: true,
 
     ability: {
         name: "Recall Unit"

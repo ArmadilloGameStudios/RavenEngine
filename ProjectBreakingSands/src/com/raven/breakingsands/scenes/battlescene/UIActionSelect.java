@@ -487,6 +487,9 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                 btnBlink.setDisable(!pawn.canAbility(ability.get()));
                 btnBlink.setActive(btnBlink.getActive() && pawn == this.pawn);
                 btnBlink.setAbility(ability.get());
+                pawn.getAbilities().stream()
+                        .filter(a -> a.action && a.upgrade != null && a.upgrade.equals("Blink"))
+                        .forEach(btnBlink::addBonusAbility);
             } else {
                 btnBlink.setVisibility(false);
             }
@@ -497,6 +500,9 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                 btnRecall.setDisable(!pawn.canAbility(ability.get()));
                 btnRecall.setActive(btnRecall.getActive() && pawn == this.pawn);
                 btnRecall.setAbility(ability.get());
+                pawn.getAbilities().stream()
+                        .filter(a -> a.action && a.replace != null && a.replace.equals("Recall"))
+                        .forEach(btnRecall::addBonusAbility);
             } else {
                 btnRecall.setVisibility(false);
             }
@@ -517,6 +523,9 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                 btnHack.setDisable(!pawn.canAbility(ability.get()));
                 btnHack.setActive(btnHack.getActive() && pawn == this.pawn);
                 btnHack.setAbility(ability.get());
+                pawn.getAbilities().stream()
+                        .filter(a -> a.action && a.upgrade != null && a.upgrade.equals("Hack"))
+                        .forEach(btnHack::addBonusAbility);
             } else {
                 btnHack.setVisibility(false);
             }

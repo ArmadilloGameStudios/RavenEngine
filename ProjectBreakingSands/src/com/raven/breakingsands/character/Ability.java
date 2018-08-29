@@ -32,7 +32,7 @@ public class Ability implements GameDatable {
     public Integer size, damage, uses;
     public Integer remainingUses;
     public Integer hp, shield, movement, resistance, piercing, maxRange, minRange, xpModifier, restore;
-    public boolean remain, passesPawn, passesWall, usedThisTurn,
+    public boolean action, remain, passesPawn, passesWall, usedThisTurn,
             taunt, push_blast, hook_pull,
             hack, instant_hack, transferable, cure,
             blink, recall, recall_unit;
@@ -46,6 +46,8 @@ public class Ability implements GameDatable {
 
         gameData.ifHas("desc", d -> description = d.asString());
         gameData.ifHas("weapon", w -> weapon = w.asString());
+
+        gameData.ifHas("action", a -> action = a.asBoolean());
 
         if (weapon != null) {
             if (!description.equals("")) {

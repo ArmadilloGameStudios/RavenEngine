@@ -1,10 +1,16 @@
 package com.raven.breakingsands.scenes.battlescene;
 
+import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.ui.*;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.MouseHandler;
+import javafx.util.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class UIDetailText
         extends UIObject<BattleScene, UIContainer<BattleScene>>
@@ -17,6 +23,8 @@ public class UIDetailText
 
     private UIImage<BattleScene> backgroundImg;
     private UIImage<BattleScene> pawnImg;
+
+    private List<Pair<Ability, UIImage<BattleScene>>> abilityImgList = new ArrayList<>();
 
     private SelectionDetails details;
 
@@ -630,6 +638,44 @@ public class UIDetailText
             uiShots.setText(details.shots);
             uiShots.load();
         }
+
+        // add new abilities
+        pawn.getAbilities().stream().filter(a -> !a.action).forEach(a -> {
+            if (abilityImgList.stream().noneMatch(ai -> ai.getKey() == a)) {
+                UIImage<BattleScene> abilityImg = new UIImage<>(getScene(), 10, 9, "sprites/ability hex.png");
+                abilityImg.setSpriteAnimation(new SpriteAnimationState(getScene().getEngine().getAnimation("hexbutton")));
+                addChild(abilityImg);
+
+                abilityImg.setToolTip(a.name, a.description);
+
+                Pair<Ability, UIImage<BattleScene>> pair = new Pair<>(a, abilityImg);
+
+                abilityImgList.add(pair);
+            }
+        });
+
+        // remove gone abilities
+        List<Pair<Ability, UIImage<BattleScene>>> toRemove = new ArrayList<>();
+
+        abilityImgList.forEach(ai -> {
+            if (pawn.getAbilities().stream().noneMatch(a -> ai.getKey() == a)) {
+                toRemove.add(ai);
+            }
+        });
+
+        toRemove.forEach(ai -> {
+            abilityImgList.remove(ai);
+            removeChild(ai.getValue());
+        });
+
+        AtomicInteger i = new AtomicInteger();
+        // order images
+        abilityImgList.stream().forEach(pair -> {
+            UIImage img = pair.getValue();
+            img.setX(getWidth() * 2 + 2 + i.get() * 22);
+            img.setY(20);
+            i.getAndIncrement();
+        });
     }
 
     @Override

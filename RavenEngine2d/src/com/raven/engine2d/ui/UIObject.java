@@ -66,6 +66,7 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
 
     public void removeChild(UIObject obj) {
         children.remove(obj);
+        scene.removeGameObject(obj);
     }
 
     public final void setDestination(Layer.Destination destination) {
@@ -176,7 +177,7 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
                 public void handleMouseHover(float delta) {
                     totalTime += delta;
 
-                    if (totalTime > 500f && !showing) {
+                    if (totalTime > 300f && !showing) {
                         scene.showToolTip(tooltipTitle, tooltipText);
                         showing = true;
                     }
