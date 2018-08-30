@@ -36,13 +36,7 @@ public abstract class UIButton<S extends Scene>
     }
 
     public void setSprite(String src) {
-        removeChild(image);
-        getScene().removeGameObject(image);
-
-        image = new UIImage<>(getScene(), (int) getWidth(), (int) getHeight() * 2, src);
-        image.setSpriteAnimation(spriteAnimationState);
-
-        addChild(image);
+        image.setSprite(src);
     }
 
     public void setLocked(boolean locked) {

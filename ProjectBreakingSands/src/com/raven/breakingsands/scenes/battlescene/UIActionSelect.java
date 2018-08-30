@@ -422,6 +422,14 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
     }
 
     public void setPawn(Pawn pawn) {
+        if (getScene().getActiveTeam() == 0) {
+            btnUndo.setDisable(false);
+            btnUndo.setActive(false);
+        } else {
+            btnUndo.setDisable(true);
+            btnUndo.setActive(false);
+        }
+
         if (pawn == null || (getScene().getActiveAbility() != null && getScene().getActiveAbility().recall_unit)) {
             this.disable = true;
 
@@ -431,8 +439,6 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             btnCancel.setActive(false);
             btnMove.setDisable(disable);
             btnMove.setActive(false);
-            btnUndo.setDisable(disable);
-            btnUndo.setActive(false);
             btnLevel.setDisable(disable);
             btnLevel.setActive(false);
             btnLevel.setVisibility(false);
@@ -458,7 +464,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             btnAttack.setActive(btnAttack.getActive() && pawn == this.pawn);
             btnMove.setDisable(!pawn.canMove());
             btnMove.setActive(btnMove.getActive() && pawn == this.pawn);
-            btnUndo.setDisable(false);
+//            btnUndo.setDisable(false);
 //            btnUndo.setActive(false);
             btnCancel.setDisable(false);
 //            btnCancel.setActive(false);

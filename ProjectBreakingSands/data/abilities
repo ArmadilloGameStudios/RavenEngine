@@ -2,6 +2,7 @@
     name: "Fast",
     type: "self",
     desc: "movement +1",
+    icon: "sprites/ability hex fast.png",
 
     movement: 1
 },
@@ -9,6 +10,7 @@
     name: "Defensive",
     type: "self",
     desc: "resistance +1",
+    icon: "sprites/ability hex protection.png",
 
     resistance: 1
 },
@@ -16,6 +18,7 @@
     name: "Shielded",
     type: "self",
     desc: "shield +3",
+    icon: "sprites/ability hex protection.png",
 
     shield: 3
 },
@@ -23,6 +26,7 @@
     name: "Tough",
     type: "self",
     desc: "health +5",
+    icon: "sprites/ability hex health.png",
 
     hp: 5
 },
@@ -30,6 +34,7 @@
     name: "Accurate",
     type: "self",
     desc: "piercing +1",
+    icon: "sprites/ability hex accurate.png",
 
     piercing: 1
 },
@@ -37,6 +42,7 @@
     name: "Sharpshooter",
     type: "self",
     desc: "range +1",
+    icon: "sprites/ability hex improve.png",
 
     max_range: 1
 },
@@ -44,6 +50,7 @@
     name: "Intelligent",
     type: "self",
     desc: "xp gain x2",
+    icon: "sprites/ability hex twice.png",
 
     xp_modifier: 2
 },
@@ -52,48 +59,56 @@
     type: "floor",
     target: "ally",
     desc: "all allies restore 1 hp each new floor",
+    icon: "sprites/ability hex medic.png",
 
     restore: 1
 },
 {
     name: "Plasma Blade",
     type: "self",
+    icon: "sprites/gun hex.png",
 
     weapon: "Plasma Blade"
 },
 {
     name: "Std. Rifle",
     type: "self",
+    icon: "sprites/gun hex.png",
 
     weapon: "Std. Rifle"
 },
 {
     name: "Hand Cannon",
     type: "self",
+    icon: "sprites/gun hex.png",
 
     weapon: "Hand Cannon"
 },
 {
     name: "Sniper",
     type: "self",
+    icon: "sprites/gun hex.png",
 
     weapon: "Sniper"
 },
 {
     name: "Machine Gun",
     type: "self",
+    icon: "sprites/gun hex.png",
 
     weapon: "Machine Gun",
 },
 {
-    name: "X2 Barrel Shotgun",
+    name: "DBL Barrel Shotgun",
     type: "self",
+    icon: "sprites/gun hex.png",
 
     weapon: "X2 Barrel Shotgun",
 },
 {
     name: "Impenetrable",
     desc: "become even more resilient to damage.\n\nhealth +3\nshield +5\nresistance +1",
+    icon: "sprites/ability hex protection.png",
 
     class: "tank",
     type: "self",
@@ -105,6 +120,7 @@
 {
     name: "Protector",
     desc: "protect allies close to you.\n\nsize 2\nshield +2\nresistance +1",
+    icon: "sprites/ability hex protection.png",
 
     class: "tank",
     type: "aurora",
@@ -118,6 +134,7 @@
 {
     name: "Guardian",
     desc: "protect allies close to you.\n\nsize 3\nshield +4\nresistance +2",
+    icon: "sprites/ability hex protection.png",
 
     class: "tank",
     type: "aurora",
@@ -132,6 +149,7 @@
 {
     name: "Taunt",
     desc: "taunt enemies into attacking you over your allies.\n\nsize 4",
+    icon: "sprites/ability hex taunt.png",
 
     class: "tank",
     type: "aurora",
@@ -145,6 +163,7 @@
 {
     name: "Ext. Taunt",
     desc: "taunt enemies into attacking you over your allies.\n\nsize 7",
+    icon: "sprites/ability hex taunt.png",
 
     class: "tank",
     type: "aurora",
@@ -158,6 +177,7 @@
 {
     name: "Push Blast",
     desc: "push all enemies away for you.\n\ndamage 5",
+    icon: "sprites/ability hex push.png",
 
     class: "tank",
     type: "aurora",
@@ -174,6 +194,7 @@
 {
     name: "Hook",
     desc: "pull an enemy closer to you.\ncan attack and use other abilities.\n\nrange 6",
+    icon: "sprites/ability hex hook.png",
 
     class: "tank",
     type: "target",
@@ -207,6 +228,7 @@
 {
     name: "Boost Hack",
     desc: "hacked units have improved stats.\n\nhealth +2\nshield +2\nresistance +1",
+    icon: "sprites/ability hex protection.png",
 
     class: "hacker",
     type: "self",
@@ -221,6 +243,7 @@
 {
     name: "Double Hack",
     desc: "allows two units to be hacked a floor",
+    icon: "sprites/ability hex twice.png",
 
     class: "hacker",
     type: "self",
@@ -233,6 +256,7 @@
 {
     name: "Transferable Hack",
     desc: "hacked units can transfer the hack to and adjacent one, the original unit will no longer be hacked.",
+    icon: "sprites/ability hex swap.png",
 
     class: "hacker",
     type: "self",
@@ -245,6 +269,7 @@
 {
     name: "Quick Hack",
     desc: "can attack and use other abilities after hacking.",
+    icon: "sprites/ability hex fast.png",
 
     class: "hacker",
     type: "self",
@@ -258,6 +283,7 @@
 {
     name: "Instant Hack",
     desc: "the hacked unit can move and attack the same turn it was hacked.",
+    icon: "sprites/ability hex fast double.png",
 
     class: "hacker",
     type: "self",
@@ -272,6 +298,7 @@
 {
     name: "Remote Hack",
     desc: "can hack units that aren't adjacent.\n\nrange 2",
+    icon: "sprites/ability hex improve.png",
 
     class: "hacker",
     type: "self",
@@ -285,6 +312,7 @@
 {
     name: "Extended Hack",
     desc: "can hack units even further away.\n\nrange 4",
+    icon: "sprites/ability hex improve double.png",
 
     class: "hacker",
     type: "self",
@@ -313,6 +341,7 @@
 {
     name: "Double Blink",
     desc: "can blink twice a turn.",
+    icon: "sprites/ability hex twice.png",
 
     class: "blinker",
     type: "self",
@@ -325,6 +354,7 @@
 {
     name: "Further Blink",
     desc: "can blink further away.\n\nrange 4",
+    icon: "sprites/ability hex improve.png",
 
     class: "blinker",
     type: "self",
@@ -337,6 +367,7 @@
 {
     name: "Quick Blink",
     desc: "can attack and use other abilities after blinking.",
+    icon: "sprites/ability hex fast.png",
 
     class: "blinker",
     type: "self",
@@ -349,6 +380,7 @@
 {
     name: "Swap Blink",
     desc: "can switch places with other units.",
+    icon: "sprites/ability hex swap.png",
 
     class: "blinker",
     type: "self",
@@ -361,6 +393,7 @@
 {
     name: "Wall Blink",
     desc: "can blink through walls.",
+    icon: "sprites/ability hex accurate.png",
 
     class: "blinker",
     type: "self",
@@ -373,6 +406,7 @@
 {
     name: "Recall",
     desc: "can blink allies to an adjacent space.",
+    icon: "sprites/ability hex recall.png",
 
     class: "blinker",
     type: "target",
@@ -396,6 +430,7 @@
 {
     name: "Quick Recall",
     desc: "can attack and use other abilities after recalling.",
+    icon: "sprites/ability hex fast.png",
 
     class: "blinker",
     type: "target",

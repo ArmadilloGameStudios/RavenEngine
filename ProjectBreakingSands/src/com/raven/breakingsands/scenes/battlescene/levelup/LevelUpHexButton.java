@@ -102,7 +102,7 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
             description = ability.name + "\n" + ability.description;
         }
 
-        setSprite(getSprite(type));
+        setSprite(ability.icon);
 
         this.setToolTip(ability.name, ability.description);
 
@@ -145,6 +145,10 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
     }
 
     public void clear() {
+        if (type != Type.START && type != Type.CLASS) {
+            setSprite("sprites/ability hex.png");
+        }
+
         ability = null;
         pawnClass = null;
 

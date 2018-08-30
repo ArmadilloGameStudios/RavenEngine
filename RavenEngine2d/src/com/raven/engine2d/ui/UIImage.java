@@ -28,6 +28,11 @@ public class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObject>> 
         texture.load(scene);
     }
 
+    public final void setSprite(String src) {
+        texture = getScene().getEngine().getSpriteSheet(src);
+        texture.load(getScene());
+    }
+
     @Override
     public int getStyle() {
         return 0;

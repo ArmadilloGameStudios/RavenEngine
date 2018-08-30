@@ -27,7 +27,7 @@ public class Ability implements GameDatable {
     public int target;
     public RangeStyle style;
     public UseRegainType useRegainType = UseRegainType.TURN;
-    public String replace;
+    public String replace, icon = "sprites/ability hex.png";
 
     public Integer size, damage, uses;
     public Integer remainingUses;
@@ -48,6 +48,7 @@ public class Ability implements GameDatable {
         gameData.ifHas("weapon", w -> weapon = w.asString());
 
         gameData.ifHas("action", a -> action = a.asBoolean());
+        gameData.ifHas("icon", a -> icon = a.asString());
 
         if (weapon != null) {
             if (!description.equals("")) {

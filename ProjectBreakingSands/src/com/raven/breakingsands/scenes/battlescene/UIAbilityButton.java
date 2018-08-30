@@ -29,7 +29,7 @@ public abstract class UIAbilityButton extends UIButton<BattleScene> {
     }
 
     public void addBonusAbility(Ability ability) {
-        UIImage<BattleScene> abilityImg = new UIImage<>(getScene(), 10, 9, "sprites/ability hex.png");
+        UIImage<BattleScene> abilityImg = new UIImage<>(getScene(), 10, 9, ability.icon);
         abilityImg.setSpriteAnimation(new SpriteAnimationState(getScene().getEngine().getAnimation("hexbutton")));
         addChild(abilityImg);
 

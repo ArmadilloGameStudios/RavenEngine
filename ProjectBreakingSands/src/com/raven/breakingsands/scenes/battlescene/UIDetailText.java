@@ -642,7 +642,7 @@ public class UIDetailText
         // add new abilities
         pawn.getAbilities().stream().filter(a -> !a.action).forEach(a -> {
             if (abilityImgList.stream().noneMatch(ai -> ai.getKey() == a)) {
-                UIImage<BattleScene> abilityImg = new UIImage<>(getScene(), 10, 9, "sprites/ability hex.png");
+                UIImage<BattleScene> abilityImg = new UIImage<>(getScene(), 10, 9, a.icon);
                 abilityImg.setSpriteAnimation(new SpriteAnimationState(getScene().getEngine().getAnimation("hexbutton")));
                 addChild(abilityImg);
 
