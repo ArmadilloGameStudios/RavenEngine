@@ -25,7 +25,7 @@
     weapon_hack: "Blue Guard Disk",
     xp_gain: 3,
 
-    weight: 50,
+    weight: 70,
 },
 {
     name: "Blade Drone",

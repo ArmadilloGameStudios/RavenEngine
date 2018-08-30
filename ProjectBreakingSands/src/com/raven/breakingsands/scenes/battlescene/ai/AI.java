@@ -88,7 +88,7 @@ public class AI implements Runnable {
             Collection<Terrain> cat = e.getParent().selectRange(w.getStyle(),
                     w.getRangeMin(),
                     w.getRangeMax() + e.getBonusMaxRange(),
-                    false, true);
+                    false, false);
 
             enemyAttackTerrain.put(e, cat);
         });

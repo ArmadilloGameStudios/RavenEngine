@@ -41,19 +41,19 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     public static Highlight
             OFF = new Highlight(),
 
-            BLUE = new Highlight(.1f, .45f, .9f, .4f),
+    BLUE = new Highlight(.1f, .45f, .9f, .4f),
             BLUE_CHANGING = new Highlight(.2f, .6f, 1f, .75f),
 
-            RED = new Highlight(.9f, .05f, .0f, .4f),
+    RED = new Highlight(.9f, .05f, .0f, .4f),
             RED_CHANGING = new Highlight(1f, .2f, .15f, .75f),
 
-            YELLOW = new Highlight(1f, .8f, .2f, .4f),
+    YELLOW = new Highlight(1f, .8f, .2f, .4f),
             YELLOW_CHANGING = new Highlight(1f, .9f, .4f, .75f),
 
-            GREEN = new Highlight(.2f, .9f, .1f, .4f),
+    GREEN = new Highlight(.2f, .9f, .1f, .4f),
             GREEN_CHANGING = new Highlight(.4f, 1f, .4f, .75f),
 
-            PURPLE = new Highlight(.4f, .1f, .8f, .4f),
+    PURPLE = new Highlight(.4f, .1f, .8f, .4f),
             PURPLE_CHANGING = new Highlight(.7f, .0f, .9f, .75f);
 
     private GameData loadGameData = null;
@@ -282,7 +282,8 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         System.out.println(getTerrainMap().getTerrainList().stream().filter(t -> t.getPawn() != null).count());
 
-        getGame().saveGame();
+        if (loadGameData == null)
+            getGame().saveGame();
     }
 
     private void addPawns() {
@@ -370,7 +371,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     @Override
     public void onExitScene() {
-        getGame().saveGame();
+        // getGame().saveGame();
     }
 
     private Vector2f tempVec2 = new Vector2f();
@@ -520,7 +521,8 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             activePawn.updateDetailText();
         }
 
-        getGame().saveGame();
+        if (activeTeam == 1)
+            getGame().saveGame();
 
         setState(SELECT_DEFAULT);
     }
@@ -878,10 +880,11 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     // actions - should be the prime way of interacting with the battle scene state
-    public void pawnWait() {
-        activePawn.setReady(false);
-
-        pawnDeselect();
+    public void reloadGame() {
+//        activePawn.setReady(false);
+//
+//        pawnDeselect();
+        getGame().loadGame();
     }
 
     public void pawnEnd() {

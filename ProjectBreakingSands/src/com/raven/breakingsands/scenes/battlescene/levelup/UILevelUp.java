@@ -189,7 +189,7 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
                 break;
         }
 
-//        pawn.setLevel(pawn.getLevel() + 1);
+        pawn.setLevel(pawn.getLevel() + 1);
 
         close();
     }

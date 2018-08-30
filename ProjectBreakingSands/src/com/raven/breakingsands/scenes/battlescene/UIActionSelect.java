@@ -16,7 +16,7 @@ import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELEC
 public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
     private UIAbilityButton btnPushBlast, btnHookPull, btnHack, btnBlink, btnRecall;
-    private UIButton<BattleScene> btnMove, btnAttack, btnSkip, btnCancel, btnLevel, btnEnd;
+    private UIButton<BattleScene> btnMove, btnAttack, btnUndo, btnCancel, btnLevel, btnEnd;
     private List<UIButton<BattleScene>> btns = new ArrayList<>();
     private boolean disable;
     private BattleScene.State oldState = SELECT_DEFAULT;
@@ -357,21 +357,6 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
         addChild(btnAttack);
         btns.add(btnAttack);
 
-        btnSkip = new UIButton<BattleScene>(scene,
-                "sprites/icon skip.png",
-                "iconbutton") {
-
-            @Override
-            public void handleMouseClick() {
-                if (!isDisabled()) {
-                    getScene().pawnWait();
-                }
-            }
-        };
-        btnSkip.setToolTipSrc("skip");
-        addChild(btnSkip);
-        btns.add(btnSkip);
-
         btnCancel = new UIButton<BattleScene>(scene,
                 "sprites/cancel icon.png",
                 "iconbutton") {
@@ -402,9 +387,24 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
         addChild(btnLevel);
         btns.add(btnLevel);
 
+        btnUndo = new UIButton<BattleScene>(scene,
+                "sprites/icon skip.png",
+                "iconbuttonlarge") {
+
+            @Override
+            public void handleMouseClick() {
+                if (!isDisabled()) {
+                    getScene().reloadGame();
+                }
+            }
+        };
+        btnUndo.setToolTipSrc("undo");
+        addChild(btnUndo);
+        btns.add(btnUndo);
+
         btnEnd = new UIButton<BattleScene>(scene,
                 "sprites/icon end turn.png",
-                "endbutton") {
+                "iconbuttonlarge") {
 
             @Override
             public void handleMouseClick() {
@@ -431,8 +431,8 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             btnCancel.setActive(false);
             btnMove.setDisable(disable);
             btnMove.setActive(false);
-            btnSkip.setDisable(disable);
-            btnSkip.setActive(false);
+            btnUndo.setDisable(disable);
+            btnUndo.setActive(false);
             btnLevel.setDisable(disable);
             btnLevel.setActive(false);
             btnLevel.setVisibility(false);
@@ -458,8 +458,8 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             btnAttack.setActive(btnAttack.getActive() && pawn == this.pawn);
             btnMove.setDisable(!pawn.canMove());
             btnMove.setActive(btnMove.getActive() && pawn == this.pawn);
-            btnSkip.setDisable(false);
-//            btnSkip.setActive(false);
+            btnUndo.setDisable(false);
+//            btnUndo.setActive(false);
             btnCancel.setDisable(false);
 //            btnCancel.setActive(false);
 

@@ -416,7 +416,6 @@
         target: "ally",
         size: -1,
 
-
         passes_wall: true,
         recall_unit: true,
     }
