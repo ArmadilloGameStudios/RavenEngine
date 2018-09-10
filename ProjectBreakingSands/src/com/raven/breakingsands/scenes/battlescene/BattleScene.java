@@ -24,6 +24,7 @@ import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.ui.UIToolTip;
 import com.raven.engine2d.util.math.Vector2f;
+import com.raven.engine2d.util.math.Vector2i;
 import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.util.pathfinding.Path;
 import com.raven.engine2d.util.pathfinding.PathAdjacentNode;
@@ -40,20 +41,15 @@ import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELEC
 public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable {
     public static Highlight
             OFF = new Highlight(),
-
-    BLUE = new Highlight(.1f, .45f, .9f, .4f),
+            BLUE = new Highlight(.1f, .45f, .9f, .4f),
             BLUE_CHANGING = new Highlight(.2f, .6f, 1f, .75f),
-
-    RED = new Highlight(.9f, .05f, .0f, .4f),
+            RED = new Highlight(.9f, .05f, .0f, .4f),
             RED_CHANGING = new Highlight(1f, .2f, .15f, .75f),
-
-    YELLOW = new Highlight(1f, .8f, .2f, .4f),
+            YELLOW = new Highlight(1f, .8f, .2f, .4f),
             YELLOW_CHANGING = new Highlight(1f, .9f, .4f, .75f),
-
-    GREEN = new Highlight(.2f, .9f, .1f, .4f),
+            GREEN = new Highlight(.2f, .9f, .1f, .4f),
             GREEN_CHANGING = new Highlight(.4f, 1f, .4f, .75f),
-
-    PURPLE = new Highlight(.4f, .1f, .8f, .4f),
+            PURPLE = new Highlight(.4f, .1f, .8f, .4f),
             PURPLE_CHANGING = new Highlight(.7f, .0f, .9f, .75f);
 
     private GameData loadGameData = null;
@@ -69,15 +65,15 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         MOVING, ATTACKING, SELECT_DEFAULT, SELECT_MOVE, SELECT_ATTACK, SELECT_ABILITY
     }
 
-    private Random random = new Random();
+//    private long seed = 1499045290341207917L;
+    private long seed = new Random().nextLong();
+    private Random random = new Random(seed);
 
     private Map map;
 
     private HashMap<Terrain, Path<Terrain>> pathMap;
     private Path<Terrain> currentPath;
     private int pathIndex = 0;
-    private float pathSpeed = 4f * 100f;
-    private float pathMoveTime = 0f;
 
     private List<Pawn> pawns = new CopyOnWriteArrayList<>();
     private List<Pawn> playersPawns;
@@ -186,6 +182,8 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     @Override
     public void onEnterScene() {
+        System.out.println("Seed: " + seed);
+
         setBackgroundColor(new Vector3f(0f, 0f, 0f));
 
         // center the view
@@ -384,7 +382,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         switch (state) {
             case MOVING:
-                movePawn(deltaTime);
+//                movePawn(deltaTime);
                 break;
             case SELECT_DEFAULT:
                 if (activeTeam != 0)
@@ -414,51 +412,43 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         }
     }
 
-    private void movePawn(float delta) {
-
+    private void movePawn() {
         Terrain current = currentPath.get(pathIndex).getNode();
+        Terrain start = currentPath.get(0).getNode();
 
         if (pathIndex + 1 < currentPath.size()) {
             PathAdjacentNode<Terrain> next = currentPath.get(pathIndex + 1);
-            float cost = next.getCost();
 
-            pathMoveTime += delta;
+            current.getWorldPosition().subtract(start.getWorldPosition(), tempVec);
+            activePawn.setPosition(tempVec);
 
-            float overflow = 0f;
+            next.getNode().getWorldPosition().subtract(current.getWorldPosition(), tempVec);
 
-            if (pathMoveTime > pathSpeed * cost) {
-                overflow = pathMoveTime - pathSpeed * cost;
-                delta -= overflow;
-
-                pathMoveTime = 0f;
-            }
-
-
-            Vector2f movement = next.getNode().getWorldPosition().subtract(current.getWorldPosition(), tempVec);
-
-            activePawn.move(movement.scale(delta / (pathSpeed * cost), tempVec2));
-
-            activePawn.setFlip(movement.y > 0f || movement.x > 0f);
+            activePawn.setFlip(tempVec.y > 0f || tempVec.x > 0f);
 
             SpriteAnimationState animationState = activePawn.getAnimationState();
-            if (movement.y > 0f || movement.x < 0f) {
+            if (tempVec.y > 0f || tempVec.x < 0f) {
                 animationState.setAction("walking up", false);
             } else {
                 animationState.setAction("walking down", false);
             }
 
-            if (overflow > 0f) {
-                pathIndex += 1;
-                movePawn(overflow);
-            }
+            animationState.addActionFinishHandler(a -> {
+                pathIndex++;
+                movePawn();
+            });
+
         } else {
             pathIndex = 0;
-            pathMoveTime = 0f;
 
             activePawn.setPosition(0, 0);
-            current.setPawn(activePawn);
+            SpriteAnimationState animationState = activePawn.getAnimationState();
+            animationState.setActionIdle();
 
+            current.setPawn(activePawn);
             setActivePawn(activePawn);
+
+            setState(State.SELECT_DEFAULT);
         }
     }
 
@@ -659,10 +649,12 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 actionSelect.setPawn(null);
 
                 clearAllPaths();
-                activePawn.getAnimationState().setAction("walking up");
+//                activePawn.getAnimationState().setAction("walking up");
                 activePawn.move(currentPath.getCost());
 
                 map.setState(Terrain.State.UNSELECTABLE);
+
+                movePawn();
                 break;
 
             case ATTACKING:

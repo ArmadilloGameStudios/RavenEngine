@@ -33,7 +33,6 @@ public class Menu extends UICenterContainer<BattleScene> {
         MenuButton exitButton = new MenuButton(getScene(), "exit") {
             @Override
             public void handleMouseClick() {
-                getScene().getGame().saveGame();
                 getScene().getGame().exit();
             }
         };

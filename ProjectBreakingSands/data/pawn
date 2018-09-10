@@ -42,4 +42,36 @@
     xp_gain: 8,
 
     weight: 20
-}
+},
+{
+    name: "Jitter Ball",
+    sprite: "sprites/jitterball.png",
+    animation: "jitterball",
+    sprite_hack: "sprites/jitterball.png",
+    standing: true,
+    team: 1,
+    hp: 10,
+    resistance: 3,
+    movement: 2,
+    weapon: "Guard Disk",
+    weapon_hack: "Blue Guard Disk",
+    xp_gain: 12,
+
+    weight: 2000
+},
+{
+    name: "Guard Drone MK2",
+    sprite: "sprites/guarddrone.png",
+    animation: "guarddrone",
+    sprite_hack: "sprites/guarddronehack.png",
+    standing: true,
+    team: 1,
+    hp: 10,
+    movement: 4,
+    resistance: 1,
+    weapon: "Guard Disk",
+    weapon_hack: "Blue Guard Disk",
+    xp_gain: 18,
+
+    weight: 00,
+},

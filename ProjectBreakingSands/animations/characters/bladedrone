@@ -12,20 +12,20 @@
     width: 32,
     height: 32,
     y: 32,
-    frames: [{ time: 100, x: 0 },
-             { time: 100, x: 32 },
-             { time: 100, x: 64 },
-             { time: 100, x: 96 }]
+    frames: [{ time: 50, x: 0 },
+             { time: 50, x: 32, xoffset: -8 , yoffset: 4 },
+             { time: 50, x: 64, xoffset: -16, yoffset: 8 },
+             { time: 50, x: 96, xoffset: -24, yoffset: 12 }]
 },
 {
     name: "walking down",
     width: 32,
     height: 32,
     y: 64,
-    frames: [{ time: 100, x: 0 },
-             { time: 100, x: 32 },
-             { time: 100, x: 64 },
-             { time: 100, x: 96 }]
+    frames: [{ time: 50, x: 0 },
+             { time: 50, x: 32, xoffset: -8 , yoffset: -4 },
+             { time: 50, x: 64, xoffset: -16, yoffset: -8 },
+             { time: 50, x: 96, xoffset: -24, yoffset: -12 }]
 },
 {
     name: "melee up start",

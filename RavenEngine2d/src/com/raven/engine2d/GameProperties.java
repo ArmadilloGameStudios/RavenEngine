@@ -6,6 +6,7 @@ package com.raven.engine2d;
  * Created by cookedbird on 11/15/17.
  */
 public class GameProperties {
+    private static float animationSpeed = 1.0f;
     private static int scaling = 2;
     private static int height = 1080, width = 1920;
     private static String mainDirectory;
@@ -38,6 +39,10 @@ public class GameProperties {
 
     public static void setMainDirectory(String dir) {
         GameProperties.mainDirectory = dir;
+    }
+
+    public static float getAnimationSpeed() {
+        return animationSpeed;
     }
 
     private GameProperties() {}

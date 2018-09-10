@@ -162,7 +162,7 @@
     },
 
     damage: 3,
-    range: [2, 3],
+    range: 3,
     piercing: 0,
     style: "straight",
     effect: "disk",
@@ -179,7 +179,7 @@
     },
 
     damage: 3,
-    range: [2, 3],
+    range: 3,
     piercing: 0,
     style: "straight",
     effect: "blue disk",

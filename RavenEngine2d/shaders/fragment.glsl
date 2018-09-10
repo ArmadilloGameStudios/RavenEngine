@@ -20,7 +20,7 @@ void main() {
 
     gl_FragDepth = z; // TODO get world coords
 
-    float part = min(1, dot(sprite.xyz, vec3(.9)));
+    float part = min(1, dot(sprite.xyz, vec3(.6)));
 
     vec3 color = mix(sprite.rgb, highlight.xyz, highlight.a * part);
 

@@ -88,7 +88,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
 
     @Override
     public void onExitScene() {
-        getGame().saveGame();
+
     }
 
     @Override

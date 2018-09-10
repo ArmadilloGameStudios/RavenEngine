@@ -37,7 +37,6 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
         } else {
             this.size = Math.min(level / 3 + 1, 8);
         }
-
     }
 
     public Map(BattleScene scene, GameData gameData) {
@@ -70,7 +69,7 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
 
         addWalls();
 
-        System.out.println(tries + ", " + size + ", " + structures.size());
+//        System.out.println(tries + ", " + size + ", " + structures.size());
 
         // setText all connections
 

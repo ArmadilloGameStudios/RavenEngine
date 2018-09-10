@@ -246,6 +246,9 @@ public abstract class WorldObject<
     }
 
     public void removeAllChildren() {
+        children.forEach(c -> {
+            scene.removeGameObject(c);
+        });
         children.clear();
     }
 
