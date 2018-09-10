@@ -7,8 +7,6 @@ import com.raven.engine2d.scene.Scene;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBImage;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;

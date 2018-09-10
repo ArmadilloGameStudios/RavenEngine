@@ -186,3 +186,36 @@
 
     tags: [ ],
 }
+{
+    name: "Demon Disk",
+    type: "ranged",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    damage: 5,
+    range: 1,
+    piercing: 0,
+    style: "straight",
+    effect: "disk",
+
+    tags: [ ],
+}
+{
+    name: "Blue Demon Disk",
+    display: "Demon Disk",
+    type: "ranged",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    damage: 5,
+    range: 1,
+    piercing: 0,
+    style: "straight",
+    effect: "blue disk",
+
+    tags: [ ],
+}

@@ -10,10 +10,10 @@
     movement: 3,
     weapon: "Std. Pistol",
 
-    weight: 70,
+    weight: 150,
 },
 {
-    name: "Guard Drone",
+    name: "Guardian",
     sprite: "sprites/guarddrone.png",
     animation: "guarddrone",
     sprite_hack: "sprites/guarddronehack.png",
@@ -25,10 +25,10 @@
     weapon_hack: "Blue Guard Disk",
     xp_gain: 3,
 
-    weight: 00,
+    weight: 100,
 },
 {
-    name: "Blade Drone",
+    name: "Blade Wielder",
     sprite: "sprites/bladedrone.png",
     animation: "bladedrone",
     sprite_hack: "sprites/bladedronehack.png",
@@ -41,23 +41,23 @@
     weapon_hack: "Plasma Blade",
     xp_gain: 8,
 
-    weight: 20
+    weight: 80
 },
 {
-    name: "Jitter Ball",
+    name: "Demon Orb",
     sprite: "sprites/jitterball.png",
     animation: "jitterball",
-    sprite_hack: "sprites/jitterball.png",
+    sprite_hack: "sprites/jitterballhack.png",
     standing: true,
     team: 1,
     hp: 10,
     resistance: 3,
     movement: 2,
-    weapon: "Guard Disk",
-    weapon_hack: "Blue Guard Disk",
+    weapon: "Demon Disk",
+    weapon_hack: "Blue Demon Disk",
     xp_gain: 12,
 
-    weight: 2000
+    weight: 60
 },
 {
     name: "Guard Drone MK2",
@@ -73,5 +73,5 @@
     weapon_hack: "Blue Guard Disk",
     xp_gain: 18,
 
-    weight: 00,
+    weight: 30,
 },
