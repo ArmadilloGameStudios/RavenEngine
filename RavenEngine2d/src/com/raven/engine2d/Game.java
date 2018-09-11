@@ -1,6 +1,7 @@
 package com.raven.engine2d;
 
 import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDataReader;
 import com.raven.engine2d.database.GameDataTable;
 import com.raven.engine2d.graphics2d.GameWindow;
@@ -158,5 +159,41 @@ public abstract class Game<G extends Game<G>> {
         }
 
         return null;
+    }
+
+    abstract public boolean saveSettings();
+
+    protected boolean saveSettingsDataTables(GameDataTable table) {
+        boolean success = true;
+
+        try {
+            Path p = Paths.get(getMainDirectory(), "settings");
+            File f = p.toFile();
+
+            if (f.getParentFile().exists())
+                f.getParentFile().mkdirs();
+
+            if (!f.exists())
+                f.createNewFile();
+
+            Files.write(p, table.toFileString().getBytes(), StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            e.printStackTrace();
+            success = false;
+        }
+
+        return success;
+    }
+
+    protected static GameDataList loadSettingsGameData(String mainDirectory) {
+        Path savePath = Paths.get(mainDirectory);
+
+        try {
+            return GameDataReader.readFile(savePath.resolve("settings"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new GameDataList();
     }
 }

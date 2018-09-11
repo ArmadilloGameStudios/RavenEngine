@@ -19,14 +19,14 @@ public class GameDataReader {
 
     private static int i = 0;
 
-    public static List<GameData> readFile(Path path) throws IOException {
+    public static GameDataList readFile(Path path) throws IOException {
         return readFile(new String(Files.readAllBytes(path)).toCharArray());
     }
 
-    public static List<GameData> readFile(char[] chars) {
+    public static GameDataList readFile(char[] chars) {
         i = 0;
 
-        List<GameData> data = new ArrayList<GameData>();
+        GameDataList data = new GameDataList();
 
         while (i < chars.length) {
             GameData d = readData(chars);

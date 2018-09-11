@@ -80,8 +80,8 @@ public class GameWindow {
 
 
         // Create the window
-        window = glfwCreateWindow(GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight(),
+        window = glfwCreateWindow(GameProperties.getDisplayWidth(),
+                GameProperties.getDisplayHeight(),
                 engine.getGame().getTitle(), glfwGetPrimaryMonitor(),
                 NULL);
         if (window == NULL)

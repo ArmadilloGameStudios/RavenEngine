@@ -91,7 +91,7 @@ public class GameProperties {
         if (resolutionList.stream().noneMatch(r -> r.x == width && r.y == height)) {
             resolutionList.add(new Vector2i(width, height));
 
-            resolutionList.sort((a, b) -> {
+            resolutionList.sort((b, a) -> {
                 int v = b.x - a.x;
                 return v == 0 ? b.y - a.y : v;
             });

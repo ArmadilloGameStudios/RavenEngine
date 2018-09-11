@@ -6,17 +6,29 @@ import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDataTable;
 import com.raven.engine2d.launcher.GameLauncher;
 import com.raven.engine2d.scene.Scene;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class BreakingSandsGame extends Game<BreakingSandsGame> {
 
+    private static String mainDirectory = "ProjectBreakingSands";
+
     public static void main(String[] args) {
-        GameEngine.<BreakingSandsGame>Launch(new BreakingSandsGame());
+        GameData settings = loadSettingsGameData(mainDirectory).get(0);
+
+        settings.ifHas("music", s -> GameProperties.setMusicVolume(s.asInteger()));
+        settings.ifHas("sfx", s -> GameProperties.setSFXVolume(s.asInteger()));
+        settings.ifHas("width", s -> GameProperties.setScreenWidth(s.asInteger()));
+        settings.ifHas("height", s -> GameProperties.setScreenHeight(s.asInteger()));
+        settings.ifHas("scaling", s -> GameProperties.setScaling(s.asInteger()));
+
+        GameEngine.Launch(new BreakingSandsGame());
         System.out.println("Lunched");
     }
 
@@ -41,7 +53,7 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
 
     @Override
     public String getMainDirectory() {
-        return "ProjectBreakingSands";
+        return mainDirectory;
     }
 
     @Override
@@ -71,5 +83,20 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
             System.out.println("Loading Failed");
             return false;
         }
+    }
+
+    @Override
+    public boolean saveSettings() {
+        HashMap<String, GameData> map = new HashMap<>();
+        map.put("music", new GameData(GameProperties.getMusicVolume()));
+        map.put("sfx", new GameData(GameProperties.getSFXVolume()));
+        map.put("width", new GameData(GameProperties.getScreenWidth()));
+        map.put("height", new GameData(GameProperties.getScreenHeight()));
+        map.put("scaling", new GameData(GameProperties.getScaling()));
+
+        GameDataTable settings = new GameDataTable("settings");
+        settings.add(new GameData(map));
+
+        return saveSettingsDataTables(settings);
     }
 }
