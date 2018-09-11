@@ -1,6 +1,7 @@
 package com.raven.engine2d.graphics2d.sprite;
 
 import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
 import com.raven.engine2d.graphics2d.sprite.handler.FrameFinishHandler;
 
@@ -27,7 +28,7 @@ public class SpriteAnimationState {
     }
 
     public void update(float deltaTime) {
-        time += deltaTime;
+        time += deltaTime * GameProperties.getAnimationSpeed();
 
         if (time > activeFrame.getTime()) {
             for (FrameFinishHandler handler : frameFinishHandlers) {

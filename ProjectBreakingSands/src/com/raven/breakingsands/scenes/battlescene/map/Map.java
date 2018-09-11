@@ -29,10 +29,10 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
     private int i = 0;
     private int tries = 0;
 
-    public Map(BattleScene scene, int size) {
+    public Map(BattleScene scene, int level) {
         super(scene);
 
-        this.size = Math.min(size, 8);
+        this.size = Math.min(level / 4 + 1, 4);
     }
 
     public Map(BattleScene scene, GameData gameData) {
@@ -52,6 +52,12 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
 
     public void generate() {
         while (structures.size() == 0 || !structures.contains(firstStructure) || terrain.stream().noneMatch(Terrain::isSpawn)) {
+
+            removeAllChildren();
+            structures.clear();
+            terrain.clear();
+            firstStructure = null;
+
             i = size;
             startGeneration();
             removeIslands();
@@ -59,9 +65,9 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
 
         addWalls();
 
-        System.out.println(tries + ", " + size + ", " + structures.size());
+//        System.out.println(tries + ", " + size + ", " + structures.size());
 
-        // show all connections
+        // setText all connections
 
     }
 
@@ -74,28 +80,46 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
         addStructure(s);
 
         do {
-            i = size - structures.size();
+            i = size - structures.size() + 2;
             tries++;
         } while (generate(structureFactory));
     }
 
     private boolean generate(StructureFactory structureFactory) {
+        boolean t = structures.stream().filter(s -> !s.isTerminal()).count() - 1 >= size;
+
         // find a structure with open connections
         List<Structure> openStructures = this.structures.stream()
-                .filter(st -> Arrays.stream(st.getEntrances()).anyMatch(e -> !e.isConnected() && e.anyTerminal(i < 0)))
+                .filter(st -> Arrays.stream(st.getEntrances()).anyMatch(e -> !e.isConnected() && e.anyTerminal(t)))
                 .collect(Collectors.toList());
+
+        System.out.println("Terminal: " + (t));
+        System.out.println("Open Structs: " + openStructures.size());
 
         int sCount = openStructures.size();
 
         if (sCount == 0) {
+            openStructures = this.structures.stream()
+                    .filter(st -> Arrays.stream(st.getEntrances()).anyMatch(e -> !e.isConnected() && e.anyTerminal(true)))
+                    .collect(Collectors.toList());
+//            System.out.println("None Left");;
+            sCount = openStructures.size();
+
+            if (sCount == 0) {
 //            System.out.println("None Left");
-            return false;
+                return false;
+            }
+
+            structureFactory.setTerminal(true);
+        } else {
+            structureFactory.setTerminal(t);
         }
 
         Structure buildFrom = openStructures.get(getScene().getRandom().nextInt(sCount));
+        System.out.println("Building From: " + buildFrom.getName());
+
         structureFactory.setConnection(buildFrom);
 //        System.out.println("BF " + buildFrom.getName());
-        structureFactory.setTerminal(i < 0);
 
         Structure s = structureFactory.getInstance();
 
@@ -103,6 +127,7 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
             if (buildFrom == firstStructure) return false;
             removeStructure(buildFrom);
         } else {
+            System.out.println("Building: " + s.getName());
             addStructure(s);
 //            System.out.println("Add " + s.getName());
         }
@@ -159,7 +184,7 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
 
         Terrain start = terrain.stream().filter(Terrain::isStart).findFirst().get();
 
-        PathFinder<Terrain> terrainPathFinder = new PathFinder<>();
+        PathFinder<Terrain, Terrain.PathFlag> terrainPathFinder = new PathFinder<>();
 
         terrain.forEach(t -> {
             Path<Terrain> path = terrainPathFinder.findTarget(t, start);

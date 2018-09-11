@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CrookedBird/CrookedBird.iml" filepath="$PROJECT_DIR$/CrookedBird/CrookedBird.iml" />
-      <module fileurl="file://$PROJECT_DIR$/CrookedBirdDBManager/CrookedBirdDBManager.iml" filepath="$PROJECT_DIR$/CrookedBirdDBManager/CrookedBirdDBManager.iml" />
       <module fileurl="file://$PROJECT_DIR$/ProjectBreakingSands/ProjectBreakingSands.iml" filepath="$PROJECT_DIR$/ProjectBreakingSands/ProjectBreakingSands.iml" />
       <module fileurl="file://$PROJECT_DIR$/RavenEngine2d/RavenEngine2d.iml" filepath="$PROJECT_DIR$/RavenEngine2d/RavenEngine2d.iml" />
-      <module fileurl="file://$PROJECT_DIR$/TacticianMercSquad/TacticianMercSquad.iml" filepath="$PROJECT_DIR$/TacticianMercSquad/TacticianMercSquad.iml" />
     </modules>
   </component>
 </project>

@@ -4,13 +4,13 @@ import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
+import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.ui.UIFont;
 import com.raven.engine2d.worldobject.WorldTextObject;
 
 public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
     private Terrain.State state;
-    private Ability ability;
 
     public TerrainMessage(BattleScene scene) {
         super(scene);
@@ -24,60 +24,60 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
     }
 
     public void setState(Terrain.State state) {
-        if (state == Terrain.State.SELECTABLE || this.state != state || this.ability != getScene().getActiveAbility()) {
-            this.state = state;
-            this.ability = getScene().getActiveAbility();
+        this.state = state;
+        Ability ability = getScene().getActiveAbility();
 
-            switch (state) {
-                case SELECTABLE:
-                    if (getParent().getPawn() == getScene().getActivePawn()) {
-                        setText("active");
-                    } else
-                        setText("select");
-                    break;
-                case MOVEABLE:
-                case MOVE:
-                    setText("move");
-                    break;
-                case ATTACKABLE:
-                case ATTACK:
-                    Pawn pawn = getParent().getPawn();
-                    if (pawn != null) {
-                        Weapon w = getScene().getActivePawn().getWeapon();
-                        int damage = pawn.getDamage(w.getDamage(), w.getPiercing(), w.getShots());
-
-                        if (damage >= pawn.getRemainingHitPoints()) {
-                            setText("kill -" + damage);
-                        } else {
-                            setText("attack -" + damage);
-                        }
-                    } else {
-                        setText("attack");
-                    }
-                    break;
-                case UNSELECTABLE:
+        switch (state) {
+            case SELECTABLE:
+                if (getParent().getPawn() == getScene().getActivePawn()) {
+                    setText("deselect");
+                } else
+                    setText("select");
+                break;
+            case MOVEABLE:
+            case MOVE:
+                setText("move");
+                break;
+            case UNSELECTABLE:
+                if (getParent().getPawn() == null || getParent().getPawn().getTeam(true) != 1 || getScene().getActiveTeam() == 1) {
                     setText("");
                     break;
-                case ABILITY:
-                case ABILITYABLE:
-                    setText(ability.name);
-                    break;
-            }
+                }
+            case ATTACKABLE:
+            case ATTACK:
+                Pawn pawn = getParent().getPawn();
+                if (pawn != null && getScene().getActivePawn() != null) {
+                    Weapon w = getScene().getActivePawn().getWeapon();
+                    int damage = pawn.getDamage(w.getDamage(), w.getPiercing() + getScene().getActivePawn().getBonusPiercing(), w.getShots());
+
+                    if (damage >= pawn.getRemainingHitPoints()) {
+                        setText("kill -" + damage);
+                    } else {
+                        setText("attack -" + damage);
+                    }
+                } else {
+                    setText("attack");
+                }
+                break;
+            case ABILITY:
+            case ABILITYABLE:
+                setText(ability.name);
+                break;
         }
     }
 
     @Override
     public void setVisibility(boolean visibility) {
-        super.setVisibility(visibility && state != Terrain.State.UNSELECTABLE);
+        super.setVisibility(visibility && (state != Terrain.State.UNSELECTABLE || getParent().getPawn() != null));
     }
 
     @Override
     public Layer.Destination getDestination() {
-        return Layer.Destination.Details;
+        return Layer.Destination.UI;
     }
 
     @Override
     public float getZ() {
-        return .1f;
+        return 1.9f;
     }
 }

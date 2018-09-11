@@ -1,6 +1,7 @@
 package com.raven.engine2d;
 
 import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDataReader;
 import com.raven.engine2d.database.GameDataTable;
 import com.raven.engine2d.graphics2d.GameWindow;
@@ -8,12 +9,14 @@ import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.worldobject.GameObject;
 
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -64,8 +67,8 @@ public abstract class Game<G extends Game<G>> {
 
         GameObject.resetObjectIDs();
 
-        scene.enterScene();
         currentScene = scene;
+        scene.enterScene();
         readyTransitionScene = null;
     }
 
@@ -97,6 +100,13 @@ public abstract class Game<G extends Game<G>> {
             song.stop();
             song.setFramePosition(0);
             song.setMicrosecondPosition(0);
+
+            // TODO shouldn't need to be done every time
+            FloatControl gainControl = (FloatControl) song
+                    .getControl(FloatControl.Type.MASTER_GAIN);
+            float dB = (float) (Math.log(GameProperties.getMusicVolume() / 100f) / Math.log(10.0) * 20.0);
+            gainControl.setValue(dB);
+
             song.start();
         }
     }
@@ -127,7 +137,7 @@ public abstract class Game<G extends Game<G>> {
                 if (!f.exists())
                     f.createNewFile();
 
-                Files.write(p, table.toString().getBytes(), StandardOpenOption.CREATE);
+                Files.write(p, table.toFileString().getBytes(), StandardOpenOption.CREATE);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -149,5 +159,41 @@ public abstract class Game<G extends Game<G>> {
         }
 
         return null;
+    }
+
+    abstract public boolean saveSettings();
+
+    protected boolean saveSettingsDataTables(GameDataTable table) {
+        boolean success = true;
+
+        try {
+            Path p = Paths.get(getMainDirectory(), "settings");
+            File f = p.toFile();
+
+            if (f.getParentFile().exists())
+                f.getParentFile().mkdirs();
+
+            if (!f.exists())
+                f.createNewFile();
+
+            Files.write(p, table.toFileString().getBytes(), StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            e.printStackTrace();
+            success = false;
+        }
+
+        return success;
+    }
+
+    protected static GameDataList loadSettingsGameData(String mainDirectory) {
+        Path savePath = Paths.get(mainDirectory);
+
+        try {
+            return GameDataReader.readFile(savePath.resolve("settings"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new GameDataList();
     }
 }

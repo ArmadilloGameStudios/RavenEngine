@@ -6,6 +6,8 @@ import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.character.WeaponType;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
+import com.raven.breakingsands.scenes.battlescene.SelectionDetails;
+import com.raven.breakingsands.scenes.battlescene.UIDetailText;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
@@ -18,11 +20,10 @@ import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.WorldObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         implements GameDatable {
@@ -43,19 +44,24 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     // instance
     private Weapon weapon;
-    private String name = "", charClass = "amateur";
+    private String name = "", charClass = "amateur", spriteNormal, spriteHack, weaponHack;
+    private GameData weaponNormal;
     private int level = 0, xp, team,
             hitPoints, remainingHitPoints, bonusHp, bonusHpLoss,
             totalShield, remainingShield, bonusShield, bonusShieldLoss,
             totalMovement, remainingMovement,
             resistance, bonusResistance, totalAttacks = 1, remainingAttacks,
-            xpGain;
+            bonusPiercing, bonusMinRange, bonusMaxRange,
+            xpModifier = 1, xpGain;
     private Hack hack;
     private boolean unmoved = true;
     private boolean ready = true;
+    private int abilityOrder = 0;
     private List<Ability> abilities = new ArrayList<>();
     private List<Ability> abilityAffects = new ArrayList<>();
 
+    private SelectionDetails details = new SelectionDetails();
+    private UIDetailText uiDetailText;
     private PawnMessage pawnMessage;
     private float messageShowTime;
 
@@ -66,10 +72,17 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         gameData.ifHas("class", c -> charClass = c.asString());
         gameData.ifHas("level", l -> level = l.asInteger());
         gameData.ifHas("xp", x -> xp = x.asInteger());
+        gameData.ifHas("ability_order",
+                o -> abilityOrder = o.asInteger(),
+                () -> abilityOrder = new Random().nextInt());
         team = gameData.getInteger("team");
 
-        gameData.ifHas("bonusHpLoss", g -> bonusHpLoss = g.asInteger()); // TODO check after abilities
-        gameData.ifHas("remainingHitPoints",
+        gameData.ifHas("sprite", s -> spriteNormal = s.asString());
+        gameData.ifHas("sprite_hack", h -> spriteHack = h.asString());
+        gameData.ifHas("weapon_hack", h -> weaponHack = h.asString());
+
+        gameData.ifHas("bonus_hp_loss", g -> bonusHpLoss = g.asInteger()); // TODO check after abilities
+        gameData.ifHas("remaining_hit_points",
                 r -> {
                     remainingHitPoints = r.asInteger();
                     hitPoints = gameData.getInteger("hp");
@@ -77,8 +90,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 () -> remainingHitPoints = hitPoints = gameData.getInteger("hp"));
 
 
-        gameData.ifHas("bonusShieldLoss", g -> bonusShieldLoss = g.asInteger()); // TODO check after abilities
-        gameData.ifHas("remainingShield",
+        gameData.ifHas("bonus_shield_loss", g -> bonusShieldLoss = g.asInteger()); // TODO check after abilities
+        gameData.ifHas("remaining_shield",
                 r -> {
                     remainingShield = r.asInteger();
                     totalShield = gameData.getInteger("shield");
@@ -87,34 +100,28 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         totalMovement = gameData.getInteger("movement");
 
-        gameData.ifHas("remainingMovement", m -> remainingMovement = m.asInteger());
+        gameData.ifHas("remaining_movement", m -> remainingMovement = m.asInteger());
         gameData.ifHas("resistance", m -> resistance = m.asInteger());
-        gameData.ifHas("totalAttacks", m -> totalAttacks = m.asInteger());
-        gameData.ifHas("remainingAttacks", m -> remainingAttacks = m.asInteger());
+        gameData.ifHas("bonus_piercing", m -> bonusPiercing = m.asInteger());
+        gameData.ifHas("bonus_min_range", m -> bonusMinRange = m.asInteger());
+        gameData.ifHas("bonus_max_range", m -> bonusMaxRange = m.asInteger());
+        gameData.ifHas("total_attacks", m -> totalAttacks = m.asInteger());
+        gameData.ifHas("remaining_attacks", m -> remainingAttacks = m.asInteger());
         gameData.ifHas("xp_gain", x -> xpGain = x.asInteger());
-        gameData.ifHas("unmoved", x -> unmoved = x.asBoolean());
-        gameData.ifHas("ready", x -> ready = x.asBoolean());
+        gameData.ifHas("xp_modifier", x -> xpModifier = x.asInteger());
 
         GameDatabase db = scene.getEngine().getGameDatabase();
 
         // weapon
         if (gameData.has("weapon")) {
-            GameData gdWeapon = gameData.getData("weapon");
-
-            if (gdWeapon.isString()) {
-                db.getTable("weapon").stream()
-                        .filter(w -> w.getString("name").equals(gdWeapon.asString()))
-                        .findFirst()
-                        .ifPresent(w -> weapon = new Weapon(scene, w));
+            if (gameData.has("weapon_normal")) {
+                weaponNormal = gameData.getData("weapon_normal");
             } else {
-                weapon = new Weapon(scene, gdWeapon);
+                weaponNormal = gameData.getData("weapon");
             }
+            setWeapon(gameData.getData("weapon"));
         } else {
             weapon = new Weapon(scene, db.getTable("weapon").getRandom(scene.getRandom()));
-        }
-
-        if (weapon != null) {
-            addChild(weapon);
         }
 
         // abilities
@@ -125,7 +132,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         }
 
         // hack
-        gameData.ifHas("hack", h -> hack = new Hack(scene, h));
+        gameData.ifHas("hack", h -> hack(new Hack(scene, this, h)));
+
+        gameData.ifHas("unmoved", x -> unmoved = x.asBoolean());
+        gameData.ifHas("ready", x -> ready = x.asBoolean());
 
         // message
         pawnMessage = new PawnMessage(scene);
@@ -134,6 +144,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         pos.y += 1.3;
         pawnMessage.setPosition(pos);
         addChild(pawnMessage);
+
+        setHighlight(BattleScene.OFF);
     }
 
     @Override
@@ -147,28 +159,38 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         map.put("name", new GameData(name));
         map.put("class", new GameData(charClass));
+        if (spriteHack != null)
+            map.put("sprite_hack", new GameData(spriteHack));
+        map.put("weapon_hack", new GameData(weaponHack));
+        map.put("weapon_normal", new GameData(weaponNormal));
         map.put("level", new GameData(level));
         map.put("xp", new GameData(xp));
+        map.put("xp_modifier", new GameData(xpModifier));
+        map.put("ability_order", new GameData(abilityOrder));
         map.put("team", new GameData(team));
         map.put("hp", new GameData(hitPoints));
-        map.put("remainingHitPoints", new GameData(remainingHitPoints));
-        map.put("bonusHpLoss", new GameData(bonusHpLoss));
+        map.put("remaining_hit_points", new GameData(remainingHitPoints));
+        map.put("bonus_hp_loss", new GameData(bonusHpLoss));
         map.put("shield", new GameData(totalShield));
-        map.put("remainingShield", new GameData(remainingShield));
-        map.put("bonusShieldLoss", new GameData(bonusShieldLoss));
+        map.put("remaining_shield", new GameData(remainingShield));
+        map.put("bonus_shield_loss", new GameData(bonusShieldLoss));
         map.put("movement", new GameData(totalMovement));
-        map.put("remainingMovement", new GameData(remainingMovement));
+        map.put("remaining_movement", new GameData(remainingMovement));
         map.put("resistance", new GameData(resistance));
-        map.put("totalAttacks", new GameData(totalAttacks));
-        map.put("remainingAttacks", new GameData(remainingAttacks));
+        map.put("bonus_piercing", new GameData(bonusPiercing));
+        map.put("bonus_min_range", new GameData(bonusMinRange));
+        map.put("bonus_max_range", new GameData(bonusMaxRange));
+        map.put("total_attacks", new GameData(totalAttacks));
+        map.put("remaining_attacks", new GameData(remainingAttacks));
         map.put("xp_gain", new GameData(xpGain));
-        map.put("unmoved", new GameData(unmoved));
-        map.put("ready", new GameData(ready));
         map.put("weapon", weapon.toGameData());
         map.put("abilities", new GameDataList(abilities).toGameData());
         if (hack != null) {
             map.put("hack", hack.toGameData());
         }
+
+        map.put("ready", new GameData(ready));
+        map.put("unmoved", new GameData(unmoved));
 
         return new GameData(map);
     }
@@ -187,12 +209,12 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             return team;
     }
 
-    public void setTeam(int i) {
-        team = i;
+    public int getAbilityOrder() {
+        return abilityOrder;
     }
 
-    public void hack(Hack hack) {
-        this.hack = hack;
+    public void setTeam(int i) {
+        team = i;
     }
 
     public Hack getHack() {
@@ -242,31 +264,53 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public boolean canAttack() {
-        boolean canMove = true;
+        final boolean[] canMove = {true};
 
-        canMove &= remainingAttacks == totalAttacks;
+        canMove[0] &= remainingAttacks > 0;
 
-        for (Ability a : abilities) {
-            canMove &= a.uses == null || (a.remainingUses == a.uses || a.remain);
-        }
+        abilities.stream().filter(a -> a.upgrade == null).forEach(a -> {
+            if (a.useRegainType == Ability.UseRegainType.TURN)
+                canMove[0] &= a.uses == null || (!a.usedThisTurn || a.remainingUses.equals(a.uses) || a.remain);
+            else
+                canMove[0] &= a.uses == null || (!a.usedThisTurn || a.remain);
+        });
 
-        return canMove;
+        return canMove[0];
     }
 
     public boolean canAbility(Ability ability) {
-        boolean canMove = true;
-
-        canMove &= remainingAttacks == totalAttacks || abilities.stream().anyMatch(a -> a.remain);
-
-        for (Ability a : abilities) {
-            if (a == ability) {
-                canMove &= a.uses == null || (a.remainingUses > 0);
-            } else
-                canMove &= a.uses == null || (a.remainingUses == a.uses || a.remain);
-
+        if (ability.recall_unit) {
+            return true;
         }
 
-        return canMove;
+        if (ability.remain && ability.uses != null && ability.remainingUses > 0 && !ability.usedThisTurn) {
+            return true;
+        }
+
+        if (ability.usedThisTurn && ability.useRegainType == Ability.UseRegainType.LEVEL && !ability.remain) {
+            return false;
+        }
+
+        if (remainingAttacks != totalAttacks && !ability.remain) {
+            return false;
+        }
+
+
+        final boolean[] canMove = {true};
+
+        canMove[0] &= remainingAttacks == totalAttacks || abilities.stream().anyMatch(a -> a.remain);
+
+        abilities.stream().filter(a -> a.upgrade == null).forEach(a -> {
+            if (a == ability) {
+                canMove[0] &= a.uses == null || (a.remainingUses > 0);
+            } else if (a.useRegainType == Ability.UseRegainType.TURN) {
+                canMove[0] &= a.uses == null || (!a.usedThisTurn || a.remainingUses.equals(a.uses) || a.remain);
+            } else {
+                canMove[0] &= a.uses == null || (!a.usedThisTurn || a.remain);
+            }
+        });
+
+        return canMove[0];
     }
 
     public int getTotalMovement() {
@@ -283,6 +327,27 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     public int getResistance() {
         return resistance + bonusResistance;
+    }
+
+    public int getBonusResistance() {
+        return bonusResistance;
+    }
+
+    public int getBonusPiercing() {
+        return bonusPiercing;
+    }
+
+    public int getBonusMinRange() {
+        return getWeapon().getWeaponType() == WeaponType.MELEE ? 0 : bonusMinRange;
+    }
+
+    public int getBonusMaxRange() {
+        return getWeapon().getWeaponType() == WeaponType.MELEE ? 0 : bonusMaxRange;
+    }
+
+    public int getResistance(boolean b) {
+        if (b) return getResistance();
+        else return resistance;
     }
 
     public String getCharacterClass() {
@@ -310,20 +375,27 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         // add ability to the pawn if it is part of the class upgrade
         bonus.ifHas("ability", a -> {
-            GameDatabase.all("classes").stream()
-                    .filter(c -> c.getString("name").equals(this.charClass))
-                    .map(c -> c.getList("abilities"))
+            GameDatabase.all("abilities").stream()
+                    .filter(c -> c.has("class") && c.getString("class").equals(this.charClass))
+                    .filter(ab -> ab.getString("name").equals(a.asString()))
                     .findFirst()
-                    .map(aa -> aa.stream().filter(ab -> ab.getString("name").equals(a.asString())).findFirst())
-                    .ifPresent(x -> x.ifPresent(ability -> addAbility(new Ability(ability))));
+                    .ifPresent(ability -> addAbility(new Ability(ability)));
         });
     }
 
     public void addAbility(Ability ability) {
-        addAbility(ability, true);
+        addAbility(ability, true, -1);
     }
 
     public void addAbility(Ability ability, boolean add) {
+        addAbility(ability, add, -1);
+    }
+
+    public void addAbility(Ability ability, int index) {
+        addAbility(ability, true, index);
+    }
+
+    public void addAbility(Ability ability, boolean add, int index) {
         ability.owner = this;
 
         if (ability.replace != null) {
@@ -332,7 +404,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                     .findFirst()
                     .ifPresent(this::removeAbility);
         }
-        abilities.add(ability);
 
         if (ability.type == Ability.Type.SELF) {
             if (ability.upgrade == null && add) {
@@ -351,89 +422,181 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 if (ability.resistance != null) {
                     resistance += ability.resistance;
                 }
+                if (ability.piercing != null) {
+                    bonusPiercing += ability.piercing;
+                }
+                if (ability.maxRange != null) {
+                    bonusMaxRange += ability.maxRange;
+                }
+                if (ability.minRange != null) {
+                    bonusMinRange += ability.minRange;
+                }
+                if (ability.xpModifier != null) {
+                    xpModifier *= ability.xpModifier;
+                }
             } else { // upgrade existing ability
-                abilities.stream()
+                List<Ability> as = abilities.stream()
                         .filter(a -> a.name.equals(ability.upgrade))
-                        .forEach(a -> {
-                            if (ability.size != null) {
-                                if (a.size == null)
-                                    a.size = ability.size;
-                                else
-                                    a.size += ability.size;
-                            }
-                            if (ability.damage != null) {
-                                if (a.damage == null)
-                                    a.damage = ability.damage;
-                                else
-                                    a.damage += ability.damage;
-                            }
-                            if (ability.turns != null) {
-                                if (a.turns == null)
-                                    a.turns = ability.turns;
-                                else
-                                    a.turns += ability.turns;
-                            }
-                            if (ability.uses != null) {
-                                if (a.uses == null) {
-                                    a.uses = ability.uses;
-                                    a.remainingUses = ability.uses;
-                                } else {
-                                    a.uses += ability.uses;
-                                    a.remainingUses += ability.uses;
-                                }
-                            }
-                            a.remain |= ability.remain;
-                        });
+                        .collect(Collectors.toList());
+
+                as.forEach(a -> {
+                    int i = removeAbility(a);
+
+                    a.upgrade(ability, add);
+
+                    addAbility(a, i);
+                });
             }
         }
+        if (index >= 0) {
+            abilities.add(index, ability);
+        } else
+            abilities.add(ability);
 
         if (getParent() != null)
             getParent().setPawn(this); // Shitty way of making sure the aurora effect is there
     }
 
-    public void removeAbility(Ability a) {
-        abilities.remove(a);
-        getParent().removePawnAbility(a);
+    public int removeAbility(Ability ability) {
+        int index = abilities.indexOf(ability);
+        abilities.remove(ability);
+        if (getParent() != null)
+            getParent().removePawnAbility(ability);
+
+        if (ability.upgrade != null)
+            abilities.stream()
+                    .filter(a -> a.name.equals(ability.upgrade))
+                    .forEach(a -> {
+                        if (ability.size != null) {
+                            a.size -= ability.size;
+                        }
+                        if (ability.damage != null) {
+                            a.damage -= ability.damage;
+                        }
+                        if (ability.uses != null) { // TODO
+                            a.uses -= ability.uses;
+                            a.remainingUses -= ability.uses;
+                        }
+                        if (ability.instant_hack) {
+                            a.instant_hack = false;
+                        }
+                        a.remain = false;
+                    });
+
+        return index;
     }
 
     public List<Ability> getAbilities() {
-        return abilities;
+        return new ArrayList<>(abilities);
     }
 
-    public void addAbilityAffect(Ability a) {
-        if (a.target == Ability.Target.ALL ||
-                (a.target == Ability.Target.ALLY && getTeam(true) == 0) ||
-                (a.target == Ability.Target.ENEMY && getTeam(false) == 1)) {
+    public void doAbilityAffect(Ability a) {
+        if ((a.target & Ability.Target.ALL) == Ability.Target.ALL ||
+                ((a.target & Ability.Target.ALLY) == Ability.Target.ALLY && getTeam(true) == 0) ||
+                ((a.target & Ability.Target.ENEMY) == Ability.Target.ENEMY && getTeam(true) == 1)) {
 
-            abilityAffects.add(a);
-
-            if (a.hp != null)
-                this.bonusHp += a.hp;
-            if (a.shield != null)
-                this.bonusShield += a.shield;
-            if (a.resistance != null)
-                this.bonusResistance += a.resistance;
-
-            getParent().updateText();
+            if (a.restore != null) {
+                this.remainingHitPoints += a.restore;
+                this.remainingHitPoints =
+                        this.remainingHitPoints > this.hitPoints ?
+                                this.hitPoints : this.remainingHitPoints;
+            }
         }
     }
 
+    public void addAbilityAffect(Ability a) {
+        if ((a.target & Ability.Target.ALL) == Ability.Target.ALL ||
+                ((a.target & Ability.Target.ALLY) == Ability.Target.ALLY && getTeam(true) == 0) ||
+                ((a.target & Ability.Target.ENEMY) == Ability.Target.ENEMY && getTeam(true) == 1)) {
+
+            if (abilityAffects.stream().noneMatch(e -> e.name.equals(a.name))) {
+                if (abilityAffects.stream().anyMatch(e -> a.name.equals(e.replace))) {
+                    // if already replaced, do nothing
+                } else {
+                    Optional<Ability> o = abilityAffects.stream()
+                            .filter(e -> e.name.equals(a.replace))
+                            .findFirst();
+
+                    if (o.isPresent()) {
+                        // if will replace, add difference
+                        Ability existing = o.get();
+
+                        if (a.hp != null)
+                            this.bonusHp += a.hp - (existing.hp != null ? existing.hp : 0);
+                        if (a.shield != null)
+                            this.bonusShield += a.shield - (existing.shield != null ? existing.shield : 0);
+                        if (a.resistance != null)
+                            this.bonusResistance += a.resistance - (existing.resistance != null ? existing.resistance : 0);
+                    } else {
+                        // otherwise, add normally
+                        if (a.hp != null)
+                            this.bonusHp += a.hp;
+                        if (a.shield != null)
+                            this.bonusShield += a.shield;
+                        if (a.resistance != null)
+                            this.bonusResistance += a.resistance;
+                    }
+                }
+
+                updateDetailText();
+            }
+
+            abilityAffects.add(a);
+        }
+    }
+
+
     public void removeAbilityAffect(Ability a) {
         if (abilityAffects.remove(a)) {
+            if ((a.target & Ability.Target.ALL) == Ability.Target.ALL ||
+                    ((a.target & Ability.Target.ALLY) == Ability.Target.ALLY && getTeam(true) == 0) ||
+                    ((a.target & Ability.Target.ENEMY) == Ability.Target.ENEMY && getTeam(false) == 1)) {
 
-            if (a.hp != null)
-                this.bonusHp -= a.hp;
-            if (a.shield != null)
-                this.bonusShield -= a.shield;
-            if (a.resistance != null)
-                this.bonusResistance -= a.resistance;
+                if (abilityAffects.stream().noneMatch(e -> e.name.equals(a.name))) {
+                    if (abilityAffects.stream().anyMatch(e -> a.name.equals(e.replace))) {
+                        // if already replaced, do nothing
+                    } else {
+                        Optional<Ability> o = abilityAffects.stream()
+                                .filter(e -> e.name.equals(a.replace))
+                                .findFirst();
 
-            getParent().updateText();
+                        if (o.isPresent()) {
+                            // if was replacing, subtract difference
+                            Ability existing = o.get();
+
+                            if (a.hp != null)
+                                this.bonusHp -= a.hp - (existing.hp != null ? existing.hp : 0);
+                            if (a.shield != null)
+                                this.bonusShield -= a.shield - (existing.shield != null ? existing.shield : 0);
+                            if (a.resistance != null)
+                                this.bonusResistance -= a.resistance - (existing.resistance != null ? existing.resistance : 0);
+
+
+                        } else {
+                            // otherwise, remove normally
+                            if (a.hp != null)
+                                this.bonusHp -= a.hp;
+                            if (a.shield != null)
+                                this.bonusShield -= a.shield;
+                            if (a.resistance != null)
+                                this.bonusResistance -= a.resistance;
+
+                            updateDetailText();
+                        }
+                    }
+                }
+            }
         }
     }
 
     public List<Ability> getAbilityAffects() {
         return abilityAffects;
+    }
+
+    public void runFloorAbilities() {
+        abilities.stream()
+                .filter(a -> a.type == Ability.Type.FLOOR)
+                .forEach(a -> getScene().getPawns().forEach(p -> p.doAbilityAffect(a)));
     }
 
     public int getLevel() {
@@ -448,7 +611,25 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         return weapon;
     }
 
+    public void setWeapon(String weapon) {
+        GameDatabase.all("weapon").stream()
+                .filter(w -> w.getString("name").equals(weapon))
+                .findFirst()
+                .ifPresent(w -> setWeapon(new Weapon(getScene(), w)));
+    }
+
+    public void setWeapon(GameData gdWeapon) {
+        if (gdWeapon.isString()) {
+            setWeapon(gdWeapon.asString());
+        } else {
+            setWeapon(new Weapon(getScene(), gdWeapon));
+        }
+    }
+
     public void setWeapon(Weapon weapon) {
+        if (this.weapon != null)
+            removeChild(weapon);
+
         this.weapon = weapon;
 
         if (weapon != null) {
@@ -462,7 +643,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         remainingAttacks = totalAttacks;
 
         abilities.forEach(a -> {
-            if (a.uses != null) a.remainingUses = a.uses;
+            if (a.uses != null && a.useRegainType == Ability.UseRegainType.TURN) {
+                a.remainingUses = a.uses;
+            }
+            a.usedThisTurn = false;
         });
     }
 
@@ -519,7 +703,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             AtomicReference<Boolean> a = new AtomicReference<>(false);
             AtomicReference<Boolean> b = new AtomicReference<>(false);
 
-            Pawn p = this;
             ActionFinishHandler handlerA = animationState -> {
                 a.set(true);
 
@@ -536,7 +719,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 }
             };
 
-            attack(target, weapon.getDamage(), weapon.getPiercing(), weapon.getShots(), handlerB);
+            attack(target, weapon.getDamage(), weapon.getPiercing() + getBonusPiercing(), weapon.getShots(), handlerB);
             getAnimationState().addActionFinishHandler(handlerA);
             getAnimationState().addActionFinishHandler(cat -> cat.setActionIdle(false));
 
@@ -567,35 +750,32 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         return Math.max(Math.max(damage - remainingResistance, 0) * shots, 1);
     }
 
-    public void attack(Pawn pawn, int damage, int percing, int shots, ActionFinishHandler onAttackDone) {
+    public void attack(Pawn target, int damage, int percing, int shots, ActionFinishHandler onAttackDone) {
         reduceAttacks();
 
-        int dealtDamage = pawn.getDamage(damage, percing, shots);
+        int dealtDamage = target.getDamage(damage, percing, shots);
+        System.out.println(damage + " " + dealtDamage);
 
         setUnmoved(false);
 
         if (hack != null) {
-            if (pawn.damage(dealtDamage, onAttackDone) && getTeam(true) == 0) {
-                hack.getHacker().xp += pawn.xpGain;
-                hack.getHacker().showMessage("+" + Integer.toString(pawn.xpGain) + "xp");
+            if (target.damage(dealtDamage, onAttackDone) && getTeam(true) == 0) {
+                hack.getHacker().gainXP(target.xpGain, false);
 
                 getScene().getPawns().stream()
                         .filter(p -> p.getTeam(false) == 0 && p != hack.getHacker())
                         .forEach(p -> {
-                            p.xp += pawn.xpGain / 3;
-                            p.showMessage("+" + Integer.toString(pawn.xpGain / 3) + "xp");
+                            p.gainXP(target.xpGain, true);
                         });
             }
         } else {
-            if (pawn.damage(dealtDamage, onAttackDone) && getTeam(false) == 0) {
-                xp += pawn.xpGain;
-                showMessage("+" + Integer.toString(pawn.xpGain) + "xp");
+            if (target.damage(dealtDamage, onAttackDone) && getTeam(false) == 0) {
+                gainXP(target.xpGain, false);
 
                 getScene().getPawns().stream()
                         .filter(p -> p.getTeam(false) == 0 && p != this)
                         .forEach(p -> {
-                            p.xp += pawn.xpGain / 3;
-                            p.showMessage("+" + Integer.toString(pawn.xpGain / 3) + "xp");
+                            p.gainXP(target.xpGain, true);
                         });
             }
         }
@@ -614,29 +794,33 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             dealtDamage = 1;
         }
 
+        // shield
         int rolloverBonusShieldDamage = dealtDamage;
         if (getBonusShield() > 0) {
             rolloverBonusShieldDamage = -Math.min(getBonusShield() - dealtDamage, 0);
-            this.bonusShieldLoss = Math.min(getBonusShield() - dealtDamage, -this.bonusShield);
+            this.bonusShieldLoss = Math.max(-dealtDamage + this.bonusShieldLoss, Math.min(-this.bonusShield, this.bonusShieldLoss));
         }
 
         int rolloverShieldDamage = -Math.min(this.remainingShield - rolloverBonusShieldDamage, 0);
         this.remainingShield = Math.max(this.remainingShield - rolloverBonusShieldDamage, 0);
 
+        // hp
         int rolloverBonusHp = rolloverShieldDamage;
         if (getBonusHp() > 0) {
             rolloverBonusHp = -Math.min(getBonusHp() - rolloverShieldDamage, 0);
-            this.bonusHpLoss = Math.min(getBonusHp() - rolloverShieldDamage, 0);
+            this.bonusHpLoss = Math.max(-dealtDamage + this.bonusHpLoss, Math.min(-this.bonusHp, this.bonusHpLoss));
         }
-        this.remainingHitPoints = Math.max(this.remainingHitPoints - rolloverBonusHp, -this.bonusHp);
 
+        this.remainingHitPoints = Math.max(this.remainingHitPoints - rolloverBonusHp, 0);
+
+        // death
         if (this.remainingHitPoints <= 0) {
             this.die(onAttackDone);
         } else if (onAttackDone != null) {
             onAttackDone.onActionFinish(getAnimationState());
         }
 
-        this.getParent().updateText();
+        this.updateDetailText();
 
         this.showMessage("-" + Integer.toString(dealtDamage));
 
@@ -646,6 +830,60 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     public void showMessage(String msg) {
         pawnMessage.setText(msg);
         messageShowTime = 0;
+    }
+
+    public void gainXP(int xp, boolean indirect) {
+        int gain;
+
+        if (indirect) {
+            gain = (xp / 3) * xpModifier;
+        } else {
+            gain = xp * xpModifier;
+        }
+
+        this.xp += gain;
+
+        showMessage("+" + Integer.toString(gain) + "xp");
+    }
+
+    public void hack(Hack hack) {
+        if (hack != null) {
+
+            bonusHp += hack.getHP();
+            bonusShield += hack.getShield();
+            bonusResistance += hack.getResistance();
+
+            if (hack.isInstant()) {
+                ready();
+            } else {
+                setReady(false);
+            }
+            hack.setInstant(false);
+
+            if (this.spriteHack != null)
+                this.setSpriteSheet(spriteHack);
+            if (this.weaponHack != null) {
+                setWeapon(this.weaponHack);
+            }
+        } else if (this.hack != null) {
+            bonusHp -= this.hack.getHP();
+            bonusShield -= this.hack.getShield();
+            bonusResistance -= this.hack.getResistance();
+
+            setReady(false);
+
+            if (this.spriteNormal != null)
+                this.setSpriteSheet(spriteNormal);
+            if (this.weaponNormal != null) {
+                setWeapon(this.weaponNormal);
+            }
+        }
+
+        this.hack = hack;
+
+        setUIDetailText(new UIDetailText(getScene(), this));
+
+        updateDetailText();
     }
 
     public void die(ActionFinishHandler onAttackDone) {
@@ -682,7 +920,11 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     @Override
     public float getZ() {
-        return ZLayer.PAWN.getValue();
+        Vector2f wPos = getWorldPosition();
+
+        return ZLayer.PAWN.getValue() +
+                ((getParent().getMapY() - getParent().getMapX()) / 1000f) +
+                -(wPos.y - wPos.x) / 1000f;
     }
 
     public void setFlip(boolean flip) {
@@ -707,15 +949,19 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         this.unmoved &= unmoved;
     }
 
-    public void setReadyIfUnmoved() {
-        //ready = unmoved;
-    }
-
-    public void restoreShield() {
+    public void prepLevel() {
         bonusHpLoss = 0;
         bonusShieldLoss = 0;
-        bonusResistance = 0;
         remainingShield = totalShield;
+
+        abilities.forEach(a -> {
+            if (a.uses != null) {
+                a.remainingUses = a.uses;
+                a.usedThisTurn = false;
+            }
+        });
+
+        ready();
     }
 
     public int getXp() {
@@ -723,6 +969,93 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public int getNextLevelXp() {
-        return (level * (level + 1) + 1) * 50;
+        return (level * (level + 1) + 1) * 5;
+//        return 0;
+    }
+
+    public void setUIDetailText(UIDetailText uiDetailText) {
+        if (this.uiDetailText != null)
+            getScene().removeUIDetails(this.uiDetailText);
+
+        this.uiDetailText = uiDetailText;
+        getScene().addUIDetails(this.uiDetailText);
+    }
+
+    public void updateDetailText() {
+        if (uiDetailText != null) {
+
+            if (getScene().getActivePawn() == this) {
+                uiDetailText.setAnimationAction("active");
+            } else {
+                if (this.isReady() && getTeam(true) == getScene().getActiveTeam())
+                    if (getParent() != null && getParent().isMouseHovering()) {
+                        uiDetailText.setAnimationAction("hover");
+                    } else {
+                        uiDetailText.setAnimationAction("idle");
+                    }
+                else {
+                    uiDetailText.setAnimationAction("disable");
+                }
+            }
+
+            details.name = getName();
+
+            if (getTeam(false) == 0) {
+                details.name = getName() + " " + getLevel();
+                details.level = getXp() + "/" + getNextLevelXp();
+
+            } else {
+                details.level = "";
+            }
+
+            details.hp = getRemainingHitPoints() + "/" + getHitPoints();
+            if (getBonusHp() > 0) {
+                details.hp += "+" + getBonusHp();
+            }
+
+            details.shield = getRemainingShield() + "/" + getTotalShield();
+            if (getBonusShield() > 0) {
+                details.shield += "+" + getBonusShield();
+            }
+
+            if (getTeam(true) == getScene().getActiveTeam())
+                details.movement = getRemainingMovement() + "/" + getTotalMovement();
+            else
+                details.movement = Integer.toString(getTotalMovement());
+
+            details.resistance = Integer.toString(getResistance(false));
+            if (getBonusResistance() > 0) {
+                details.resistance += "+" + getBonusResistance();
+            }
+
+            details.weapon = getWeapon().getName();
+            details.damage = Integer.toString(getWeapon().getDamage());
+            details.piercing = Integer.toString(getWeapon().getPiercing());
+            if (getBonusPiercing() > 0) {
+                details.piercing += "+" + getBonusPiercing();
+            }
+            if (getWeapon().getRangeMax() != getWeapon().getRangeMin()) {
+                details.range = Integer.toString(getWeapon().getRangeMin());
+
+                if (getBonusMinRange() > 0) {
+                    details.range += "+" + getBonusMinRange();
+                }
+
+                details.range += "-" + Integer.toString(getWeapon().getRangeMax());
+
+                if (getBonusMaxRange() > 0) {
+                    details.range += "+" + getBonusMaxRange();
+                }
+            } else {
+                details.range = Integer.toString(getWeapon().getRangeMax());
+            }
+            details.shots = Integer.toString(getWeapon().getShots());
+
+            uiDetailText.setDetails(details);
+        }
+    }
+
+    public UIDetailText getUIDetailText() {
+        return uiDetailText;
     }
 }

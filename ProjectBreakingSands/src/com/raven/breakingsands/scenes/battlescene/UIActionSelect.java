@@ -2,7 +2,7 @@ package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
-import com.raven.breakingsands.scenes.hud.UIRightContainer;
+import com.raven.breakingsands.scenes.hud.UIBottomCenterContainer;
 import com.raven.engine2d.ui.UIButton;
 
 import java.util.ArrayList;
@@ -13,10 +13,10 @@ import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.ATTAC
 import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.MOVING;
 import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_DEFAULT;
 
-public class UIActionSelect extends UIRightContainer<BattleScene> {
+public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
-    private UIAbilityButton btnPushBlast, btnHookPull, btnHack;
-    private UIButton<BattleScene> btnMove, btnAttack, btnSkip, btnCancel, btnLevel, btnEnd;
+    private UIAbilityButton btnPushBlast, btnHookPull, btnHack, btnBlink, btnRecall;
+    private UIButton<BattleScene> btnMove, btnAttack, btnUndo, btnCancel, btnLevel, btnEnd;
     private List<UIButton<BattleScene>> btns = new ArrayList<>();
     private boolean disable;
     private BattleScene.State oldState = SELECT_DEFAULT;
@@ -25,6 +25,104 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
 
     public UIActionSelect(BattleScene scene) {
         super(scene);
+
+        btnBlink = new UIAbilityButton(scene,
+                "sprites/push icon.png",
+                "iconbutton") {
+
+            @Override
+            public void handleMouseClick() {
+                if (!isDisabled()) {
+                    if (isActive()) {
+                        setActive(false);
+                        getScene().setActiveAbility(null);
+                        scene.setState(oldState = SELECT_DEFAULT);
+                    } else {
+                        btns.forEach(b -> b.setActive(false));
+                        setActive(true);
+                        getScene().setActiveAbility(getAbility());
+                        scene.setState(oldState = BattleScene.State.SELECT_ABILITY);
+                    }
+                }
+            }
+
+            @Override
+            public void handleMouseEnter() {
+                super.handleMouseEnter();
+
+                if (!isDisabled())
+                    if (!isActive()) {
+                        oldAbility = scene.getActiveAbility();
+                        scene.setActiveAbility(getAbility());
+                        oldState = scene.getState();
+                        scene.setState(BattleScene.State.SELECT_ABILITY);
+                    }
+            }
+
+            @Override
+            public void handleMouseLeave() {
+                super.handleMouseLeave();
+
+                if (!isDisabled())
+                    if (!isActive()) {
+                        scene.setActiveAbility(oldAbility);
+                        scene.setState(oldState);
+                    }
+            }
+        };
+        btnBlink.setVisibility(false);
+        btnBlink.setToolTipSrc("blink");
+        addChild(btnBlink);
+        btns.add(btnBlink);
+
+        btnRecall = new UIAbilityButton(scene,
+                "sprites/icon hook.png",
+                "iconbutton") {
+
+            @Override
+            public void handleMouseClick() {
+                if (!isDisabled()) {
+                    if (isActive()) {
+                        setActive(false);
+                        getScene().setActiveAbility(null);
+                        scene.setState(oldState = SELECT_DEFAULT);
+                    } else {
+                        btns.forEach(b -> b.setActive(false));
+                        setActive(true);
+                        getScene().setActiveAbility(getAbility());
+                        scene.setState(oldState = BattleScene.State.SELECT_ABILITY);
+                    }
+                }
+            }
+
+            @Override
+            public void handleMouseEnter() {
+                super.handleMouseEnter();
+
+                if (!isDisabled())
+                    if (!isActive()) {
+                        oldAbility = scene.getActiveAbility();
+                        scene.setActiveAbility(getAbility());
+                        oldState = scene.getState();
+                        scene.setState(BattleScene.State.SELECT_ABILITY);
+                    }
+            }
+
+            @Override
+            public void handleMouseLeave() {
+                super.handleMouseLeave();
+
+                if (!isDisabled())
+                    if (!isActive()) {
+                        scene.setActiveAbility(oldAbility);
+                        scene.setState(oldState);
+                    }
+            }
+        };
+        btnRecall.setVisibility(false);
+        btnRecall.setToolTipSrc("recall");
+        addChild(btnRecall);
+        btns.add(btnRecall);
 
         btnPushBlast = new UIAbilityButton(scene,
                 "sprites/push icon.png",
@@ -64,6 +162,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             }
         };
         btnPushBlast.setVisibility(false);
+        btnPushBlast.setToolTipSrc("pushblast");
         addChild(btnPushBlast);
         btns.add(btnPushBlast);
 
@@ -116,6 +215,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             }
         };
         btnHookPull.setVisibility(false);
+        btnHookPull.setToolTipSrc("hook");
         addChild(btnHookPull);
         btns.add(btnHookPull);
 
@@ -167,6 +267,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             }
         };
         btnHack.setVisibility(false);
+        btnHack.setToolTipSrc("hack");
         addChild(btnHack);
         btns.add(btnHack);
 
@@ -209,6 +310,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
 
             }
         };
+        btnMove.setToolTipSrc("move");
         addChild(btnMove);
         btns.add(btnMove);
 
@@ -251,22 +353,9 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
 
             }
         };
+        btnAttack.setToolTipSrc("attack");
         addChild(btnAttack);
         btns.add(btnAttack);
-
-        btnSkip = new UIButton<BattleScene>(scene,
-                "sprites/icon skip.png",
-                "iconbutton") {
-
-            @Override
-            public void handleMouseClick() {
-                if (!isDisabled()) {
-                    getScene().pawnWait();
-                }
-            }
-        };
-        addChild(btnSkip);
-        btns.add(btnSkip);
 
         btnCancel = new UIButton<BattleScene>(scene,
                 "sprites/cancel icon.png",
@@ -279,6 +368,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
                 }
             }
         };
+        btnCancel.setToolTipSrc("deselect");
         addChild(btnCancel);
         btns.add(btnCancel);
 
@@ -293,12 +383,28 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
                 }
             }
         };
+        btnLevel.setToolTipSrc("level up");
         addChild(btnLevel);
         btns.add(btnLevel);
 
+        btnUndo = new UIButton<BattleScene>(scene,
+                "sprites/icon skip.png",
+                "iconbuttonlarge") {
+
+            @Override
+            public void handleMouseClick() {
+                if (!isDisabled()) {
+                    getScene().reloadGame();
+                }
+            }
+        };
+        btnUndo.setToolTipSrc("undo");
+        addChild(btnUndo);
+        btns.add(btnUndo);
+
         btnEnd = new UIButton<BattleScene>(scene,
                 "sprites/icon end turn.png",
-                "iconbutton") {
+                "iconbuttonlarge") {
 
             @Override
             public void handleMouseClick() {
@@ -308,6 +414,7 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
 
             }
         };
+        btnEnd.setToolTipSrc("end turn");
         addChild(btnEnd);
         btns.add(btnEnd);
 
@@ -315,7 +422,15 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
     }
 
     public void setPawn(Pawn pawn) {
-        if (pawn == null) {
+        if (getScene().getActiveTeam() == 0) {
+            btnUndo.setDisable(false);
+            btnUndo.setActive(false);
+        } else {
+            btnUndo.setDisable(true);
+            btnUndo.setActive(false);
+        }
+
+        if (pawn == null || (getScene().getActiveAbility() != null && getScene().getActiveAbility().recall_unit)) {
             this.disable = true;
 
             btnAttack.setDisable(disable);
@@ -324,8 +439,6 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             btnCancel.setActive(false);
             btnMove.setDisable(disable);
             btnMove.setActive(false);
-            btnSkip.setDisable(disable);
-            btnSkip.setActive(false);
             btnLevel.setDisable(disable);
             btnLevel.setActive(false);
             btnLevel.setVisibility(false);
@@ -338,6 +451,12 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             btnHack.setDisable(disable);
             btnHack.setActive(false);
             btnHack.setVisibility(false);
+            btnBlink.setDisable(disable);
+            btnBlink.setActive(false);
+            btnBlink.setVisibility(false);
+            btnRecall.setDisable(disable);
+            btnRecall.setActive(false);
+            btnRecall.setVisibility(false);
         } else /*if (pawn != this.pawn)*/ {
             btnCancel.setDisable(!(pawn.getTotalMovement() == pawn.getRemainingMovement()));
 
@@ -345,8 +464,8 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
             btnAttack.setActive(btnAttack.getActive() && pawn == this.pawn);
             btnMove.setDisable(!pawn.canMove());
             btnMove.setActive(btnMove.getActive() && pawn == this.pawn);
-            btnSkip.setDisable(false);
-//            btnSkip.setActive(false);
+//            btnUndo.setDisable(false);
+//            btnUndo.setActive(false);
             btnCancel.setDisable(false);
 //            btnCancel.setActive(false);
 
@@ -368,6 +487,32 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
                 btnPushBlast.setVisibility(false);
             }
 
+            ability = pawn.getAbilities().stream().filter(a -> a.blink).findFirst();
+            if (ability.isPresent()) {
+                btnBlink.setVisibility(true);
+                btnBlink.setDisable(!pawn.canAbility(ability.get()));
+                btnBlink.setActive(btnBlink.getActive() && pawn == this.pawn);
+                btnBlink.setAbility(ability.get());
+                pawn.getAbilities().stream()
+                        .filter(a -> a.action && a.upgrade != null && a.upgrade.equals("Blink"))
+                        .forEach(btnBlink::addBonusAbility);
+            } else {
+                btnBlink.setVisibility(false);
+            }
+
+            ability = pawn.getAbilities().stream().filter(a -> a.recall).findFirst();
+            if (ability.isPresent()) {
+                btnRecall.setVisibility(true);
+                btnRecall.setDisable(!pawn.canAbility(ability.get()));
+                btnRecall.setActive(btnRecall.getActive() && pawn == this.pawn);
+                btnRecall.setAbility(ability.get());
+                pawn.getAbilities().stream()
+                        .filter(a -> a.action && a.replace != null && a.replace.equals("Recall"))
+                        .forEach(btnRecall::addBonusAbility);
+            } else {
+                btnRecall.setVisibility(false);
+            }
+
             ability = pawn.getAbilities().stream().filter(a -> a.hook_pull).findFirst();
             if (ability.isPresent()) {
                 btnHookPull.setVisibility(true);
@@ -384,6 +529,9 @@ public class UIActionSelect extends UIRightContainer<BattleScene> {
                 btnHack.setDisable(!pawn.canAbility(ability.get()));
                 btnHack.setActive(btnHack.getActive() && pawn == this.pawn);
                 btnHack.setAbility(ability.get());
+                pawn.getAbilities().stream()
+                        .filter(a -> a.action && a.upgrade != null && a.upgrade.equals("Hack"))
+                        .forEach(btnHack::addBonusAbility);
             } else {
                 btnHack.setVisibility(false);
             }

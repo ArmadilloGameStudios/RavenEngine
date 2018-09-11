@@ -1,23 +1,16 @@
 package com.raven.engine2d.ui;
 
 import com.raven.engine2d.GameEngine;
-import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
-import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.shader.TextShader;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2i;
 import org.lwjgl.system.CallbackI;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class UITextWriter {
 
@@ -45,15 +38,24 @@ public class UITextWriter {
     private UITexture uiImage;
     private GameEngine engine;
     private String text, background;
+    private UITextWriterHandler handler;
 
     private int x = 0; // 8
     private int y = 0; // 10
+    private int lines = 0;
+
 
     public UITextWriter(GameEngine engine, Scene scene, UITexture image, UIFont font) {
+        this(engine, scene, image, font, null);
+    }
+
+    public UITextWriter(GameEngine engine, Scene scene, UITexture image, UIFont font, UITextWriterHandler handler) {
         this.engine = engine;
 
         uiImage = image;
         this.font = font;
+
+        this.handler = handler;
 
         engine.getWindow().printErrors("pre load (sprite 1) ");
         alphabetImage = engine.getSpriteSheet("sprites/alphabet.png");
@@ -103,17 +105,75 @@ public class UITextWriter {
         y = font.getY();
 
         if (font.getSide() == UIFont.Side.LEFT) {
-            for (Character c : text.toLowerCase().toCharArray()) {
+
+            Character lastChar = null;
+            char[] chars = text.toLowerCase().toCharArray();
+
+            for (int index = 0; index < chars.length; index++) {
+                char c = chars[index];
+
+                if (font.isWrap()) {
+                    // get next word length, if total is greater than width, new line;
+
+
+                    if (c == '\n') {
+                        x = font.getX();
+                        y += 10;
+
+                        lines += 1;
+                    } else if (lastChar != null &&
+                            !(Character.isAlphabetic(lastChar) || Character.isDigit(lastChar)) &&
+                            (Character.isAlphabetic(c) || Character.isDigit(c))) {
+
+                        int next = nextWordLength(index, chars, alphabetLocation);
+
+                        if (next + x >= uiImage.getWidth()) {
+
+                            x = font.getX();
+                            y += 10;
+
+                            lines += 1;
+                        }
+
+                    }
+                }
+
                 writeChar(shader, c, alphabetLocation);
+
+                lastChar = c;
             }
         } else {
             x = uiImage.getWidth() - 1;
 
-            for (Character c : new StringBuilder(text.toLowerCase()).reverse().toString().toCharArray()) {
+            char[] chars = new StringBuilder(text.toLowerCase()).reverse().toString().toCharArray();
+
+            for (int index = 0; index < chars.length; index++) {
+                char c = chars[index];
                 writeChar(shader, c, alphabetLocation);
             }
         }
 
+        if (handler != null) {
+            handler.onFinish(lines + 1);
+        }
+    }
+
+    private int nextWordLength(int i, char[] chars, GameDataList alphabetLocation) {
+        AtomicInteger wordLen = new AtomicInteger();
+
+
+        while (i < chars.length && (Character.isAlphabetic(chars[i]) || Character.isDigit(chars[i]))) {
+
+            char c = chars[i];
+            alphabetLocation.stream()
+                    .filter(a -> a.getString("name").equals(Character.toString(c)))
+                    .findFirst()
+                    .ifPresent(a -> wordLen.addAndGet(a.getInteger("width") - 1));
+
+            i++;
+        }
+
+        return wordLen.get();
     }
 
     private Vector2i
@@ -122,7 +182,6 @@ public class UITextWriter {
             des = new Vector2i();
 
     private void writeChar(TextShader shader, Character c, GameDataList alphabetLocation) {
-
         engine.getWindow().printErrors("meow");
         switch (c) {
             case ' ':

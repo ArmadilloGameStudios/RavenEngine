@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class GameObject<GO extends GameObject, P extends Parentable, C extends GameObject>
+public abstract class GameObject<GO extends GameObject, P extends Parentable<? extends GameObject>, C extends GameObject>
         implements Childable<P>, Parentable<C> {
 
     private static int last_id = 0;
@@ -36,13 +36,13 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
         return id;
     }
 
-    protected final void clearID() {
+    public final void clearID() {
         gameObjectIDMap.remove(this.id);
         this.id = 0;
     }
 
     public final void newID() {
-        id = last_id++;
+        id = last_id += 20;
         gameObjectIDMap.put(id, this);
     }
 
@@ -52,6 +52,10 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable, C 
 
     public void addMouseHandler(MouseHandler c) {
         this.clickHandlers.add(c);
+    }
+
+    public void removeMouseHandler(MouseHandler c) {
+        this.clickHandlers.remove(c);
     }
 
     public boolean isMouseHovering() {

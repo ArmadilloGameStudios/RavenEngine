@@ -1,21 +1,31 @@
 package com.raven.engine2d.graphics2d;
 
+import com.codedisaster.steamworks.SteamAPI;
+import com.codedisaster.steamworks.SteamException;
+import com.codedisaster.steamworks.SteamUtils;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.shader.TextShader;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.system.MemoryStack;
+import sun.java2d.HeadlessGraphicsEnvironment;
 
+import java.awt.*;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwGetMonitors;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.opengl.ARBImaging.GL_TABLE_TOO_LARGE;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
@@ -50,23 +60,34 @@ public class GameWindow {
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
 
+        long monitor = glfwGetPrimaryMonitor();
+        GLFWVidMode vidmode = glfwGetVideoMode(monitor);
+
+        GameProperties.setDisplayWidth(vidmode.width());
+        GameProperties.setDisplayHeight(vidmode.height());
+
+        glfwGetVideoModes(monitor).stream().forEach(m -> GameProperties.addResolution(m.width(), m.height()));
+
         // Configure GLFW
         glfwDefaultWindowHints();
-//        if (System.getProperty("os.name").contains("mac")) {
+        // this has caused so many problems, including with the steam overlay
+        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+            System.out.println("Setting Core Profile");
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-//        }
+        }
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-
         // Create the window
-        window = glfwCreateWindow(GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight(),
-                engine.getGame().getTitle(), glfwGetPrimaryMonitor(),
+        window = glfwCreateWindow(
+                GameProperties.getDisplayWidth(),
+                GameProperties.getDisplayHeight(),
+                engine.getGame().getTitle(), monitor,
                 NULL);
+
         if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -77,9 +98,6 @@ public class GameWindow {
 
             // Get the window size passed to glfwCreateWindow
             glfwGetWindowSize(window, pWidth, pHeight);
-
-            // Get the resolution of the primary monitor
-            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
             // Center the window
             glfwSetWindowPos(window, (vidmode.width() - pWidth.get(0)) / 2,
@@ -103,7 +121,7 @@ public class GameWindow {
         glfwSetCursorPosCallback(window, (window, xpos, ypos) -> engine.inputMouseMove(xpos, ypos));
         glfwSetScrollCallback(window, (window, xoffset, yoffset) -> engine.inputScroll(xoffset, yoffset));
 
-        GL.createCapabilities();
+        GLCapabilities cat = GL.createCapabilities();
 
         mainShader = new MainShader(engine, this);
         textShader = new TextShader(engine, this);
@@ -135,10 +153,12 @@ public class GameWindow {
     }
 
     public MainShader getMainShader() {
+//        mainShader.release();
+//        mainShader = new MainShader(engine, this);
         return mainShader;
     }
 
-    public TextShader getTexthader() {
+    public TextShader getTextShader() {
         return textShader;
     }
 
@@ -200,5 +220,13 @@ public class GameWindow {
 
     public void setActiveShader(Shader activeShader) {
         this.activeShader = activeShader;
+    }
+
+    public void setDimension(int width, int height) {
+        GameProperties.setScreenWidth(width);
+        GameProperties.setScreenHeight(height);
+
+        mainShader.release();
+        mainShader = new MainShader(engine, this);
     }
 }

@@ -15,6 +15,7 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject>
 
     private int width = 3, height = 3;
     private int x, y;
+    private boolean terminal;
 
     private String name;
 
@@ -39,6 +40,8 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject>
         this.y = y;
         this.setX(x);
         this.setY(y);
+
+        gameData.ifHas("terminal", t -> terminal = t.asBoolean());
 
         width = gameData.getInteger("width");
         height = gameData.getInteger("height");
@@ -195,6 +198,10 @@ public class Structure extends WorldObject<BattleScene, Map, WorldObject>
 
     @Override
     public float getZ() {
-        return .5f;
+        return 0f;
+    }
+
+    public boolean isTerminal() {
+        return terminal;
     }
 }

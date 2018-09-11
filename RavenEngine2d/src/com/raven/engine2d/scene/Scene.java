@@ -8,11 +8,10 @@ import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.shader.MainShader;
-import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.shader.TextShader;
-import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.ui.UITextWriter;
+import com.raven.engine2d.ui.UIToolTip;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.worldobject.GameObject;
@@ -25,9 +24,12 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     private Layer layerDetails = new Layer(Layer.Destination.Details);
     private Layer layerEffects = new Layer(Layer.Destination.Effects);
     private Layer layerUI = new Layer(Layer.Destination.UI);
+    private Layer layerToolTip = new Layer(Layer.Destination.ToolTip);
 
     private Vector3f backgroundColor = new Vector3f();
     private Vector2f worldOffset = new Vector2f();
+
+    private UIToolTip toolTip;
 
     private List<GameObject> children = new ArrayList<>();
     private List<UITextWriter> toWrite = new ArrayList<>();
@@ -46,10 +48,11 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     }
 
     final public void draw(GameWindow window) {
+
         // text
         window.printErrors("pre t");
         if (toWrite.size() > 0) {
-            TextShader textShader = window.getTexthader();
+            TextShader textShader = window.getTextShader();
             window.printErrors("rrr");
             textShader.useProgram();
             window.printErrors("lll");
@@ -67,7 +70,6 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
         mainShader.useProgram();
 
         mainShader.clear(backgroundColor);
-
 
         // drawImage
         for (GameObject o : layerTerrain.getChildren()) {
@@ -89,10 +91,18 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
         }
 
         // ui
+        mainShader.clearDepthBuffer();
+
         for (GameObject o : layerUI.getChildren()) {
             if (o.isVisible())
                 o.draw(mainShader);
             window.printErrors("Draw UI Error: ");
+        }
+
+        for (GameObject o : layerToolTip.getChildren()) {
+            if (o.isVisible())
+                o.draw(mainShader);
+            window.printErrors("Draw ToolTip Error: ");
         }
 
         window.printErrors("pre b");
@@ -109,18 +119,6 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
         }
     }
 
-    private Layer getLayerTerrain() {
-        return layerTerrain;
-    }
-
-    private Layer getLayerDetails() {
-        return layerDetails;
-    }
-
-    private Layer getLayerUI() {
-        return layerUI;
-    }
-
     public Layer getLayer(Layer.Destination destination) {
         switch (destination) {
             case Terrain:
@@ -131,6 +129,8 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
                 return layerEffects;
             case UI:
                 return layerUI;
+            case ToolTip:
+                return layerToolTip;
         }
 
         return null;
@@ -149,10 +149,24 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
 
     public void addGameObject(GameObject go) {
         getLayer(go.getDestination()).addChild(go);
+
+        go.getChildren().forEach(c -> {
+            if (c instanceof GameObject)
+                addGameObject((GameObject) c);
+        });
     }
 
     public void removeGameObject(GameObject go) {
-        getLayer(go.getDestination()).removeChild(go);
+        Layer layer = getLayer(go.getDestination());
+
+        if (layer != null) {
+            layer.removeChild(go);
+        }
+
+        go.getChildren().forEach(c -> {
+            if (c instanceof GameObject)
+                removeGameObject((GameObject) c);
+        });
     }
 
     public void addTextToWrite(UITextWriter textWriter) {
@@ -204,8 +218,6 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
         for (ShaderTexture sheet : getShaderTextures()) {
             sheet.release();
         }
-
-        Shader.clearTextureID();
     }
 
     abstract public void onExitScene();
@@ -232,5 +244,35 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
 
     public Clip getClip(String name) {
         return null;
+    }
+
+    protected void setToolTip(UIToolTip toolTip) {
+        if (this.toolTip != null)
+            removeGameObject(this.toolTip);
+
+        this.toolTip = toolTip;
+
+        this.layerUI.addChild(toolTip);
+        addGameObject(toolTip);
+    }
+
+    public void showToolTip(String title, String text) {
+        if (toolTip != null) {
+
+            toolTip.setTitle(title);
+            toolTip.setText(text);
+
+            toolTip.setVisibility(true);
+        }
+    }
+
+    public void hideToolTip() {
+        if (toolTip != null) {
+            toolTip.setVisibility(false);
+        }
+    }
+
+    public UIToolTip getToolTip() {
+        return toolTip;
     }
 }

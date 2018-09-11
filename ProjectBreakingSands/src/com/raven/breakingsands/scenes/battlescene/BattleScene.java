@@ -6,15 +6,14 @@ import com.raven.breakingsands.character.Effect;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.ai.AI;
 import com.raven.breakingsands.scenes.battlescene.decal.Wall;
+import com.raven.breakingsands.scenes.battlescene.levelup.UILevelUp;
 import com.raven.breakingsands.scenes.battlescene.map.Map;
 import com.raven.breakingsands.scenes.battlescene.map.Terrain;
 import com.raven.breakingsands.scenes.battlescene.menu.Menu;
 import com.raven.breakingsands.scenes.battlescene.pawn.Hack;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
-import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
-import com.raven.breakingsands.scenes.hud.UIBottomRightContainer;
-import com.raven.breakingsands.scenes.hud.UICenterContainer;
+import com.raven.breakingsands.scenes.hud.*;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
@@ -23,7 +22,9 @@ import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.scene.Scene;
+import com.raven.engine2d.ui.UIToolTip;
 import com.raven.engine2d.util.math.Vector2f;
+import com.raven.engine2d.util.math.Vector2i;
 import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.util.pathfinding.Path;
 import com.raven.engine2d.util.pathfinding.PathAdjacentNode;
@@ -40,48 +41,46 @@ import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELEC
 public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable {
     public static Highlight
             OFF = new Highlight(),
-            BLUE = new Highlight(.2f, .6f, 1f, .75f),
-            BLUE_CHANGING = new Highlight(.2f, .6f, 1f, .5f),
-            RED = new Highlight(1f, .1f, .05f, .75f),
-            RED_CHANGING = new Highlight(1f, .3f, .2f, .5f),
-            YELLOW = new Highlight(1f, .8f, .2f, .75f),
-            YELLOW_CHANGING = new Highlight(1f, .8f, .2f, .5f),
-            GREEN = new Highlight(.3f, 1f, .2f, .75f),
-            GREEN_CHANGING = new Highlight(.3f, 1f, .2f, .5f),
-            PURPLE = new Highlight(.5f, .1f, .8f, .75f),
-            PURPLE_CHANGING = new Highlight(.5f, .1f, .8f, .75f);
+            BLUE = new Highlight(.1f, .45f, .9f, .4f),
+            BLUE_CHANGING = new Highlight(.2f, .6f, 1f, .75f),
+            RED = new Highlight(.9f, .05f, .0f, .4f),
+            RED_CHANGING = new Highlight(1f, .2f, .15f, .75f),
+            YELLOW = new Highlight(1f, .8f, .2f, .4f),
+            YELLOW_CHANGING = new Highlight(1f, .9f, .4f, .75f),
+            GREEN = new Highlight(.2f, .9f, .1f, .4f),
+            GREEN_CHANGING = new Highlight(.4f, 1f, .4f, .75f),
+            PURPLE = new Highlight(.4f, .1f, .8f, .4f),
+            PURPLE_CHANGING = new Highlight(.7f, .0f, .9f, .75f);
 
     private GameData loadGameData = null;
 
-    private List<ShaderTexture> models;
-
     private Menu menu;
+    private UIUpperLeftContainer<BattleScene> bottomLeftContainer;
+    private UIUpperRightContainer<BattleScene> bottomRightContainer;
     private UIActionSelect actionSelect;
     private UILevelUp uiLevelUp;
-    private UIDetailText uiActiveDetailText;
-    private UIDetailText uiSelectedDetailText;
+    private UIFloorDisplay uiFloorDisplay;
 
     public enum State {
         MOVING, ATTACKING, SELECT_DEFAULT, SELECT_MOVE, SELECT_ATTACK, SELECT_ABILITY
     }
 
-    private Random random = new Random();
+//    private long seed = 1499045290341207917L;
+    private long seed = new Random().nextLong();
+    private Random random = new Random(seed);
 
     private Map map;
 
     private HashMap<Terrain, Path<Terrain>> pathMap;
     private Path<Terrain> currentPath;
     private int pathIndex = 0;
-    private float pathSpeed = 4f * 100f;
-    private float pathMoveTime = 0f;
-
-    private HashMap<Terrain, Float> rangeMap;
 
     private List<Pawn> pawns = new CopyOnWriteArrayList<>();
     private List<Pawn> playersPawns;
     private Pawn activePawn;
     private Pawn targetPawn;
 
+    private int difficulty;
     private int activeTeam = 0;
     private Ability activeAbility;
 
@@ -91,9 +90,10 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     private AI ai = new AI(this);
     private Future aiFuture;
 
-    public BattleScene(BreakingSandsGame game, List<Pawn> playersPawns) {
+    public BattleScene(BreakingSandsGame game, List<Pawn> playersPawns, int difficulty) {
         super(game);
 
+        this.difficulty = difficulty;
         this.playersPawns = playersPawns;
     }
 
@@ -109,6 +109,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         map.put("pawns", new GameDataList(pawns).toGameData());
         map.put("map", this.map.toGameData());
+        map.put("difficulty", new GameData(difficulty));
         map.put("activeTeam", new GameData(activeTeam));
         map.put("activePawn", new GameData(pawns.indexOf(activePawn)));
 
@@ -181,11 +182,20 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     @Override
     public void onEnterScene() {
+        System.out.println("Seed: " + seed);
+
         setBackgroundColor(new Vector3f(0f, 0f, 0f));
 
+        // center the view
         Vector2f wo = this.getWorldOffset();
-        wo.x = GameProperties.getScreenWidth() / GameProperties.getScaling();
+        wo.x = GameProperties.getScreenWidth() / GameProperties.getScaling() - 64 * 2;
         wo.y = GameProperties.getScreenHeight() / GameProperties.getScaling();
+
+        this.setToolTip(new UIToolTip<>(this,
+                120, 120,
+                "sprites/tooltip.png",
+                "tooltip",
+                GameDatabase.all("tooltip")));
 
         if (loadGameData != null) {
             // Pawns
@@ -193,44 +203,47 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 pawns.add(new Pawn(this, p));
             });
 
+            // dif
+            difficulty = loadGameData.getInteger("difficulty");
+
             // Terrain
             map = new Map(this, loadGameData.getData("map"));
             addChild(map);
             map.getTerrainList().forEach(Terrain::setPawnIndex);
+        } else {
+            // Terrain
+            map = new Map(this, difficulty);
+            map.generate();
+            addChild(map);
+        }
 
-            // Bottom UI
-            UIBottomRightContainer<BattleScene> bottomRightContainer = new UIBottomRightContainer<>(this);
-            addChild(bottomRightContainer);
-            uiActiveDetailText = new UIDetailText(this, bottomRightContainer.getStyle());
-            bottomRightContainer.addChild(uiActiveDetailText);
-            bottomRightContainer.pack();
+        // Action Select
+        actionSelect = new UIActionSelect(this);
+        addChild(actionSelect);
 
-            UIBottomLeftContainer<BattleScene> bottomLeftContainer = new UIBottomLeftContainer<>(this);
-            addChild(bottomLeftContainer);
-            uiSelectedDetailText = new UIDetailText(this, bottomLeftContainer.getStyle());
-            bottomLeftContainer.addChild(uiSelectedDetailText);
-            bottomLeftContainer.pack();
+        // Level UP
+        UICenterContainer<BattleScene> centerContainer = new UICenterContainer<>(this);
+        addChild(centerContainer);
+        uiLevelUp = new UILevelUp(this);
+        centerContainer.addChild(uiLevelUp);
+        centerContainer.pack();
+        uiLevelUp.setVisibility(false);
 
-            // Action Select
-            actionSelect = new UIActionSelect(this);
-            addChild(actionSelect);
+        // Menu
+        menu = new Menu(this);
+        menu.pack();
+        addChild(menu);
+        menu.setVisibility(false);
 
-            // Level UP
-            UICenterContainer<BattleScene> centerContainer = new UICenterContainer<>(this);
-            addChild(centerContainer);
-            uiLevelUp = new UILevelUp(this);
-            centerContainer.addChild(uiLevelUp);
-            centerContainer.pack();
-            uiLevelUp.setVisibility(false);
+        // floor display
+        uiFloorDisplay = new UIFloorDisplay(this);
+        uiFloorDisplay.setFloor(difficulty);
+        UIUpperContainer<BattleScene> topContainer = new UIUpperContainer<>(this);
+        addChild(topContainer);
+        topContainer.addChild(uiFloorDisplay);
+        topContainer.pack();
 
-            // Menu
-            menu = new Menu(this);
-            menu.pack();
-            addChild(menu);
-            menu.setVisibility(false);
-
-//          victory();
-
+        if (loadGameData != null) {
             activeTeam = loadGameData.getInteger("activeTeam");
             if (loadGameData.getInteger("activePawn") >= 0) {
                 Pawn a = pawns.get(loadGameData.getInteger("activePawn"));
@@ -238,59 +251,37 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             } else
                 setActivePawn(null);
         } else {
-            int difficulty = 1;
-            if (playersPawns != null) {
-                difficulty = (int) (Math.max(playersPawns.stream().mapToInt(Pawn::getLevel).sum() / 1.5 - 2, 1.0));
-            }
-
-            // Terrain
-            map = new Map(this, difficulty);
-            map.generate();
-            addChild(map);
-
-            // Bottom UI
-            UIBottomRightContainer<BattleScene> bottomRightContainer = new UIBottomRightContainer<>(this);
-            addChild(bottomRightContainer);
-            uiActiveDetailText = new UIDetailText(this, bottomRightContainer.getStyle());
-            bottomRightContainer.addChild(uiActiveDetailText);
-            bottomRightContainer.pack();
-
-            UIBottomLeftContainer<BattleScene> bottomLeftContainer = new UIBottomLeftContainer<>(this);
-            addChild(bottomLeftContainer);
-            uiSelectedDetailText = new UIDetailText(this, bottomLeftContainer.getStyle());
-            bottomLeftContainer.addChild(uiSelectedDetailText);
-            bottomLeftContainer.pack();
-
-            // Action Select
-            actionSelect = new UIActionSelect(this);
-            addChild(actionSelect);
-
-            // Level UP
-            UICenterContainer<BattleScene> centerContainer = new UICenterContainer<>(this);
-            addChild(centerContainer);
-            uiLevelUp = new UILevelUp(this);
-            centerContainer.addChild(uiLevelUp);
-            centerContainer.pack();
-            uiLevelUp.setVisibility(false);
-
-            // Menu
-            menu = new Menu(this);
-            menu.pack();
-            addChild(menu);
-            menu.setVisibility(false);
-
-//          victory();
-
             addPawns();
 
             // restore shield
-            pawns.forEach(Pawn::restoreShield);
+            pawns.forEach(Pawn::prepLevel);
 
             // make sure the abilites are correct
             pawns.forEach(p -> p.getParent().setPawn(p));
+            pawns.forEach(Pawn::runFloorAbilities);
 
             setActiveTeam(0);
         }
+
+        // Left/Right UI Details
+        bottomLeftContainer = new UIUpperLeftContainer<>(this);
+        addChild(bottomLeftContainer);
+
+        bottomRightContainer = new UIUpperRightContainer<>(this);
+        addChild(bottomRightContainer);
+
+        for (Pawn p : pawns) {
+            p.setUIDetailText(new UIDetailText(this, p));
+            p.updateDetailText();
+        }
+
+        bottomLeftContainer.pack();
+        bottomRightContainer.pack();
+
+        System.out.println(getTerrainMap().getTerrainList().stream().filter(t -> t.getPawn() != null).count());
+
+        if (loadGameData == null)
+            getGame().saveGame();
     }
 
     private void addPawns() {
@@ -323,10 +314,33 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             });
         }
 
+        // add enemies
+        // create xp to burn
+        int xpBank = 3 * Math.max(difficulty, 1) * Math.max(difficulty / 3, 1);
+
+        // create and populate map
+        HashMap<Terrain, Integer> mapSpawn = new HashMap<>();
+        List<Terrain> terrainSpawn = new ArrayList<>();
+
         terrainList.forEach(t -> {
             if (t.isSpawn()) {
-                spawnPawn(1, t);
+                mapSpawn.put(t, 0);
+                terrainSpawn.add(t);
             }
+        });
+
+        // add from xp bank
+        while (xpBank > 0) {
+            int r = getRandom().nextInt(terrainSpawn.size());
+            Terrain t = terrainSpawn.get(r);
+            int xp = mapSpawn.get(t) + 3;
+            xpBank -= 3;
+            mapSpawn.put(t, xp);
+        }
+
+        // spawn from xp cost
+        terrainSpawn.forEach(t -> {
+            spawnPawn(1, t, mapSpawn.get(t));
         });
 
         setActivePawn(null);
@@ -337,20 +351,25 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         return pawns;
     }
 
-    public void spawnPawn(int team, Terrain terrain) {
+    public void spawnPawn(int team, Terrain terrain, int xp) {
+        System.out.println("XP: " + xp);
+
         if (terrain.isPassable(true)) {
             PawnFactory pf = new PawnFactory(this);
             pf.setTeam(team);
+            pf.setMaxXp(xp);
             Pawn p = pf.getInstance();
 
-            pawns.add(p);
-            map.setPawn(terrain, p);
+            if (p != null) {
+                pawns.add(p);
+                map.setPawn(terrain, p);
+            }
         }
     }
 
     @Override
     public void onExitScene() {
-        getGame().saveGame();
+        // getGame().saveGame();
     }
 
     private Vector2f tempVec2 = new Vector2f();
@@ -363,11 +382,11 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         switch (state) {
             case MOVING:
-                movePawn(deltaTime);
+//                movePawn(deltaTime);
                 break;
             case SELECT_DEFAULT:
                 if (activeTeam != 0)
-                    if (aiFuture.isDone()) {
+                    if (aiFuture != null && aiFuture.isDone()) {
                         ai.resolve();
                     }
                 break;
@@ -393,56 +412,80 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         }
     }
 
-    private void movePawn(float delta) {
-
+    private void movePawn() {
         Terrain current = currentPath.get(pathIndex).getNode();
+        Terrain start = currentPath.get(0).getNode();
 
         if (pathIndex + 1 < currentPath.size()) {
             PathAdjacentNode<Terrain> next = currentPath.get(pathIndex + 1);
-            float cost = next.getCost();
 
-            pathMoveTime += delta;
+            current.getWorldPosition().subtract(start.getWorldPosition(), tempVec);
+            activePawn.setPosition(tempVec);
 
-            float overflow = 0f;
+            next.getNode().getWorldPosition().subtract(current.getWorldPosition(), tempVec);
 
-            if (pathMoveTime > pathSpeed * cost) {
-                overflow = pathMoveTime - pathSpeed * cost;
-                delta -= overflow;
-
-                pathMoveTime = 0f;
-            }
-
-
-            Vector2f movement = next.getNode().getWorldPosition().subtract(current.getWorldPosition(), tempVec);
-
-            activePawn.move(movement.scale(delta / (pathSpeed * cost), tempVec2));
-
-            activePawn.setFlip(movement.y > 0f || movement.x > 0f);
+            activePawn.setFlip(tempVec.y > 0f || tempVec.x > 0f);
 
             SpriteAnimationState animationState = activePawn.getAnimationState();
-            if (movement.y > 0f || movement.x < 0f) {
+            if (tempVec.y > 0f || tempVec.x < 0f) {
                 animationState.setAction("walking up", false);
             } else {
                 animationState.setAction("walking down", false);
             }
 
-            if (overflow > 0f) {
-                pathIndex += 1;
-                movePawn(overflow);
-            }
+            animationState.addActionFinishHandler(a -> {
+                pathIndex++;
+                movePawn();
+            });
+
         } else {
             pathIndex = 0;
-            pathMoveTime = 0f;
 
             activePawn.setPosition(0, 0);
-            current.setPawn(activePawn);
+            SpriteAnimationState animationState = activePawn.getAnimationState();
+            animationState.setActionIdle();
 
+            current.setPawn(activePawn);
             setActivePawn(activePawn);
+
+            setState(State.SELECT_DEFAULT);
         }
     }
 
     public void removePawn(Pawn pawn) {
+        removeUIDetails(pawn.getUIDetailText());
         pawns.remove(pawn);
+    }
+
+    public void removeUIDetails(UIDetailText object) {
+        if (bottomLeftContainer != null && bottomRightContainer != null) {
+
+            bottomLeftContainer.removeChild(object);
+            bottomRightContainer.removeChild(object);
+
+            bottomLeftContainer.pack();
+            bottomRightContainer.pack();
+        }
+
+        if (object != null) {
+//            object.release();
+            removeGameObject(object);
+//            object.setVisibility(false);  // This works but remove should work
+        }
+    }
+
+    public void addUIDetails(UIDetailText object) {
+        if (bottomLeftContainer != null && bottomRightContainer != null) {
+
+            if (object.getPawn().getTeam(true) == 0) {
+                bottomLeftContainer.addChild(object);
+            } else {
+                bottomRightContainer.addChild(object);
+            }
+
+            bottomLeftContainer.pack();
+            bottomRightContainer.pack();
+        }
     }
 
     public UILevelUp getUILevelUp() {
@@ -454,34 +497,22 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     public void setActivePawn(Pawn pawn) {
-        getGame().saveGame();
-
         if (checkVictory()) return;
 
-        if (activePawn != null && activePawn != pawn) {
-            activePawn.setReadyIfUnmoved();
-        }
+        Pawn oldPawn = this.activePawn;
 
         this.activePawn = pawn;
 
-        if (activePawn != null) {
-            activePawn.getParent().updateText();
-
-            if (pawn.getTeam(true) == 0)
-                setActiveDetailText(activePawn.getParent().getDetails());
-            else
-                clearActiveDetailText();
-
-
-            Vector2f pos = pawn.getWorldPosition();
-            // TODO focus on pawn
-
-//            System.out.println("Pawn -");
-//            pawn.getAbilities().forEach(a -> System.out.println(a.name));
-//            System.out.println("Terrain -");
-//            pawn.getParent().getAbilities().forEach(a -> System.out.println(a.name));
-
+        if (oldPawn != null) {
+            oldPawn.updateDetailText();
         }
+
+        if (activePawn != null) {
+            activePawn.updateDetailText();
+        }
+
+        if (activeTeam == 1)
+            getGame().saveGame();
 
         setState(SELECT_DEFAULT);
     }
@@ -504,28 +535,36 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     public void setActiveTeam(int team) {
 
         if (team != activeTeam) {
-            pawns.forEach(pawn -> {
-                Hack hack = pawn.getHack();
-                if (hack != null && hack.getTeam() == team) {
-                    hack.tick();
-
-                    if (hack.getRemainingTurns() <= 0) {
-                        if (hack.getSelfDestruct() > 0) {
-                            pawn.damage(5, null);
-                        }
-                        pawn.hack(null);
-                    }
-
-                    pawn.getParent().setPawn(pawn);
-                }
-            });
+            activeAbility = null;
         }
+        // check hack
+//        if (team != activeTeam) {
+//            pawns.forEach(pawn -> {
+//                Hack hack = pawn.getHack();
+//                if (hack != null && hack.getTeam() == team) {
+//                    hack.tick();
+//
+//                    if (hack.getRemainingTurns() <= 0) {
+//                        if (hack.getSelfDestruct() > 0) {
+//                            pawn.damage(5, null);
+//                        }
+//                        pawn.hack(null);
+//                    }
+//
+//                    pawn.getParent().setPawn(pawn);
+//                }
+//            });
+//        }
 
         this.activeTeam = team;
 
         pawns.stream()
                 .filter(p -> p.getTeam(true) == activeTeam)
                 .forEach(Pawn::ready);
+
+        for (Pawn pawn : pawns) {
+            pawn.updateDetailText();
+        }
 
         setActivePawn(null);
     }
@@ -540,13 +579,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     public void setTargetPawn(Pawn targetPawn) {
         this.targetPawn = targetPawn;
-    }
-
-    private boolean doSpawn() {
-        int a = 10 - (int) pawns.stream().filter(p -> p.getTeam(false) != 0).count();
-        int b = random.nextInt(10);
-
-        return a > b || true;
     }
 
     public void setState(State state) {
@@ -617,10 +649,12 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 actionSelect.setPawn(null);
 
                 clearAllPaths();
-                activePawn.getAnimationState().setAction("walking up");
+//                activePawn.getAnimationState().setAction("walking up");
                 activePawn.move(currentPath.getCost());
 
                 map.setState(Terrain.State.UNSELECTABLE);
+
+                movePawn();
                 break;
 
             case ATTACKING:
@@ -641,9 +675,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         } else {
             // selectable pawns
             for (Pawn pawn : pawns) {
-                if ((pawn.getTeam(false) == 0 && pawn.isReady()) ||
-                        pawn.getTeam(true) == 0 && pawn.isReady() &&
-                        pawn.getParent().getState() == Terrain.State.UNSELECTABLE) {
+                if (pawn.getTeam(true) == 0 && pawn.isReady() && pawn.getParent().getState() == Terrain.State.UNSELECTABLE) {
                     pawn.getParent().setState(Terrain.State.SELECTABLE);
                 }
             }
@@ -666,7 +698,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         if (activePawn.canMove()) {
             // find movement
-            PathFinder<Terrain> pf = new PathFinder<>();
+            PathFinder<Terrain, Terrain.PathFlag> pf = new PathFinder<>();
 
             pathMap = pf.findDistance(parentTerrain, activePawn.getRemainingMovement());
 
@@ -679,16 +711,14 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         if (activePawn.canAttack()) {
             // find attack
-            List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
-            rangeMap = parentTerrain.filterCoverRange(inRange, activePawn.getWeapon().getPassesPawn());
+            Collection<Terrain> range = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRangeMax() + activePawn.getBonusMaxRange(), false, false);
 
-            if (rangeMap.size() > 0) {
-                for (Terrain n : rangeMap.keySet()) {
-                    if (n.getPawn() != null && n.getPawn().getTeam(false) != activePawn.getTeam(true)) {
+            if (range.size() > 0) {
+                for (Terrain n : range) {
+                    if (n.getPawn() != null && n.getPawn().getTeam(true) != activePawn.getTeam(true)) {
 
 //                    n.cover = rangeMap.get(n);
                         n.setState(Terrain.State.ATTACKABLE);
-                        n.updateText();
                     }
                 }
             }
@@ -704,7 +734,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             // find movement
             Terrain parentTerrain = activePawn.getParent();
 
-            PathFinder<Terrain> pf = new PathFinder<>();
+            PathFinder<Terrain, Terrain.PathFlag> pf = new PathFinder<>();
 
             pathMap = pf.findDistance(parentTerrain, activePawn.getRemainingMovement());
 
@@ -725,13 +755,13 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             // find attack
             Terrain parentTerrain = activePawn.getParent();
 
-            List<Terrain> inRange = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRange());
-            rangeMap = parentTerrain.filterCoverRange(inRange, activePawn.getWeapon().getPassesPawn());
+            Collection<Terrain> range = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRangeMax() + activePawn.getBonusMaxRange(), false, false);
 
-            if (rangeMap.size() > 0) {
-                for (Terrain n : rangeMap.keySet()) {
-                    n.setState(Terrain.State.ATTACKABLE);
-                    n.updateText();
+            if (range.size() > 0) {
+                for (Terrain n : range) {
+                    if (n.getPawn() == null || n.getPawn().getTeam(true) != activeTeam) {
+                        n.setState(Terrain.State.ATTACKABLE);
+                    }
                 }
             }
         }
@@ -746,19 +776,40 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             // find target
             Terrain parentTerrain = activePawn.getParent();
 
-            List<Terrain> inRange = parentTerrain.selectRange(activeAbility.style, activeAbility.size);
-            rangeMap = parentTerrain.filterCoverRange(inRange, activeAbility.passesPawn);
+            Collection<Terrain> range = parentTerrain.selectRange(activeAbility.style, activeAbility.size, activeAbility.passesWall, activeAbility.passesPawn);
 
-            if (rangeMap.size() > 0) {
-                for (Terrain n : rangeMap.keySet()) {
-                    if (n.getPawn() == null || n.getPawn().getTeam(false) != activePawn.getTeam(true)) {
-                        n.setState(Terrain.State.ABILITYABLE);
-                        n.updateText();
+            if (range.size() > 0) {
+                for (Terrain n : range) {
+                    if ((activeAbility.target & Ability.Target.EMPTY) != 0) {
+                        if (n.getPawn() == null) {
+                            n.setState(Terrain.State.ABILITYABLE);
+                        }
+                    }
+
+                    if ((activeAbility.target & Ability.Target.ENEMY) != 0) {
+                        if ((n.getPawn() == null && activeAbility.size >= 0) || n.getPawn() != null && n.getPawn().getTeam(true) != activePawn.getTeam(true)) {
+                            n.setState(Terrain.State.ABILITYABLE);
+                        }
+                    }
+
+                    if ((activeAbility.target & Ability.Target.ALLY) != 0) {
+                        if (n.getPawn() != null) {
+//                            System.out.println("Check Ally");
+//                            System.out.println(n.getPawn().getName());
+//                            System.out.println((n.getPawn() == null && activeAbility.size >= 0));
+//                            System.out.println(n.getPawn() != null);
+//                            System.out.println(n.getPawn() != activePawn);
+//                            System.out.println(n.getPawn().getTeam(true) == activePawn.getTeam(true));
+                        }
+                        if ((n.getPawn() == null && activeAbility.size >= 0) || n.getPawn() != null && n.getPawn() != activePawn && n.getPawn().getTeam(true) == activePawn.getTeam(true)) {
+                            n.setState(Terrain.State.ABILITYABLE);
+                        }
                     }
                 }
             }
         }
 
+//        if (!activeAbility.recall_unit)
         setSelectablePawn();
     }
 
@@ -808,7 +859,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     public boolean checkVictory() {
         for (Pawn pawn : pawns) {
-            if (pawn.getTeam(false) != 0)
+            if (pawn.getTeam(true) != 0) // TODO give xp for hacked pawns
                 return false;
         }
 
@@ -817,28 +868,15 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     public void victory() {
-        getGame().prepTransitionScene(new BattleScene(getGame(), pawns.stream().filter(p -> p.getTeam(false) == 0).collect(Collectors.toList())));
-    }
-
-    private void clearActiveDetailText() {
-        if (uiActiveDetailText != null)
-            uiActiveDetailText.setDetails(new SelectionDetails());
-    }
-
-    public void setActiveDetailText(SelectionDetails details) {
-        if (uiActiveDetailText != null)
-            uiActiveDetailText.setDetails(details);
-    }
-
-    public void setSelectedDetailText(SelectionDetails details) {
-        if (uiSelectedDetailText != null)
-            uiSelectedDetailText.setDetails(details);
+        getGame().prepTransitionScene(new BattleScene(getGame(), pawns.stream().filter(p -> p.getTeam(false) == 0).collect(Collectors.toList()), difficulty + 1));
     }
 
     // actions - should be the prime way of interacting with the battle scene state
-    public void pawnWait() {
-        activePawn.setReady(false);
-        setActivePawn(null);
+    public void reloadGame() {
+//        activePawn.setReady(false);
+//
+//        pawnDeselect();
+        getGame().loadGame();
     }
 
     public void pawnEnd() {
@@ -849,6 +887,16 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     public void pawnDeselect() {
+        if (activePawn != null && activeAbility != null && activeAbility.recall_unit) {
+            activePawn.getAbilities().forEach(a -> {
+                if (a.recall) {
+                    a.remainingUses = a.uses;
+                }
+            });
+        }
+
+        activeAbility = null;
+
         setActivePawn(null);
     }
 
@@ -861,14 +909,19 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         setState(BattleScene.State.ATTACKING);
     }
 
-    public void pawnAbility(Pawn pawn) {
+    private Terrain abilityTerrain = null;
+
+    public void pawnAbility(Terrain terrain) {
         if (activeAbility.uses != null) {
             activeAbility.remainingUses--;
+            activeAbility.usedThisTurn = true;
         }
+
+        actionSelect.setPawn(null);
 
         if (activeAbility.hook_pull) {
             Terrain base = activePawn.getParent();
-            Terrain from = pawn.getParent();
+            Terrain from = terrain;
             Optional<Terrain> to = Optional.empty();
 
             if (base.getMapX() > from.getMapX()) {
@@ -884,17 +937,45 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 to = map.get(base.getMapX(), base.getMapY() + 1);
             }
 
-            to.ifPresent(t -> t.setPawn(pawn));
+            to.ifPresent(t -> t.setPawn(terrain.getPawn()));
 
             setActivePawn(activePawn);
         } else if (activeAbility.hack) {
-            pawn.hack(new Hack(activePawn, 0, activeAbility.turns, activeAbility.damage != null ? activeAbility.damage : 0));
-            pawn.ready();
+            terrain.getPawn().hack(new Hack(terrain.getPawn(), activePawn, 0, activeAbility));
+//            pawn.ready();
             activePawn.setUnmoved(activeAbility.remain);
-            if (activePawn.isReady())
-                setActivePawn(activePawn);
-            else
+
+            if (activeAbility.cure) {
+                activePawn.hack(null);
                 setActivePawn(null);
+            } else {
+                if (activePawn.isReady()) {
+                    setActivePawn(activePawn);
+                } else {
+                    setActivePawn(null);
+                }
+            }
+        } else if (activeAbility.blink) {
+            Pawn pawn = terrain.getPawn();
+            Terrain oldTerrain = activePawn.getParent();
+            terrain.setPawn(activePawn);
+
+            if (pawn != null) {
+                oldTerrain.setPawn(pawn);
+            }
+
+            setActivePawn(activePawn);
+        } else if (activeAbility.recall) {
+            abilityTerrain = terrain;
+            map.setState(Terrain.State.UNSELECTABLE);
+            abilityTerrain.setState(Terrain.State.ABILITY_UNSELECTABLE);
+            setActiveAbility(activeAbility.bonusAbility);
+            actionSelect.setPawn(activePawn);
+            setStateSelectAbility();
+        } else if (activeAbility.recall_unit) {
+            abilityTerrain.setPawn(terrain.getPawn());
+            activeAbility = null;
+            setActivePawn(activePawn);
         }
     }
 
@@ -908,7 +989,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         if (activeAbility.uses != null) {
             activeAbility.remainingUses--;
         }
-        System.out.println(activeAbility.remainingUses);
 
         List<Pawn> pawns = this.pawns.stream()
                 .filter(p ->

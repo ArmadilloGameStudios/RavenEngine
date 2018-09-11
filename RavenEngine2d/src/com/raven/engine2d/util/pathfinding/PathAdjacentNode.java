@@ -1,6 +1,6 @@
 package com.raven.engine2d.util.pathfinding;
 
-public class PathAdjacentNode<N extends com.raven.engine2d.util.pathfinding.PathNode> {
+public class PathAdjacentNode<N extends PathNode> {
     private N node;
     private int cost;
 

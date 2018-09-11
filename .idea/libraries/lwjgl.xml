@@ -1,27 +1,34 @@
 <component name="libraryTable">
   <library name="lwjgl">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-natives-macos.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-glfw.jar!/" />
       <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-glfw-natives-linux.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-natives-linux.jar!/" />
       <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-glfw-natives-macos.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-natives-windows.jar!/" />
       <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-glfw-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-glfw.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-natives-windows.jar!/" />
       <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-opengl-natives-linux.jar!/" />
       <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-opengl-natives-macos.jar!/" />
       <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-opengl-natives-windows.jar!/" />
       <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-opengl.jar!/" />
       <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-stb-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-stb-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-stb-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-stb.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-glfw-javadoc.jar!/" />
       <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-javadoc.jar!/" />
       <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-opengl-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-stb-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-glfw-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-opengl-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Java/LWJGL 3/lwjgl-stb-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

@@ -12,7 +12,6 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 public class UITexture
         extends ShaderTexture {
 
-    private int textureActiveLocation;
     private int width, height, texture;
 
     public UITexture(GameEngine engine, int width, int height) {
@@ -22,34 +21,39 @@ public class UITexture
         this.height = height;
     }
 
+    private boolean loaded = false;
+
     @Override
     public void load(Scene scene) {
-        // Set Texture
-        if (textureActiveLocation == 0)
-            textureActiveLocation = Shader.getNextTextureID();
+        if (!loaded) {
+            // Set Texture
 
-        glActiveTexture(GL_TEXTURE0 + textureActiveLocation);
+            glActiveTexture(GL_TEXTURE0);
+            scene.getEngine().getWindow().printErrors("a"); // okay, I am making to many textures because some reason
 
-        if (texture == 0)
-            texture = glGenTextures();
+            if (texture == 0) {
+                texture = glGenTextures();
+//                System.out.println("Gen UITexture: " + texture);
+            }
+            scene.getEngine().getWindow().printErrors("b");
 
-        glBindTexture(GL_TEXTURE_2D, texture);
+            glBindTexture(GL_TEXTURE_2D, texture);
+            scene.getEngine().getWindow().printErrors("c");
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
-                width, height,
-                0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+                    width, height,
+                    0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+            scene.getEngine().getWindow().printErrors("d");
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            scene.getEngine().getWindow().printErrors("e");
 
-        glActiveTexture(GL_TEXTURE0);
+            scene.getEngine().getWindow().printErrors("f");
+        }
 
         scene.addLoadedShaderTexture(this);
-    }
-
-    @Override
-    public int getTextureActiveLocation() {
-        return textureActiveLocation;
+        loaded = true;
     }
 
     @Override
@@ -70,8 +74,11 @@ public class UITexture
     @Override
     public void release() {
         // TODO make sure this is correct
-        textureActiveLocation = 0;
-        texture = 0;
-        glDeleteTextures(texture);
+        loaded = false;
+        if (texture != 0) {
+            glDeleteTextures(texture);
+//            System.out.println("Del UITexture: " + texture);
+            texture = 0;
+        }
     }
 }

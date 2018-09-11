@@ -35,6 +35,24 @@
     tags: [ "common" ]
 },
 {
+    name: "Red Plasma Blade",
+    display: "Plasma Blade",
+    type: "melee",
+    sprite: "sprites/plasmablade.png",
+    animation: "plasma blade red",
+
+    audio: {
+        attack: "plasma_blade_sound.wav"
+    },
+
+    damage: 4,
+    piercing: 2,
+    range: 1,
+    directional: true,
+
+    tags: [ ]
+},
+{
     name: "Std. Rifle",
     type: "ranged",
     sprite: "sprites/pistol.png",
@@ -63,7 +81,6 @@
     audio: {
         attack: "plasma_blade_sound.wav"
     },
-
 
     effect: "blue blast",
     damage: 3,
@@ -108,7 +125,7 @@
     effect: "blue blast",
     damage: 2,
     piercing: 0,
-    range: 3,
+    range: 2,
     shots: 3,
     directional: true,
     style: "straight",
@@ -116,7 +133,7 @@
     tags: [ "common" ]
 },
 {
-    name: "Quick Shot",
+    name: "X2 Barrel Shotgun",
     type: "ranged",
     sprite: "sprites/pistol.png",
     animation: "pistol",
@@ -125,11 +142,10 @@
         attack: "plasma_blade_sound.wav"
     },
 
-
     effect: "blue blast",
-    damage: 2,
-    piercing: 1,
-    range: 2,
+    damage: 3,
+    piercing: 0,
+    range: 1,
     shots: 2,
     style: "straight",
 
@@ -145,11 +161,61 @@
         attack: "guard_drone_attack.wav"
     },
 
-    damage: 2,
-    range: 2,
-    piercing: 1,
-    style: "diamond",
+    damage: 3,
+    range: 3,
+    piercing: 0,
+    style: "straight",
     effect: "disk",
+
+    tags: [ ],
+}
+{
+    name: "Blue Guard Disk",
+    display: "Guard Disk",
+    type: "ranged",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    damage: 3,
+    range: 3,
+    piercing: 0,
+    style: "straight",
+    effect: "blue disk",
+
+    tags: [ ],
+}
+{
+    name: "Demon Disk",
+    type: "ranged",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    damage: 5,
+    range: 1,
+    piercing: 0,
+    style: "straight",
+    effect: "disk",
+
+    tags: [ ],
+}
+{
+    name: "Blue Demon Disk",
+    display: "Demon Disk",
+    type: "ranged",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    damage: 5,
+    range: 1,
+    piercing: 0,
+    style: "straight",
+    effect: "blue disk",
 
     tags: [ ],
 }

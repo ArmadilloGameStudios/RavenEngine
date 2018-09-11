@@ -2,15 +2,19 @@ package com.raven.engine2d.util.pathfinding;
 
 import java.util.*;
 
-public class PathFinder<N extends PathNode<N>> {
+public class PathFinder<N extends PathNode<N, E>, E extends Enum<E>> {
 
     public HashMap<N, Path<N>> findDistance(N start, int dist) {
+        return findDistance(start, dist, start.getEmptyNodeEnumSet());
+    }
+
+    public HashMap<N, Path<N>> findDistance(N start, int dist, EnumSet<E> flags) {
 //        dist += 1; // take the starting cost into account
 
         HashMap<N, Path<N>> nodeMap = new HashMap<>();
         HashMap<N, Path<N>> unresolvedPaths = new HashMap<>();
 
-        List<PathAdjacentNode<N>> neighbors = start.getAdjacentNodes();
+        List<PathAdjacentNode<N>> neighbors = start.getAdjacentNodes(flags);
 
         for (PathAdjacentNode<N> n : neighbors) {
             Path<N> path = new Path<>();
@@ -25,17 +29,17 @@ public class PathFinder<N extends PathNode<N>> {
             }
         }
 
-        findPaths(nodeMap, unresolvedPaths, dist);
+        findPaths(nodeMap, unresolvedPaths, dist, flags);
 
         return nodeMap;
     }
 
-    private void findPaths(HashMap<N, Path<N>> nodeMap, HashMap<N, Path<N>> unresolvedPaths, int dist) {
+    private void findPaths(HashMap<N, Path<N>> nodeMap, HashMap<N, Path<N>> unresolvedPaths, int dist, EnumSet<E> flags) {
 
         HashMap<N, Path<N>> nextUnresolvedPaths = new HashMap<>();
 
         for (Path<N> unresolvedPath : unresolvedPaths.values()) {
-            List<PathAdjacentNode<N>> neighbors = unresolvedPath.getLast().getNode().getAdjacentNodes();
+            List<PathAdjacentNode<N>> neighbors = unresolvedPath.getLast().getNode().getAdjacentNodes(flags);
 
             for (PathAdjacentNode<N> n : neighbors) {
                 Path<N> oldPath = nodeMap.get(n.getNode());
@@ -59,18 +63,26 @@ public class PathFinder<N extends PathNode<N>> {
         }
 
         if (nextUnresolvedPaths.size() > 0) {
-            findPaths(nodeMap, nextUnresolvedPaths, dist);
+            findPaths(nodeMap, nextUnresolvedPaths, dist, flags);
         }
     }
 
-    // TODO fix this shitty code - but does it work?
     public Path<N> findTarget(N start, N target) {
-        HashMap<N, Path<N>> catMap = findDistance(start, 100);
+        return findTarget(start, target, start.getEmptyNodeEnumSet());
+    }
+
+    public Path<N> findTarget(N start, N target, E flag) {
+        return findTarget(start, target, EnumSet.of(flag));
+    }
+
+    // TODO fix this shitty code - but does it work?
+    public Path<N> findTarget(N start, N target, EnumSet<E> flags) {
+        HashMap<N, Path<N>> catMap = findDistance(start, 100, flags);
 
         Path<N> cat = catMap.get(target);
 
         if (cat == null) {
-            Optional<Path<N>> maybeCat = target.getAdjacentNodes().stream()
+            Optional<Path<N>> maybeCat = target.getAdjacentNodes(flags).stream()
                     .map(an -> catMap.get(an.getNode()))
                     .filter(Objects::nonNull)
                     .min(Comparator.comparingInt(Path::getCost));

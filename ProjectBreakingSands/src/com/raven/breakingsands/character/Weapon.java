@@ -78,7 +78,7 @@ public class Weapon
     }
 
     private GameData gameData;
-    private int damage, piercing = 0, range, rangeMin, shots;
+    private int damage, piercing = 0, rangeMax, rangeMin, shots;
     private boolean directional, passesPawn;
     private WeaponType weaponType;
     private RangeStyle style;
@@ -88,7 +88,10 @@ public class Weapon
     public Weapon(BattleScene scene, GameData gameData) {
         super(scene, gameData);
 
-        name = gameData.getString("name");
+        gameData.ifHas("display",
+                d -> name = d.asString(),
+                () -> name = gameData.getString("name"));
+
 
         damage = gameData.getInteger("damage");
 
@@ -122,11 +125,11 @@ public class Weapon
         });
 
         if (gameData.getData("range").isInteger()) {
-            range = gameData.getInteger("range");
+            rangeMax = gameData.getInteger("range");
             rangeMin = 1;
         } else {
             List<GameData> ranges = gameData.getList("range");
-            range = ranges.get(1).asInteger();
+            rangeMax = ranges.get(1).asInteger();
             rangeMin = ranges.get(0).asInteger();
         }
 
@@ -151,7 +154,7 @@ public class Weapon
             }
         }
 
-        this.gameData = gameData;
+        this.gameData = new GameData(gameData);
     }
 
     public void runAttackAnimation(boolean directionUp) {
@@ -179,8 +182,8 @@ public class Weapon
         return piercing;
     }
 
-    public int getRange() {
-        return range;
+    public int getRangeMax() {
+        return rangeMax;
     }
 
     public int getRangeMin() {

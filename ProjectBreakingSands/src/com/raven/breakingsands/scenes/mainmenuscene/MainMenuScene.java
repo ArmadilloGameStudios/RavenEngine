@@ -38,8 +38,6 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         textures.addAll(DisplayPawn.getSpriteSheets(this));
     }
 
-    private Vector3f tempVec = new Vector3f();
-
     @Override
     public void onEnterScene() {
         // Pawn
@@ -52,7 +50,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         // World Offset
         Vector2f wo = getWorldOffset();
 
-        wo.x = GameProperties.getScreenWidth() / GameProperties.getScaling();
+        wo.x = GameProperties.getScreenWidth() / GameProperties.getScaling() - 32;
         wo.y = GameProperties.getScreenHeight() / GameProperties.getScaling();
 
         // UI
@@ -76,6 +74,10 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         newGameBtn.load();
         container.addChild(newGameBtn);
 
+        SettingsButton settingsButton = new SettingsButton(this);
+        settingsButton.load();
+        container.addChild(settingsButton);
+
         ExitButton exitBtn = new ExitButton(this);
         exitBtn.load();
         container.addChild(exitBtn);
@@ -88,7 +90,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
 
     @Override
     public void onExitScene() {
-        getGame().saveGame();
+
     }
 
     @Override

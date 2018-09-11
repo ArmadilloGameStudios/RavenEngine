@@ -20,6 +20,27 @@ public class GameData implements GameDatable {
         dataType = DataType.DATA;
     }
 
+    public GameData(GameData data) {
+        dataType = data.dataType;
+        switch (data.dataType) {
+            case DATA:
+                value = new HashMap<String, GameData>((HashMap<String, GameData>) data.value);
+                break;
+            case BOOL:
+                value = new Boolean(data.asBoolean());
+                break;
+            case STRING:
+                value = new String(data.asString());
+                break;
+            case LIST:
+                value = new GameDataList(data.asList());
+                break;
+            case INTEGER:
+                value = new Integer(data.asInteger());
+                break;
+        }
+    }
+
     public GameData(Map<String, GameData> value) {
         this.value = value;
         dataType = DataType.DATA;

@@ -2,6 +2,7 @@ package com.raven.engine2d.worldobject;
 
 import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.shader.MainShader;
@@ -12,6 +13,7 @@ import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -99,6 +101,14 @@ public abstract class WorldObject<
         return new GameData(map);
     }
 
+    public String getSpriteSheetName() {
+        return spriteSheetName;
+    }
+
+    public String getAnimationName() {
+        return animationName;
+    }
+
     public float getX() {
         return position.x;
     }
@@ -150,6 +160,13 @@ public abstract class WorldObject<
         this.position.y = position.y;
     }
 
+    public float getWorldZ() {
+        if (getParent() instanceof WorldObject) {
+            return getZ() + (((WorldObject) getParent()).getWorldZ());
+        }
+        return getZ();
+    }
+
     public S getScene() {
         return scene;
     }
@@ -165,6 +182,13 @@ public abstract class WorldObject<
             clip.stop();
             clip.setFramePosition(0);
             clip.setMicrosecondPosition(0);
+
+            // TODO shouldn't need to be done every time
+            FloatControl gainControl = (FloatControl) clip
+                    .getControl(FloatControl.Type.MASTER_GAIN);
+            float dB = (float) (Math.log(GameProperties.getSFXVolume() / 100f) / Math.log(10.0) * 20.0);
+            gainControl.setValue(dB);
+
             clip.start();
         }
     }
@@ -191,7 +215,7 @@ public abstract class WorldObject<
 
     public void draw(MainShader shader) {
         if (spriteSheet != null)
-            shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), standing, getHighlight(), DrawStyle.ISOMETRIC);
+            shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getWorldZ(), getHighlight(), DrawStyle.ISOMETRIC);
     }
 
     public void setParent(P parent) {
@@ -223,6 +247,7 @@ public abstract class WorldObject<
     public void addChild(C child) {
 
         child.setParent(this);
+        child.setScene(getScene());
 
         children.add(child);
 
@@ -230,6 +255,9 @@ public abstract class WorldObject<
     }
 
     public void removeAllChildren() {
+        children.forEach(c -> {
+            scene.removeGameObject(c);
+        });
         children.clear();
     }
 
@@ -267,5 +295,11 @@ public abstract class WorldObject<
         scene.addGameObject(this);
 
         children.forEach(c -> c.setScene(scene));
+    }
+
+    protected void setSpriteSheet(String spriteSheetName) {
+        this.spriteSheetName = spriteSheetName;
+        spriteSheet = scene.getEngine().getSpriteSheet(spriteSheetName);
+        spriteSheet.load(scene);
     }
 }

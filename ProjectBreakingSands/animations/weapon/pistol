@@ -2,7 +2,7 @@
     name: "idle",
     width: 32,
     height: 32,
-    frames: [{ time: 1000, x: 64, y: 0 }]
+    frames: [{ time: 100, x: 64, y: 0 }]
 },
 {
     name: "attack down start",

@@ -8,8 +8,6 @@ import com.raven.engine2d.util.math.Vector2i;
 import com.raven.engine2d.util.math.Vector4f;
 import com.raven.engine2d.worldobject.Parentable;
 
-import java.awt.*;
-
 public class UILabel<S extends Scene>
         extends UIText<S> {
 

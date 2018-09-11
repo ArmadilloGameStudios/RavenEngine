@@ -6,8 +6,7 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import java.io.File;
 import java.util.*;
 
-import com.codedisaster.steamworks.SteamAPI;
-import com.codedisaster.steamworks.SteamException;
+import com.codedisaster.steamworks.*;
 import com.raven.engine2d.database.GameDataTable;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.GameWindow;
@@ -87,13 +86,19 @@ public class GameEngine<G extends Game<G>> {
 
         System.out.println("Starting Steam API");
         try {
+//            if (SteamAPI.isSteamRunning()) {
             steamInit = SteamAPI.init();
+//            } else {
+//                steamInit = false;
+//            }
         } catch (SteamException se) {
             System.out.println("Couldn't load steam native libraries");
         }
 
         if (!steamInit) {
             System.out.println("Steam failed to start");
+        } else {
+            System.out.println("Steam started");
         }
 
         System.out.println("Starting OpenGL");
@@ -117,6 +122,10 @@ public class GameEngine<G extends Game<G>> {
                 && !glfwWindowShouldClose(window.getWindowHandler())) {
 
             long start = System.nanoTime();
+
+            if (SteamAPI.isSteamRunning()) {
+                SteamAPI.runCallbacks();
+            }
 
             input(deltaTime);
             draw();
@@ -149,6 +158,8 @@ public class GameEngine<G extends Game<G>> {
         game.breakdown();
 
         window.destroy();
+
+        SteamAPI.shutdown();
 
         System.out.println("Exit");
 

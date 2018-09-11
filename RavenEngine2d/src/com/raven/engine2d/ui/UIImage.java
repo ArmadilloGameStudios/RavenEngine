@@ -10,7 +10,7 @@ import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.Childable;
 import com.raven.engine2d.worldobject.Parentable;
 
-public final class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObject>> {
+public class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObject>> {
 
     private Vector2f position = new Vector2f();
     private SpriteSheet texture;
@@ -28,6 +28,11 @@ public final class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObj
         texture.load(scene);
     }
 
+    public final void setSprite(String src) {
+        texture = getScene().getEngine().getSpriteSheet(src);
+        texture.load(getScene());
+    }
+
     @Override
     public int getStyle() {
         return 0;
@@ -38,9 +43,17 @@ public final class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObj
         return height;
     }
 
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
     @Override
     public float getWidth() {
         return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
     }
 
     @Override
@@ -70,11 +83,32 @@ public final class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObj
 
     @Override
     public void draw(MainShader shader) {
-        shader.draw(texture, spriteAnimation, getWorldPosition(), getScene().getWorldOffset(), getID(), getZ(), true, null, DrawStyle.UI);
+        shader.draw(texture, spriteAnimation, getWorldPosition(), null, getID(), getWorldZ(), null, DrawStyle.UI);
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        if (spriteAnimation != null) {
+            spriteAnimation.update(deltaTime);
+        }
+
+        this.onUpdate(deltaTime);
+
+        for (UIObject c : getChildren()) {
+            c.update(deltaTime);
+        }
+    }
+
+    protected SpriteSheet getTexture() {
+        return texture;
     }
 
     public void setSpriteAnimation(SpriteAnimationState spriteAnimation) {
         this.spriteAnimation = spriteAnimation;
+    }
+
+    public void setAnimationAction(String action) {
+        this.spriteAnimation.setAction(action);
     }
 
     @Override
