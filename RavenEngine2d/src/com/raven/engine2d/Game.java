@@ -8,6 +8,7 @@ import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.worldobject.GameObject;
 
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -98,6 +99,13 @@ public abstract class Game<G extends Game<G>> {
             song.stop();
             song.setFramePosition(0);
             song.setMicrosecondPosition(0);
+
+            // TODO shouldn't need to be done every time
+            FloatControl gainControl = (FloatControl) song
+                    .getControl(FloatControl.Type.MASTER_GAIN);
+            float dB = (float) (Math.log(GameProperties.getMusicVolume() / 100f) / Math.log(10.0) * 20.0);
+            gainControl.setValue(dB);
+
             song.start();
         }
     }

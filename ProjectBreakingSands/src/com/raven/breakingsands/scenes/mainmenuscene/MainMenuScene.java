@@ -38,8 +38,6 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         textures.addAll(DisplayPawn.getSpriteSheets(this));
     }
 
-    private Vector3f tempVec = new Vector3f();
-
     @Override
     public void onEnterScene() {
         // Pawn
@@ -75,6 +73,10 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         NewGameButton newGameBtn = new NewGameButton(this);
         newGameBtn.load();
         container.addChild(newGameBtn);
+
+        SettingsButton settingsButton = new SettingsButton(this);
+        settingsButton.load();
+        container.addChild(settingsButton);
 
         ExitButton exitBtn = new ExitButton(this);
         exitBtn.load();

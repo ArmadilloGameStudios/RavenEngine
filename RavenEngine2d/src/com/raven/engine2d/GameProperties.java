@@ -1,5 +1,12 @@
 package com.raven.engine2d;
 
+import com.raven.engine2d.util.math.Vector2i;
+import javafx.util.Pair;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * A class to access most the general properties of the
  * engine or game
@@ -9,7 +16,10 @@ public class GameProperties {
     private static float animationSpeed = 1.0f;
     private static int scaling = 2;
     private static int height = 1080, width = 1920;
+    private static int dheight = 1080, dwidth = 1920;
     private static String mainDirectory;
+    private static List<Vector2i> resolutionList = new ArrayList<>();
+    private static int sfx = 100, music = 100;
 
     public static int getScreenWidth() {
         return width;
@@ -25,6 +35,22 @@ public class GameProperties {
 
     public static void setScreenHeight(int height) {
         GameProperties.height = height;
+    }
+
+    public static int getDisplayWidth() {
+        return dwidth;
+    }
+
+    public static void setDisplayWidth(int width) {
+        GameProperties.dwidth = width;
+    }
+
+    public static int getDisplayHeight() {
+        return dheight;
+    }
+
+    public static void setDisplayHeight(int height) {
+        GameProperties.dheight = height;
     }
 
     public static int getScaling() { return scaling; }
@@ -43,6 +69,37 @@ public class GameProperties {
 
     public static float getAnimationSpeed() {
         return animationSpeed;
+    }
+
+    public static void setSFXVolume(int value) {
+        sfx = value;
+    }
+
+    public static int getSFXVolume() {
+        return sfx;
+    }
+
+    public static void setMusicVolume(int value) {
+        music = value;
+    }
+
+    public static int getMusicVolume() {
+        return music;
+    }
+
+    public static void addResolution(int width, int height) {
+        if (resolutionList.stream().noneMatch(r -> r.x == width && r.y == height)) {
+            resolutionList.add(new Vector2i(width, height));
+
+            resolutionList.sort((a, b) -> {
+                int v = b.x - a.x;
+                return v == 0 ? b.y - a.y : v;
+            });
+        }
+    }
+
+    public static List<Vector2i> getResolutionList() {
+        return resolutionList;
     }
 
     private GameProperties() {}

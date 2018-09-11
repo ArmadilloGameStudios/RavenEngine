@@ -2,6 +2,7 @@ package com.raven.engine2d.worldobject;
 
 import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.shader.MainShader;
@@ -12,6 +13,7 @@ import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -180,6 +182,13 @@ public abstract class WorldObject<
             clip.stop();
             clip.setFramePosition(0);
             clip.setMicrosecondPosition(0);
+
+            // TODO shouldn't need to be done every time
+            FloatControl gainControl = (FloatControl) clip
+                    .getControl(FloatControl.Type.MASTER_GAIN);
+            float dB = (float) (Math.log(GameProperties.getSFXVolume() / 100f) / Math.log(10.0) * 20.0);
+            gainControl.setValue(dB);
+
             clip.start();
         }
     }

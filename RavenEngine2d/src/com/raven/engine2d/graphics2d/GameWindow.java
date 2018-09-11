@@ -11,9 +11,13 @@ import com.raven.engine2d.graphics2d.shader.TextShader;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.system.MemoryStack;
+import sun.java2d.HeadlessGraphicsEnvironment;
 
+import java.awt.*;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +49,14 @@ public class GameWindow {
     }
 
     public void create() {
+
+        GraphicsDevice d = ((HeadlessGraphicsEnvironment) GraphicsEnvironment
+                .getLocalGraphicsEnvironment())
+                .getSunGraphicsEnvironment()
+                .getDefaultScreenDevice();
+
+        Arrays.stream(d.getDisplayModes()).forEach(dm -> GameProperties.addResolution(dm.getWidth(), dm.getHeight()));
+
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
@@ -86,6 +98,9 @@ public class GameWindow {
             // Get the resolution of the primary monitor
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
+            GameProperties.setDisplayWidth(vidmode.width());
+            GameProperties.setDisplayHeight(vidmode.height());
+
             // Center the window
             glfwSetWindowPos(window, (vidmode.width() - pWidth.get(0)) / 2,
                     (vidmode.height() - pHeight.get(0)) / 2);
@@ -108,7 +123,7 @@ public class GameWindow {
         glfwSetCursorPosCallback(window, (window, xpos, ypos) -> engine.inputMouseMove(xpos, ypos));
         glfwSetScrollCallback(window, (window, xoffset, yoffset) -> engine.inputScroll(xoffset, yoffset));
 
-        GL.createCapabilities();
+        GLCapabilities cat = GL.createCapabilities();
 
         mainShader = new MainShader(engine, this);
         textShader = new TextShader(engine, this);
@@ -207,5 +222,13 @@ public class GameWindow {
 
     public void setActiveShader(Shader activeShader) {
         this.activeShader = activeShader;
+    }
+
+    public void setDimension(int width, int height) {
+        GameProperties.setScreenWidth(width);
+        GameProperties.setScreenHeight(height);
+
+        mainShader.release();
+        mainShader = new MainShader(engine, this);
     }
 }

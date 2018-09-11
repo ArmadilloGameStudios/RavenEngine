@@ -366,8 +366,8 @@ public class MainShader extends Shader {
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glReadBuffer(GL_COLOR_ATTACHMENT1);
         glReadPixels(
-                (int) mouse.getX() / GameProperties.getScaling(),
-                (GameProperties.getScreenHeight() - (int) mouse.getY()) / GameProperties.getScaling(),
+                (int) ((mouse.getX() * GameProperties.getScreenWidth()) / (GameProperties.getDisplayWidth() * GameProperties.getScaling())),
+                (GameProperties.getDisplayHeight() - (int) mouse.getY()) * GameProperties.getScreenHeight() / (GameProperties.getDisplayHeight() * GameProperties.getScaling()),
                 1, 1,
                 GL_RGB, GL_UNSIGNED_BYTE,
                 pixelReadBuffer);
@@ -409,8 +409,8 @@ public class MainShader extends Shader {
                 GameProperties.getScreenWidth() / GameProperties.getScaling(),
                 GameProperties.getScreenHeight() / GameProperties.getScaling(),
                 0, 0,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight(),
+                GameProperties.getDisplayWidth(),
+                GameProperties.getDisplayHeight(),
                 GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
 

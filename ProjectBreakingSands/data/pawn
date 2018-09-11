@@ -59,19 +59,3 @@
 
     weight: 60
 },
-{
-    name: "Guard Drone MK2",
-    sprite: "sprites/guarddrone.png",
-    animation: "guarddrone",
-    sprite_hack: "sprites/guarddronehack.png",
-    standing: true,
-    team: 1,
-    hp: 10,
-    movement: 4,
-    resistance: 1,
-    weapon: "Guard Disk",
-    weapon_hack: "Blue Guard Disk",
-    xp_gain: 18,
-
-    weight: 30,
-},
