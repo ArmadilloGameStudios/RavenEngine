@@ -108,7 +108,8 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
     @Override
     public float getY() {
 
-        float y = GameProperties.getScreenHeight() - height * 2f - (float) (getScene().getEngine().getMouse().getY() * 2f / GameProperties.getScaling());
+//      float y = GameProperties.getScreenHeight() - height * 2f - (float) (getScene().getEngine().getMouse().getY() * 2f                                     /                                      GameProperties.getScaling());
+        float y = GameProperties.getScreenHeight() - height * 2f - (float) (getScene().getEngine().getMouse().getY() * 2f) * GameProperties.getScreenHeight() / (GameProperties.getDisplayHeight() * GameProperties.getScaling());
 
         if (background != null) {
             if (y - background.getHeight() * 2f < 0)
@@ -128,7 +129,8 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
 
     @Override
     public float getX() {
-        float x = (float) (getScene().getEngine().getMouse().getX() * 2f / GameProperties.getScaling());
+//      float x = (float) (getScene().getEngine().getMouse().getX() * 2f                                    /                                     GameProperties.getScaling());
+        float x = (float) (getScene().getEngine().getMouse().getX() * 2f * GameProperties.getScreenWidth()) / (GameProperties.getDisplayWidth() * GameProperties.getScaling());
 
         if (background != null) {
             if (background.getWidth() * 2f + x > GameProperties.getScreenWidth() * 2f / GameProperties.getScaling())

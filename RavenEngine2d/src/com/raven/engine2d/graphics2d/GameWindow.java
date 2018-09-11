@@ -8,6 +8,7 @@ import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.shader.TextShader;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -23,6 +24,8 @@ import java.util.Map;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwGetMonitors;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.opengl.ARBImaging.GL_TABLE_TOO_LARGE;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
@@ -49,14 +52,6 @@ public class GameWindow {
     }
 
     public void create() {
-
-        GraphicsDevice d = ((HeadlessGraphicsEnvironment) GraphicsEnvironment
-                .getLocalGraphicsEnvironment())
-                .getSunGraphicsEnvironment()
-                .getDefaultScreenDevice();
-
-        Arrays.stream(d.getDisplayModes()).forEach(dm -> GameProperties.addResolution(dm.getWidth(), dm.getHeight()));
-
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
@@ -64,6 +59,14 @@ public class GameWindow {
         // Initialize GLFW.
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
+
+        long monitor = glfwGetPrimaryMonitor();
+        GLFWVidMode vidmode = glfwGetVideoMode(monitor);
+
+        GameProperties.setDisplayWidth(vidmode.width());
+        GameProperties.setDisplayHeight(vidmode.height());
+
+        glfwGetVideoModes(monitor).stream().forEach(m -> GameProperties.addResolution(m.width(), m.height()));
 
         // Configure GLFW
         glfwDefaultWindowHints();
@@ -78,12 +81,13 @@ public class GameWindow {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-
         // Create the window
-        window = glfwCreateWindow(GameProperties.getDisplayWidth(),
+        window = glfwCreateWindow(
+                GameProperties.getDisplayWidth(),
                 GameProperties.getDisplayHeight(),
-                engine.getGame().getTitle(), glfwGetPrimaryMonitor(),
+                engine.getGame().getTitle(), monitor,
                 NULL);
+
         if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -94,12 +98,6 @@ public class GameWindow {
 
             // Get the window size passed to glfwCreateWindow
             glfwGetWindowSize(window, pWidth, pHeight);
-
-            // Get the resolution of the primary monitor
-            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-            GameProperties.setDisplayWidth(vidmode.width());
-            GameProperties.setDisplayHeight(vidmode.height());
 
             // Center the window
             glfwSetWindowPos(window, (vidmode.width() - pWidth.get(0)) / 2,
