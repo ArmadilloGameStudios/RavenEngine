@@ -3,10 +3,7 @@ package com.raven.breakingsands.scenes.battlescene.map;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
-import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector2i;
-import javafx.util.Pair;
-import org.lwjgl.system.CallbackI;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

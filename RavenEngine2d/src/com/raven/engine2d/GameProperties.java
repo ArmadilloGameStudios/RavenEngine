@@ -1,7 +1,6 @@
 package com.raven.engine2d;
 
 import com.raven.engine2d.util.math.Vector2i;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -4,7 +4,6 @@ import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.util.math.Vector2f;
-import javafx.util.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -159,16 +158,17 @@ public class LevelUpAdvancedStar extends LevelUpStar {
         List<Ability> requiresNeeded = abilities.stream()
                 .filter(a -> a.replace != null)
                 .collect(Collectors.toList());
-        List<Pair<Ability, Ability>> needed = abilities.stream()
+        Map<Ability, Ability> needed = abilities.stream()
                 .filter(a ->
                         requiresNeeded.stream()
                                 .anyMatch(n -> n.replace.equals(a.name)))
-                .map(a -> new Pair<>(a, requiresNeeded.stream().filter(n -> n.replace.equals(a.name)).findFirst().get()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(
+                        a -> a,
+                        a -> requiresNeeded.stream().filter(n -> n.replace.equals(a.name)).findFirst().get()));
 
         List<Ability> remaining = new ArrayList<>(abilities);
         remaining.removeAll(requiresNeeded);
-        remaining.removeAll(needed.stream().map(Pair::getKey).collect(Collectors.toList()));
+        remaining.removeAll(needed.keySet());
 
         List<LevelUpHexButton> neededCanGo = new ArrayList<>(Arrays.asList(
                 abilityButton1,
@@ -184,33 +184,34 @@ public class LevelUpAdvancedStar extends LevelUpStar {
         for (int i = 0; i < needed.size(); i++) {
 
             int index = r.nextInt(neededCanGo.size());
-            Pair<Ability, Ability> p = needed.get(i);
+            Ability ar = needed.keySet().toArray(new Ability[needed.size()])[i];
+            Ability an = needed.get(ar);
             LevelUpHexButton button = neededCanGo.remove(index);
-            button.setAbility(p.getKey());
+            button.setAbility(ar);
 
             remainingCanGo.remove(button);
 
             if (button == abilityButton1) {
-                abilityButton4.setAbility(p.getValue());
+                abilityButton4.setAbility(an);
                 neededCanGo.remove(abilityButton4);
                 remainingCanGo.remove(abilityButton4);
 
             } else if (button == abilityButton3) {
-                abilityButton6.setAbility(p.getValue());
+                abilityButton6.setAbility(an);
                 neededCanGo.remove(abilityButton6);
                 remainingCanGo.remove(abilityButton6);
 
             } else if (button == abilityButton4) {
-                abilityButton1.setAbility(p.getValue());
+                abilityButton1.setAbility(an);
                 neededCanGo.remove(abilityButton1);
                 remainingCanGo.remove(abilityButton1);
 
             } else if (button == abilityButton5) {
-                abilityButton7.setAbility(p.getValue());
+                abilityButton7.setAbility(an);
                 remainingCanGo.remove(abilityButton7);
 
             } else if (button == abilityButton6) {
-                abilityButton3.setAbility(p.getValue());
+                abilityButton3.setAbility(an);
                 neededCanGo.remove(abilityButton3);
                 remainingCanGo.remove(abilityButton3);
 

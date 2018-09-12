@@ -102,10 +102,14 @@ public abstract class Game<G extends Game<G>> {
             song.setMicrosecondPosition(0);
 
             // TODO shouldn't need to be done every time
-            FloatControl gainControl = (FloatControl) song
-                    .getControl(FloatControl.Type.MASTER_GAIN);
-            float dB = (float) (Math.log(GameProperties.getMusicVolume() / 100f) / Math.log(10.0) * 20.0);
-            gainControl.setValue(dB);
+            try {
+                FloatControl gainControl = (FloatControl) song
+                        .getControl(FloatControl.Type.MASTER_GAIN);
+                float dB = (float) (Math.log(GameProperties.getMusicVolume() / 100f) / Math.log(10.0) * 20.0);
+                gainControl.setValue(dB);
+            } catch (Exception e) {
+
+            }
 
             song.start();
         }
