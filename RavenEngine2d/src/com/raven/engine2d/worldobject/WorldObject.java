@@ -184,7 +184,7 @@ public abstract class WorldObject<
             clip.setMicrosecondPosition(0);
 
             // TODO shouldn't need to be done every time
-            if (getScene().getEngine().changeSongVolume(GameProperties.getMusicVolume(), clip)) {
+            if (getScene().getEngine().changeSongVolume(GameProperties.getSFXVolume(), clip)) {
                 clip.start();
             } else {
                 System.out.println("Missing Audio Controls: " + name);

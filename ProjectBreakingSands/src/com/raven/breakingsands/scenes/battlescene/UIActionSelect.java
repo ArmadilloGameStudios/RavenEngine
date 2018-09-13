@@ -15,7 +15,7 @@ import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELEC
 
 public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
-    private UIAbilityButton btnPushBlast, btnHookPull, btnHack, btnBlink, btnRecall;
+    private UIAbilityButton btnPushBlast, btnHookPull, btnHack, btnBlink, btnRecall, btnHeal;
     private UIButton<BattleScene> btnMove, btnAttack, btnUndo, btnCancel, btnLevel, btnEnd;
     private List<UIButton<BattleScene>> btns = new ArrayList<>();
     private boolean disable;
@@ -25,6 +25,55 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
     public UIActionSelect(BattleScene scene) {
         super(scene);
+
+        btnHeal = new UIAbilityButton(scene,
+                "sprites/push icon.png",
+                "iconbutton") {
+
+            @Override
+            public void handleMouseClick() {
+                if (!isDisabled()) {
+                    if (isActive()) {
+                        setActive(false);
+                        getScene().setActiveAbility(null);
+                        scene.setState(oldState = SELECT_DEFAULT);
+                    } else {
+                        btns.forEach(b -> b.setActive(false));
+                        setActive(true);
+                        getScene().setActiveAbility(getAbility());
+                        scene.setState(oldState = BattleScene.State.SELECT_ABILITY);
+                    }
+                }
+            }
+
+            @Override
+            public void handleMouseEnter() {
+                super.handleMouseEnter();
+
+                if (!isDisabled())
+                    if (!isActive()) {
+                        oldAbility = scene.getActiveAbility();
+                        scene.setActiveAbility(getAbility());
+                        oldState = scene.getState();
+                        scene.setState(BattleScene.State.SELECT_ABILITY);
+                    }
+            }
+
+            @Override
+            public void handleMouseLeave() {
+                super.handleMouseLeave();
+
+                if (!isDisabled())
+                    if (!isActive()) {
+                        scene.setActiveAbility(oldAbility);
+                        scene.setState(oldState);
+                    }
+            }
+        };
+        btnHeal.setVisibility(false);
+        btnHeal.setToolTipSrc("heal");
+        addChild(btnHeal);
+        btns.add(btnHeal);
 
         btnBlink = new UIAbilityButton(scene,
                 "sprites/push icon.png",
@@ -457,6 +506,9 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             btnRecall.setDisable(disable);
             btnRecall.setActive(false);
             btnRecall.setVisibility(false);
+            btnHeal.setDisable(disable);
+            btnHeal.setActive(false);
+            btnHeal.setVisibility(false);
         } else /*if (pawn != this.pawn)*/ {
             btnCancel.setDisable(!(pawn.getTotalMovement() == pawn.getRemainingMovement()));
 
@@ -534,6 +586,19 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                         .forEach(btnHack::addBonusAbility);
             } else {
                 btnHack.setVisibility(false);
+            }
+
+            ability = pawn.getAbilities().stream().filter(a -> a.heal).findFirst();
+            if (ability.isPresent()) {
+                btnHeal.setVisibility(true);
+                btnHeal.setDisable(!pawn.canAbility(ability.get()));
+                btnHeal.setActive(btnHeal.getActive() && pawn == this.pawn);
+                btnHeal.setAbility(ability.get());
+                pawn.getAbilities().stream()
+                        .filter(a -> a.action && a.upgrade != null && a.upgrade.equals("Heal"))
+                        .forEach(btnHeal::addBonusAbility);
+            } else {
+                btnHeal.setVisibility(false);
             }
         }
 

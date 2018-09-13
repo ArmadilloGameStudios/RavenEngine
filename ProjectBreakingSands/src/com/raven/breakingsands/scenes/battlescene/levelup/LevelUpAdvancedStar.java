@@ -181,10 +181,12 @@ public class LevelUpAdvancedStar extends LevelUpStar {
 
         // add needed
 
-        for (int i = 0; i < needed.size(); i++) {
+        List<Ability> neededKeysSorted = needed.keySet().stream().sorted(Comparator.comparing(a -> a.name)).collect(Collectors.toList());
+
+        for (int i = 0; i < neededKeysSorted.size(); i++) {
 
             int index = r.nextInt(neededCanGo.size());
-            Ability ar = needed.keySet().toArray(new Ability[needed.size()])[i];
+            Ability ar = neededKeysSorted.get(i);
             Ability an = needed.get(ar);
             LevelUpHexButton button = neededCanGo.remove(index);
             button.setAbility(ar);

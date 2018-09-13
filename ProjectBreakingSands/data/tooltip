@@ -113,3 +113,8 @@
     title: "blink",
     text: "blink to another space."
 },
+{
+    src: "heal",
+    title: "heal",
+    text: "heal an ally."
+},

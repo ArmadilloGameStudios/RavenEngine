@@ -454,4 +454,110 @@
         passes_wall: true,
         recall_unit: true,
     }
-}
+},
+{
+    name: "Heal",
+    desc: "heal an ally.",
+
+    class: "medic",
+    type: "target",
+    target: "ally",
+    size: 1,
+    passes_pawn: true,
+    heal: true,
+
+    restore: 1
+
+    uses: 1,
+
+    action: true,
+},
+{
+    name: "Quick Heal",
+    desc: "can attack and use other abilities after healing.",
+    icon: "sprites/ability hex fast.png",
+
+    class: "medic",
+    type: "self",
+    upgrade: "Heal",
+
+    remain: true,
+
+    action: true,
+},
+{
+    name: "Self Heal",
+    desc: "can heal yourself.",
+    icon: "sprites/ability hex accurate.png",
+
+    class: "medic",
+    type: "self",
+    target: "self",
+    upgrade: "Heal",
+
+    action: true,
+},
+{
+    name: "Improved Heal",
+    desc: "can heal more hp.",
+    icon: "sprites/ability hex improve.png",
+
+    class: "medic",
+    type: "self",
+    upgrade: "Heal",
+
+    restore: 2
+
+    action: true,
+},
+{
+    name: "Full Heal",
+    desc: "heal all hp.",
+    icon: "sprites/ability hex improve double.png",
+
+    class: "medic",
+    type: "self",
+    replace: "Improved Heal",
+    upgrade: "Heal",
+
+    restore: 1000
+
+    action: true,
+},
+{
+    name: "Double Heal",
+    desc: "heal up to twice a turn.",
+    icon: "sprites/ability hex twice.png",
+
+    class: "medic",
+    type: "self",
+    upgrade: "Heal",
+
+    uses: 1
+
+    action: true,
+},
+{
+    name: "Quadruple Heal",
+    desc: "heal up to four times a turn.",
+    icon: "sprites/ability hex quadruple.png",
+
+    class: "medic",
+    type: "self",
+    replace: "Double Heal",
+    upgrade: "Heal",
+
+    uses: 3
+
+    action: true,
+},
+{
+    name: "Healing Rest",
+    desc: "heal all allies each new floor.",
+    icon: "sprites/ability hex medic.png",
+
+    class: "medic",
+    type: "floor",
+
+    rest_heal: true,
+},

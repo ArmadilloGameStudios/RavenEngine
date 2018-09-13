@@ -47,7 +47,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     private String name = "", charClass = "amateur", spriteNormal, spriteHack, weaponHack;
     private GameData weaponNormal;
     private int level = 0, xp, team,
-            hitPoints, remainingHitPoints, bonusHp, bonusHpLoss,
+            maxHitPoints, remainingHitPoints, bonusHp, bonusHpLoss,
             totalShield, remainingShield, bonusShield, bonusShieldLoss,
             totalMovement, remainingMovement,
             resistance, bonusResistance, totalAttacks = 1, remainingAttacks,
@@ -85,9 +85,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         gameData.ifHas("remaining_hit_points",
                 r -> {
                     remainingHitPoints = r.asInteger();
-                    hitPoints = gameData.getInteger("hp");
+                    maxHitPoints = gameData.getInteger("hp");
                 },
-                () -> remainingHitPoints = hitPoints = gameData.getInteger("hp"));
+                () -> remainingHitPoints = maxHitPoints = gameData.getInteger("hp"));
 
 
         gameData.ifHas("bonus_shield_loss", g -> bonusShieldLoss = g.asInteger()); // TODO check after abilities
@@ -168,7 +168,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         map.put("xp_modifier", new GameData(xpModifier));
         map.put("ability_order", new GameData(abilityOrder));
         map.put("team", new GameData(team));
-        map.put("hp", new GameData(hitPoints));
+        map.put("hp", new GameData(maxHitPoints));
         map.put("remaining_hit_points", new GameData(remainingHitPoints));
         map.put("bonus_hp_loss", new GameData(bonusHpLoss));
         map.put("shield", new GameData(totalShield));
@@ -222,7 +222,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public int getHitPoints() {
-        return hitPoints;
+        return maxHitPoints;
     }
 
     public int getRemainingHitPoints() {
@@ -360,7 +360,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         GameData bonus = newCharClass.getData("bonus");
 
         bonus.ifHas("hp", gd -> {
-            hitPoints += gd.asInteger();
+            maxHitPoints += gd.asInteger();
             remainingHitPoints += gd.asInteger();
         });
         bonus.ifHas("shield", gd -> {
@@ -408,7 +408,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         if (ability.type == Ability.Type.SELF) {
             if (ability.upgrade == null && add) {
                 if (ability.hp != null) {
-                    hitPoints += ability.hp;
+                    maxHitPoints += ability.hp;
                     remainingHitPoints += ability.hp;
                 }
                 if (ability.shield != null) {
@@ -498,10 +498,16 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             if (a.restore != null) {
                 this.remainingHitPoints += a.restore;
                 this.remainingHitPoints =
-                        this.remainingHitPoints > this.hitPoints ?
-                                this.hitPoints : this.remainingHitPoints;
+                        this.remainingHitPoints > this.maxHitPoints ?
+                                this.maxHitPoints : this.remainingHitPoints;
+            }
+            if (a.rest_heal) {
+                abilities.stream()
+                        .filter(ab -> ab.heal)
+                        .forEach(this::doAbilityAffect);
             }
         }
+        System.out.println("Floor: " + a);
     }
 
     public void addAbilityAffect(Ability a) {
@@ -596,7 +602,15 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     public void runFloorAbilities() {
         abilities.stream()
                 .filter(a -> a.type == Ability.Type.FLOOR)
-                .forEach(a -> getScene().getPawns().forEach(p -> p.doAbilityAffect(a)));
+                .forEach(a -> {
+                    if (a.rest_heal) {
+                        abilities.stream()
+                                .filter(ab -> ab.heal)
+                                .forEach(aa -> getScene().getPawns().forEach(p -> p.doAbilityAffect(aa)));
+                    } else {
+                        getScene().getPawns().forEach(p -> p.doAbilityAffect(a));
+                    }
+                } );
     }
 
     public int getLevel() {
@@ -1057,5 +1071,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     public UIDetailText getUIDetailText() {
         return uiDetailText;
+    }
+
+    public void heal(int restore) {
+        this.remainingHitPoints = Math.min(this.remainingHitPoints + restore, this.maxHitPoints);
     }
 }

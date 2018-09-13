@@ -24,4 +24,12 @@
     bonus: {
         ability: "Blink",
     }
+},
+{
+    name: "medic",
+    desc: "heals the team, keeping them alive and away from the brink of death.\n\ngain ability: heal"
+
+    bonus: {
+        ability: "Heal",
+    }
 }

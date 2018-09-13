@@ -113,22 +113,29 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
         return  ability;
     }
 
-    public void setClass(GameData pawnClass) {
+    public void setClass(GameData pawnClass, boolean used) {
         this.pawnClass = pawnClass;
 
         Pawn pawn = uiLevelUp.getPawn();
+
         boolean active = pawn.getCharacterClass().equals(pawnClass.getString("name"));
+        used |= active;
+        used |= !pawn.getCharacterClass().equals("amateur");
+
+        if (used) {
+            setSprite("sprites/start hex.png");
+        } else {
+            setSprite("sprites/class hex.png");
+        }
+
         setDisable(!active);
         setActive(active);
         if (isActive()) {
             setLocked(true);
         }
-        setDisable(!pawn.getCharacterClass().equals(pawnClass.getString("name")));
-        setLocked(!pawn.getCharacterClass().equals("amateur"));
-//        boolean disable = !pawn.getCharacterClass().equals("amateur") && !pawn.getCharacterClass().equals(pawnClass.getString("name"));
-//        setActive(!disable);
-//        setDisable(disable);
-//        setLocked(disable);
+
+        setDisable(!pawn.getCharacterClass().equals(pawnClass.getString("name")) || used);
+        setLocked(!pawn.getCharacterClass().equals("amateur")|| used);
 
         pawnClass.ifHas("desc", d -> description = d.asString(), () -> description = "");
         this.setToolTip(pawnClass.getString("name"), description);

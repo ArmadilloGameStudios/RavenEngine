@@ -35,7 +35,7 @@ public class Ability implements GameDatable {
     public boolean action, remain, passesPawn, passesWall, usedThisTurn,
             taunt, push_blast, hook_pull,
             hack, instant_hack, transferable, cure,
-            blink, recall, recall_unit;
+            blink, recall, recall_unit, heal, rest_heal;
 
     public Ability bonusAbility;
 
@@ -183,6 +183,8 @@ public class Ability implements GameDatable {
         gameData.ifHas("blink", h -> blink = h.asBoolean());
         gameData.ifHas("recall", h -> recall = h.asBoolean());
         gameData.ifHas("recall_unit", h -> recall_unit = h.asBoolean());
+        gameData.ifHas("heal", h -> heal = h.asBoolean());
+        gameData.ifHas("rest_heal", h -> rest_heal = h.asBoolean());
         gameData.ifHas("ability", h -> bonusAbility = new Ability(h));
     }
 
@@ -232,6 +234,12 @@ public class Ability implements GameDatable {
                 this.movement = ability.movement;
             else
                 this.movement += ability.movement;
+        }
+        if (ability.restore != null) {
+            if (this.restore == null)
+                this.restore = ability.restore;
+            else
+                this.restore += ability.restore;
         }
         if (ability.uses != null) {
             if (this.uses == null) {

@@ -23,7 +23,8 @@ public class LevelUpBaseStar extends LevelUpStar {
             abilityButton12, abilityButton7,
             abilityButton8, abilityButton9,
             abilityButton10, abilityButton11,
-            classButton1, classButton2, classButton3;
+            classButton1, classButton2,
+            classButton3, classButton4;
 
     private List<LevelUpHexButton> abilityButtonList = new ArrayList<>();
     private List<LevelUpHexButton> classButtonList = new ArrayList<>();
@@ -111,8 +112,8 @@ public class LevelUpBaseStar extends LevelUpStar {
 
         // class
         classButton1 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.CLASS);
-        classButton1.setY(80);
-        classButton1.setX(0);
+        classButton1.setY(40);
+        classButton1.setX(60);
         addChild(classButton1);
         classButtonList.add(classButton1);
 
@@ -127,6 +128,12 @@ public class LevelUpBaseStar extends LevelUpStar {
         classButton3.setX(-60);
         addChild(classButton3);
         classButtonList.add(classButton3);
+
+        classButton4 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.CLASS);
+        classButton4.setY(40);
+        classButton4.setX(-60);
+        addChild(classButton4);
+        classButtonList.add(classButton4);
 
         // Connections
         addChild(new LevelUpHexConnection(getScene(), startButton, abilityButton1));
@@ -156,12 +163,14 @@ public class LevelUpBaseStar extends LevelUpStar {
         addChild(new LevelUpHexConnection(getScene(), abilityButton11, abilityButton5));
         addChild(new LevelUpHexConnection(getScene(), abilityButton11, abilityButton6));
 
-        addChild(new LevelUpHexConnection(getScene(), classButton1, abilityButton12));
         addChild(new LevelUpHexConnection(getScene(), classButton1, abilityButton7));
+        addChild(new LevelUpHexConnection(getScene(), classButton1, abilityButton8));
         addChild(new LevelUpHexConnection(getScene(), classButton2, abilityButton8));
         addChild(new LevelUpHexConnection(getScene(), classButton2, abilityButton9));
         addChild(new LevelUpHexConnection(getScene(), classButton3, abilityButton10));
         addChild(new LevelUpHexConnection(getScene(), classButton3, abilityButton11));
+        addChild(new LevelUpHexConnection(getScene(), classButton4, abilityButton11));
+        addChild(new LevelUpHexConnection(getScene(), classButton4, abilityButton12));
     }
 
     @Override
@@ -237,12 +246,16 @@ public class LevelUpBaseStar extends LevelUpStar {
         i = 0;
         List<GameData> classes = new GameDataList(GameDatabase.all("classes"));
 
-        for (; i < 3; i++) {
+        for (; i < 4; i++) {
             int index = r.nextInt(classes.size());
-            GameData a = classes.remove(index);
+            GameData c = classes.remove(index);
+
+            boolean used = getScene().getPawns().stream()
+                    .filter(p -> p != pawn)
+                    .anyMatch(p -> p.getCharacterClass().equals(c.getString("name")));
 
             LevelUpHexButton button = classButtonList.get(i);
-            button.setClass(a);
+            button.setClass(c, used);
         }
     }
 

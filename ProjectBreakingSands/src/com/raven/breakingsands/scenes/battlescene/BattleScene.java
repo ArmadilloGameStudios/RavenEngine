@@ -780,14 +780,12 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
             if (range.size() > 0) {
                 for (Terrain n : range) {
-                    if ((activeAbility.target & Ability.Target.EMPTY) != 0) {
-                        if (n.getPawn() == null) {
+                    if ((activeAbility.target & Ability.Target.EMPTY) != 0) {if (n.getPawn() == null) {
                             n.setState(Terrain.State.ABILITYABLE);
                         }
                     }
 
-                    if ((activeAbility.target & Ability.Target.ENEMY) != 0) {
-                        if ((n.getPawn() == null && activeAbility.size >= 0) || n.getPawn() != null && n.getPawn().getTeam(true) != activePawn.getTeam(true)) {
+                    if ((activeAbility.target & Ability.Target.ENEMY) != 0) {if ((n.getPawn() == null && activeAbility.size >= 0) || n.getPawn() != null && n.getPawn().getTeam(true) != activePawn.getTeam(true)) {
                             n.setState(Terrain.State.ABILITYABLE);
                         }
                     }
@@ -806,6 +804,10 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                         }
                     }
                 }
+            }
+
+            if ((activeAbility.target & Ability.Target.SELF)!= 0) {
+                activePawn.getParent().setState(Terrain.State.ABILITYABLE);
             }
         }
 
@@ -974,6 +976,11 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             setStateSelectAbility();
         } else if (activeAbility.recall_unit) {
             abilityTerrain.setPawn(terrain.getPawn());
+            activeAbility = null;
+            setActivePawn(activePawn);
+        } else if (activeAbility.heal) {
+            Pawn target = terrain.getPawn();
+            target.heal(activeAbility.restore);
             activeAbility = null;
             setActivePawn(activePawn);
         }
