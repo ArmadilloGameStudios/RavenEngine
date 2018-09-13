@@ -102,17 +102,19 @@ public abstract class Game<G extends Game<G>> {
             song.setMicrosecondPosition(0);
 
             // TODO shouldn't need to be done every time
-            try {
-                FloatControl gainControl = (FloatControl) song
-                        .getControl(FloatControl.Type.MASTER_GAIN);
-                float dB = (float) (Math.log(GameProperties.getMusicVolume() / 100f) / Math.log(10.0) * 20.0);
-                gainControl.setValue(dB);
-            } catch (Exception e) {
-
+            if (engine.changeSongVolume(GameProperties.getMusicVolume(), song)) {
+                song.loop(-1);
+                song.start();
+            } else {
+                song = null;
+                System.out.println("Missing Audio Controls: " + name);
             }
-
-            song.start();
         }
+    }
+
+    public void changeSongVolume(int value) {
+        if (song != null)
+            engine.changeSongVolume(value, song);
     }
 
     abstract public void setup();

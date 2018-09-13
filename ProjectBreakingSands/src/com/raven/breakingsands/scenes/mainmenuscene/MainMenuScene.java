@@ -40,6 +40,7 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
 
     @Override
     public void onEnterScene() {
+
         // Pawn
         pawn = new DisplayPawn(this);
         addChild(pawn);

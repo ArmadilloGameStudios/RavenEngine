@@ -161,7 +161,7 @@
         attack: "guard_drone_attack.wav"
     },
 
-    damage: 3,
+    damage: 2,
     range: 3,
     piercing: 0,
     style: "straight",
@@ -178,7 +178,7 @@
         attack: "guard_drone_attack.wav"
     },
 
-    damage: 3,
+    damage: 2,
     range: 3,
     piercing: 0,
     style: "straight",

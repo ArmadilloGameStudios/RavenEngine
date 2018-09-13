@@ -5,6 +5,7 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.codedisaster.steamworks.*;
 import com.raven.engine2d.database.GameDataTable;
@@ -312,6 +313,10 @@ public class GameEngine<G extends Game<G>> {
 
                 audioMap.put(audioName, clip);
 
+//                System.out.println(audioName);
+//                System.out.println(clip.getLineInfo());
+//                System.out.println(Arrays.stream(clip.getControls()).map(Control::getType).collect(Collectors.toList()));
+
                 return clip;
 
             } catch (Exception e) {
@@ -321,6 +326,28 @@ public class GameEngine<G extends Game<G>> {
         }
 
         return null;
+    }
+
+    final public boolean changeSongVolume(int volume, Clip clip) {
+        if (clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+            FloatControl gainControl = (FloatControl) clip
+                    .getControl(FloatControl.Type.MASTER_GAIN);
+
+            float dB = (float) (Math.log(volume / 100f) / Math.log(10.0) * 20.0);
+            gainControl.setValue(dB);
+
+            return true;
+        } else if (clip.isControlSupported(FloatControl.Type.VOLUME)) {
+            FloatControl gainControl = (FloatControl) clip
+                    .getControl(FloatControl.Type.VOLUME);
+
+            float dB = (float) (Math.log(volume / 100f) / Math.log(10.0) * 20.0);
+            gainControl.setValue(dB);
+
+            return true;
+        }
+
+        return false;
     }
 
     // input

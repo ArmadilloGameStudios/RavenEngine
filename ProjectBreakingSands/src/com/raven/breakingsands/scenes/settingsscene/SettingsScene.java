@@ -117,6 +117,8 @@ public class SettingsScene extends Scene<BreakingSandsGame> {
 
                 getGame().saveSettings();
 
+                getGame().changeSongVolume(musicVolumeSel.getValue());
+
                 getGame().prepTransitionScene(new SettingsScene(getGame()));
             }
         };

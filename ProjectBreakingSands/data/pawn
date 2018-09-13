@@ -50,7 +50,7 @@
     sprite_hack: "sprites/jitterballhack.png",
     standing: true,
     team: 1,
-    hp: 10,
+    hp: 7,
     resistance: 3,
     movement: 2,
     weapon: "Demon Disk",

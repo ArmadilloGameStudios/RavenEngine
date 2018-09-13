@@ -34,6 +34,7 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
 
     @Override
     public void setup() {
+        playSong("theme.wav");
     }
 
     @Override
