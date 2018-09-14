@@ -11,6 +11,7 @@ public abstract class UIText<S extends Scene>
         extends UIObject<S, UIObject<S, Parentable<UIObject>>> {
 
     private String text;
+    private String currentText;
     private final String backgroundSrc;
     private UITexture image;
     private UITextWriter textWriter;
@@ -26,8 +27,10 @@ public abstract class UIText<S extends Scene>
     public UIText(S scene, String text, String backgroundSrc) {
         super(scene);
 
-        this.text = text;
+        currentText = this.text = text;
         this.backgroundSrc = backgroundSrc;
+
+        textWriter = new UITextWriter(getScene().getEngine(), getScene());
     }
 
     public UIFont getFont() {
@@ -50,14 +53,13 @@ public abstract class UIText<S extends Scene>
             image.load(getScene());
             getScene().getEngine().getWindow().printErrors("post cat (ut) ");
         }
-        // TODO don't remake each time
-        textWriter = new UITextWriter(getScene().getEngine(), getScene(), image, font, handler);
 
         if (backgroundSrc != null)
             textWriter.setBackground(backgroundSrc);
 
-        textWriter.setText(text);
-//        image.load(getScene());
+        textWriter.setImageDest(image);
+        textWriter.setText(text, font);
+        textWriter.setHandler(handler);
 
         getScene().addTextToWrite(textWriter);
     }

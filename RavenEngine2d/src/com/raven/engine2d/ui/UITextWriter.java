@@ -9,6 +9,7 @@ import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2i;
 import org.lwjgl.system.CallbackI;
 
+import java.awt.*;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -44,28 +45,17 @@ public class UITextWriter {
     private int y = 0; // 10
     private int lines = 0;
 
-
-    public UITextWriter(GameEngine engine, Scene scene, UITexture image, UIFont font) {
-        this(engine, scene, image, font, null);
-    }
-
-    public UITextWriter(GameEngine engine, Scene scene, UITexture image, UIFont font, UITextWriterHandler handler) {
+    public UITextWriter(GameEngine engine, Scene scene) {
         this.engine = engine;
 
-        uiImage = image;
         this.font = font;
 
         this.handler = handler;
 
-        engine.getWindow().printErrors("pre load (sprite 1) ");
         alphabetImage = engine.getSpriteSheet("sprites/alphabet.png");
-        engine.getWindow().printErrors("pre load (sprite 2) ");
         alphabetImage.load(scene);
-        engine.getWindow().printErrors("pre load (sprite 3) ");
         alphabetSmallImage = engine.getSpriteSheet("sprites/alphabet_small.png");
-        engine.getWindow().printErrors("pre load (sprite 4) ");
         alphabetSmallImage.load(scene);
-        engine.getWindow().printErrors("pre load (sprite 5) ");
     }
 
 
@@ -73,11 +63,28 @@ public class UITextWriter {
         background = src;
     }
 
-    public void setText(String text) {
+    public void setImageDest(UITexture image) {
+        uiImage = image;
+    }
+
+    public void setText(String text, UIFont font) {
         this.text = text;
+        this.font = font;
+    }
+
+    public void setHandler(UITextWriterHandler handler) {
+        this.handler = handler;
+    }
+
+    public void clearHandler() {
+        handler = null;
     }
 
     public void write(TextShader shader) {
+        x = 0; // 8
+        y = 0; // 10
+        lines = 0;
+
         engine.getWindow().printErrors("rawr");
         shader.setWriteDestination(uiImage);
 

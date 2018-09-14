@@ -1,9 +1,8 @@
 package com.raven.breakingsands.scenes.battlescene.pawn;
 
 import com.raven.breakingsands.character.Effect;
-import com.raven.breakingsands.character.WeaponType;
-import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
+import com.raven.engine2d.graphics2d.sprite.handler.CountdownActionFinishHandler;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,7 +27,7 @@ public class PawnShotsActionFinishHandler implements ActionFinishHandler {
     }
 
     @Override
-    public void onActionFinish(SpriteAnimationState state) {
+    public void onActionFinish() {
 
         if (shotCount.get() > 1) {
 
@@ -52,7 +51,7 @@ public class PawnShotsActionFinishHandler implements ActionFinishHandler {
                         effect.getAnimationState().setAction("up");
                     else
                         effect.getAnimationState().setAction("down");
-                effect.getAnimationState().addActionFinishHandler(an -> target.removeChild(effect));
+                effect.getAnimationState().addActionFinishHandler(() -> target.removeChild(effect));
             }
 
             from.getAnimationState().addActionFinishHandler(new PawnShotsActionFinishHandler(from, target, shotCount, directional, directionUp, onAttackDone));
@@ -77,31 +76,17 @@ public class PawnShotsActionFinishHandler implements ActionFinishHandler {
                         effect.getAnimationState().setAction("up");
                     else
                         effect.getAnimationState().setAction("down");
-                effect.getAnimationState().addActionFinishHandler(an -> target.removeChild(effect));
+                effect.getAnimationState().addActionFinishHandler(() -> target.removeChild(effect));
             }
 
             AtomicReference<Boolean> a = new AtomicReference<>(false);
             AtomicReference<Boolean> b = new AtomicReference<>(false);
 
-            ActionFinishHandler handlerA = animationState -> {
-                a.set(true);
+            ActionFinishHandler mHandler = new CountdownActionFinishHandler(onAttackDone, 2);
 
-                if (b.get()) {
-                    onAttackDone.onActionFinish(animationState);
-                }
-            };
-
-            ActionFinishHandler handlerB = animationState -> {
-                b.set(true);
-
-                if (a.get()) {
-                    onAttackDone.onActionFinish(animationState);
-                }
-            };
-
-            from.attack(target, from.getWeapon().getDamage(), from.getWeapon().getPiercing() + from.getBonusPiercing(), from.getWeapon().getShots(), handlerB);
-            from.getAnimationState().addActionFinishHandler(handlerA);
-            from.getAnimationState().addActionFinishHandler(cat -> cat.setActionIdle(false));
+            from.attack(target, from.getWeapon().getDamage(), from.getWeapon().getPiercing() + from.getBonusPiercing(), from.getWeapon().getShots(), mHandler);
+            from.getAnimationState().addActionFinishHandler(mHandler);
+            from.getAnimationState().addActionFinishHandler(() -> from.getAnimationState().setActionIdle(false));
         }
 
     }

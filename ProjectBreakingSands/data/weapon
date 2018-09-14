@@ -201,7 +201,7 @@
     effect: "disk",
 
     tags: [ ],
-}
+},
 {
     name: "Blue Demon Disk",
     display: "Demon Disk",
@@ -218,4 +218,39 @@
     effect: "blue disk",
 
     tags: [ ],
-}
+},
+{
+    name: "Self Destruct",
+    type: "area",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    self_destruct: true,
+
+    damage: 10,
+    range: 1,
+    piercing: 0,
+    effect: "blue disk",
+
+    tags: [ ],
+},
+{
+    name: "Blue Self Destruct",
+    display: "Self Destruct",
+    type: "area",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    self_destruct: true,
+
+    damage: 8,
+    range: 1,
+    piercing: 5,
+    effect: "blue disk",
+
+    tags: [ ],
+},

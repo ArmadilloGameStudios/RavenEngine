@@ -60,8 +60,6 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
 
         if (!children.contains(obj))
             children.add(obj);
-        else
-            System.out.println("dup");
     }
 
     public void removeChild(UIObject obj) {

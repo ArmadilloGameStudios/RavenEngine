@@ -2,10 +2,10 @@ package com.raven.engine2d;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.glFinish;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import com.codedisaster.steamworks.*;
 import com.raven.engine2d.database.GameDataTable;
@@ -17,7 +17,6 @@ import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.input.Keyboard;
 import com.raven.engine2d.input.Mouse;
 import com.raven.engine2d.worldobject.GameObject;
-import org.lwjgl.system.CallbackI;
 
 import javax.sound.sampled.*;
 
@@ -129,16 +128,21 @@ public class GameEngine<G extends Game<G>> {
             }
 
             input(deltaTime);
+
             draw();
+
             window.printErrors("Draw Error: ");
 
             game.update(deltaTime);
+
             window.printErrors("Update Error: ");
 
 //            if (frame % 60 == 0) {
 //                System.out.println("FPS: " + 1000f / (framesdt / 60f) + " MPF: " + framesdt / 60f);
 //                framesdt = 0;
 //            }
+
+            glFinish();
 
             glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
 
@@ -148,8 +152,12 @@ public class GameEngine<G extends Game<G>> {
             deltaTime = (currentTime - start) / 1000000.0f;
             systemTime = currentTime / 1000000L;
 
-            framesdt += deltaTime;
-            frame++;
+//            if (deltaTime > 20) {
+//                System.out.println("Lag: " + deltaTime);
+//            }
+
+//            framesdt += deltaTime;
+//            frame++;
 
             window.printErrors("Errors: ");
         }

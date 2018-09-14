@@ -29,27 +29,20 @@ public class UITexture
             // Set Texture
 
             glActiveTexture(GL_TEXTURE0);
-            scene.getEngine().getWindow().printErrors("a"); // okay, I am making to many textures because some reason
 
             if (texture == 0) {
                 texture = glGenTextures();
 //                System.out.println("Gen UITexture: " + texture);
             }
-            scene.getEngine().getWindow().printErrors("b");
 
             glBindTexture(GL_TEXTURE_2D, texture);
-            scene.getEngine().getWindow().printErrors("c");
 
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
                     width, height,
                     0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-            scene.getEngine().getWindow().printErrors("d");
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            scene.getEngine().getWindow().printErrors("e");
-
-            scene.getEngine().getWindow().printErrors("f");
         }
 
         scene.addLoadedShaderTexture(this);

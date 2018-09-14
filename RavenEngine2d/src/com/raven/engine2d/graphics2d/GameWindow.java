@@ -109,6 +109,7 @@ public class GameWindow {
 
         // Enable v-sync
         glfwSwapInterval(GL_TRUE);
+//        glfwSwapInterval(GL_FALSE);
 
         // Make the window visible
         glfwShowWindow(window);

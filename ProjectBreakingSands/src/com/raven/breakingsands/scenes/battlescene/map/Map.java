@@ -93,9 +93,6 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
                 .filter(st -> Arrays.stream(st.getEntrances()).anyMatch(e -> !e.isConnected() && e.anyTerminal(t)))
                 .collect(Collectors.toList());
 
-        System.out.println("Terminal: " + (t));
-        System.out.println("Open Structs: " + openStructures.size());
-
         int sCount = openStructures.size();
 
         if (sCount == 0) {
@@ -116,7 +113,6 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
         }
 
         Structure buildFrom = openStructures.get(getScene().getRandom().nextInt(sCount));
-        System.out.println("Building From: " + buildFrom.getName());
 
         structureFactory.setConnection(buildFrom);
 //        System.out.println("BF " + buildFrom.getName());
@@ -127,7 +123,6 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
             if (buildFrom == firstStructure) return false;
             removeStructure(buildFrom);
         } else {
-            System.out.println("Building: " + s.getName());
             addStructure(s);
 //            System.out.println("Add " + s.getName());
         }
@@ -143,7 +138,6 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
 
     private void removeStructure(Structure s) {
         removeOnlyStructure(s);
-        System.out.println("Remove " + s.getName());
 
         // remove all not connected to the first
         // get list of connected
@@ -155,7 +149,6 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
         int removedCount = toRemove.size();
 
         for (Structure r : toRemove) {
-            System.out.println("Remove " + r.getName());
             removeOnlyStructure(r);
         }
 

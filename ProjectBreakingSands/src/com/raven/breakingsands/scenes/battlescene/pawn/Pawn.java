@@ -16,13 +16,14 @@ import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
+import com.raven.engine2d.graphics2d.sprite.handler.CountdownActionFinishHandler;
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.worldobject.WorldObject;
+import org.lwjgl.system.CallbackI;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
@@ -507,7 +508,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                         .forEach(this::doAbilityAffect);
             }
         }
-        System.out.println("Floor: " + a);
     }
 
     public void addAbilityAffect(Ability a) {
@@ -610,7 +610,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                     } else {
                         getScene().getPawns().forEach(p -> p.doAbilityAffect(a));
                     }
-                } );
+                });
     }
 
     public int getLevel() {
@@ -680,11 +680,44 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         setFlip(target.getParent().getMapY() > getParent().getMapY() ||
                 target.getParent().getMapX() > getParent().getMapX());
 
-        if (weapon.getWeaponType() == WeaponType.MELEE) {
-            runMeleeAnimation(target, directional, directionUp, onAttackDone);
-        } else if (weapon.getWeaponType() == WeaponType.RANGED) {
-            runRangedAnimation(target, directional, directionUp, onAttackDone);
+        switch (weapon.getWeaponType()) {
+            case MELEE:
+                runMeleeAnimation(target, directional, directionUp, onAttackDone);
+                break;
+            case RANGED:
+                runRangedAnimation(target, directional, directionUp, onAttackDone);
+                break;
+            case AREA:
+                System.out.println("area");
+                runAreaAnimation(onAttackDone);
+                break;
         }
+    }
+
+    private void runAreaAnimation(ActionFinishHandler onAttackDone) {
+
+        getAnimationState().setAction("ranged start");
+
+        getAnimationState().addActionFinishHandler(() -> {
+            getAnimationState().setAction("ranged end");
+
+            List<Terrain> targets = getParent().selectRange(weapon.getStyle(), weapon.getRangeMin(), weapon.getRangeMax(), false, weapon.getPassesPawn()).stream()
+                    .filter(t -> t.getPawn() != null)
+                    .collect(Collectors.toList());
+
+            CountdownActionFinishHandler mHandler = new CountdownActionFinishHandler(onAttackDone, 1 + targets.size());
+
+            for (Terrain target : targets) {
+                attack(target.getPawn(), weapon.getDamage(), weapon.getPiercing() + getBonusPiercing(), weapon.getShots(), mHandler);
+            }
+
+            if (!weapon.isSelfDestruct()) {
+                getAnimationState().addActionFinishHandler(mHandler);
+                getAnimationState().addActionFinishHandler(() -> getAnimationState().setActionIdle(false));
+            } else {
+                getAnimationState().addActionFinishHandler(() -> this.die(mHandler));
+            }
+        });
     }
 
     private void runMeleeAnimation(Pawn target, boolean directional, boolean directionUp, ActionFinishHandler onAttackDone) {
@@ -697,7 +730,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         else
             getAnimationState().setAction("melee start");
 
-        getAnimationState().addActionFinishHandler(x -> {
+        getAnimationState().addActionFinishHandler(() -> {
 
             if (directional)
                 if (directionUp)
@@ -711,31 +744,14 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             if (effect != null) {
                 effect.setVisibility(true);
                 target.addChild(effect);
-                effect.getAnimationState().addActionFinishHandler(an -> target.removeChild(effect));
+                effect.getAnimationState().addActionFinishHandler(() -> target.removeChild(effect));
             }
 
-            AtomicReference<Boolean> a = new AtomicReference<>(false);
-            AtomicReference<Boolean> b = new AtomicReference<>(false);
+            ActionFinishHandler mHandler = new CountdownActionFinishHandler(onAttackDone, 2);
 
-            ActionFinishHandler handlerA = animationState -> {
-                a.set(true);
-
-                if (b.get()) {
-                    onAttackDone.onActionFinish(animationState);
-                }
-            };
-
-            ActionFinishHandler handlerB = animationState -> {
-                b.set(true);
-
-                if (a.get()) {
-                    onAttackDone.onActionFinish(animationState);
-                }
-            };
-
-            attack(target, weapon.getDamage(), weapon.getPiercing() + getBonusPiercing(), weapon.getShots(), handlerB);
-            getAnimationState().addActionFinishHandler(handlerA);
-            getAnimationState().addActionFinishHandler(cat -> cat.setActionIdle(false));
+            attack(target, weapon.getDamage(), weapon.getPiercing() + getBonusPiercing(), weapon.getShots(), mHandler);
+            getAnimationState().addActionFinishHandler(mHandler);
+            getAnimationState().addActionFinishHandler(() -> getAnimationState().setActionIdle(false));
 
         });
 
@@ -768,7 +784,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         reduceAttacks();
 
         int dealtDamage = target.getDamage(damage, percing, shots);
-        System.out.println(damage + " " + dealtDamage);
 
         setUnmoved(false);
 
@@ -831,7 +846,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         if (this.remainingHitPoints <= 0) {
             this.die(onAttackDone);
         } else if (onAttackDone != null) {
-            onAttackDone.onActionFinish(getAnimationState());
+            onAttackDone.onActionFinish();
         }
 
         this.updateDetailText();
@@ -858,6 +873,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         this.xp += gain;
 
         showMessage("+" + Integer.toString(gain) + "xp");
+
+        updateDetailText();
     }
 
     public void hack(Hack hack) {
@@ -901,19 +918,23 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public void die(ActionFinishHandler onAttackDone) {
+        System.out.println("die");
+
         if (getAnimationState().hasAction("die")) {
             getAnimationState().setAction("die");
-            getAnimationState().addActionFinishHandler(a -> onDie());
+            getAnimationState().addActionFinishHandler(this::onDie);
             if (onAttackDone != null)
                 getAnimationState().addActionFinishHandler(onAttackDone);
         } else {
             onDie();
             if (onAttackDone != null)
-                onAttackDone.onActionFinish(getAnimationState());
+                onAttackDone.onActionFinish();
         }
     }
 
     private void onDie() {
+        System.out.println("onDie");
+        remainingHitPoints = 0;
         getParent().removePawn();
         getScene().removePawn(this);
     }
@@ -1075,5 +1096,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     public void heal(int restore) {
         this.remainingHitPoints = Math.min(this.remainingHitPoints + restore, this.maxHitPoints);
+
+        showMessage("+" + Integer.toString(restore) + "hp");
+
+        updateDetailText();
     }
 }

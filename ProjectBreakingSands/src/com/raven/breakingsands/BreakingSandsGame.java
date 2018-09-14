@@ -66,7 +66,9 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
         if (scene instanceof BattleScene) {
             gdtToSave.add(new GameDataTable("current_save", ((BattleScene) scene)));
 
-            return saveDataTables(gdtToSave);
+            Thread t = new Thread(() -> saveDataTables(gdtToSave));
+            t.start();
+            return true;
         } else {
             System.out.println("Saving Failed");
             return false;

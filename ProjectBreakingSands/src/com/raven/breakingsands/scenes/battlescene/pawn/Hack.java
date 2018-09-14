@@ -33,7 +33,6 @@ public class Hack implements GameDatable {
 
     public Hack(BattleScene scene, Pawn pawn, GameData data) {
         if (data.has("hacker") && data.getInteger("hacker") != -1) {
-            System.out.println(data.getInteger("hacker"));
             hacker = scene.getPawns().get(data.getInteger("hacker"));
         } else {
             hacker = scene.getPawns().get(0);

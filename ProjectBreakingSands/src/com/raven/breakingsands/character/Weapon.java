@@ -34,7 +34,7 @@ public class Weapon
         }
 
         @Override
-        public void onActionFinish(SpriteAnimationState animationState) {
+        public void onActionFinish() {
 
             if (shotCount.get() > 1) {
 
@@ -58,7 +58,7 @@ public class Weapon
                 else
                     getAnimationState().setAction("attack end");
 
-                getAnimationState().addActionFinishHandler(r -> {
+                getAnimationState().addActionFinishHandler(() -> {
                     getAnimationState().setActionIdle();
 //                    setVisibility(false);
                 });
@@ -79,7 +79,7 @@ public class Weapon
 
     private GameData gameData;
     private int damage, piercing = 0, rangeMax, rangeMin, shots;
-    private boolean directional, passesPawn;
+    private boolean directional, passesPawn, selfDestruct;
     private WeaponType weaponType;
     private RangeStyle style;
     private String name;
@@ -121,6 +121,9 @@ public class Weapon
                 case "ranged":
                     weaponType = WeaponType.RANGED;
                     break;
+                case "area":
+                    weaponType = WeaponType.AREA;
+                    break;
             }
         });
 
@@ -137,6 +140,7 @@ public class Weapon
             directional = gameData.getBoolean("directional");
         }
 
+        gameData.ifHas("self_destruct", gd -> selfDestruct = gd.asBoolean());
         gameData.ifHas("piercing", gd -> piercing = gd.asInteger());
 
         gameData.ifHas("shots", gd -> shots = gd.asInteger(), () -> shots = 1);
@@ -192,6 +196,10 @@ public class Weapon
 
     public int getShots() {
         return shots;
+    }
+
+    public boolean isSelfDestruct() {
+        return selfDestruct;
     }
 
     public RangeStyle getStyle() {

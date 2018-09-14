@@ -46,8 +46,6 @@ public class SpriteSheet extends ShaderTexture {
     }
 
     public void load(Scene scene) {
-        getEngine().getWindow().printErrors("pre load");
-
         if (!loaded) {
             buffer.flip();
 
@@ -68,8 +66,6 @@ public class SpriteSheet extends ShaderTexture {
             scene.addLoadedShaderTexture(this);
             loaded = true;
         }
-
-        getEngine().getWindow().printErrors("post load");
     }
 
     @Override

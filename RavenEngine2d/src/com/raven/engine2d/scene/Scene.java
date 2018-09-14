@@ -19,6 +19,8 @@ import com.raven.engine2d.worldobject.Parentable;
 
 import javax.sound.sampled.Clip;
 
+import static org.lwjgl.opengl.GL11.glFinish;
+
 public abstract class Scene<G extends Game<G>> implements Parentable<GameObject> {
     private Layer layerTerrain = new Layer(Layer.Destination.Terrain);
     private Layer layerDetails = new Layer(Layer.Destination.Details);
@@ -50,12 +52,9 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     final public void draw(GameWindow window) {
 
         // text
-        window.printErrors("pre t");
         if (toWrite.size() > 0) {
             TextShader textShader = window.getTextShader();
-            window.printErrors("rrr");
             textShader.useProgram();
-            window.printErrors("lll");
 
             toWrite.forEach(textWriter -> {
                 textWriter.write(textShader);
@@ -105,9 +104,8 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
             window.printErrors("Draw ToolTip Error: ");
         }
 
-        window.printErrors("pre b");
+
         mainShader.blitToScreen();
-        window.printErrors("post b");
     }
 
     final public void update(float deltaTime) {

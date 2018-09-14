@@ -5,6 +5,7 @@ import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
 import com.raven.engine2d.graphics2d.sprite.handler.FrameFinishHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -13,11 +14,12 @@ public class SpriteAnimationState {
     private SpriteAnimationAction activeAction;
     private SpriteAnimationFrame activeFrame;
 
-    private List<FrameFinishHandler> frameFinishHandlers = new CopyOnWriteArrayList<>();
-    private List<ActionFinishHandler> actionFinishHandlers = new CopyOnWriteArrayList<>();
+    private List<ActionFinishHandler> actionFinishHandlers = new ArrayList<>();
+    private List<ActionFinishHandler> actionFinishHandlersOverflow = new ArrayList<>();
 
     private float time = 0;
     private boolean flip = false;
+    private boolean processing;
     private String idleAction = "idle";
 
 
@@ -31,18 +33,19 @@ public class SpriteAnimationState {
         time += deltaTime * GameProperties.getAnimationSpeed();
 
         if (time > activeFrame.getTime()) {
-            for (FrameFinishHandler handler : frameFinishHandlers) {
-                handler.onFrameFinish(this);
-            }
-            frameFinishHandlers.clear();
-
             time -= activeFrame.getTime();
+            // TODO make get NExt Frame recursive
             activeFrame = activeAction.getNextFrame(activeFrame, time);
 
             if (activeFrame.getIndex() == 0) {
+                processing = true;
                 for (ActionFinishHandler handler : actionFinishHandlers) {
-                    handler.onActionFinish(this);
+                    handler.onActionFinish();
                 }
+                actionFinishHandlers.clear();
+                processing = false;
+                actionFinishHandlers.addAll(actionFinishHandlersOverflow);
+                actionFinishHandlersOverflow.clear();
             }
         }
     }
@@ -80,7 +83,6 @@ public class SpriteAnimationState {
     }
 
     public void setAction(String action, boolean reset) {
-        actionFinishHandlers.clear();
         if (reset || !activeAction.getName().equals(action)) {
             this.activeAction = animation.getAction(action);
             this.activeFrame = activeAction.getFrames().get(0);
@@ -115,12 +117,11 @@ public class SpriteAnimationState {
         return flip;
     }
 
-    public void addFrameFinishHandler(FrameFinishHandler handler) {
-        frameFinishHandlers.add(handler);
-    }
-
     public void addActionFinishHandler(ActionFinishHandler handler) {
         if (handler != null)
-            actionFinishHandlers.add(handler);
+            if (processing)
+                actionFinishHandlersOverflow.add(handler);
+            else
+                actionFinishHandlers.add(handler);
     }
 }
