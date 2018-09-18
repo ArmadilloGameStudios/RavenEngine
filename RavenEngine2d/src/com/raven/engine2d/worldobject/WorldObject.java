@@ -54,7 +54,7 @@ public abstract class WorldObject<
 
             if (data.has("animation")) {
                 animationName = data.getString("animation");
-                spriteAnimationState = new SpriteAnimationState(scene.getEngine().getAnimation(animationName));
+                spriteAnimationState = new SpriteAnimationState(this, scene.getEngine().getAnimation(animationName));
 
                 data.ifHas("animation_idle", i -> spriteAnimationState.setIdleAction(i.asString()));
             }
@@ -292,6 +292,11 @@ public abstract class WorldObject<
         scene.addGameObject(this);
 
         children.forEach(c -> c.setScene(scene));
+    }
+
+    @Override
+    public final void needsRedraw() {
+        getScene().getLayer(getDestination()).setNeedRedraw(true);
     }
 
     protected void setSpriteSheet(String spriteSheetName) {

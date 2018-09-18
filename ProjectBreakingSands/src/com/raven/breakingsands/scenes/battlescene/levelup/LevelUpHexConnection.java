@@ -20,7 +20,7 @@ public class LevelUpHexConnection extends UIImage<BattleScene> {
 
         if (buttonA.getX() == buttonB.getX()) {
 
-            setSpriteAnimation(new SpriteAnimationState(scene.getEngine().getAnimation("connection")));
+            setSpriteAnimation(new SpriteAnimationState(this, scene.getEngine().getAnimation("connection")));
 
             if (buttonA.getY() > buttonB.getY()) {
                 setY(buttonB.getY() + buttonB.getHeight() * 2f);
@@ -34,7 +34,7 @@ public class LevelUpHexConnection extends UIImage<BattleScene> {
 
             if (buttonA.getY() > buttonB.getY()) {
 
-                SpriteAnimationState state = new SpriteAnimationState(scene.getEngine().getAnimation("connectiondag"));
+                SpriteAnimationState state = new SpriteAnimationState(this, scene.getEngine().getAnimation("connectiondag"));
                 state.setFlip(true);
                 setSpriteAnimation(state);
                 setY(buttonA.getY() - 6);
@@ -42,7 +42,7 @@ public class LevelUpHexConnection extends UIImage<BattleScene> {
 
             } else {
 
-                SpriteAnimationState state = new SpriteAnimationState(scene.getEngine().getAnimation("connectiondag"));
+                SpriteAnimationState state = new SpriteAnimationState(this, scene.getEngine().getAnimation("connectiondag"));
                 setSpriteAnimation(state);
                 setY(buttonA.getY() + buttonA.getHeight() * 2f - 4);
                 setX(buttonA.getX() - state.getWidth() - 2);
@@ -52,12 +52,12 @@ public class LevelUpHexConnection extends UIImage<BattleScene> {
 
             if (buttonA.getY() > buttonB.getY()) {
 
-                setSpriteAnimation(new SpriteAnimationState(scene.getEngine().getAnimation("connectiondag")));
+                setSpriteAnimation(new SpriteAnimationState(this, scene.getEngine().getAnimation("connectiondag")));
                 setY(buttonA.getY() - 6);
                 setX(buttonA.getX() + buttonA.getWidth() * 2f - 4);
             } else {
 
-                SpriteAnimationState state = new SpriteAnimationState(scene.getEngine().getAnimation("connectiondag"));
+                SpriteAnimationState state = new SpriteAnimationState(this, scene.getEngine().getAnimation("connectiondag"));
                 state.setFlip(true);
                 setSpriteAnimation(state);
                 setY(buttonA.getY() + buttonA.getHeight() * 2f - 4);

@@ -60,7 +60,7 @@ public class UIDetailText
         backgroundImg = new UIImage<>(getScene(),
                 220, 54,
                 bcgImgRightSrc);
-        SpriteAnimationState state = new SpriteAnimationState(getScene().getEngine().getAnimation("details"));
+        SpriteAnimationState state = new SpriteAnimationState(backgroundImg, getScene().getEngine().getAnimation("details"));
         state.setFlip(false);
         backgroundImg.setSpriteAnimation(state);
         addChild(backgroundImg);
@@ -69,7 +69,7 @@ public class UIDetailText
                 32, 32,
                 pawn.getSpriteSheetName());
         pawnImg.setZ(.02f);
-        state = new SpriteAnimationState(getScene().getEngine().getAnimation(pawn.getAnimationName()));
+        state = new SpriteAnimationState(pawnImg, getScene().getEngine().getAnimation(pawn.getAnimationName()));
         state.setFlip(true);
         pawnImg.setSpriteAnimation(state);
         pawnImg.setX(182);
@@ -287,7 +287,7 @@ public class UIDetailText
         backgroundImg = new UIImage<>(getScene(),
                 220, 54,
                 bcgImgRightSrc);
-        SpriteAnimationState state = new SpriteAnimationState(getScene().getEngine().getAnimation("details"));
+        SpriteAnimationState state = new SpriteAnimationState(backgroundImg, getScene().getEngine().getAnimation("details"));
         state.setFlip(true);
         backgroundImg.setSpriteAnimation(state);
         addChild(backgroundImg);
@@ -296,7 +296,7 @@ public class UIDetailText
                 32, 32,
                 pawn.getSpriteSheetName());
         pawnImg.setZ(.02f);
-        state = new SpriteAnimationState(getScene().getEngine().getAnimation(pawn.getAnimationName()));
+        state = new SpriteAnimationState(pawnImg, getScene().getEngine().getAnimation(pawn.getAnimationName()));
         state.setFlip(false);
         pawnImg.setSpriteAnimation(state);
         pawnImg.setX(182 + offset + 2);
@@ -644,7 +644,7 @@ public class UIDetailText
         pawn.getAbilities().stream().filter(a -> !a.action).forEach(a -> {
             if (abilityImgList.keySet().stream().noneMatch(ai -> ai == a)) {
                 UIImage<BattleScene> abilityImg = new UIImage<>(getScene(), 10, 9, a.icon);
-                abilityImg.setSpriteAnimation(new SpriteAnimationState(getScene().getEngine().getAnimation("hexbutton")));
+                abilityImg.setSpriteAnimation(new SpriteAnimationState(this, getScene().getEngine().getAnimation("hexbutton")));
                 addChild(abilityImg);
 
                 abilityImg.setToolTip(a.name, a.description);

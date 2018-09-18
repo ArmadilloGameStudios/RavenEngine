@@ -71,8 +71,8 @@ public class CompilationShader extends  Shader {
         glDepthFunc(GL_GREATER);
 
         glEnable(GL_BLEND);
-        glBlendFuncSeparatei(0, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-        glBlendEquationSeparatei(0, GL_FUNC_ADD, GL_MAX);
+        glBlendFuncSeparatei(0, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA);
+        glBlendEquationSeparatei(0, GL_FUNC_ADD, GL_FUNC_ADD);
 
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
@@ -142,23 +142,6 @@ public class CompilationShader extends  Shader {
 
     public void blitToScreen() {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, compilationTarget.getFramebufferHandle());
-        glReadBuffer(GL_COLOR_ATTACHMENT0);
-
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        glDrawBuffer(GL_BACK);
-
-        glBlitFramebuffer(
-                0, 0,
-                GameProperties.getScreenWidth() / GameProperties.getScaling(),
-                GameProperties.getScreenHeight() / GameProperties.getScaling(),
-                0, 0,
-                GameProperties.getDisplayWidth(),
-                GameProperties.getDisplayHeight(),
-                GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    }
-
-    public void blitToScreen(RenderTarget target) {
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, target.getFramebufferHandle());
         glReadBuffer(GL_COLOR_ATTACHMENT0);
 
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

@@ -13,6 +13,8 @@ public class Layer {
         Terrain, UI, Details, Effects, ToolTip
     }
 
+    private boolean needRedraw = true;
+
     private Destination destination;
     private List<GameObject> gameObjectList = new CopyOnWriteArrayList<>();
 
@@ -30,6 +32,14 @@ public class Layer {
     public void addChild(GameObject obj) {
         if (!gameObjectList.contains(obj))
             gameObjectList.add(obj);
+    }
+
+    public void setNeedRedraw(boolean needRedraw) {
+        this.needRedraw = needRedraw;
+    }
+
+    public boolean isNeedRedraw() {
+        return needRedraw;
     }
 
     public void removeChild(GameObject obj) {

@@ -4,6 +4,7 @@ import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.sprite.handler.ActionFinishHandler;
 import com.raven.engine2d.graphics2d.sprite.handler.FrameFinishHandler;
+import com.raven.engine2d.worldobject.GameObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +21,11 @@ public class SpriteAnimationState {
     private float time = 0;
     private boolean flip = false;
     private boolean processing;
+    private GameObject gameObject;
     private String idleAction = "idle";
 
-
-    public SpriteAnimationState(SpriteAnimation animation) {
+    public SpriteAnimationState(GameObject gameObject, SpriteAnimation animation) {
+        this.gameObject = gameObject;
         this.animation = animation;
         this.activeAction = animation.getAction(idleAction);
         this.activeFrame = activeAction.getFrames().get(0);
@@ -33,6 +35,9 @@ public class SpriteAnimationState {
         time += deltaTime * GameProperties.getAnimationSpeed();
 
         if (time > activeFrame.getTime()) {
+            if (activeAction.getFrames().size() > 1 || actionFinishHandlers.size() > 0)
+            gameObject.needsRedraw();
+
             time -= activeFrame.getTime();
             // TODO make get NExt Frame recursive
             activeFrame = activeAction.getNextFrame(activeFrame, time);
@@ -87,6 +92,7 @@ public class SpriteAnimationState {
             this.activeAction = animation.getAction(action);
             this.activeFrame = activeAction.getFrames().get(0);
             this.time = 0;
+            gameObject.needsRedraw();
         }
     }
 

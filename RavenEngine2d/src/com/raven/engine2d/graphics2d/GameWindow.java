@@ -52,7 +52,8 @@ public class GameWindow {
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
 
-        long monitor = glfwGetPrimaryMonitor();
+//        long monitor = glfwGetPrimaryMonitor();
+        long monitor = glfwGetMonitors().get(0);
         GLFWVidMode vidmode = glfwGetVideoMode(monitor);
 
         GameProperties.setDisplayWidth(vidmode.width());
@@ -72,6 +73,7 @@ public class GameWindow {
         }
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
 
         // Create the window
         window = glfwCreateWindow(
@@ -100,8 +102,8 @@ public class GameWindow {
         glfwMakeContextCurrent(window);
 
         // Enable v-sync
-        glfwSwapInterval(GL_TRUE);
-//        glfwSwapInterval(GL_FALSE);
+//        glfwSwapInterval(GL_TRUE);
+        glfwSwapInterval(GL_FALSE);
 
         // Make the window visible
         glfwShowWindow(window);
@@ -115,6 +117,7 @@ public class GameWindow {
         glfwSetScrollCallback(window, (window, xoffset, yoffset) -> engine.inputScroll(xoffset, yoffset));
 
         GLCapabilities cat = GL.createCapabilities();
+
 
         layerShader = new LayerShader(engine, this);
         compilationShader = new CompilationShader(engine, this);
@@ -178,36 +181,38 @@ public class GameWindow {
     }
 
     public void printErrors(String tag) {
-        int err;
-        while ((err = glGetError()) != GL_NO_ERROR) {
-            switch (err) {
-                case GL_INVALID_ENUM:
-                    System.out.println(tag + " GL_INVALID_ENUM 0x" + Integer.toHexString(err));
-                    break;
-                case GL_INVALID_VALUE:
-                    System.out.println(tag + " GL_INVALID_VALUE 0x" + Integer.toHexString(err));
-                    break;
-                case GL_INVALID_OPERATION:
-                    System.out.println(tag + " GL_INVALID_OPERATION 0x" + Integer.toHexString(err));
-                    break;
-                case GL_STACK_OVERFLOW:
-                    System.out.println(tag + " GL_STACK_OVERFLOW 0x" + Integer.toHexString(err));
-                    break;
-                case GL_OUT_OF_MEMORY:
-                    System.out.println(tag + " GL_OUT_OF_MEMORY 0x" + Integer.toHexString(err));
-                    break;
-                case GL_INVALID_FRAMEBUFFER_OPERATION:
-                    System.out.println(tag + " GL_INVALID_FRAMEBUFFER_OPERATION 0x" + Integer.toHexString(err));
-                    break;
-                case GL_CONTEXT_LOST:
-                    System.out.println(tag + " GL_CONTEXT_LOST 0x" + Integer.toHexString(err));
-                    break;
-                case GL_TABLE_TOO_LARGE:
-                    System.out.println(tag + " GL_TABLE_TOO_LARGE 0x" + Integer.toHexString(err));
-                    break;
-                default:
-                    System.out.println(tag + " 0x" + Integer.toHexString(err));
-                    break;
+        if (false) {
+            int err;
+            while ((err = glGetError()) != GL_NO_ERROR) {
+                switch (err) {
+                    case GL_INVALID_ENUM:
+                        System.out.println(tag + " GL_INVALID_ENUM 0x" + Integer.toHexString(err));
+                        break;
+                    case GL_INVALID_VALUE:
+                        System.out.println(tag + " GL_INVALID_VALUE 0x" + Integer.toHexString(err));
+                        break;
+                    case GL_INVALID_OPERATION:
+                        System.out.println(tag + " GL_INVALID_OPERATION 0x" + Integer.toHexString(err));
+                        break;
+                    case GL_STACK_OVERFLOW:
+                        System.out.println(tag + " GL_STACK_OVERFLOW 0x" + Integer.toHexString(err));
+                        break;
+                    case GL_OUT_OF_MEMORY:
+                        System.out.println(tag + " GL_OUT_OF_MEMORY 0x" + Integer.toHexString(err));
+                        break;
+                    case GL_INVALID_FRAMEBUFFER_OPERATION:
+                        System.out.println(tag + " GL_INVALID_FRAMEBUFFER_OPERATION 0x" + Integer.toHexString(err));
+                        break;
+                    case GL_CONTEXT_LOST:
+                        System.out.println(tag + " GL_CONTEXT_LOST 0x" + Integer.toHexString(err));
+                        break;
+                    case GL_TABLE_TOO_LARGE:
+                        System.out.println(tag + " GL_TABLE_TOO_LARGE 0x" + Integer.toHexString(err));
+                        break;
+                    default:
+                        System.out.println(tag + " 0x" + Integer.toHexString(err));
+                        break;
+                }
             }
         }
     }

@@ -130,22 +130,22 @@ public class GameEngine<G extends Game<G>> {
 
             input(deltaTime);
 
-            draw();
-
-            window.printErrors("Draw Error: ");
-
             game.update(deltaTime);
 
             window.printErrors("Update Error: ");
+
+            draw();
+
+            window.printErrors("Draw Error: ");
 
 //            if (frame % 60 == 0) {
 //                System.out.println("FPS: " + 1000f / (framesdt / 60f) + " MPF: " + framesdt / 60f);
 //                framesdt = 0;
 //            }
 
-            glFinish();
-
             glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
+
+            glFinish();
 
             window.printErrors("Swap Error: ");
 
@@ -153,9 +153,9 @@ public class GameEngine<G extends Game<G>> {
             deltaTime = (currentTime - start) / 1000000.0f;
             systemTime = currentTime / 1000000L;
 
-//            if (deltaTime > 20) {
-//                System.out.println("Lag: " + deltaTime);
-//            }
+            if (deltaTime > 20) {
+                System.out.println("Lag: " + deltaTime);
+            }
 
 //            framesdt += deltaTime;
 //            frame++;

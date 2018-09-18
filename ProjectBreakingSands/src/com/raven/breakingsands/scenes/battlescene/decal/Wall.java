@@ -50,7 +50,7 @@ public class Wall extends WorldObject<BattleScene, Terrain, WorldObject> impleme
 
     @Override
     public Layer.Destination getDestination() {
-        return Layer.Destination.Terrain;
+        return Layer.Destination.Details;
     }
 
     @Override

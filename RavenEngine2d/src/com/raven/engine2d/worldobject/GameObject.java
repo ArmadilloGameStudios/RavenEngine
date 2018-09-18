@@ -93,6 +93,8 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable<? e
         for (MouseHandler c : clickHandlers) c.handleMouseClick();
     }
 
+    public abstract void needsRedraw();
+
     public abstract void draw(LayerShader shader, RenderTarget target);
 
     public boolean isVisible() {
@@ -103,6 +105,7 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable<? e
     }
 
     public void setVisibility(boolean visibility) {
+        needsRedraw();
         this.visibility = visibility;
     }
 

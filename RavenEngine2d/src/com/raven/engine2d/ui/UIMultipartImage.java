@@ -19,13 +19,13 @@ public class UIMultipartImage<S extends Scene> extends UIImage<S> {
     public UIMultipartImage(S scene, String src, String anim) {
         super(scene, 0, 0, src);
 
-        spriteAnimationTop = new SpriteAnimationState(scene.getEngine().getAnimation(anim));
+        spriteAnimationTop = new SpriteAnimationState(this, scene.getEngine().getAnimation(anim));
         spriteAnimationTop.setIdleAction("top");
         spriteAnimationTop.setActionIdle();
-        spriteAnimationMid = new SpriteAnimationState(scene.getEngine().getAnimation(anim));
+        spriteAnimationMid = new SpriteAnimationState(this, scene.getEngine().getAnimation(anim));
         spriteAnimationMid.setIdleAction("mid");
         spriteAnimationMid.setActionIdle();
-        spriteAnimationBottom = new SpriteAnimationState(scene.getEngine().getAnimation(anim));
+        spriteAnimationBottom = new SpriteAnimationState(this, scene.getEngine().getAnimation(anim));
         spriteAnimationBottom.setIdleAction("bottom");
         spriteAnimationBottom.setActionIdle();
 

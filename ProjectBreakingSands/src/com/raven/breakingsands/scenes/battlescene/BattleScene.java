@@ -21,6 +21,7 @@ import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
+import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.ui.UIToolTip;
 import com.raven.engine2d.util.math.Vector2f;
@@ -396,18 +397,30 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
         if (isDownKey) {
             worldOffset.y += smoothing * deltaTime;
+            getLayer(Layer.Destination.Terrain).setNeedRedraw(true);
+            getLayer(Layer.Destination.Details).setNeedRedraw(true);
+            getLayer(Layer.Destination.Effects).setNeedRedraw(true);
         }
 
         if (isUpKey) {
             worldOffset.y -= smoothing * deltaTime;
+            getLayer(Layer.Destination.Terrain).setNeedRedraw(true);
+            getLayer(Layer.Destination.Details).setNeedRedraw(true);
+            getLayer(Layer.Destination.Effects).setNeedRedraw(true);
         }
 
         if (isRightKey) {
             worldOffset.x -= smoothing * deltaTime;
+            getLayer(Layer.Destination.Terrain).setNeedRedraw(true);
+            getLayer(Layer.Destination.Details).setNeedRedraw(true);
+            getLayer(Layer.Destination.Effects).setNeedRedraw(true);
         }
 
         if (isLeftKey) {
             worldOffset.x += smoothing * deltaTime;
+            getLayer(Layer.Destination.Terrain).setNeedRedraw(true);
+            getLayer(Layer.Destination.Details).setNeedRedraw(true);
+            getLayer(Layer.Destination.Effects).setNeedRedraw(true);
         }
     }
 

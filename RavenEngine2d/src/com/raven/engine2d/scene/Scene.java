@@ -30,7 +30,7 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     private Layer layerUI = new Layer(Layer.Destination.UI);
     private Layer layerToolTip = new Layer(Layer.Destination.ToolTip);
 
-    private Vector3f backgroundColor = new Vector3f(1,0,0);
+    private Vector3f backgroundColor = new Vector3f(0,0,0);
     private Vector2f worldOffset = new Vector2f();
 
     private UIToolTip toolTip;
@@ -77,7 +77,7 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
 
         // ui
         drawLayer(layerUI, layerShader);
-        drawLayer(layerToolTip, layerShader);
+//        drawLayer(layerToolTip, layerShader);
 
         // compile
         CompilationShader compilationShader = window.getCompilationShader();
@@ -98,12 +98,18 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     }
 
     private void drawLayer(Layer layer, LayerShader layerShader) {
-        layerShader.clear(layer.getRenderTarget(), backgroundColor);
-        for (GameObject o : layer.getChildren()) {
-            if (o.isVisible())
-                o.draw(layerShader, layer.getRenderTarget());
+        if (layer.isNeedRedraw()) {
+            layerShader.clear(layer.getRenderTarget(), backgroundColor);
+            for (GameObject o : layer.getChildren()) {
+                if (o.isVisible())
+                    o.draw(layerShader, layer.getRenderTarget());
 
-            getEngine().getWindow().printErrors("Draw " + layer.getDestination() + " Error: ");
+                getEngine().getWindow().printErrors("Draw " + layer.getDestination() + " Error: ");
+            }
+
+            layer.setNeedRedraw(false);
+
+//            System.out.println(layer.getDestination());
         }
     }
 

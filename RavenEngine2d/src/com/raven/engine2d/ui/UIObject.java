@@ -68,8 +68,17 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
         scene.removeGameObject(obj);
     }
 
+    @Override
+    public final void needsRedraw() {
+        getScene().getLayer(getDestination()).setNeedRedraw(true);
+    }
+
     public final void setDestination(Layer.Destination destination) {
+        getScene().getLayer(this.destination).removeChild(this);
+
         this.destination = destination;
+
+        getScene().getLayer(this.destination).addChild(this);
     }
 
     @Override
