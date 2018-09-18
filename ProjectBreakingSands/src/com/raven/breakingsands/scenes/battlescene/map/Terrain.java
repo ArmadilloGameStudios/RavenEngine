@@ -448,6 +448,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     }
 
     public void setState(State state) {
+
         this.state = state;
 
         if (isMouseHovering() && state != State.UNSELECTABLE) {

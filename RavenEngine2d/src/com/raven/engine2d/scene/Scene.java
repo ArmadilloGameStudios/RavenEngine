@@ -77,7 +77,7 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
 
         // ui
         drawLayer(layerUI, layerShader);
-//        drawLayer(layerToolTip, layerShader);
+        drawLayer(layerToolTip, layerShader);
 
         // compile
         CompilationShader compilationShader = window.getCompilationShader();

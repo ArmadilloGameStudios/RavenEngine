@@ -102,7 +102,6 @@ public class GameWindow {
         glfwMakeContextCurrent(window);
 
         // Enable v-sync
-//        glfwSwapInterval(GL_TRUE);
         glfwSwapInterval(GL_FALSE);
 
         // Make the window visible

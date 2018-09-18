@@ -62,6 +62,8 @@ public abstract class UIText<S extends Scene>
         textWriter.setText(text, font);
         textWriter.setHandler(handler);
 
+        needsRedraw();
+
         getScene().addTextToWrite(textWriter);
     }
 

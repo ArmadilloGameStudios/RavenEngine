@@ -38,6 +38,8 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_DEFAULT;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.opengl.GL11.GL_FALSE;
 
 public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable {
     public static Highlight
@@ -100,7 +102,6 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     public BattleScene(BreakingSandsGame game, GameData savedData) {
         super(game);
-
         loadGameData = savedData;
     }
 

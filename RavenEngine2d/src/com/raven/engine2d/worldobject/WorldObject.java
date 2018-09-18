@@ -192,6 +192,8 @@ public abstract class WorldObject<
     public void setHighlight(Highlight h) {
         highlight = h;
 
+        needsRedraw();
+
 //        for (C child : children) {
 //            child.setHighlight(h);
 //        }
