@@ -25,7 +25,7 @@ void main() {
     vec3 color = mix(sprite.rgb, highlight.xyz, highlight.a * part);
 
     frag_color = vec4(color, sprite.a);
-//    frag_color = vec4(z, z, z, 1);
+
     if (id != vec3(0))
         frag_id = id;
     else

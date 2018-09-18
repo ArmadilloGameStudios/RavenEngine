@@ -1,19 +1,16 @@
 package com.raven.engine2d.worldobject;
 
-import com.raven.engine2d.Game;
-import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.graphics2d.DrawStyle;
-import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.shader.LayerShader;
+import com.raven.engine2d.graphics2d.shader.RenderTarget;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
-import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.FloatControl;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -212,9 +209,10 @@ public abstract class WorldObject<
         return spriteAnimationState;
     }
 
-    public void draw(MainShader shader) {
+    @Override
+    public void draw(LayerShader shader, RenderTarget target) {
         if (spriteSheet != null)
-            shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getWorldZ(), getHighlight(), DrawStyle.ISOMETRIC);
+            shader.draw(spriteSheet, target, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getWorldZ(), getHighlight(), DrawStyle.ISOMETRIC);
     }
 
     public void setParent(P parent) {

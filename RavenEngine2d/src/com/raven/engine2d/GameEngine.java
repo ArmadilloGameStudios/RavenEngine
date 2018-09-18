@@ -81,6 +81,7 @@ public class GameEngine<G extends Game<G>> {
     private int frame = 0;
     private float framesdt = 0;
 
+
     public void run() {
         System.out.println("Started Run");
 
@@ -184,7 +185,7 @@ public class GameEngine<G extends Game<G>> {
     private void input(float delta) {
         glfwPollEvents();
 
-        int id = window.getMainShader().getWorldObjectID();
+        int id = window.getCompilationShader().getWorldObjectID();
 
         GameObject hover = null;
         if (id != 0) {

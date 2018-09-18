@@ -1,6 +1,7 @@
 package com.raven.engine2d.worldobject;
 
-import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.shader.LayerShader;
+import com.raven.engine2d.graphics2d.shader.RenderTarget;
 import com.raven.engine2d.scene.Layer;
 
 import java.util.ArrayList;
@@ -92,7 +93,7 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable<? e
         for (MouseHandler c : clickHandlers) c.handleMouseClick();
     }
 
-    public abstract void draw(MainShader shader);
+    public abstract void draw(LayerShader shader, RenderTarget target);
 
     public boolean isVisible() {
         if (getParent() instanceof GameObject) {

@@ -1,13 +1,12 @@
 package com.raven.engine2d.ui;
 
 import com.raven.engine2d.graphics2d.DrawStyle;
-import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.shader.LayerShader;
+import com.raven.engine2d.graphics2d.shader.RenderTarget;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
-import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
-import com.raven.engine2d.worldobject.Childable;
 import com.raven.engine2d.worldobject.Parentable;
 
 public class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObject>> {
@@ -82,8 +81,8 @@ public class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObject>> 
     }
 
     @Override
-    public void draw(MainShader shader) {
-        shader.draw(texture, spriteAnimation, getWorldPosition(), null, getID(), getWorldZ(), null, DrawStyle.UI);
+    public void draw(LayerShader shader, RenderTarget target) {
+        shader.draw(texture, target, spriteAnimation, getWorldPosition(), null, getID(), getWorldZ(), null, DrawStyle.UI);
     }
 
     @Override

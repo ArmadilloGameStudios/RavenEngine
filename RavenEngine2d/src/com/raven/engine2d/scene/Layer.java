@@ -3,8 +3,8 @@ package com.raven.engine2d.scene;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.raven.engine2d.GameEngine;
-import com.raven.engine2d.graphics2d.GameWindow;
+import com.raven.engine2d.graphics2d.shader.LayerShader;
+import com.raven.engine2d.graphics2d.shader.RenderTarget;
 import com.raven.engine2d.worldobject.GameObject;
 
 public class Layer {
@@ -16,8 +16,11 @@ public class Layer {
     private Destination destination;
     private List<GameObject> gameObjectList = new CopyOnWriteArrayList<>();
 
+    private RenderTarget renderTarget;
+
     public Layer(Destination destination) {
         this.destination = destination;
+        renderTarget = new RenderTarget(LayerShader.COLOR, LayerShader.ID, LayerShader.DEPTH);
     }
 
     public List<GameObject> getChildren() {
@@ -35,5 +38,9 @@ public class Layer {
 
     public Destination getDestination() {
         return destination;
+    }
+
+    public RenderTarget getRenderTarget() {
+        return renderTarget;
     }
 }

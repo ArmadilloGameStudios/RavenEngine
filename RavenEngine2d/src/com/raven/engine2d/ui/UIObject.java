@@ -1,6 +1,7 @@
 package com.raven.engine2d.ui;
 
-import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.shader.LayerShader;
+import com.raven.engine2d.graphics2d.shader.RenderTarget;
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
@@ -111,7 +112,7 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
         return scene;
     }
 
-    public void draw(MainShader shader) {
+    public void draw(LayerShader shader, RenderTarget target) {
 
     }
 

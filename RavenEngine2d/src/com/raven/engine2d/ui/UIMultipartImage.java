@@ -1,12 +1,14 @@
 package com.raven.engine2d.ui;
 
 import com.raven.engine2d.graphics2d.DrawStyle;
-import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.shader.LayerShader;
+import com.raven.engine2d.graphics2d.shader.RenderTarget;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 
 public class UIMultipartImage<S extends Scene> extends UIImage<S> {
+
     private SpriteAnimationState spriteAnimationTop;
     private SpriteAnimationState spriteAnimationMid;
     private SpriteAnimationState spriteAnimationBottom;
@@ -38,19 +40,19 @@ public class UIMultipartImage<S extends Scene> extends UIImage<S> {
     }
 
     @Override
-    public void draw(MainShader shader) {
+    public void draw(LayerShader shader, RenderTarget target) {
         offset.y = getHeight();
         offset.y -= spriteAnimationTop.getHeight();
-        shader.draw(getTexture(), spriteAnimationTop, getWorldPosition(), offset, getID(), getWorldZ(), null, DrawStyle.UI);
+        shader.draw(getTexture(), target, spriteAnimationTop, getWorldPosition(), offset, getID(), getWorldZ(), null, DrawStyle.UI);
 
 
         for (int i = 0; i < rows; i++) {
             offset.y -= spriteAnimationMid.getHeight();
-            shader.draw(getTexture(), spriteAnimationMid, getWorldPosition(), offset, getID(), getWorldZ(), null, DrawStyle.UI);
+            shader.draw(getTexture(), target, spriteAnimationMid, getWorldPosition(), offset, getID(), getWorldZ(), null, DrawStyle.UI);
 
         }
         offset.y -= spriteAnimationBottom.getHeight();
-        shader.draw(getTexture(), spriteAnimationBottom, getWorldPosition(), offset, getID(), getWorldZ(), null, DrawStyle.UI);
+        shader.draw(getTexture(), target, spriteAnimationBottom, getWorldPosition(), offset, getID(), getWorldZ(), null, DrawStyle.UI);
     }
 
     @Override

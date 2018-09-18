@@ -1,30 +1,21 @@
 package com.raven.engine2d.graphics2d;
 
-import com.codedisaster.steamworks.SteamAPI;
-import com.codedisaster.steamworks.SteamException;
-import com.codedisaster.steamworks.SteamUtils;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
+import com.raven.engine2d.graphics2d.shader.CompilationShader;
+import com.raven.engine2d.graphics2d.shader.LayerShader;
 import com.raven.engine2d.graphics2d.shader.Shader;
-import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.shader.TextShader;
-import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.system.MemoryStack;
-import sun.java2d.HeadlessGraphicsEnvironment;
 
-import java.awt.*;
 import java.nio.IntBuffer;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitors;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.opengl.ARBImaging.GL_TABLE_TOO_LARGE;
 import static org.lwjgl.opengl.GL11.*;
@@ -40,7 +31,8 @@ public class GameWindow {
     // The window handle
     private long window;
 
-    private MainShader mainShader;
+    private LayerShader layerShader;
+    private CompilationShader compilationShader;
     private TextShader textShader;
 
     private GameEngine engine;
@@ -124,7 +116,8 @@ public class GameWindow {
 
         GLCapabilities cat = GL.createCapabilities();
 
-        mainShader = new MainShader(engine, this);
+        layerShader = new LayerShader(engine, this);
+        compilationShader = new CompilationShader(engine, this);
         textShader = new TextShader(engine, this);
 
         // Enable depth test
@@ -153,10 +146,14 @@ public class GameWindow {
         return window;
     }
 
-    public MainShader getMainShader() {
-//        mainShader.release();
-//        mainShader = new MainShader(engine, this);
-        return mainShader;
+    public LayerShader getLayerShader() {
+//        layerShader.release();
+//        layerShader = new LayerShader(engine, this);
+        return layerShader;
+    }
+
+    public CompilationShader getCompilationShader() {
+        return compilationShader;
     }
 
     public TextShader getTextShader() {
@@ -227,7 +224,10 @@ public class GameWindow {
         GameProperties.setScreenWidth(width);
         GameProperties.setScreenHeight(height);
 
-        mainShader.release();
-        mainShader = new MainShader(engine, this);
+        layerShader.release();
+        layerShader = new LayerShader(engine, this);
+
+        compilationShader.release();
+        compilationShader = new CompilationShader(engine, this);
     }
 }

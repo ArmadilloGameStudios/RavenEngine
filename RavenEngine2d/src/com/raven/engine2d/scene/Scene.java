@@ -7,9 +7,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.graphics2d.GameWindow;
-import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.shader.CompilationShader;
+import com.raven.engine2d.graphics2d.shader.LayerShader;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.shader.TextShader;
+import com.raven.engine2d.ui.UIObject;
 import com.raven.engine2d.ui.UITextWriter;
 import com.raven.engine2d.ui.UIToolTip;
 import com.raven.engine2d.util.math.Vector2f;
@@ -19,7 +21,7 @@ import com.raven.engine2d.worldobject.Parentable;
 
 import javax.sound.sampled.Clip;
 
-import static org.lwjgl.opengl.GL11.glFinish;
+import static org.lwjgl.opengl.GL11.*;
 
 public abstract class Scene<G extends Game<G>> implements Parentable<GameObject> {
     private Layer layerTerrain = new Layer(Layer.Destination.Terrain);
@@ -28,7 +30,7 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     private Layer layerUI = new Layer(Layer.Destination.UI);
     private Layer layerToolTip = new Layer(Layer.Destination.ToolTip);
 
-    private Vector3f backgroundColor = new Vector3f();
+    private Vector3f backgroundColor = new Vector3f(1,0,0);
     private Vector2f worldOffset = new Vector2f();
 
     private UIToolTip toolTip;
@@ -65,47 +67,44 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
         }
 
         // shader
-        MainShader mainShader = window.getMainShader();
-        mainShader.useProgram();
-
-        mainShader.clear(backgroundColor);
+        LayerShader layerShader = window.getLayerShader();
+        layerShader.useProgram();
 
         // drawImage
-        for (GameObject o : layerTerrain.getChildren()) {
-            if (o.isVisible())
-                o.draw(mainShader);
-            window.printErrors("Draw Terrain Error: ");
-        }
-
-        for (GameObject o : layerDetails.getChildren()) {
-            if (o.isVisible())
-                o.draw(mainShader);
-            window.printErrors("Draw Details Error: ");
-        }
-
-        for (GameObject o : layerEffects.getChildren()) {
-            if (o.isVisible())
-                o.draw(mainShader);
-            window.printErrors("Draw Effects Error: ");
-        }
+        drawLayer(layerTerrain, layerShader);
+        drawLayer(layerDetails, layerShader);
+        drawLayer(layerEffects, layerShader);
 
         // ui
-        mainShader.clearDepthBuffer();
+        drawLayer(layerUI, layerShader);
+        drawLayer(layerToolTip, layerShader);
 
-        for (GameObject o : layerUI.getChildren()) {
+        // compile
+        CompilationShader compilationShader = window.getCompilationShader();
+        compilationShader.useProgram();
+
+        compilationShader.clear(backgroundColor);
+        window.printErrors("Draw Clear Error: ");
+        compilationShader.compile(layerTerrain.getRenderTarget());
+        compilationShader.compile(layerDetails.getRenderTarget());
+        compilationShader.compile(layerEffects.getRenderTarget());
+        compilationShader.clearDepthBuffer();
+        compilationShader.compile(layerUI.getRenderTarget());
+        compilationShader.compile(layerToolTip.getRenderTarget());
+
+        window.printErrors("Draw Compile Error: ");
+        compilationShader.blitToScreen();
+        window.printErrors("Draw Blit Error: ");
+    }
+
+    private void drawLayer(Layer layer, LayerShader layerShader) {
+        layerShader.clear(layer.getRenderTarget(), backgroundColor);
+        for (GameObject o : layer.getChildren()) {
             if (o.isVisible())
-                o.draw(mainShader);
-            window.printErrors("Draw UI Error: ");
+                o.draw(layerShader, layer.getRenderTarget());
+
+            getEngine().getWindow().printErrors("Draw " + layer.getDestination() + " Error: ");
         }
-
-        for (GameObject o : layerToolTip.getChildren()) {
-            if (o.isVisible())
-                o.draw(mainShader);
-            window.printErrors("Draw ToolTip Error: ");
-        }
-
-
-        mainShader.blitToScreen();
     }
 
     final public void update(float deltaTime) {
@@ -209,7 +208,15 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
             obj.release();
         }
 
+        for (GameObject obj : layerEffects.getChildren()) {
+            obj.release();
+        }
+
         for (GameObject obj : layerUI.getChildren()) {
+            obj.release();
+        }
+
+        for (GameObject obj : layerToolTip.getChildren()) {
             obj.release();
         }
 
@@ -250,7 +257,7 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
 
         this.toolTip = toolTip;
 
-        this.layerUI.addChild(toolTip);
+        this.layerToolTip.addChild(toolTip);
         addGameObject(toolTip);
     }
 

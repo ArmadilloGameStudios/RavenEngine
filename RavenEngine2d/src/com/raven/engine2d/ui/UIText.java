@@ -1,7 +1,8 @@
 package com.raven.engine2d.ui;
 
 import com.raven.engine2d.graphics2d.DrawStyle;
-import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.shader.LayerShader;
+import com.raven.engine2d.graphics2d.shader.RenderTarget;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
@@ -64,8 +65,8 @@ public abstract class UIText<S extends Scene>
         getScene().addTextToWrite(textWriter);
     }
 
-    public void draw(MainShader shader) {
-        shader.draw(image, getSpriteAnimationState(), getWorldPosition(), null, getID(), getWorldZ(), null, DrawStyle.UI);
+    public void draw(LayerShader shader, RenderTarget target) {
+        shader.draw(image, target, getSpriteAnimationState(), getWorldPosition(), null, getID(), getWorldZ(), null, DrawStyle.UI);
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
-import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.ui.UIFont;
 import com.raven.engine2d.worldobject.WorldTextObject;
@@ -73,11 +72,11 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
 
     @Override
     public Layer.Destination getDestination() {
-        return Layer.Destination.UI;
+        return Layer.Destination.Terrain;
     }
 
     @Override
     public float getZ() {
-        return 1.9f;
+        return 10 + getParent().getZ();
     }
 }
