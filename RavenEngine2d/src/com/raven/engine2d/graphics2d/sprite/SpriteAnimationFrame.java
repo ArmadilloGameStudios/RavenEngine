@@ -5,7 +5,7 @@ import com.raven.engine2d.database.GameData;
 import java.sql.SQLSyntaxErrorException;
 
 public class SpriteAnimationFrame {
-    private int x, y, x_offset, y_offset, width, height, time, index;
+    private int x, y, x_offset, y_offset, width, height, time, index, flip_x_offset = 0;
 
     public SpriteAnimationFrame(GameData gdAction, GameData gdFrame, int index) {
         time = gdFrame.getInteger("time");
@@ -45,12 +45,16 @@ public class SpriteAnimationFrame {
 
         if (gdFrame.has("width")) {
             width = gdFrame.getInteger("width");
+
+            gdAction.ifHas("width", a -> flip_x_offset = width - a.asInteger());
         } else {
             width = gdAction.getInteger("width");
         }
 
         if (gdFrame.has("height")) {
             height = gdFrame.getInteger("height");
+
+            gdAction.ifHas("height", a -> y_offset -= height - a.asInteger());
         } else {
             height = gdAction.getInteger("height");
         }
@@ -74,6 +78,10 @@ public class SpriteAnimationFrame {
 
     public int getYOffset() {
         return y_offset;
+    }
+
+    public int getFlipXOffset() {
+        return flip_x_offset;
     }
 
     public int getWidth() {

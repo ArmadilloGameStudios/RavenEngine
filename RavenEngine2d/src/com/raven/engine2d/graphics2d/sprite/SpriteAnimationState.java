@@ -64,7 +64,8 @@ public class SpriteAnimationState {
     }
 
     public float getXOffset() {
-        return activeFrame.getXOffset();
+        return activeFrame.getXOffset() +
+                (getFlip() ? activeFrame.getFlipXOffset() : -activeFrame.getFlipXOffset());
     }
 
     public float getYOffset() {

@@ -10,7 +10,7 @@
     movement: 3,
     weapon: "Std. Pistol",
 
-    weight: 150,
+    weight: 100,
 },
 {
     name: "amateur",
@@ -24,7 +24,7 @@
     movement: 3,
     weapon: "Std. Pistol",
 
-    weight: 150,
+    weight: 100,
 },
 {
     name: "amateur",
@@ -38,7 +38,7 @@
     movement: 3,
     weapon: "Std. Pistol",
 
-    weight: 150,
+    weight: 100,
 },
 {
     name: "amateur",
@@ -52,7 +52,7 @@
     movement: 3,
     weapon: "Std. Pistol",
 
-    weight: 150,
+    weight: 100,
 },
 {
     name: "Guardian",
@@ -65,7 +65,7 @@
     movement: 3,
     weapon: "Guard Disk",
     weapon_hack: "Blue Guard Disk",
-    xp_gain: 30,
+    xp_gain: 3,
 
     weight: 100,
 },
@@ -103,9 +103,9 @@
 },
 {
     name: "Destructo",
-    sprite: "sprites/jitterball.png",
-    animation: "jitterball",
-    sprite_hack: "sprites/jitterballhack.png",
+    sprite: "sprites/destructo.png",
+    animation: "destructo",
+    sprite_hack: "sprites/destructohack.png",
     standing: true,
     team: 1,
     hp: 1,
@@ -113,7 +113,7 @@
     movement: 5,
     weapon: "Self Destruct",
     weapon_hack: "Blue Self Destruct",
-    xp_gain: 3,
+    xp_gain: 18,
 
     weight: 40
 },

@@ -85,16 +85,12 @@ public class GameEngine<G extends Game<G>> {
     public void run() {
         System.out.println("Started Run");
 
-        System.out.println("Starting Steam API");
-        try {
-//            if (SteamAPI.isSteamRunning()) {
-            steamInit = SteamAPI.init();
-//            } else {
-//                steamInit = false;
-//            }
-        } catch (SteamException se) {
-            System.out.println("Couldn't load steam native libraries");
-        }
+//        System.out.println("Starting Steam API");
+//        try {
+//            steamInit = SteamAPI.init();
+//        } catch (SteamException se) {
+//            System.out.println("Couldn't load steam native libraries");
+//        }
 
         if (!steamInit) {
             System.out.println("Steam failed to start");
@@ -169,7 +165,7 @@ public class GameEngine<G extends Game<G>> {
 
         window.destroy();
 
-        SteamAPI.shutdown();
+//        SteamAPI.shutdown();
 
         System.out.println("Exit");
 
