@@ -20,6 +20,7 @@ public class GameProperties {
     private static String mainDirectory;
     private static List<Vector2i> resolutionList = new ArrayList<>();
     private static int sfx = 100, music = 100;
+    private static boolean vsync = false;
 
     public static int getScreenWidth() {
         return width;
@@ -100,6 +101,14 @@ public class GameProperties {
 
     public static List<Vector2i> getResolutionList() {
         return resolutionList;
+    }
+
+    public static void setVSync(boolean vsync) {
+        GameProperties.vsync = vsync;
+    }
+
+    public static boolean getVSync() {
+        return vsync;
     }
 
     private GameProperties() {}

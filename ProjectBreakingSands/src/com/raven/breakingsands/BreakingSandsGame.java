@@ -8,28 +8,32 @@ import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDataTable;
-import com.raven.engine2d.launcher.GameLauncher;
+import com.raven.engine2d.database.GameDatable;
 import com.raven.engine2d.scene.Scene;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class BreakingSandsGame extends Game<BreakingSandsGame> {
 
     private static String mainDirectory = "ProjectBreakingSands";
+    private int gameId;
 
     public static void main(String[] args) {
-        GameData settings = loadSettingsGameData(mainDirectory).get(0);
+        GameEngine.Launch(new BreakingSandsGame());
+        System.out.println("Lunched");
+    }
+
+    public BreakingSandsGame() {
+        GameData settings = loadGameData("settings").get(0);
 
         settings.ifHas("music", s -> GameProperties.setMusicVolume(s.asInteger()));
         settings.ifHas("sfx", s -> GameProperties.setSFXVolume(s.asInteger()));
         settings.ifHas("width", s -> GameProperties.setScreenWidth(s.asInteger()));
         settings.ifHas("height", s -> GameProperties.setScreenHeight(s.asInteger()));
         settings.ifHas("scaling", s -> GameProperties.setScaling(s.asInteger()));
-
-        GameEngine.Launch(new BreakingSandsGame());
-        System.out.println("Lunched");
+        settings.ifHas("vsync", s -> GameProperties.setVSync(s.asBoolean()));
     }
 
     @Override
@@ -64,10 +68,9 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
         Scene scene = getCurrentScene();
 
         if (scene instanceof BattleScene) {
+            saveRecords();
             gdtToSave.add(new GameDataTable("current_save", ((BattleScene) scene)));
-
-            Thread t = new Thread(() -> saveDataTables(gdtToSave));
-            t.start();
+            saveDataTablesThreaded(gdtToSave);
             return true;
         } else {
             System.out.println("Saving Failed");
@@ -88,18 +91,58 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
         }
     }
 
-    @Override
-    public boolean saveSettings() {
+    public void saveSettings() {
         HashMap<String, GameData> map = new HashMap<>();
         map.put("music", new GameData(GameProperties.getMusicVolume()));
         map.put("sfx", new GameData(GameProperties.getSFXVolume()));
         map.put("width", new GameData(GameProperties.getScreenWidth()));
         map.put("height", new GameData(GameProperties.getScreenHeight()));
         map.put("scaling", new GameData(GameProperties.getScaling()));
+        map.put("vsync", new GameData(GameProperties.getVSync()));
 
         GameDataTable settings = new GameDataTable("settings");
         settings.add(new GameData(map));
 
-        return saveSettingsDataTables(settings);
+        saveDataTableThreaded(settings);
+    }
+
+    public GameDataList loadRecords() {
+        return loadGameData("records");
+    }
+
+    private void saveRecords() {
+        BattleScene scene = ((BattleScene) this.getCurrentScene());
+        GameDataList records = loadRecords();
+
+        Optional<GameData> existing = records.stream()
+                .filter(d -> d.getInteger("id") == gameId)
+                .findFirst();
+
+        if (existing.isPresent()) {
+            GameData data = existing.get();
+
+            Map<String, GameData> map = data.asMap();
+            map.put("floor", new GameData(scene.getDifficulty()));
+            DateFormat df = new SimpleDateFormat("M/dd/yyyy");
+            map.put("date", new GameData(df.format(new Date())));
+        } else {
+            Map<String, GameData> map = new HashMap<>();
+            map.put("floor", new GameData(scene.getDifficulty()));
+            DateFormat df = new SimpleDateFormat("M/dd/yyyy");
+            map.put("date", new GameData(df.format(new Date())));
+            map.put("id", new GameData(gameId));
+            records.add(new GameData(map));
+        }
+
+
+        this.saveDataTableThreaded(new GameDataTable("records", (List<? extends GameDatable>)records));
+    }
+
+    public void setGameID(int id) {
+        gameId = id;
+    }
+
+    public int getGameID() {
+        return gameId;
     }
 }

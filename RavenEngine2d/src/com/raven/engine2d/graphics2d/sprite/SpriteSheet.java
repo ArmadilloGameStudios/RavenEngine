@@ -42,7 +42,6 @@ public class SpriteSheet extends ShaderTexture {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public void load(Scene scene) {
@@ -53,7 +52,6 @@ public class SpriteSheet extends ShaderTexture {
             glActiveTexture(GL_TEXTURE0);
             textureName = glGenTextures();
             glBindTexture(GL_TEXTURE_2D, textureName);
-//                System.out.println("Gen SpriteSheet: " + textureName);
 
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
                     width, height,

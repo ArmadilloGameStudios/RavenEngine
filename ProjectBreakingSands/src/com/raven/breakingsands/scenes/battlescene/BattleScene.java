@@ -112,6 +112,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         map.put("pawns", new GameDataList(pawns).toGameData());
         map.put("map", this.map.toGameData());
         map.put("difficulty", new GameData(difficulty));
+        map.put("id", new GameData(getGame().getGameID()));
         map.put("activeTeam", new GameData(activeTeam));
         map.put("activePawn", new GameData(pawns.indexOf(activePawn)));
 
@@ -127,6 +128,9 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         textures.addAll(Pawn.getSpriteSheets(this));
         textures.addAll(Effect.getSpriteSheets(this));
         textures.addAll(Weapon.getSpriteSheets(this));
+
+        getEngine().getSpriteSheet("sprites/alphabet_small.png").load(this);
+        getEngine().getSpriteSheet("sprites/alphabet.png").load(this);
     }
 
     private boolean isDownKey = false;
@@ -140,7 +144,10 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
             case GLFW.GLFW_KEY_ESCAPE:
                 if (action == GLFW.GLFW_PRESS) {
                     if (isPaused()) {
-                        menu.setVisibility(false);
+                        if (menu.isVisible())
+                            menu.setVisibility(false);
+                        if (uiLevelUp.isVisible())
+                            uiLevelUp.close();
                         setPaused(false);
                     } else {
                         menu.setVisibility(true);
@@ -200,6 +207,9 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                 GameDatabase.all("tooltip")));
 
         if (loadGameData != null) {
+
+            getGame().setGameID(loadGameData.getInteger("id"));
+
             // Pawns
             loadGameData.getList("pawns").forEach(p -> {
                 pawns.add(new Pawn(this, p));
@@ -835,6 +845,10 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
 
     public Random getRandom() {
         return random;
+    }
+
+    public int getDifficulty() {
+        return difficulty;
     }
 
     public void selectPath(Terrain t) {

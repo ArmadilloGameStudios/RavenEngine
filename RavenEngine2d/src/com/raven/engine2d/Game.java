@@ -129,15 +129,22 @@ public abstract class Game<G extends Game<G>> {
 
     abstract public boolean saveGame();
 
-    protected boolean saveDataTables(List<GameDataTable> gdtToSave) {
+    protected void saveDataTablesThreaded(List<GameDataTable> gdtToSave) {
+        Thread t = new Thread(() -> saveDataTables(gdtToSave, "save"));
+        t.start();
+
+
+    }
+
+    private boolean saveDataTables(List<GameDataTable> gdtToSave, String folder) {
         boolean success = true;
 
         try {
             for (GameDataTable table : gdtToSave) {
-                Path p = Paths.get(getMainDirectory(), "save", table.getName());
+                Path p = Paths.get(getMainDirectory(), folder, table.getName());
                 File f = p.toFile();
 
-                if (f.getParentFile().exists())
+                if (!f.getParentFile().exists())
                     f.getParentFile().mkdirs();
 
                 if (!f.exists())
@@ -145,6 +152,32 @@ public abstract class Game<G extends Game<G>> {
 
                 Files.write(p, table.toFileString().getBytes(), StandardOpenOption.CREATE);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+            success = false;
+        }
+
+        return success;
+    }
+
+    protected void saveDataTableThreaded(GameDataTable gdtToSave) {
+        Thread t = new Thread(() -> saveDataTable(gdtToSave));
+        t.start();
+
+
+    }
+
+    private boolean saveDataTable(GameDataTable gdtToSave) {
+        boolean success = true;
+
+        try {
+            Path p = Paths.get(getMainDirectory(), gdtToSave.getName());
+            File f = p.toFile();
+
+            if (!f.exists())
+                f.createNewFile();
+
+            Files.write(p, gdtToSave.toFileString().getBytes(), StandardOpenOption.CREATE);
         } catch (IOException e) {
             e.printStackTrace();
             success = false;
@@ -167,35 +200,11 @@ public abstract class Game<G extends Game<G>> {
         return null;
     }
 
-    abstract public boolean saveSettings();
-
-    protected boolean saveSettingsDataTables(GameDataTable table) {
-        boolean success = true;
+    protected GameDataList loadGameData(String file) {
+        Path savePath = Paths.get(getMainDirectory());
 
         try {
-            Path p = Paths.get(getMainDirectory(), "settings");
-            File f = p.toFile();
-
-            if (f.getParentFile().exists())
-                f.getParentFile().mkdirs();
-
-            if (!f.exists())
-                f.createNewFile();
-
-            Files.write(p, table.toFileString().getBytes(), StandardOpenOption.CREATE);
-        } catch (IOException e) {
-            e.printStackTrace();
-            success = false;
-        }
-
-        return success;
-    }
-
-    protected static GameDataList loadSettingsGameData(String mainDirectory) {
-        Path savePath = Paths.get(mainDirectory);
-
-        try {
-            return GameDataReader.readFile(savePath.resolve("settings"));
+            return GameDataReader.readFile(savePath.resolve(file));
         } catch (IOException e) {
             e.printStackTrace();
         }

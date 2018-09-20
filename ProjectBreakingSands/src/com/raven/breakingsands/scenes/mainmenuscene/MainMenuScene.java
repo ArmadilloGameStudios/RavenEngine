@@ -75,6 +75,10 @@ public class MainMenuScene extends Scene<BreakingSandsGame> {
         newGameBtn.load();
         container.addChild(newGameBtn);
 
+        RecordsButton recordsButton = new RecordsButton(this);
+        recordsButton.load();
+        container.addChild(recordsButton);
+
         SettingsButton settingsButton = new SettingsButton(this);
         settingsButton.load();
         container.addChild(settingsButton);

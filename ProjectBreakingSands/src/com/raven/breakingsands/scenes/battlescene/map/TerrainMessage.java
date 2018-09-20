@@ -32,7 +32,7 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
                 if (getParent().getPawn() == getScene().getActivePawn()) {
                     setText("deselect");
                 } else {
-                    setText("select\n" + getParent().getPawn().getCharacterClass());
+                    setText("select\n" + getParent().getPawn().getName());
                 }
                 break;
             case MOVEABLE:
@@ -57,7 +57,10 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
                         setText("attack -" + damage);
                     }
                 } else {
-                    setText("attack");
+                    if (pawn != null)
+                        setText(pawn.getName());
+                    else
+                        setText("attack");
                 }
                 break;
             case ABILITY:

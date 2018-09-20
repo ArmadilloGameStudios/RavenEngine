@@ -101,8 +101,8 @@ public class GameWindow {
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
 
-        // Enable v-sync
-        glfwSwapInterval(GL_FALSE);
+        // Enable v-sync?
+        glfwSwapInterval(GameProperties.getVSync() ? GL_TRUE : GL_FALSE);
 
         // Make the window visible
         glfwShowWindow(window);
@@ -116,7 +116,6 @@ public class GameWindow {
         glfwSetScrollCallback(window, (window, xoffset, yoffset) -> engine.inputScroll(xoffset, yoffset));
 
         GLCapabilities cat = GL.createCapabilities();
-
 
         layerShader = new LayerShader(engine, this);
         compilationShader = new CompilationShader(engine, this);

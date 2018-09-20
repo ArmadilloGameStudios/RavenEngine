@@ -1004,7 +1004,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public int getNextLevelXp() {
-        return (level * (level + 1) + 1) * 5;
+        return (level * (level + 1) + 2) * 5;
 //        return 0;
     }
 

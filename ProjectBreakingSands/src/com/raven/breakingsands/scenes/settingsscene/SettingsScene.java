@@ -89,7 +89,6 @@ public class SettingsScene extends Scene<BreakingSandsGame> {
         container.addChild(musicVolumeSel);
 
         // sfx
-
         AtomicReference<Integer> selectedSfx = new AtomicReference<>(volume.get(10));
         volume.stream()
                 .filter(l -> l >= GameProperties.getSFXVolume())
@@ -105,12 +104,33 @@ public class SettingsScene extends Scene<BreakingSandsGame> {
                 selectedSfx.get());
         container.addChild(sfxVolumeSel);
 
+        // v-sync
+         List<Boolean> booleans = Arrays.asList(true, false);
+         List<String> booleansStrings = Arrays.asList("true", "false");
+
+
+        AtomicReference<Boolean> selectedVSync = new AtomicReference<>(booleans.get(1));
+        booleans.stream()
+                .filter(l -> l == GameProperties.getVSync())
+                .findFirst()
+                .ifPresent(selectedVSync::set);
+
+        UISelector<SettingsScene, Boolean> vSyncSel = new UISelector<>(this,
+                "sprites/selector.png",
+                "sprites/selectorleftbutton.png",
+                "sprites/selectorrightbutton.png",
+                "v-sync (restart)",
+                booleans, booleansStrings,
+                selectedVSync.get());
+        container.addChild(vSyncSel);
+
         UITextButton<SettingsScene> doneBtn = new UITextButton<SettingsScene>(this, "apply", "sprites/button.png", "mainbutton") {
             @Override
             public void handleMouseClick() {
                 GameProperties.setScaling(scaleSel.getValue());
                 GameProperties.setMusicVolume(musicVolumeSel.getValue());
                 GameProperties.setSFXVolume(sfxVolumeSel.getValue());
+                GameProperties.setVSync(vSyncSel.getValue());
 
                 Vector2i dim = resolutionSel.getValue();
                 getEngine().getWindow().setDimension(dim.x, dim.y);
