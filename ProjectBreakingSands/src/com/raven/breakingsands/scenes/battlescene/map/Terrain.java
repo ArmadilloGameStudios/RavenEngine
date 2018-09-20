@@ -151,8 +151,9 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         // message
         terrainMessage = new TerrainMessage(getScene());
         Vector2f pos = terrainMessage.getWorldPosition();
-        pos.x -= -.4;
-        pos.y += -.4;
+        pos.x -= -1.2;
+        pos.y += -1.2;
+
         terrainMessage.setPosition(pos);
         addChild(terrainMessage);
     }

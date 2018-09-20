@@ -39,6 +39,11 @@
     text: "The name of the weapon the unit has."
 },
 {
+    src: "attacks",
+    title: "number of attacks",
+    text: "the number of times this unit can attack a turn."
+},
+{
     src: "range",
     title: "range",
     text: "The min and max distance the weapon can shoot."

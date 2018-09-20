@@ -133,7 +133,7 @@
     tags: [ "common" ]
 },
 {
-    name: "X2 Barrel Shotgun",
+    name: "DBL Barrel",
     type: "ranged",
     sprite: "sprites/pistol.png",
     animation: "pistol",
@@ -247,9 +247,9 @@
 
     self_destruct: true,
 
-    damage: 8,
+    damage: 10,
     range: 1,
-    piercing: 5,
+    piercing: 0,
     effect: "blue disk",
 
     tags: [ ],

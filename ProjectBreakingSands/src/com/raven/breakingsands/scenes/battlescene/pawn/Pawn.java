@@ -1022,14 +1022,13 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             if (getScene().getActivePawn() == this) {
                 uiDetailText.setAnimationAction("active");
             } else {
-                if (this.isReady() && getTeam(true) == getScene().getActiveTeam())
-                    if (getParent() != null && getParent().isMouseHovering()) {
-                        uiDetailText.setAnimationAction("hover");
-                    } else {
+                if (getParent() != null && getParent().isMouseHovering()) {
+                    uiDetailText.setAnimationAction("hover");
+                } else {
+                    if (this.isReady() && getTeam(true) == getScene().getActiveTeam())
                         uiDetailText.setAnimationAction("idle");
-                    }
-                else {
-                    uiDetailText.setAnimationAction("disable");
+                    else
+                        uiDetailText.setAnimationAction("disable");
                 }
             }
 
@@ -1064,6 +1063,17 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             }
 
             details.weapon = getWeapon().getName();
+
+            if (getTeam(true) == getScene().getActiveTeam()) {
+                if (canAttack()) {
+                    details.attacks = remainingAttacks + "/" + totalAttacks;
+                } else {
+                    details.attacks = "0/" + totalAttacks;
+                }
+            } else {
+                details.attacks = Integer.toString(totalAttacks);
+            }
+
             details.damage = Integer.toString(getWeapon().getDamage());
             details.piercing = Integer.toString(getWeapon().getPiercing());
             if (getBonusPiercing() > 0) {
@@ -1085,6 +1095,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 details.range = Integer.toString(getWeapon().getRangeMax());
             }
             details.shots = Integer.toString(getWeapon().getShots());
+
+            details.canAttack = canAttack() || canMove();
 
             uiDetailText.setDetails(details);
         }

@@ -2,6 +2,7 @@ package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
+import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.ui.*;
 import com.raven.engine2d.util.math.Vector2f;
@@ -30,7 +31,8 @@ public class UIDetailText
     private SelectionDetails details;
 
     private UILabel<BattleScene>
-            uiName, uiLvl, uiWeapon,
+            uiName, uiLvl,
+            uiWeapon, uiAttacks,
             uiHP, uiLblHP,
             uiMov, uiLblMov,
             uiRes, uiLblRes,
@@ -191,6 +193,18 @@ public class UIDetailText
         uiWeapon.load();
 
         addChild(uiWeapon);
+
+        // Attacks
+        uiAttacks = new UILabel<>(getScene(), "-", 80, 10);
+        font = uiAttacks.getFont();
+        font.setSmall(true);
+        font.setHighlight(false);
+        font.setSide(UIFont.Side.RIGHT);
+        uiAttacks.setX(254);
+        uiAttacks.setY(56);
+        uiAttacks.load();
+
+        addChild(uiAttacks);
 
         // Damage
         uiDmg = new UILabel<>(getScene(), "-", 30, 10);
@@ -419,6 +433,18 @@ public class UIDetailText
 
         addChild(uiWeapon);
 
+        // Attacks
+        uiAttacks = new UILabel<>(getScene(), "-", 80, 10);
+        font = uiAttacks.getFont();
+        font.setSmall(true);
+        font.setHighlight(false);
+        font.setSide(UIFont.Side.RIGHT);
+        uiAttacks.setX(254);
+        uiAttacks.setY(56);
+        uiAttacks.load();
+
+        addChild(uiAttacks);
+
         // Damage
         uiDmg = new UILabel<>(getScene(), "-", 30, 10);
         font = uiDmg.getFont();
@@ -521,8 +547,8 @@ public class UIDetailText
         uiLblRes.setToolTipSrc("resistance");
         uiRes.setToolTipSrc("resistance");
 
-
         uiWeapon.setToolTipSrc("weapon");
+        uiAttacks.setToolTipSrc("attacks");
 
         uiLblDmg.setToolTipSrc("damage");
         uiDmg.setToolTipSrc("damage");
@@ -583,6 +609,12 @@ public class UIDetailText
     }
 
     public void setDetails(SelectionDetails details) {
+        if (details.canAttack) {
+            this.backgroundImg.getSpriteAnimation().setIdleAction("idle");
+        } else {
+            this.backgroundImg.getSpriteAnimation().setIdleAction("disable");
+        }
+
         this.details = details;
 
         if (!uiName.getText().equals(details.name)) {
@@ -618,6 +650,11 @@ public class UIDetailText
         if (!uiWeapon.getText().equals(details.weapon)) {
             uiWeapon.setText(details.weapon);
             uiWeapon.load();
+        }
+
+        if (!uiAttacks.getText().equals(details.attacks)) {
+            uiAttacks.setText(details.attacks);
+            uiAttacks.load();
         }
 
         if (!uiDmg.getText().equals(details.damage)) {

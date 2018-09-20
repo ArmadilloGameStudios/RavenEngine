@@ -18,6 +18,7 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
         UIFont font = getFont();
         font.setSmall(true);
         font.setHighlight(false);
+        font.setWrap(true);
 
         setHighlight(BattleScene.OFF);
     }
@@ -30,8 +31,9 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
             case SELECTABLE:
                 if (getParent().getPawn() == getScene().getActivePawn()) {
                     setText("deselect");
-                } else
-                    setText("select");
+                } else {
+                    setText("select\n" + getParent().getPawn().getCharacterClass());
+                }
                 break;
             case MOVEABLE:
             case MOVE:

@@ -29,7 +29,7 @@ public abstract class WorldTextObject
             this.text = text;
 
             if (image == null) {
-                if (font.isHighlight()) {
+                if (font.isHighlight() || font.isWrap()) {
                     image = new UITexture(getScene().getEngine(), 160, 12 * 2);
                 } else {
                     image = new UITexture(getScene().getEngine(), 160, 12);

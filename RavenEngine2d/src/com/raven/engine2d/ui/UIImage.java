@@ -107,7 +107,14 @@ public class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObject>> 
     }
 
     public void setAnimationAction(String action) {
-        this.spriteAnimation.setAction(action);
+        if (action.equals("idle"))
+            this.spriteAnimation.setActionIdle();
+        else
+            this.spriteAnimation.setAction(action);
+    }
+
+    public SpriteAnimationState getSpriteAnimation() {
+        return this.spriteAnimation;
     }
 
     @Override

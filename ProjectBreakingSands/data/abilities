@@ -99,11 +99,11 @@
     weapon: "Machine Gun",
 },
 {
-    name: "DBL Barrel Shotgun",
+    name: "DBL Barrel",
     type: "self",
     icon: "sprites/gun hex.png",
 
-    weapon: "X2 Barrel Shotgun",
+    weapon: "DBL Barrel",
 },
 {
     name: "Impenetrable",
