@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -158,6 +159,12 @@ public abstract class Game<G extends Game<G>> {
         }
 
         return success;
+    }
+
+    public void deleteDataTables(String name) {
+        Path p = Paths.get(getMainDirectory(), name);
+
+        Arrays.stream(p.toFile().listFiles()).forEach(File::delete);
     }
 
     protected void saveDataTableThreaded(GameDataTable gdtToSave) {

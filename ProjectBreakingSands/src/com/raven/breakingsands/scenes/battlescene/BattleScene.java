@@ -25,7 +25,6 @@ import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.ui.UIToolTip;
 import com.raven.engine2d.util.math.Vector2f;
-import com.raven.engine2d.util.math.Vector2i;
 import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.util.pathfinding.Path;
 import com.raven.engine2d.util.pathfinding.PathAdjacentNode;
@@ -38,8 +37,6 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_DEFAULT;
-import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
-import static org.lwjgl.opengl.GL11.GL_FALSE;
 
 public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable {
     public static Highlight
@@ -62,6 +59,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     private UIUpperRightContainer<BattleScene> bottomRightContainer;
     private UIActionSelect actionSelect;
     private UILevelUp uiLevelUp;
+    private UIDefeat uiDefeat;
     private UIFloorDisplay uiFloorDisplay;
 
     public enum State {
@@ -149,6 +147,10 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
                         if (uiLevelUp.isVisible())
                             uiLevelUp.close();
                         setPaused(false);
+
+                        if (uiDefeat.isVisible()) {
+                            setPaused(true);
+                        }
                     } else {
                         menu.setVisibility(true);
                         setPaused(true);
@@ -240,6 +242,11 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         centerContainer.addChild(uiLevelUp);
         centerContainer.pack();
         uiLevelUp.setVisibility(false);
+
+        // uiDefeat
+        uiDefeat = new UIDefeat(this);
+        addChild(uiDefeat);
+        uiDefeat.setVisibility(false);
 
         // Menu
         menu = new Menu(this);
@@ -516,7 +523,7 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
     }
 
     public void setActivePawn(Pawn pawn) {
-        if (checkVictory()) return;
+        if (checkVictoryDefeat()) return;
 
         Pawn oldPawn = this.activePawn;
 
@@ -887,18 +894,27 @@ public class BattleScene extends Scene<BreakingSandsGame> implements GameDatable
         this.currentPath = currentPath;
     }
 
-    public boolean checkVictory() {
-        for (Pawn pawn : pawns) {
-            if (pawn.getTeam(true) != 0) // TODO give xp for hacked pawns
-                return false;
+    public boolean checkVictoryDefeat() {
+        // TODO give xp for hacked pawns
+        if (pawns.stream().noneMatch(p -> p.getTeam(true) != 0)) {
+            victory();
+            return true;
+        } else if (pawns.stream().noneMatch(p -> p.getTeam(true) == 0)) {
+            defeat();
+            return true;
         }
 
-        victory();
-        return true;
+        return false;
     }
 
     public void victory() {
         getGame().prepTransitionScene(new BattleScene(getGame(), pawns.stream().filter(p -> p.getTeam(false) == 0).collect(Collectors.toList()), difficulty + 1));
+    }
+
+    public void defeat() {
+        uiDefeat.setVisibility(true);
+        getGame().deleteSaveGame();
+        setPaused(true);
     }
 
     // actions - should be the prime way of interacting with the battle scene state

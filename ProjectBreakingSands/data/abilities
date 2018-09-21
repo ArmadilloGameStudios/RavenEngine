@@ -49,7 +49,7 @@
 {
     name: "Intelligent",
     type: "self",
-    desc: "xp gain x2",
+    desc: "x2 xp gain when an ally kills and enemy",
     icon: "sprites/ability hex twice.png",
 
     xp_modifier: 2
@@ -499,7 +499,7 @@
 },
 {
     name: "Improved Heal",
-    desc: "can heal more hp.",
+    desc: "can heal more hp.\n\nrestore +3",
     icon: "sprites/ability hex improve.png",
 
     class: "medic",

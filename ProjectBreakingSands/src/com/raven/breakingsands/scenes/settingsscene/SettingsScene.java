@@ -106,7 +106,7 @@ public class SettingsScene extends Scene<BreakingSandsGame> {
 
         // v-sync
          List<Boolean> booleans = Arrays.asList(true, false);
-         List<String> booleansStrings = Arrays.asList("true", "false");
+         List<String> booleansStrings = Arrays.asList("yes", "no");
 
 
         AtomicReference<Boolean> selectedVSync = new AtomicReference<>(booleans.get(1));

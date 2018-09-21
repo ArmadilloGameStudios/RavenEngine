@@ -1,18 +1,10 @@
 package com.raven.breakingsands.scenes.mainmenuscene;
 
 import com.raven.breakingsands.BreakingSandsGame;
-import com.raven.breakingsands.character.Effect;
-import com.raven.breakingsands.character.Weapon;
-import com.raven.breakingsands.scenes.battlescene.decal.Wall;
-import com.raven.breakingsands.scenes.battlescene.map.Terrain;
-import com.raven.breakingsands.scenes.battlescene.menu.MenuButton;
-import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
-import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Scene;
-import com.raven.engine2d.ui.UIButton;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -20,7 +12,6 @@ import org.lwjgl.glfw.GLFW;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainMenuScene extends Scene<BreakingSandsGame> {

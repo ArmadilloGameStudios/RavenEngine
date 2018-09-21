@@ -78,6 +78,10 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
         }
     }
 
+    public void deleteSaveGame() {
+        deleteDataTables("save");
+    }
+
     @Override
     public boolean loadGame() {
 

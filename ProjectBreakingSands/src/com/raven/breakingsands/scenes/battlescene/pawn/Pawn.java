@@ -867,7 +867,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         if (indirect) {
             gain = (xp / 3) * xpModifier;
         } else {
-            gain = xp * xpModifier;
+            gain = xp;
         }
 
         this.xp += gain;
