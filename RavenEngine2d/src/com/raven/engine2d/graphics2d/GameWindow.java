@@ -6,12 +6,17 @@ import com.raven.engine2d.graphics2d.shader.CompilationShader;
 import com.raven.engine2d.graphics2d.shader.LayerShader;
 import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.graphics2d.shader.TextShader;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.File;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -81,6 +86,21 @@ public class GameWindow {
                 GameProperties.getDisplayHeight(),
                 engine.getGame().getTitle(), monitor,
                 NULL);
+
+        try {
+            int[] x, y;
+            ByteBuffer buffer = STBImage.stbi_load(
+                    GameProperties.getMainDirectory() + File.separator + "sprites" + File.separator + "Icon.png",
+                    x = new int[1], y = new int[1], new int[1], STBImage.STBI_rgb_alpha);
+
+            GLFWImage image = GLFWImage.malloc();
+            image.set(x[0], y[0], buffer);
+            GLFWImage.Buffer imagebf = GLFWImage.malloc(1);
+            imagebf.put(0, image);
+            glfwSetWindowIcon(window, imagebf);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");

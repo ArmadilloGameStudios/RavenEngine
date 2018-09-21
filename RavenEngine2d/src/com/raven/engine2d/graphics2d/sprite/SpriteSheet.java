@@ -88,4 +88,8 @@ public class SpriteSheet extends ShaderTexture {
     public int getWidth() {
         return width;
     }
+
+    public CharSequence getFilePath() {
+        return filePath;
+    }
 }

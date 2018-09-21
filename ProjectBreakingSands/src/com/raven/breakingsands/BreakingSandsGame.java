@@ -2,6 +2,7 @@ package com.raven.breakingsands;
 
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
 import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
+import com.raven.breakingsands.scenes.splashscreenscene.SplashScreenScene;
 import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
@@ -48,7 +49,7 @@ public class BreakingSandsGame extends Game<BreakingSandsGame> {
 
     @Override
     public Scene loadInitialScene() {
-        return new MainMenuScene(this);
+        return new SplashScreenScene(this);
     }
 
     @Override
