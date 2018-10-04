@@ -56,12 +56,34 @@
 },
 {
     name: "First Aid",
-    type: "floor",
+    type: "trigger",
+    trigger: "floor",
     target: "ally",
     desc: "all allies restore 1 hp each new floor",
     icon: "sprites/ability hex medic.png",
 
     restore: 1
+},
+{
+    name: "Vampiric",
+    type: "trigger",
+    trigger: "attack",
+    target: "self",
+    desc: "restores 1 hp after attacking",
+    icon: "sprites/ability hex vampire.png",
+
+    restore: 1
+},
+{
+    name: "Rage",
+    type: "trigger",
+    trigger: "kill",
+    target: "self",
+    desc: "+1 attack\n+1 movement\nafter killing an enemy",
+    icon: "sprites/ability hex rage.png",
+
+    restore_attack: 1
+    restore_movement: 1
 },
 {
     name: "Plasma Blade",
@@ -557,7 +579,8 @@
     icon: "sprites/ability hex medic.png",
 
     class: "medic",
-    type: "floor",
+    type: "trigger",
+    trigger: "floor",
 
     rest_heal: true,
 },

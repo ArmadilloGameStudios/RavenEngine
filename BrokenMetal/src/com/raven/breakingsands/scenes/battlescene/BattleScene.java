@@ -336,7 +336,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
         // add enemies
         // create xp to burn
-        int xpBank = 3 * Math.max(difficulty, 1) * Math.max(difficulty / 4, 1);
+        int xpBank = 3 * Math.max(difficulty, 1) * Math.max(difficulty / 3, 1);
 
         // create and populate map
         HashMap<Terrain, Integer> mapSpawn = new HashMap<>();

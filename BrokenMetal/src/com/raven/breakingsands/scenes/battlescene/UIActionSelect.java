@@ -510,7 +510,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             btnHeal.setActive(false);
             btnHeal.setVisibility(false);
         } else /*if (pawn != this.pawn)*/ {
-            btnCancel.setDisable(!(pawn.getTotalMovement() == pawn.getRemainingMovement()));
+            btnCancel.setDisable(!(pawn.getMaxMovement() == pawn.getRemainingMovement()));
 
             btnAttack.setDisable(!pawn.canAttack());
             btnAttack.setActive(btnAttack.getActive() && pawn == this.pawn);

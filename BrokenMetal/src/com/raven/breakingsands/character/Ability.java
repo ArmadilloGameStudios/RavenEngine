@@ -12,7 +12,9 @@ public class Ability implements GameDatable {
 
     public Pawn owner;
 
-    public enum Type {SELF, AURORA, TARGET, FLOOR}
+    public enum Type {SELF, AURORA, TARGET, TRIGGER}
+
+    public enum Trigger {ATTACK, KILL, FLOOR}
 
     public static class Target {
         static final public int ALL = 0b1111, SELF = 0b1000, ALLY = 0b0001, ENEMY = 0b0010, EMPTY = 0b0100;
@@ -24,6 +26,7 @@ public class Ability implements GameDatable {
     public String description = "";
     public String weapon;
     public Type type;
+    public Trigger trigger;
     public int target;
     public RangeStyle style;
     public UseRegainType useRegainType = UseRegainType.TURN;
@@ -31,7 +34,8 @@ public class Ability implements GameDatable {
 
     public Integer size, damage, uses;
     public Integer remainingUses;
-    public Integer hp, shield, movement, resistance, piercing, maxRange, minRange, xpModifier, restore;
+    public Integer hp, shield, movement, resistance, piercing, maxRange, minRange, xpModifier,
+            restore, restore_attack, restore_movement;
     public boolean action, remain, passesPawn, passesWall, usedThisTurn,
             taunt, push_blast, hook_pull,
             hack, instant_hack, transferable, cure,
@@ -97,10 +101,25 @@ public class Ability implements GameDatable {
             case "target":
                 type = Type.TARGET;
                 break;
-            case "floor":
-                type = Type.FLOOR;
+            case "trigger":
+                type = Type.TRIGGER;
                 break;
         }
+
+        gameData.ifHas("trigger", t -> {
+            switch (t.asString()) {
+                default:
+                case "floor":
+                    trigger = Trigger.FLOOR;
+                    break;
+                case "attack":
+                    trigger = Trigger.ATTACK;
+                    break;
+                case "kill":
+                    trigger = Trigger.KILL;
+                    break;
+            }
+        });
 
         gameData.ifHas("target", t -> {
             switch (t.asString()) {
@@ -164,6 +183,8 @@ public class Ability implements GameDatable {
         gameData.ifHas("min_range", r -> minRange = r.asInteger());
         gameData.ifHas("xp_modifier", r -> xpModifier = r.asInteger());
         gameData.ifHas("restore", r -> restore = r.asInteger());
+        gameData.ifHas("restore_attack", r -> restore_attack = r.asInteger());
+        gameData.ifHas("restore_movement", r -> restore_movement = r.asInteger());
 
         if (gameData.has("remaining_uses")) {
             gameData.ifHas("remaining_uses", u -> remainingUses = u.asInteger());
@@ -186,6 +207,10 @@ public class Ability implements GameDatable {
         gameData.ifHas("heal", h -> heal = h.asBoolean());
         gameData.ifHas("rest_heal", h -> rest_heal = h.asBoolean());
         gameData.ifHas("ability", h -> bonusAbility = new Ability(h));
+
+        System.out.println(name);
+        System.out.println(type);
+        System.out.println(trigger);
     }
 
     @Override

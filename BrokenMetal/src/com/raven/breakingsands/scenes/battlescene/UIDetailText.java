@@ -615,6 +615,12 @@ public class UIDetailText
             this.backgroundImg.getSpriteAnimation().setIdleAction("disable");
         }
 
+        if (pawn.canLevel()) {
+            backgroundImg.setSprite("sprites/character ui levelup.png");
+        } else {
+            backgroundImg.setSprite("sprites/character ui.png");
+        }
+
         this.details = details;
 
         if (!uiName.getText().equals(details.name)) {
