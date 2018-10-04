@@ -989,7 +989,6 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         } else if (activeAbility.hack) {
             terrain.getPawn().hack(new Hack(terrain.getPawn(), activePawn, 0, activeAbility));
 //            pawn.ready();
-            activePawn.setUnmoved(activeAbility.remain);
 
             if (activeAbility.cure) {
                 activePawn.hack(null);

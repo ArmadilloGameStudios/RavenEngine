@@ -27,7 +27,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
         super(scene);
 
         btnHeal = new UIAbilityButton(scene,
-                "sprites/push icon.png",
+                "sprites/icon heal.png",
                 "iconbutton") {
 
             @Override
@@ -76,7 +76,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
         btns.add(btnHeal);
 
         btnBlink = new UIAbilityButton(scene,
-                "sprites/push icon.png",
+                "sprites/icon blink.png",
                 "iconbutton") {
 
             @Override

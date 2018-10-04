@@ -54,8 +54,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             bonusPiercing, bonusMinRange, bonusMaxRange,
             xpModifier = 1, xpGain;
     private Hack hack;
-    private boolean unmoved = true;
     private boolean ready = true;
+    private boolean hasAttacked = false;
     private int abilityOrder = 0;
     private List<Ability> abilities = new ArrayList<>();
     private List<Ability> abilityAffects = new ArrayList<>();
@@ -134,8 +134,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         // hack
         gameData.ifHas("hack", h -> hack(new Hack(scene, this, h)));
 
-        gameData.ifHas("unmoved", x -> unmoved = x.asBoolean());
         gameData.ifHas("ready", x -> ready = x.asBoolean());
+        gameData.ifHas("has_attacked", x -> hasAttacked = x.asBoolean());
 
         // message
         pawnMessage = new PawnMessage(scene);
@@ -190,7 +190,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         }
 
         map.put("ready", new GameData(ready));
-        map.put("unmoved", new GameData(unmoved));
+        map.put("has_attacked", new GameData(hasAttacked));
 
         return new GameData(map);
     }
@@ -260,8 +260,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public boolean canLevel() {
-        return true;
-//        return xp >= getNextLevelXp();
+//        return true;
+        return xp >= getNextLevelXp();
     }
 
     public boolean canAttack() {
@@ -296,10 +296,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             return false;
         }
 
-
         final boolean[] canMove = {true};
 
-        canMove[0] &= remainingAttacks == maxAttacks || abilities.stream().anyMatch(a -> a.remain);
+        canMove[0] &= !hasAttacked || ability.remain;
 
         abilities.stream().filter(a -> a.upgrade == null).forEach(a -> {
             if (a == ability) {
@@ -565,7 +564,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         }
     }
 
-
     public void removeAbilityAffect(Ability a) {
         if (abilityAffects.remove(a)) {
             if ((a.target & Ability.Target.ALL) == Ability.Target.ALL ||
@@ -667,6 +665,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     public void ready() {
         setReady(true);
+        hasAttacked = false;
         remainingMovement = maxMovement;
         remainingAttacks = maxAttacks;
 
@@ -680,8 +679,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     public void move(int amount) {
         remainingMovement = Math.max(remainingMovement - amount, 0);
-
-        setUnmoved(false);
     }
 
     public void runAttackAnimation(Pawn target, ActionFinishHandler onAttackDone) {
@@ -799,8 +796,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         int dealtDamage = target.getDamage(damage, percing, shots);
 
-        setUnmoved(false);
-
         getAbilities().stream()
                 .filter(a -> a.type == Ability.Type.TRIGGER && a.trigger == Ability.Trigger.ATTACK)
                 .forEach(this::doAbilityAffect);
@@ -838,11 +833,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public void reduceAttacks() {
+        hasAttacked = true;
         remainingAttacks = Math.max(maxAttacks - 1, 0);
 
-        if (remainingAttacks == 0) {
-            setUnmoved(false);
-        }
     }
 
     public boolean damage(int dealtDamage, ActionFinishHandler onAttackDone) {
@@ -1003,11 +996,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     public void setReady(boolean ready) {
         this.ready = ready;
-        this.unmoved = ready;
-    }
-
-    public void setUnmoved(boolean unmoved) {
-        this.unmoved &= unmoved;
     }
 
     public void prepLevel() {
