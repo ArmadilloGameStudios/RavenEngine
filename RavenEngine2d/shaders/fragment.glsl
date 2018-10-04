@@ -28,6 +28,4 @@ void main() {
 
     if (id != vec3(0))
         frag_id = id;
-    else
-        frag_id = vec3(1);
 }

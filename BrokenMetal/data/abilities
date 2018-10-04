@@ -1,0 +1,563 @@
+{
+    name: "Fast",
+    type: "self",
+    desc: "movement +1",
+    icon: "sprites/ability hex fast.png",
+
+    movement: 1
+},
+{
+    name: "Defensive",
+    type: "self",
+    desc: "resistance +1",
+    icon: "sprites/ability hex protection.png",
+
+    resistance: 1
+},
+{
+    name: "Shielded",
+    type: "self",
+    desc: "shield +3",
+    icon: "sprites/ability hex protection.png",
+
+    shield: 3
+},
+{
+    name: "Tough",
+    type: "self",
+    desc: "health +5",
+    icon: "sprites/ability hex health.png",
+
+    hp: 5
+},
+{
+    name: "Accurate",
+    type: "self",
+    desc: "piercing +1",
+    icon: "sprites/ability hex accurate.png",
+
+    piercing: 1
+},
+{
+    name: "Sharpshooter",
+    type: "self",
+    desc: "range +1",
+    icon: "sprites/ability hex improve.png",
+
+    max_range: 1
+},
+{
+    name: "Intelligent",
+    type: "self",
+    desc: "x2 xp gain when an ally kills and enemy",
+    icon: "sprites/ability hex twice.png",
+
+    xp_modifier: 2
+},
+{
+    name: "First Aid",
+    type: "floor",
+    target: "ally",
+    desc: "all allies restore 1 hp each new floor",
+    icon: "sprites/ability hex medic.png",
+
+    restore: 1
+},
+{
+    name: "Plasma Blade",
+    type: "self",
+    icon: "sprites/gun hex.png",
+
+    weapon: "Plasma Blade"
+},
+{
+    name: "Std. Rifle",
+    type: "self",
+    icon: "sprites/gun hex.png",
+
+    weapon: "Std. Rifle"
+},
+{
+    name: "Hand Cannon",
+    type: "self",
+    icon: "sprites/gun hex.png",
+
+    weapon: "Hand Cannon"
+},
+{
+    name: "Sniper",
+    type: "self",
+    icon: "sprites/gun hex.png",
+
+    weapon: "Sniper"
+},
+{
+    name: "Machine Gun",
+    type: "self",
+    icon: "sprites/gun hex.png",
+
+    weapon: "Machine Gun",
+},
+{
+    name: "DBL Barrel",
+    type: "self",
+    icon: "sprites/gun hex.png",
+
+    weapon: "DBL Barrel",
+},
+{
+    name: "Impenetrable",
+    desc: "become even more resilient to damage.\n\nhealth +3\nshield +5\nresistance +1",
+    icon: "sprites/ability hex protection.png",
+
+    class: "tank",
+    type: "self",
+
+    hp: 3,
+    shield: 5,
+    resistance: 1,
+},
+{
+    name: "Protector",
+    desc: "protect allies close to you.\n\nsize 2\nshield +2\nresistance +1",
+    icon: "sprites/ability hex protection.png",
+
+    class: "tank",
+    type: "aurora",
+    target: "ally",
+
+    passes_pawn: true,
+    size: 2,
+    shield: 2,
+    resistance: 1,
+},
+{
+    name: "Guardian",
+    desc: "protect allies close to you.\n\nsize 3\nshield +4\nresistance +2",
+    icon: "sprites/ability hex protection.png",
+
+    class: "tank",
+    type: "aurora",
+    target: "ally",
+    replace: "Protector",
+
+    passes_wall: true,
+    size: 3,
+    shield: 4,
+    resistance: 2,
+},
+{
+    name: "Taunt",
+    desc: "taunt enemies into attacking you over your allies.\n\nsize 4",
+    icon: "sprites/ability hex taunt.png",
+
+    class: "tank",
+    type: "aurora",
+    target: "enemy",
+    requires_not: "Ext. Taunt",
+
+    passes_pawn: true,
+    size: 4,
+    taunt: true
+},
+{
+    name: "Ext. Taunt",
+    desc: "taunt enemies into attacking you over your allies.\n\nsize 7",
+    icon: "sprites/ability hex taunt.png",
+
+    class: "tank",
+    type: "aurora",
+    target: "enemy",
+    replace: "Taunt",
+
+    passes_pawn: true,
+    size: 7,
+    taunt: true
+},
+{
+    name: "Push Blast",
+    desc: "push all enemies away for you.\n\ndamage 5",
+    icon: "sprites/ability hex push.png",
+
+    class: "tank",
+    type: "aurora",
+    target: "enemy",
+
+    action: true,
+
+    uses: 1,
+    damage: 5,
+    style: "square"
+    size: 1,
+    push_blast: true,
+},
+{
+    name: "Hook",
+    desc: "pull an enemy closer to you.\ncan attack and use other abilities.\n\nrange 6",
+    icon: "sprites/ability hex hook.png",
+
+    class: "tank",
+    type: "target",
+    target: "enemy",
+
+    action: true,
+
+    uses: 1,
+    size: 6,
+    style: "straight",
+    remain: true,
+    hook_pull: true,
+},
+{
+    name: "Hack",
+    desc: "hacked enemy units.",
+
+    class: "hacker",
+    type: "target",
+    target: "enemy",
+
+    action: true,
+
+    passes_pawn: true,
+    use_regain_type: "level",
+    uses: 1
+    size: 1,
+    style: "diamond",
+    hack: true,
+},
+{
+    name: "Boost Hack",
+    desc: "hacked units have improved stats.\n\nhealth +2\nshield +2\nresistance +1",
+    icon: "sprites/ability hex protection.png",
+
+    class: "hacker",
+    type: "self",
+    upgrade: "Hack",
+
+    hp: 2,
+    shield: 2,
+    resistance: 1,
+
+    action: true,
+},
+{
+    name: "Double Hack",
+    desc: "allows two units to be hacked a floor",
+    icon: "sprites/ability hex twice.png",
+
+    class: "hacker",
+    type: "self",
+    upgrade: "Hack",
+
+    uses: 1
+
+    action: true,
+},
+{
+    name: "Transferable Hack",
+    desc: "hacked units can transfer the hack to and adjacent one, the original unit will no longer be hacked.",
+    icon: "sprites/ability hex swap.png",
+
+    class: "hacker",
+    type: "self",
+    upgrade: "Hack",
+
+    transferable: true,
+
+    action: true,
+},
+{
+    name: "Quick Hack",
+    desc: "can attack and use other abilities after hacking.",
+    icon: "sprites/ability hex fast.png",
+
+    class: "hacker",
+    type: "self",
+    upgrade: "Hack",
+    requires_not: "Instant Hack",
+
+    remain: true,
+
+    action: true,
+},
+{
+    name: "Instant Hack",
+    desc: "the hacked unit can move and attack the same turn it was hacked.",
+    icon: "sprites/ability hex fast double.png",
+
+    class: "hacker",
+    type: "self",
+    replace: "Quick Hack",
+    upgrade: "Hack",
+
+    instant_hack: true,
+    remain: true,
+
+    action: true,
+},
+{
+    name: "Remote Hack",
+    desc: "can hack units that aren't adjacent.\n\nrange 2",
+    icon: "sprites/ability hex improve.png",
+
+    class: "hacker",
+    type: "self",
+    upgrade: "Hack",
+    requires_not: "Extended Hack",
+
+    size: 1,
+
+    action: true,
+},
+{
+    name: "Extended Hack",
+    desc: "can hack units even further away.\n\nrange 4",
+    icon: "sprites/ability hex improve double.png",
+
+    class: "hacker",
+    type: "self",
+    replace: "Remote Hack",
+    upgrade: "Hack",
+
+    size: 3,
+
+    action: true,
+},
+{
+    name: "Blink",
+    desc: "teleport to another space.",
+
+    class: "blinker",
+    type: "target",
+    target: "empty",
+    passes_pawn: true,
+    blink: true,
+
+    uses: 1,
+    size: 2,
+
+    action: true,
+},
+{
+    name: "Double Blink",
+    desc: "can blink twice a turn.",
+    icon: "sprites/ability hex twice.png",
+
+    class: "blinker",
+    type: "self",
+    upgrade: "Blink",
+
+    uses: 1,
+
+    action: true,
+},
+{
+    name: "Further Blink",
+    desc: "can blink further away.\n\nrange 4",
+    icon: "sprites/ability hex improve.png",
+
+    class: "blinker",
+    type: "self",
+    upgrade: "Blink",
+
+    size: 2,
+
+    action: true,
+},
+{
+    name: "Quick Blink",
+    desc: "can attack and use other abilities after blinking.",
+    icon: "sprites/ability hex fast.png",
+
+    class: "blinker",
+    type: "self",
+    upgrade: "Blink",
+
+    remain: true,
+
+    action: true,
+},
+{
+    name: "Swap Blink",
+    desc: "can switch places with other units.",
+    icon: "sprites/ability hex swap.png",
+
+    class: "blinker",
+    type: "self",
+    upgrade: "Blink",
+
+    target: "all",
+
+    action: true,
+},
+{
+    name: "Wall Blink",
+    desc: "can blink through walls.",
+    icon: "sprites/ability hex accurate.png",
+
+    class: "blinker",
+    type: "self",
+    upgrade: "Blink",
+
+    passes_wall: true
+
+    action: true,
+},
+{
+    name: "Recall",
+    desc: "can blink allies to an adjacent space.",
+    icon: "sprites/ability hex recall.png",
+
+    class: "blinker",
+    type: "target",
+    target: "empty",
+
+    uses: 1,
+    size: 1,
+    recall: true,
+
+    ability: {
+        name: "Recall Unit"
+        type: "target",
+        target: "ally",
+        size: -1,
+
+
+        passes_wall: true,
+        recall_unit: true,
+    }
+},
+{
+    name: "Quick Recall",
+    desc: "can attack and use other abilities after recalling.",
+    icon: "sprites/ability hex fast.png",
+
+    class: "blinker",
+    type: "target",
+    target: "empty",
+    replace: "Recall",
+
+    uses: 1,
+    size: 1,
+    recall: true,
+    passes_wall: true,
+    remain: true,
+
+    action: true,
+
+    ability: {
+        name: "Recall Unit"
+        type: "target",
+        target: "ally",
+        size: -1,
+
+        passes_wall: true,
+        recall_unit: true,
+    }
+},
+{
+    name: "Heal",
+    desc: "heal an ally.",
+
+    class: "medic",
+    type: "target",
+    target: "ally",
+    size: 1,
+    passes_pawn: true,
+    heal: true,
+
+    restore: 1
+
+    uses: 1,
+
+    action: true,
+},
+{
+    name: "Quick Heal",
+    desc: "can attack and use other abilities after healing.",
+    icon: "sprites/ability hex fast.png",
+
+    class: "medic",
+    type: "self",
+    upgrade: "Heal",
+
+    remain: true,
+
+    action: true,
+},
+{
+    name: "Self Heal",
+    desc: "can heal yourself.",
+    icon: "sprites/ability hex accurate.png",
+
+    class: "medic",
+    type: "self",
+    target: "self",
+    upgrade: "Heal",
+
+    action: true,
+},
+{
+    name: "Improved Heal",
+    desc: "can heal more hp.\n\nrestore +3",
+    icon: "sprites/ability hex improve.png",
+
+    class: "medic",
+    type: "self",
+    upgrade: "Heal",
+
+    restore: 2
+
+    action: true,
+},
+{
+    name: "Full Heal",
+    desc: "heal all hp.",
+    icon: "sprites/ability hex improve double.png",
+
+    class: "medic",
+    type: "self",
+    replace: "Improved Heal",
+    upgrade: "Heal",
+
+    restore: 1000
+
+    action: true,
+},
+{
+    name: "Double Heal",
+    desc: "heal up to twice a turn.",
+    icon: "sprites/ability hex twice.png",
+
+    class: "medic",
+    type: "self",
+    upgrade: "Heal",
+
+    uses: 1
+
+    action: true,
+},
+{
+    name: "Quadruple Heal",
+    desc: "heal up to four times a turn.",
+    icon: "sprites/ability hex quadruple.png",
+
+    class: "medic",
+    type: "self",
+    replace: "Double Heal",
+    upgrade: "Heal",
+
+    uses: 3
+
+    action: true,
+},
+{
+    name: "Healing Rest",
+    desc: "heal all allies each new floor.",
+    icon: "sprites/ability hex medic.png",
+
+    class: "medic",
+    type: "floor",
+
+    rest_heal: true,
+},

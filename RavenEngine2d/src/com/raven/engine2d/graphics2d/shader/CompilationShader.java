@@ -202,4 +202,8 @@ public class CompilationShader extends  Shader {
 
         window.drawQuad();
     }
+
+    public void onlyDrawColors() {
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+    }
 }

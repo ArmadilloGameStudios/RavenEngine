@@ -1,0 +1,66 @@
+{
+    name: "idle",
+    width: 32,
+    height: 32,
+    frames: [{ time: 250, x: 0 },
+             { time: 250, x: 32 },
+             { time: 250, x: 64 },
+             { time: 250, x: 96 }]
+},
+{
+    name: "walking up",
+    width: 32,
+    height: 32,
+    y: 32,
+    frames: [{ time: 50, xoffset: -2, yoffset: 2 },
+             { time: 50, x: 32, xoffset: -6, yoffset: 4 },
+             { time: 50, x: 64, xoffset: -10, yoffset: 6 },
+             { time: 50, x: 96, xoffset: -14, yoffset: 8 },
+             { time: 50, x: 128, xoffset: -18, yoffset: 10 },
+             { time: 50, x: 160, xoffset: -22, yoffset: 12 },
+             { time: 50, x: 192, xoffset: -26, yoffset: 14 },
+             { time: 50, x: 224, xoffset: -30, yoffset: 16 },]
+},
+{
+    name: "walking down",
+    width: 32,
+    height: 32,
+    y: 64,
+    frames: [
+             { time: 50, xoffset: -2, yoffset: -2 },
+             { time: 50, x: 32, xoffset: -6, yoffset: -4 },
+             { time: 50, x: 64, xoffset: -10, yoffset: -6 },
+             { time: 50, x: 96, xoffset: -14, yoffset: -8 },
+             { time: 50, x: 128, xoffset: -18, yoffset: -10 },
+             { time: 50, x: 160, xoffset: -22, yoffset: -12 },
+             { time: 50, x: 192, xoffset: -26, yoffset: -14 },
+             { time: 50, x: 224, xoffset: -30, yoffset: -16 },]
+},
+{
+    name: "ranged start",
+    width: 32,
+    height: 32,
+    frames: [{ time: 100, x: 0,   y: 96 },
+             { time: 100, x: 32,  y: 96 },
+             { time: 100, x: 64,  y: 96 },
+             { time: 100, x: 96,  y: 96 },
+             { time: 100, x: 128, y: 96 },
+             { time: 100, width: 64, height: 64, x: 0,   y: 128 },
+             { time: 100, width: 64, height: 64, x: 64,  y: 128 },
+             { time: 100, width: 64, height: 64, x: 128, y: 128 },]
+},
+{
+    name: "ranged end",
+    width: 32,
+    height: 32,
+    frames: [{ time: 100, width: 64, height: 64, x: 192, y: 128 }]
+},
+{
+    name: "die",
+    width: 32,
+    height: 32,
+    frames: [{ time: 100, x: 0, y: 192 },
+             { time: 100, x: 32, y: 192 },
+             { time: 100, x: 64, y: 192 },
+             { time: 100, x: 96, y: 192 }]
+},

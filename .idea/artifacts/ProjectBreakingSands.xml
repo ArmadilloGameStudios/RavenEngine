@@ -3,12 +3,12 @@
     <output-path>$PROJECT_DIR$/out/artifacts/ProjectBreakingSands</output-path>
     <root id="archive" name="ProjectBreakingSands.jar">
       <element id="module-output" name="RavenEngine2d" />
-      <element id="module-output" name="ProjectBreakingSands" />
+      <element id="module-output" name="BrokenMetal" />
       <element id="directory" name="RavenEngine2d">
         <element id="dir-copy" path="$PROJECT_DIR$/RavenEngine2d" />
       </element>
       <element id="directory" name="ProjectBreakingSands">
-        <element id="dir-copy" path="$PROJECT_DIR$/ProjectBreakingSands" />
+        <element id="dir-copy" path="$PROJECT_DIR$/BrokenMetal" />
       </element>
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />

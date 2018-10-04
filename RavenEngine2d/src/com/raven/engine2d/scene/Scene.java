@@ -90,6 +90,7 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
         compilationShader.compile(layerEffects.getRenderTarget());
         compilationShader.clearDepthBuffer();
         compilationShader.compile(layerUI.getRenderTarget());
+        compilationShader.onlyDrawColors();
         compilationShader.compile(layerToolTip.getRenderTarget());
 
         window.printErrors("Draw Compile Error: ");

@@ -1,0 +1,119 @@
+{
+    name: "amateur",
+    sprite: "sprites/character1.png",
+    animation: "character",
+    standing: true,
+    team: 0,
+    hp: 5,
+    shield: 5
+    resistance: 0,
+    movement: 3,
+    weapon: "Std. Pistol",
+
+    weight: 100,
+},
+{
+    name: "amateur",
+    sprite: "sprites/character2.png",
+    animation: "character",
+    standing: true,
+    team: 0,
+    hp: 5,
+    shield: 5
+    resistance: 0,
+    movement: 3,
+    weapon: "Std. Pistol",
+
+    weight: 100,
+},
+{
+    name: "amateur",
+    sprite: "sprites/character3.png",
+    animation: "character",
+    standing: true,
+    team: 0,
+    hp: 5,
+    shield: 5
+    resistance: 0,
+    movement: 3,
+    weapon: "Std. Pistol",
+
+    weight: 100,
+},
+{
+    name: "amateur",
+    sprite: "sprites/character4.png",
+    animation: "character",
+    standing: true,
+    team: 0,
+    hp: 5,
+    shield: 5
+    resistance: 0,
+    movement: 3,
+    weapon: "Std. Pistol",
+
+    weight: 100,
+},
+{
+    name: "Guardian",
+    sprite: "sprites/guarddrone.png",
+    animation: "guarddrone",
+    sprite_hack: "sprites/guarddronehack.png",
+    standing: true,
+    team: 1,
+    hp: 5,
+    movement: 3,
+    weapon: "Guard Disk",
+    weapon_hack: "Blue Guard Disk",
+    xp_gain: 3,
+
+    weight: 100,
+},
+{
+    name: "Blade Wielder",
+    sprite: "sprites/bladedrone.png",
+    animation: "bladedrone",
+    sprite_hack: "sprites/bladedronehack.png",
+    standing: true,
+    team: 1,
+    hp: 6,
+    resistance: 1,
+    movement: 3,
+    weapon: "Red Plasma Blade",
+    weapon_hack: "Plasma Blade",
+    xp_gain: 9,
+
+    weight: 80
+},
+{
+    name: "Demon Orb",
+    sprite: "sprites/jitterball.png",
+    animation: "jitterball",
+    sprite_hack: "sprites/jitterballhack.png",
+    standing: true,
+    team: 1,
+    hp: 7,
+    resistance: 3,
+    movement: 2,
+    weapon: "Demon Disk",
+    weapon_hack: "Blue Demon Disk",
+    xp_gain: 12,
+
+    weight: 60
+},
+{
+    name: "Destructo",
+    sprite: "sprites/destructo.png",
+    animation: "destructo",
+    sprite_hack: "sprites/destructohack.png",
+    standing: true,
+    team: 1,
+    hp: 1,
+    resistance: 0,
+    movement: 5,
+    weapon: "Self Destruct",
+    weapon_hack: "Blue Self Destruct",
+    xp_gain: 18,
+
+    weight: 40
+},

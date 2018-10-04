@@ -20,5 +20,8 @@ void main() {
     gl_FragDepth = depth;
     frag_color = color;
 //    frag_color = vec4(vec3(color.a), 1);
-    frag_id = id;
+    if (id != 0)
+        frag_id = id;
+    else
+        frag_id = vec3(1);
 }
