@@ -125,7 +125,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
         btns.add(btnBlink);
 
         btnRecall = new UIAbilityButton(scene,
-                "sprites/icon hook.png",
+                "sprites/icon recall.png",
                 "iconbutton") {
 
             @Override

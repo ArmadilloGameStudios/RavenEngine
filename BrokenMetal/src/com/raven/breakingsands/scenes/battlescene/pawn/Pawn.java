@@ -1050,8 +1050,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
             if (getTeam(false) == 0) {
                 details.name = getName() + " " + getLevel();
-                details.level = getXp() + "/" + getNextLevelXp();
-
+//                details.level = getXp() + "/" + getNextLevelXp();
+                details.level = Integer.toString(Math.max(getNextLevelXp() - getXp(), 0));
             } else {
                 details.level = "";
             }
@@ -1106,7 +1106,15 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                     details.range += "+" + getBonusMaxRange();
                 }
             } else {
-                details.range = Integer.toString(getWeapon().getRangeMax());
+                if (getWeapon().getWeaponType() == WeaponType.RANGED) {
+                    details.range = Integer.toString(getWeapon().getRangeMax());
+
+                    if (getBonusMaxRange() > 0) {
+                        details.range += "+" + getBonusMaxRange();
+                    }
+                } else {
+                    details.range = Integer.toString(getWeapon().getRangeMax());
+                }
             }
             details.shots = Integer.toString(getWeapon().getShots());
 

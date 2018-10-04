@@ -6,7 +6,7 @@
 {
     src: "xp",
     title: "experience",
-    text: "the current amount of experience and the amount needed to level up."
+    text: "the current amount of experience needed to level up."
 },
 {
     src: "damage",

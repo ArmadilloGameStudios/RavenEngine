@@ -79,11 +79,10 @@
     type: "trigger",
     trigger: "kill",
     target: "self",
-    desc: "+1 attack\n+1 movement\nafter killing an enemy",
+    desc: "+1 attack\nafter killing an enemy",
     icon: "sprites/ability hex rage.png",
 
     restore_attack: 1
-    restore_movement: 1
 },
 {
     name: "Plasma Blade",
@@ -136,7 +135,7 @@
     type: "self",
 
     hp: 3,
-    shield: 5,
+    shield: 2,
     resistance: 1,
 },
 {
