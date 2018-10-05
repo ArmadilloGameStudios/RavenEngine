@@ -32,7 +32,6 @@ public class NewGameButton
             found = records.stream().anyMatch(rec -> finalId == rec.getInteger("id"));
         } while (found);
 
-        System.out.println(id);
         game.setGameID(id);
 
         game.prepTransitionScene(new BattleScene(game, null, 1));

@@ -85,6 +85,26 @@
     restore_attack: 1
 },
 {
+    name: "Turtle",
+    type: "trigger",
+    trigger: "damage",
+    target: "self",
+    desc: "+5 resistance after taking damgae\nends on your next turn",
+    icon: "sprites/ability hex turtle.png",
+
+    temp_resistance: 5
+},
+{
+    name: "Meditative",
+    type: "trigger",
+    trigger: "unmoved",
+    target: "self",
+    desc: "+1 movement after a turn of not moving, attacking, or using an ability",
+    icon: "sprites/ability hex yingyang.png",
+
+    bonus_movement: 1
+},
+{
     name: "Plasma Blade",
     type: "self",
     icon: "sprites/gun hex.png",

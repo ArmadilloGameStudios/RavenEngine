@@ -585,6 +585,9 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         this.activeTeam = team;
 
         pawns.stream()
+                .filter(p -> p.getTeam(true) != activeTeam)
+                .forEach(Pawn::endTurn);
+        pawns.stream()
                 .filter(p -> p.getTeam(true) == activeTeam)
                 .forEach(Pawn::ready);
 
@@ -676,7 +679,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
                 clearAllPaths();
 //                activePawn.getAnimationState().setAction("walking up");
-                activePawn.move(currentPath.getCost());
+                activePawn.reduceMovement(currentPath.getCost());
 
                 map.setState(Terrain.State.UNSELECTABLE);
 
@@ -958,6 +961,8 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     private Terrain abilityTerrain = null;
 
     public void pawnAbility(Terrain terrain) {
+        activePawn.setUnmoved(false);
+
         if (activeAbility.uses != null) {
             activeAbility.remainingUses--;
             activeAbility.usedThisTurn = true;
