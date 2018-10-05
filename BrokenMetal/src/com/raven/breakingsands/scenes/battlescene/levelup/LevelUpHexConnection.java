@@ -75,37 +75,73 @@ public class LevelUpHexConnection extends UIImage<BattleScene> {
         Ability a = buttonA.getAbility();
         Ability b = buttonB.getAbility();
 
+        System.out.println();
+
         if (a != null && b != null) {
+
+            System.out.println("Check");
+            System.out.println(a.name);
+            System.out.println(buttonA.isDisabled());
+            System.out.println(b.name);
+            System.out.println(buttonB.isDisabled());
+
             if (a.replace != null && !b.name.equals(a.replace)) {
                 setVisibility(false);
+                System.out.println("g");
                 return;
             } else if (b.replace != null && !a.name.equals(b.replace)) {
                 setVisibility(false);
+                System.out.println("h");
                 return;
             } else {
                 setVisibility(true);
+                System.out.println("i");
             }
         } else {
+            System.out.println("Check");
+            if (a != null) {
+                System.out.println(a.name);
+                System.out.println(buttonA.isDisabled());
+            }
+            if (b != null) {
+                System.out.println(b.name);
+                System.out.println(buttonB.isDisabled());
+            }
             setVisibility(true);
         }
 
         if (buttonA.getType() == LevelUpHexButton.Type.CLASS && b != null && b.replace != null) {
             setVisibility(false);
+            System.out.println("a");
             return;
         } else if (buttonB.getType() == LevelUpHexButton.Type.CLASS && a != null && a.replace != null) {
             setVisibility(false);
+            System.out.println("b");
             return;
         }
 
         if (buttonA.isActive() && buttonB.isActive()) {
             setAnimationAction("connected");
-        } else if ((buttonA.isActive() && !buttonB.isLocked()) || (buttonB.isActive() && !buttonA.isLocked())) {
+            System.out.println("f");
+        } else if (((a != null && b != null) ||
+                (buttonA.getType() == LevelUpHexButton.Type.START && !buttonA.isDisabled()) ||
+                (buttonB.getType() == LevelUpHexButton.Type.START && !buttonA.isDisabled()) ||
+                (buttonA.getType() == LevelUpHexButton.Type.CLASS) ||
+                (buttonB.getType() == LevelUpHexButton.Type.CLASS)) &&
+                ((buttonA.isActive() && !buttonB.isLocked()) || (buttonB.isActive() && !buttonA.isLocked()))) {
             if (buttonA.isActive()) {
                 buttonB.setDisable(false);
+                if (buttonB.getAbility() != null)
+                    System.out.println(buttonB.getAbility().name);
+                System.out.println("d");
             } else {
                 buttonA.setDisable(false);
+                if (buttonA.getAbility() != null)
+                    System.out.println(buttonA.getAbility().name);
+                System.out.println("e");
             }
             setAnimationAction("connected partial");
         }
+        System.out.println("over");
     }
 }

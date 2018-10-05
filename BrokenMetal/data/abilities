@@ -407,7 +407,7 @@
     type: "self",
     upgrade: "Blink",
 
-    target: "all",
+    target: "not self",
 
     action: true,
 },

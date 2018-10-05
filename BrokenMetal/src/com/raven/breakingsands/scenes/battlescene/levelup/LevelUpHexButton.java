@@ -95,6 +95,10 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
             type = Type.ABILITY;
 
             boolean active = pawn.getAbilities().stream().anyMatch(a -> a.name.equals(ability.name) || (a.replace != null && a.replace.equals(ability.name)));
+            System.out.println(ability);
+            System.out.println(active);
+            System.out.println(isLocked());
+            System.out.println(isDisabled());
             if (active) {
                 setDisable(false);
                 setActive(true);
@@ -106,6 +110,10 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
 
         this.setToolTip(ability.name, ability.description);
 
+        connections.forEach(LevelUpHexConnection::checkConnection);
+    }
+
+    public void checkConnections() {
         connections.forEach(LevelUpHexConnection::checkConnection);
     }
 

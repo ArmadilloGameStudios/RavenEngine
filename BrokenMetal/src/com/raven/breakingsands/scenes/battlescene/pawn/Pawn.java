@@ -699,7 +699,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 runRangedAnimation(target, directional, directionUp, onAttackDone);
                 break;
             case AREA:
-                System.out.println("area");
                 runAreaAnimation(onAttackDone);
                 break;
         }
@@ -938,8 +937,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public void die(ActionFinishHandler onAttackDone) {
-        System.out.println("die");
-
         if (getAnimationState().hasAction("die")) {
             getAnimationState().setAction("die");
             getAnimationState().addActionFinishHandler(this::onDie);

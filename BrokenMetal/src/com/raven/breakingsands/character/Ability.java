@@ -17,7 +17,7 @@ public class Ability implements GameDatable {
     public enum Trigger {ATTACK, KILL, FLOOR}
 
     public static class Target {
-        static final public int ALL = 0b1111, SELF = 0b1000, ALLY = 0b0001, ENEMY = 0b0010, EMPTY = 0b0100;
+        static final public int ALL = 0b1111, SELF = 0b1000, ALLY = 0b0001, ENEMY = 0b0010, EMPTY = 0b0100, NOT_SELF = 0x0111;
     }
 
     public enum UseRegainType {TURN, LEVEL}
@@ -137,6 +137,9 @@ public class Ability implements GameDatable {
                     break;
                 case "empty":
                     target = Target.EMPTY;
+                    break;
+                case "not self":
+                    target = Target.NOT_SELF;
                     break;
             }
         });
