@@ -524,9 +524,14 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             if (pawn.canLevel()) {
                 btnLevel.setDisable(false);
                 btnLevel.setVisibility(true);
+                btnLevel.setSprite("sprites/icon level up.png");
             } else {
-                btnLevel.setDisable(true);
-                btnLevel.setVisibility(false);
+                btnLevel.setDisable(false);
+                if (pawn.getLevel() == 0)
+                    btnLevel.setVisibility(false);
+                else
+                    btnLevel.setVisibility(true);
+                btnLevel.setSprite("sprites/icon skills.png");
             }
 
             Optional<Ability> ability = pawn.getAbilities().stream().filter(a -> a.push_blast).findFirst();

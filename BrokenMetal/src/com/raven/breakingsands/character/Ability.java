@@ -35,7 +35,7 @@ public class Ability implements GameDatable {
     public Integer size, damage, uses;
     public Integer remainingUses;
     public Integer hp, shield, movement, resistance, piercing, maxRange, minRange, xpModifier,
-            restore, restore_attack, restore_movement,
+            restore, restore_attack, restore_movement, restore_shield,
             temp_resistance, bonus_movement;
     public boolean action, remain, passesPawn, passesWall, usedThisTurn,
             taunt, push_blast, hook_pull,
@@ -195,6 +195,7 @@ public class Ability implements GameDatable {
         gameData.ifHas("restore", r -> restore = r.asInteger());
         gameData.ifHas("restore_attack", r -> restore_attack = r.asInteger());
         gameData.ifHas("restore_movement", r -> restore_movement = r.asInteger());
+        gameData.ifHas("restore_shield", r -> restore_shield = r.asInteger());
         gameData.ifHas("temp_resistance", r -> temp_resistance = r.asInteger());
         gameData.ifHas("bonus_movement", r -> bonus_movement = r.asInteger());
 
@@ -232,6 +233,12 @@ public class Ability implements GameDatable {
     }
 
     public void upgrade(Ability ability, boolean add) {
+        System.out.println(name);
+        System.out.println(uses);
+        System.out.println(remainingUses);
+        System.out.println(usedThisTurn);
+        System.out.println(remain);
+
         if (ability.size != null) {
             if (this.size == null)
                 this.size = ability.size;

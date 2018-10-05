@@ -271,6 +271,7 @@ public class GameEngine<G extends Game<G>> {
 
         if (sheet == null) {
             // TODO use some error sprite
+            System.out.println(spriteSrc);
             throw new NoSuchElementException();
         }
 

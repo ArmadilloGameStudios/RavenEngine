@@ -87,9 +87,9 @@
 {
     name: "Turtle",
     type: "trigger",
-    trigger: "damage",
+    trigger: "unmoved",
     target: "self",
-    desc: "+5 resistance after taking damgae\nends on your next turn",
+    desc: "+5 resistance\nafter a turn of not moving, attacking, or using an ability\nends on your next turn",
     icon: "sprites/ability hex turtle.png",
 
     temp_resistance: 5
@@ -99,8 +99,19 @@
     type: "trigger",
     trigger: "unmoved",
     target: "self",
-    desc: "+1 movement after a turn of not moving, attacking, or using an ability",
+    desc: "restore\n1 health\n1 shield\nafter a turn of not moving, attacking, or using an ability",
     icon: "sprites/ability hex yingyang.png",
+
+    restore: 1
+    restore_shield: 1
+},
+{
+    name: "Flee",
+    type: "trigger",
+    trigger: "damage",
+    target: "self",
+    desc: "+1 movement\nafter being damaged",
+    icon: "sprites/ability hex slow.png",
 
     bonus_movement: 1
 },
@@ -174,7 +185,7 @@
 },
 {
     name: "Guardian",
-    desc: "protect allies close to you.\n\nsize 3\nshield +4\nresistance +2",
+    desc: "protect allies close to you.\n\nsize 3\nshield +2\nresistance +1",
     icon: "sprites/ability hex protection.png",
 
     class: "tank",
@@ -184,8 +195,8 @@
 
     passes_wall: true,
     size: 3,
-    shield: 4,
-    resistance: 2,
+    shield: 2,
+    resistance: 1,
 },
 {
     name: "Taunt",
