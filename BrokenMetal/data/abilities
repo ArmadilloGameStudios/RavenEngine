@@ -102,8 +102,7 @@
     desc: "restore\n1 health\n1 shield\nafter a turn of not moving, attacking, or using an ability",
     icon: "sprites/ability hex yingyang.png",
 
-    restore: 1
-    restore_shield: 1
+    restore_shield: 2
 },
 {
     name: "Flee",
@@ -478,6 +477,8 @@
         passes_wall: true,
         recall_unit: true,
     }
+    
+    action: true,
 },
 {
     name: "Quick Recall",

@@ -69,6 +69,11 @@
     text: "level up the unit. giving the unit access to new weapons and abilities."
 },
 {
+    src: "abilities",
+    title: "abilities",
+    text: "view the abilities the unit has and can get."
+},
+{
     src: "deselect",
     title: "deselect",
     text: "deselect the unit, letting you pick a different one."
