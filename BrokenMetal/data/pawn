@@ -5,7 +5,7 @@
     standing: true,
     team: 0,
     hp: 5,
-    shield: 5
+    shield: 2
     resistance: 0,
     movement: 3,
     weapon: "Std. Pistol",
@@ -19,7 +19,7 @@
     standing: true,
     team: 0,
     hp: 5,
-    shield: 5
+    shield: 2
     resistance: 0,
     movement: 3,
     weapon: "Std. Pistol",
@@ -33,7 +33,7 @@
     standing: true,
     team: 0,
     hp: 5,
-    shield: 5
+    shield: 2
     resistance: 0,
     movement: 3,
     weapon: "Std. Pistol",
@@ -47,7 +47,7 @@
     standing: true,
     team: 0,
     hp: 5,
-    shield: 5
+    shield: 2
     resistance: 0,
     movement: 3,
     weapon: "Std. Pistol",

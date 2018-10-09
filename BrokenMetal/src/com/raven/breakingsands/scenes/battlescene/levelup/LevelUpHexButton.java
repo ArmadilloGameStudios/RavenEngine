@@ -90,7 +90,7 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
                 setDisable(false);
                 setActive(true);
             }
-            description = ability.name + "\n\n" + ability.description;
+            description = ability.name + "\n\n" + ability.description + "\n\nwarning: this will replace your current weapon";
         } else {
             type = Type.ABILITY;
 
@@ -99,13 +99,17 @@ public class LevelUpHexButton extends UIButton<BattleScene> {
                 setDisable(false);
                 setActive(true);
             }
-            description = ability.name + "\n" + ability.description;
+            description = ability.name + "\n\n" + ability.description;
         }
 
         setSprite(ability.icon);
 
         this.setToolTip(ability.name, ability.description);
 
+        connections.forEach(LevelUpHexConnection::checkConnection);
+    }
+
+    public void checkConnections() {
         connections.forEach(LevelUpHexConnection::checkConnection);
     }
 

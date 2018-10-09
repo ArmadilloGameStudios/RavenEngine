@@ -24,7 +24,8 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
     private LevelUpHexButton.Type rewardType;
     private LevelUpHexButton rewardButton;
 
-    private String message = "Pick a new ability, weapon, or class.";
+    private String messageCanLevel = "Pick a new ability, weapon, or class.";
+    private String messageCantLevel = "View available abilities, weapons, or classes.";
 
     public UILevelUp(BattleScene scene) {
         super(scene);
@@ -41,8 +42,8 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
         lblLevelUp.load();
         addChild(lblLevelUp);
 
-        lblDesc = new UILabel<>(getScene(), message, 244, 60);
-        lblDesc.setY(330);
+        lblDesc = new UILabel<>(getScene(), messageCanLevel, 244, 100);
+        lblDesc.setY(250);
         lblDesc.setX(12);
         font = lblDesc.getFont();
         font.setSmall(true);
@@ -125,10 +126,14 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
     }
 
     public void setPawn(Pawn pawn) {
-        // TODO split into multiple methods
         this.pawn = pawn;
 
-        lblLevelUp.setText(pawn.getName() + " leveled up!");
+        clearReward();
+
+        if (pawn.canLevel())
+            lblLevelUp.setText(pawn.getName() + " leveled up!");
+        else
+            lblLevelUp.setText(pawn.getName() + " abilities");
         lblLevelUp.load();
 
         starBasic.clear();
@@ -151,8 +156,10 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
         lblDesc.setText(description);
         lblDesc.load();
 
-        btnConfirmCancel.setText("confirm");
-        btnConfirmCancel.load();
+        if (pawn.canLevel()) {
+            btnConfirmCancel.setText("confirm");
+            btnConfirmCancel.load();
+        }
     }
 
     public void clearReward() {
@@ -166,7 +173,10 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
         this.reward = null;
         this.rewardButton = null;
 
-        lblDesc.setText(message);
+        if (pawn.canLevel())
+            lblDesc.setText(messageCanLevel);
+        else
+            lblDesc.setText(messageCantLevel);
         lblDesc.load();
 
         btnConfirmCancel.setText("cancel");
@@ -174,23 +184,24 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
     }
 
     private void selectReward() {
-        switch (rewardType) {
-            default:
-            case START:
-                break;
-            case CLASS:
-                pawn.setCharacterClass((GameData) reward);
-                break;
-            case WEAPON:
-                pawn.setWeapon((String) reward);
-                break;
-            case ABILITY:
-                pawn.addAbility((Ability) reward);
-                break;
+        if (pawn.canLevel()) {
+            switch (rewardType) {
+                default:
+                case START:
+                    break;
+                case CLASS:
+                    pawn.setCharacterClass((GameData) reward);
+                    break;
+                case WEAPON:
+                    pawn.setWeapon((String) reward);
+                    break;
+                case ABILITY:
+                    pawn.addAbility((Ability) reward);
+                    break;
+            }
+
+            pawn.setLevel(pawn.getLevel() + 1);
         }
-
-        pawn.setLevel(pawn.getLevel() + 1);
-
         close();
     }
 

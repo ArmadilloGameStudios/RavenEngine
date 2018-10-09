@@ -336,7 +336,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
         // add enemies
         // create xp to burn
-        int xpBank = 3 * Math.max(difficulty, 1) * Math.max(difficulty / 4, 1);
+        int xpBank = 3 * Math.max(difficulty, 1) * Math.max(difficulty / 3, 1);
 
         // create and populate map
         HashMap<Terrain, Integer> mapSpawn = new HashMap<>();
@@ -585,6 +585,9 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         this.activeTeam = team;
 
         pawns.stream()
+                .filter(p -> p.getTeam(true) != activeTeam)
+                .forEach(Pawn::endTurn);
+        pawns.stream()
                 .filter(p -> p.getTeam(true) == activeTeam)
                 .forEach(Pawn::ready);
 
@@ -676,7 +679,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
                 clearAllPaths();
 //                activePawn.getAnimationState().setAction("walking up");
-                activePawn.move(currentPath.getCost());
+                activePawn.reduceMovement(currentPath.getCost());
 
                 map.setState(Terrain.State.UNSELECTABLE);
 
@@ -958,6 +961,8 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     private Terrain abilityTerrain = null;
 
     public void pawnAbility(Terrain terrain) {
+        activePawn.setUnmoved(false);
+
         if (activeAbility.uses != null) {
             activeAbility.remainingUses--;
             activeAbility.usedThisTurn = true;
@@ -989,7 +994,6 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         } else if (activeAbility.hack) {
             terrain.getPawn().hack(new Hack(terrain.getPawn(), activePawn, 0, activeAbility));
 //            pawn.ready();
-            activePawn.setUnmoved(activeAbility.remain);
 
             if (activeAbility.cure) {
                 activePawn.hack(null);

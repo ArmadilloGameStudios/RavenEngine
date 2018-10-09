@@ -27,7 +27,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
         super(scene);
 
         btnHeal = new UIAbilityButton(scene,
-                "sprites/push icon.png",
+                "sprites/icon heal.png",
                 "iconbutton") {
 
             @Override
@@ -76,7 +76,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
         btns.add(btnHeal);
 
         btnBlink = new UIAbilityButton(scene,
-                "sprites/push icon.png",
+                "sprites/icon blink.png",
                 "iconbutton") {
 
             @Override
@@ -125,7 +125,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
         btns.add(btnBlink);
 
         btnRecall = new UIAbilityButton(scene,
-                "sprites/icon hook.png",
+                "sprites/icon recall.png",
                 "iconbutton") {
 
             @Override
@@ -510,7 +510,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             btnHeal.setActive(false);
             btnHeal.setVisibility(false);
         } else /*if (pawn != this.pawn)*/ {
-            btnCancel.setDisable(!(pawn.getTotalMovement() == pawn.getRemainingMovement()));
+            btnCancel.setDisable(!(pawn.getMaxMovement() == pawn.getRemainingMovement()));
 
             btnAttack.setDisable(!pawn.canAttack());
             btnAttack.setActive(btnAttack.getActive() && pawn == this.pawn);
@@ -524,9 +524,16 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             if (pawn.canLevel()) {
                 btnLevel.setDisable(false);
                 btnLevel.setVisibility(true);
+                btnLevel.setSprite("sprites/icon level up.png");
+                btnLevel.setToolTipSrc("level up");
             } else {
-                btnLevel.setDisable(true);
-                btnLevel.setVisibility(false);
+                btnLevel.setDisable(false);
+                if (pawn.getLevel() == 0)
+                    btnLevel.setVisibility(false);
+                else
+                    btnLevel.setVisibility(true);
+                btnLevel.setSprite("sprites/icon skills.png");
+                btnLevel.setToolTipSrc("abilities");
             }
 
             Optional<Ability> ability = pawn.getAbilities().stream().filter(a -> a.push_blast).findFirst();

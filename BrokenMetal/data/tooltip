@@ -6,7 +6,7 @@
 {
     src: "xp",
     title: "experience",
-    text: "the current amount of experience and the amount needed to level up."
+    text: "the current amount of experience needed to level up."
 },
 {
     src: "damage",
@@ -67,6 +67,11 @@
     src: "level up",
     title: "level up",
     text: "level up the unit. giving the unit access to new weapons and abilities."
+},
+{
+    src: "abilities",
+    title: "abilities",
+    text: "view the abilities the unit has and can get."
 },
 {
     src: "deselect",

@@ -99,7 +99,12 @@ public class LevelUpHexConnection extends UIImage<BattleScene> {
 
         if (buttonA.isActive() && buttonB.isActive()) {
             setAnimationAction("connected");
-        } else if ((buttonA.isActive() && !buttonB.isLocked()) || (buttonB.isActive() && !buttonA.isLocked())) {
+        } else if (((a != null && b != null) ||
+                (buttonA.getType() == LevelUpHexButton.Type.START && !buttonA.isDisabled()) ||
+                (buttonB.getType() == LevelUpHexButton.Type.START && !buttonA.isDisabled()) ||
+                (buttonA.getType() == LevelUpHexButton.Type.CLASS) ||
+                (buttonB.getType() == LevelUpHexButton.Type.CLASS)) &&
+                ((buttonA.isActive() && !buttonB.isLocked()) || (buttonB.isActive() && !buttonA.isLocked()))) {
             if (buttonA.isActive()) {
                 buttonB.setDisable(false);
             } else {
