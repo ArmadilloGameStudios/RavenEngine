@@ -233,11 +233,6 @@ public class Ability implements GameDatable {
     }
 
     public void upgrade(Ability ability, boolean add) {
-        System.out.println(name);
-        System.out.println(uses);
-        System.out.println(remainingUses);
-        System.out.println(usedThisTurn);
-        System.out.println(remain);
 
         if (ability.size != null) {
             if (this.size == null)

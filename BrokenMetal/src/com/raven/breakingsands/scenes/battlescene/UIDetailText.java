@@ -713,8 +713,8 @@ public class UIDetailText
         AtomicInteger i = new AtomicInteger();
         // order images
         abilityImgList.forEach((ai, img) -> {
-            img.setX(getWidth() * 2 + 2 + i.get() * 22);
-            img.setY(20);
+            img.setX(getWidth() + 1 + i.get() * 11);
+            img.setY(10);
             i.getAndIncrement();
         });
     }

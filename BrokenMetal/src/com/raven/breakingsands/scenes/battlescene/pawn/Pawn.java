@@ -46,7 +46,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     private Weapon weapon;
     private String name = "", charClass = "amateur", spriteNormal, spriteHack, weaponHack;
     private GameData weaponNormal;
-    private int level = new Random().nextInt(21), xp, team,
+    private int level = 0, xp, team,
             maxHitPoints, remainingHitPoints, bonusHp, bonusHpLoss,
             maxShield, remainingShield, bonusShield, bonusShieldLoss,
             maxMovement, remainingMovement,
@@ -412,7 +412,14 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             abilities.stream()
                     .filter(a -> a.name.equals(ability.replace))
                     .findFirst()
-                    .ifPresent(this::removeAbility);
+                    .ifPresent(a -> {
+                        this.removeAbility(a);
+
+                        if (a.uses != null) {
+                        int addUses = ability.uses - a.uses;
+                            ability.remainingUses = a.remainingUses + addUses;
+                        }
+                    });
         }
 
         if (ability.type == Ability.Type.SELF) {
