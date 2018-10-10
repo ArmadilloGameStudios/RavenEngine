@@ -64,8 +64,8 @@ public class CompilationShader extends  Shader {
         super.useProgram();
 
         glViewport(0, 0,
-                GameProperties.getScreenWidth() / 2,
-                GameProperties.getScreenHeight() / 2);
+                GameProperties.getDisplayWidth(),
+                GameProperties.getDisplayHeight());
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_GREATER);
@@ -90,8 +90,8 @@ public class CompilationShader extends  Shader {
         glBindFramebuffer(GL_FRAMEBUFFER, compilationTarget.getFramebufferHandle());
 
         glViewport(0, 0,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight());
+                GameProperties.getDisplayWidth(),
+                GameProperties.getDisplayHeight());
 
         glClearDepth(0.0);
         glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 0f);
@@ -111,8 +111,8 @@ public class CompilationShader extends  Shader {
         glDrawBuffers(buffers);
 
         glViewport(0, 0,
-                GameProperties.getScreenWidth(),
-                GameProperties.getScreenHeight());
+                GameProperties.getDisplayWidth(),
+                GameProperties.getDisplayHeight());
 
         glClearDepth(0.0);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -125,9 +125,15 @@ public class CompilationShader extends  Shader {
         glBindFramebuffer(GL_FRAMEBUFFER, compilationTarget.getFramebufferHandle());
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glReadBuffer(GL_COLOR_ATTACHMENT1);
+//        glReadPixels(
+//                (int) ((mouse.getX() * GameProperties.getDisplayWidth()) / (GameProperties.getDisplayWidth() * GameProperties.getScaling())),
+//                (GameProperties.getDisplayHeight() - (int) mouse.getY()) * GameProperties.getDisplayHeight() / (GameProperties.getDisplayHeight() * GameProperties.getScaling()),
+//                1, 1,
+//                GL_RGB, GL_UNSIGNED_BYTE,
+//                pixelReadBuffer);
         glReadPixels(
-                (int) ((mouse.getX() * GameProperties.getScreenWidth()) / (GameProperties.getDisplayWidth() * GameProperties.getScaling())),
-                (GameProperties.getDisplayHeight() - (int) mouse.getY()) * GameProperties.getScreenHeight() / (GameProperties.getDisplayHeight() * GameProperties.getScaling()),
+                (int) ((mouse.getX() * GameProperties.getDisplayWidth()) / (GameProperties.getDisplayWidth())),
+                (GameProperties.getDisplayHeight() - (int) mouse.getY()) * GameProperties.getDisplayHeight() / (GameProperties.getDisplayHeight()),
                 1, 1,
                 GL_RGB, GL_UNSIGNED_BYTE,
                 pixelReadBuffer);
@@ -149,8 +155,8 @@ public class CompilationShader extends  Shader {
 
         glBlitFramebuffer(
                 0, 0,
-                GameProperties.getScreenWidth() / GameProperties.getScaling(),
-                GameProperties.getScreenHeight() / GameProperties.getScaling(),
+                GameProperties.getDisplayWidth(),
+                GameProperties.getDisplayHeight(),
                 0, 0,
                 GameProperties.getDisplayWidth(),
                 GameProperties.getDisplayHeight(),
@@ -197,13 +203,13 @@ public class CompilationShader extends  Shader {
         glUniform4f(rect_location,
                 0,
                 0,
-                GameProperties.getScaling(),
-                -GameProperties.getScaling());
+                1,
+                -1);
 
         window.drawQuad();
     }
 
-    public void onlyDrawColors() {
+    public void drawColorOnly() {
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
     }
 }

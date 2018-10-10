@@ -37,7 +37,7 @@ public class SettingsScene extends Scene<BrokenMetalGame> {
 
         AtomicReference<Vector2i> selected = new AtomicReference<>(list.get(0));
         list.stream()
-                .filter(l -> l.x == GameProperties.getScreenWidth() && l.y == GameProperties.getScreenHeight())
+                .filter(l -> l.x == GameProperties.getDisplayWidth() && l.y == GameProperties.getDisplayHeight())
                 .findFirst()
                 .ifPresent(selected::set);
 

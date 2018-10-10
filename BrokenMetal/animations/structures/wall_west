@@ -3,7 +3,7 @@
     width: 16,
     height: 32,
     xoffset: 0,
-    yoffset: 18,
+    yoffset: 9,
     frames: [{ time: 1000, x: 0 }]
 },
 {
@@ -11,7 +11,7 @@
     width: 16,
     height: 32,
     xoffset: 0,
-    yoffset: 18,
+    yoffset: 9,
     frames: [{ time: 500, x: 0 },
              { time: 500, x: 16 }]
 },
@@ -20,7 +20,7 @@
     width: 16,
     height: 32,
     xoffset: 0,
-    yoffset: 18,
+    yoffset: 9,
     frames: [{ time: 100, x: 0 },
              { time: 100, x: 16 },
              { time: 100, x: 32 },

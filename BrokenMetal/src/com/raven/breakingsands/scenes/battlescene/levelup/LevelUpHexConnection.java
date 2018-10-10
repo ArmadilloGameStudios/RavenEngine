@@ -23,10 +23,10 @@ public class LevelUpHexConnection extends UIImage<BattleScene> {
             setSpriteAnimation(new SpriteAnimationState(this, scene.getEngine().getAnimation("connection")));
 
             if (buttonA.getY() > buttonB.getY()) {
-                setY(buttonB.getY() + buttonB.getHeight() * 2f);
+                setY(buttonB.getY() + buttonB.getHeight());
                 setX(buttonB.getX());
             } else {
-                setY(buttonA.getY() + buttonA.getHeight() * 2f);
+                setY(buttonA.getY() + buttonA.getHeight());
                 setX(buttonA.getX());
             }
 
@@ -37,15 +37,15 @@ public class LevelUpHexConnection extends UIImage<BattleScene> {
                 SpriteAnimationState state = new SpriteAnimationState(this, scene.getEngine().getAnimation("connectiondag"));
                 state.setFlip(true);
                 setSpriteAnimation(state);
-                setY(buttonA.getY() - 6);
-                setX(buttonA.getX() - state.getWidth() - 6);
+                setY(buttonA.getY() - 3);
+                setX(buttonA.getX() - state.getWidth() + 2);
 
             } else {
 
                 SpriteAnimationState state = new SpriteAnimationState(this, scene.getEngine().getAnimation("connectiondag"));
                 setSpriteAnimation(state);
-                setY(buttonA.getY() + buttonA.getHeight() * 2f - 4);
-                setX(buttonA.getX() - state.getWidth() - 2);
+                setY(buttonA.getY() + buttonA.getHeight() - 2);
+                setX(buttonA.getX() - state.getWidth() + 4);
 
             }
         } else {
@@ -53,15 +53,15 @@ public class LevelUpHexConnection extends UIImage<BattleScene> {
             if (buttonA.getY() > buttonB.getY()) {
 
                 setSpriteAnimation(new SpriteAnimationState(this, scene.getEngine().getAnimation("connectiondag")));
-                setY(buttonA.getY() - 6);
-                setX(buttonA.getX() + buttonA.getWidth() * 2f - 4);
+                setY(buttonA.getY() - 3);
+                setX(buttonA.getX() + buttonA.getWidth() - 2);
             } else {
 
                 SpriteAnimationState state = new SpriteAnimationState(this, scene.getEngine().getAnimation("connectiondag"));
                 state.setFlip(true);
                 setSpriteAnimation(state);
-                setY(buttonA.getY() + buttonA.getHeight() * 2f - 4);
-                setX(buttonA.getX() + buttonA.getWidth() * 2f - 8);
+                setY(buttonA.getY() + buttonA.getHeight() - 2);
+                setX(buttonA.getX() + buttonA.getWidth() - 4);
             }
         }
 

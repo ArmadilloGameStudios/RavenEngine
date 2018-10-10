@@ -34,8 +34,8 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
         this.addChild(background);
 
         lblLevelUp = new UILabel<>(getScene(), "level up!", 256, 14);
-        lblLevelUp.setX(90);
-        lblLevelUp.setY(472);
+        lblLevelUp.setX(45);
+        lblLevelUp.setY(236);
         UIFont font = lblLevelUp.getFont();
         font.setSmall(false);
         font.setHighlight(true);
@@ -43,8 +43,8 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
         addChild(lblLevelUp);
 
         lblDesc = new UILabel<>(getScene(), messageCanLevel, 244, 100);
-        lblDesc.setY(250);
-        lblDesc.setX(12);
+        lblDesc.setY(125);
+        lblDesc.setX(6);
         font = lblDesc.getFont();
         font.setSmall(true);
         font.setHighlight(false);
@@ -62,19 +62,19 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
             }
         };
 
-        btnConfirmCancel.setX(-btnConfirmCancel.getWidth() + getWidth());
-        btnConfirmCancel.setY(-btnConfirmCancel.getHeight());
+        btnConfirmCancel.setX(-btnConfirmCancel.getWidth() / 2 + getWidth() / 2);
+        btnConfirmCancel.setY(-btnConfirmCancel.getHeight() / 2);
         btnConfirmCancel.load();
         addChild(btnConfirmCancel);
 
         starBasic = new LevelUpBaseStar(this);
-        starBasic.setX(getWidth() / 2);
-        starBasic.setY(getHeight() / 2);
+        starBasic.setX(getWidth() / 4);
+        starBasic.setY(getHeight() / 4);
         addChild(starBasic);
 
         starAdvanced = new LevelUpAdvancedStar(this);
-        starAdvanced.setX(getWidth() * 3 / 2);
-        starAdvanced.setY(getHeight() / 2);
+        starAdvanced.setX(getWidth() * 3 / 4);
+        starAdvanced.setY(getHeight() / 4);
         addChild(starAdvanced);
     }
 

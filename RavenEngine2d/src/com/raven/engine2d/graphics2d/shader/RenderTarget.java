@@ -27,8 +27,8 @@ public class RenderTarget {
         glBindTexture(GL_TEXTURE_2D, color_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                GameProperties.getScreenWidth() / GameProperties.getScaling(),
-                GameProperties.getScreenHeight() / GameProperties.getScaling(),
+                GameProperties.getDisplayWidth(),
+                GameProperties.getDisplayHeight(),
                 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -42,8 +42,8 @@ public class RenderTarget {
         glBindTexture(GL_TEXTURE_2D, id_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                GameProperties.getScreenWidth() / GameProperties.getScaling(),
-                GameProperties.getScreenHeight() / GameProperties.getScaling(),
+                GameProperties.getDisplayWidth(),
+                GameProperties.getDisplayHeight(),
                 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -57,8 +57,8 @@ public class RenderTarget {
         glBindTexture(GL_TEXTURE_2D, depth_texture);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-                GameProperties.getScreenWidth() / GameProperties.getScaling(),
-                GameProperties.getScreenHeight() / GameProperties.getScaling(),
+                GameProperties.getDisplayWidth(),
+                GameProperties.getDisplayHeight(),
                 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

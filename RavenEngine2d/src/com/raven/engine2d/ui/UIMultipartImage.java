@@ -67,6 +67,6 @@ public class UIMultipartImage<S extends Scene> extends UIImage<S> {
                 spriteAnimationMid.getHeight() * rows +
                 spriteAnimationBottom.getHeight());
 
-        setY(((UIObject) getParent()).getHeight() * 2f - getHeight() * 2f);
+        setY(((UIObject) getParent()).getHeight() - getHeight());
     }
 }

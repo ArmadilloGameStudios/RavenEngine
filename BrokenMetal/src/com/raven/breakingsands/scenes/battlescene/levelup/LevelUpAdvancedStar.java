@@ -25,15 +25,15 @@ public class LevelUpAdvancedStar extends LevelUpStar {
         super(uiLevelUp.getScene());
 
         startButton = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.CLASS);
-        startButton.setY(-40);
+        startButton.setY(-20);
         addChild(startButton);
         startButton.setDisable(false);
         startButton.setActive(true);
 
         // abilities
         abilityButton1 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.ABILITY);
-        abilityButton1.setY(-20);
-        abilityButton1.setX(-30);
+        abilityButton1.setY(-10);
+        abilityButton1.setX(-15);
         addChild(abilityButton1);
         abilityButtonList.add(abilityButton1);
 
@@ -42,30 +42,30 @@ public class LevelUpAdvancedStar extends LevelUpStar {
         abilityButtonList.add(abilityButton2);
 
         abilityButton3 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.ABILITY);
-        abilityButton3.setY(-20);
-        abilityButton3.setX(30);
+        abilityButton3.setY(-10);
+        abilityButton3.setX(15);
         addChild(abilityButton3);
         abilityButtonList.add(abilityButton3);
 
         abilityButton4 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.ABILITY);
-        abilityButton4.setY(20);
-        abilityButton4.setX(-30);
+        abilityButton4.setY(10);
+        abilityButton4.setX(-15);
         addChild(abilityButton4);
         abilityButtonList.add(abilityButton4);
 
         abilityButton5 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.ABILITY);
-        abilityButton5.setY(40);
+        abilityButton5.setY(20);
         addChild(abilityButton5);
         abilityButtonList.add(abilityButton5);
 
         abilityButton6 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.ABILITY);
-        abilityButton6.setY(20);
-        abilityButton6.setX(30);
+        abilityButton6.setY(10);
+        abilityButton6.setX(15);
         addChild(abilityButton6);
         abilityButtonList.add(abilityButton6);
 
         abilityButton7 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.ABILITY);
-        abilityButton7.setY(80);
+        abilityButton7.setY(40);
         addChild(abilityButton7);
         abilityButtonList.add(abilityButton7);
 

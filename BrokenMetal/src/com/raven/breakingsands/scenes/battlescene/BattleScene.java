@@ -199,8 +199,8 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
         // center the view
         Vector2f wo = this.getWorldOffset();
-        wo.x = GameProperties.getScreenWidth() / GameProperties.getScaling() - 64 * 2;
-        wo.y = GameProperties.getScreenHeight() / GameProperties.getScaling();
+        wo.x = GameProperties.getDisplayWidth() / (GameProperties.getScaling() * 2) - 32 * 2;
+        wo.y = GameProperties.getDisplayHeight() / (GameProperties.getScaling() * 2);
 
         this.setToolTip(new UIToolTip<>(this,
                 120, 120,
@@ -336,7 +336,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
         // add enemies
         // create xp to burn
-        int xpBank = 3 * Math.max(difficulty, 1) * Math.max(difficulty / 3, 1);
+        int xpBank = 3 * Math.max(difficulty, 1) * Math.max(difficulty / 3, 1) + (difficulty - 1) * 3;
 
         // create and populate map
         HashMap<Terrain, Integer> mapSpawn = new HashMap<>();

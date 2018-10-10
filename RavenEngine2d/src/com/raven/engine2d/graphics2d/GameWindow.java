@@ -2,10 +2,13 @@ package com.raven.engine2d.graphics2d;
 
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
+import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.graphics2d.shader.CompilationShader;
 import com.raven.engine2d.graphics2d.shader.LayerShader;
 import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.graphics2d.shader.TextShader;
+import com.raven.engine2d.util.math.Vector2f;
+import com.raven.engine2d.util.math.Vector2i;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
@@ -18,7 +21,9 @@ import org.lwjgl.system.MemoryStack;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.List;
 
+import static com.raven.engine2d.GameProperties.getResolutionList;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
@@ -59,12 +64,20 @@ public class GameWindow {
 
 //        long monitor = glfwGetPrimaryMonitor();
         long monitor = glfwGetMonitors().get(0);
-        GLFWVidMode vidmode = glfwGetVideoMode(monitor);
-
-        GameProperties.setDisplayWidth(vidmode.width());
-        GameProperties.setDisplayHeight(vidmode.height());
-
         glfwGetVideoModes(monitor).stream().forEach(m -> GameProperties.addResolution(m.width(), m.height()));
+
+        GameData res = engine.getGame().loadGameData("settings").get(0);
+
+        if (res.has("width") && res.has("height")) {
+            GameProperties.setDisplayWidth(res.getInteger("width"));
+            GameProperties.setDisplayHeight(res.getInteger("height"));
+        } else {
+            List<Vector2i> reses = GameProperties.getResolutionList();
+            Vector2i vec = reses.get(reses.size() - 1);
+            GameProperties.setDisplayWidth(vec.x);
+            GameProperties.setDisplayHeight(vec.y);
+        }
+
 
         // Configure GLFW
         glfwDefaultWindowHints();
@@ -114,15 +127,17 @@ public class GameWindow {
             glfwGetWindowSize(window, pWidth, pHeight);
 
             // Center the window
-            glfwSetWindowPos(window, (vidmode.width() - pWidth.get(0)) / 2,
-                    (vidmode.height() - pHeight.get(0)) / 2);
+//            glfwSetWindowPos(window,
+//                    (GameProperties.getDisplayWidth() - pWidth.get(0)) / 2,
+//                    (GameProperties.getDisplayHeight() - pHeight.get(0)) / 2);
         } // the stack frame is popped automatically
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
 
         // Enable v-sync?
-        glfwSwapInterval(GameProperties.getVSync() ? GL_TRUE : GL_FALSE);
+        glfwSwapInterval(GameProperties.getVSync() ? 1 : 0);
+
 
         // Make the window visible
         glfwShowWindow(window);
@@ -244,13 +259,17 @@ public class GameWindow {
     }
 
     public void setDimension(int width, int height) {
-        GameProperties.setScreenWidth(width);
-        GameProperties.setScreenHeight(height);
+        // TODO restart window
+        GameProperties.setDisplayWidth(width);
+        GameProperties.setDisplayHeight(height);
+
+        glfwSetWindowSize(window, width, height);
 
         layerShader.release();
         layerShader = new LayerShader(engine, this);
 
         compilationShader.release();
         compilationShader = new CompilationShader(engine, this);
+
     }
 }

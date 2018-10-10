@@ -207,7 +207,7 @@ public abstract class Game<G extends Game<G>> {
         return null;
     }
 
-    protected GameDataList loadGameData(String file) {
+    public GameDataList loadGameData(String file) {
         Path savePath = Paths.get(getMainDirectory());
 
         try {

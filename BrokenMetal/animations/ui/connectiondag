@@ -4,8 +4,8 @@
     height: 7,
     x: 4,
     y: 0,
-    xoffset: -2,
-    yoffset: -2,
+    xoffset: -1,
+    yoffset: -1,
     frames: [{ time: 1000 }]
 },
 {
@@ -14,8 +14,8 @@
     height: 7,
     x: 4,
     y: 11,
-    xoffset: -2,
-    yoffset: -2,
+    xoffset: -1,
+    yoffset: -1,
     frames: [{ time: 1000 }]
 },
 {
@@ -24,7 +24,7 @@
     height: 7,
     x: 4,
     y: 22,
-    xoffset: -2,
-    yoffset: -2,
+    xoffset: -1,
+    yoffset: -1,
     frames: [{ time: 1000 }]
 }
