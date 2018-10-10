@@ -99,7 +99,7 @@
     type: "trigger",
     trigger: "unmoved",
     target: "self",
-    desc: "restore\n1 health\n1 shield\nafter a turn of not moving, attacking, or using an ability",
+    desc: "restore\n2 shield\nafter a turn of not moving, attacking, or using an ability",
     icon: "sprites/ability hex yingyang.png",
 
     restore_shield: 2
@@ -158,7 +158,7 @@
 },
 {
     name: "Impenetrable",
-    desc: "become even more resilient to damage.\n\nhealth +3\nshield +5\nresistance +1",
+    desc: "become even more resilient to damage.\n\nhealth +3\nshield +2\nresistance +1",
     icon: "sprites/ability hex protection.png",
 
     class: "tank",
@@ -286,7 +286,6 @@
     upgrade: "Hack",
 
     hp: 2,
-    shield: 2,
     resistance: 1,
 
     action: true,

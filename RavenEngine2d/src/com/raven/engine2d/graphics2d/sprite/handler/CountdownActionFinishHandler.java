@@ -20,6 +20,8 @@ public class CountdownActionFinishHandler implements ActionFinishHandler {
     public void onActionFinish() {
         remaining--;
 
+        System.out.println("Count: " + remaining);
+
         if (remaining == 0)
             handler.onActionFinish();
     }

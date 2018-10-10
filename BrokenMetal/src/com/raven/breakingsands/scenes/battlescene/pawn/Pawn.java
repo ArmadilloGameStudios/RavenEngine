@@ -412,7 +412,14 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             abilities.stream()
                     .filter(a -> a.name.equals(ability.replace))
                     .findFirst()
-                    .ifPresent(this::removeAbility);
+                    .ifPresent(a -> {
+                        this.removeAbility(a);
+
+                        if (a.uses != null) {
+                        int addUses = ability.uses - a.uses;
+                            ability.remainingUses = a.remainingUses + addUses;
+                        }
+                    });
         }
 
         if (ability.type == Ability.Type.SELF) {
@@ -1063,8 +1070,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public int getNextLevelXp() {
-        return (level * (level + 1) + Math.max(1, level * 2 + (level / 5) * (level))) * 5;
-        // 10 * 11 = 110 + 20 + 2 * 10 = 150 * 5 750
+        return level * (level + 1) + Math.max(1, level + (level / 5) * ((level - 1) * (level - 1))) * 3;
 //        return 0;
     }
 

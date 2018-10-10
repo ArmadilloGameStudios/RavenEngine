@@ -30,8 +30,8 @@ public class BrokenMetalGame extends Game<BrokenMetalGame> {
 
         settings.ifHas("music", s -> GameProperties.setMusicVolume(s.asInteger()));
         settings.ifHas("sfx", s -> GameProperties.setSFXVolume(s.asInteger()));
-        settings.ifHas("width", s -> GameProperties.setScreenWidth(s.asInteger()));
-        settings.ifHas("height", s -> GameProperties.setScreenHeight(s.asInteger()));
+        settings.ifHas("width", s -> GameProperties.setDisplayWidth(s.asInteger()));
+        settings.ifHas("height", s -> GameProperties.setDisplayHeight(s.asInteger()));
         settings.ifHas("scaling", s -> GameProperties.setScaling(s.asInteger()));
         settings.ifHas("vsync", s -> GameProperties.setVSync(s.asBoolean()));
     }
@@ -53,7 +53,7 @@ public class BrokenMetalGame extends Game<BrokenMetalGame> {
 
     @Override
     public String getTitle() {
-        return "Breaking Sands";
+        return "Broken Metal";
     }
 
     @Override
@@ -99,8 +99,8 @@ public class BrokenMetalGame extends Game<BrokenMetalGame> {
         HashMap<String, GameData> map = new HashMap<>();
         map.put("music", new GameData(GameProperties.getMusicVolume()));
         map.put("sfx", new GameData(GameProperties.getSFXVolume()));
-        map.put("width", new GameData(GameProperties.getScreenWidth()));
-        map.put("height", new GameData(GameProperties.getScreenHeight()));
+        map.put("width", new GameData(GameProperties.getDisplayWidth()));
+        map.put("height", new GameData(GameProperties.getDisplayHeight()));
         map.put("scaling", new GameData(GameProperties.getScaling()));
         map.put("vsync", new GameData(GameProperties.getVSync()));
 

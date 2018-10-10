@@ -35,12 +35,12 @@ public abstract class UIAbilityButton extends UIButton<BattleScene> {
 
         abilityImg.setToolTip(ability.name, ability.description);
 
-        abilityImg.setY(getHeight() * 2 + 2 + (abilityImgList.size() / 2) * 22);
+        abilityImg.setY(getHeight() + 1 + (abilityImgList.size() / 2) * 11);
         if (abilityImgList.size() % 2 == 0) {
-            abilityImg.setX(28);
+            abilityImg.setX(14);
         } else {
-            abilityImgList.get(abilityImgList.size() - 1).setX(16);
-            abilityImg.setX(40);
+            abilityImgList.get(abilityImgList.size() - 1).setX(8);
+            abilityImg.setX(20);
         }
         abilityImgList.add(abilityImg);
     }

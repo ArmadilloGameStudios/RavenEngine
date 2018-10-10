@@ -270,8 +270,6 @@ public class GameEngine<G extends Game<G>> {
         SpriteSheet sheet = spriteSheetsMap.get(game.getMainDirectory() + File.separator + fixPath(spriteSrc));
 
         if (sheet == null) {
-            // TODO use some error sprite
-            System.out.println(spriteSrc);
             throw new NoSuchElementException();
         }
 

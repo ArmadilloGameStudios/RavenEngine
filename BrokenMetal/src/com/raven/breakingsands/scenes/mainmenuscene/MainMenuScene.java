@@ -42,8 +42,8 @@ public class MainMenuScene extends Scene<BrokenMetalGame> {
         // World Offset
         Vector2f wo = getWorldOffset();
 
-        wo.x = GameProperties.getScreenWidth() / GameProperties.getScaling() - 32;
-        wo.y = GameProperties.getScreenHeight() / GameProperties.getScaling();
+        wo.x = GameProperties.getDisplayWidth() / (GameProperties.getScaling() * 2) - 16;
+        wo.y = GameProperties.getDisplayHeight() / (GameProperties.getScaling() * 2);
 
         // UI
         UIBottomLeftContainer<MainMenuScene> container = new UIBottomLeftContainer<>(this);

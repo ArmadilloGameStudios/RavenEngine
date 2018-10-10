@@ -15,28 +15,12 @@ import java.util.List;
 public class GameProperties {
     private static float animationSpeed = 1.0f;
     private static int scaling = 2;
-    private static int height = 1080, width = 1920;
+//    private static int height = 1080, width = 1920;
     private static int dheight = 1080, dwidth = 1920;
     private static String mainDirectory;
     private static List<Vector2i> resolutionList = new ArrayList<>();
     private static int sfx = 100, music = 100;
     private static boolean vsync = false;
-
-    public static int getScreenWidth() {
-        return width;
-    }
-
-    public static void setScreenWidth(int width) {
-        GameProperties.width = width;
-    }
-
-    public static int getScreenHeight() {
-        return height;
-    }
-
-    public static void setScreenHeight(int height) {
-        GameProperties.height = height;
-    }
 
     public static int getDisplayWidth() {
         return dwidth;
