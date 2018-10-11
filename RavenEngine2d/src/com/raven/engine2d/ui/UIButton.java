@@ -25,8 +25,7 @@ public abstract class UIButton<S extends Scene>
     public UIButton(S scene, String btnImgSrc, String animation) {
         super(scene);
 
-        spriteAnimationState = new SpriteAnimationState(scene.getEngine().getAnimation(animation));
-
+        spriteAnimationState = new SpriteAnimationState(this, scene.getEngine().getAnimation(animation));
         image = new UIImage<>(scene, (int) getWidth(), (int) getHeight() * 2, btnImgSrc);
         image.setSpriteAnimation(spriteAnimationState);
 
@@ -146,7 +145,7 @@ public abstract class UIButton<S extends Scene>
     }
 
     public void setSpriteAnimation(String animation) {
-        spriteAnimationState = new SpriteAnimationState(getScene().getEngine().getAnimation(animation));
+        spriteAnimationState = new SpriteAnimationState(image, getScene().getEngine().getAnimation(animation));
         image.setSpriteAnimation(spriteAnimationState);
     }
 

@@ -20,6 +20,8 @@ public abstract class WorldTextObject
 
     public WorldTextObject(S scene) {
         super(scene);
+
+        textWriter = new UITextWriter(getScene().getEngine(), getScene());
     }
 
     public void setText(String text) {
@@ -27,7 +29,7 @@ public abstract class WorldTextObject
             this.text = text;
 
             if (image == null) {
-                if (font.isHighlight()) {
+                if (font.isHighlight() || font.isWrap()) {
                     image = new UITexture(getScene().getEngine(), 160, 12 * 2);
                 } else {
                     image = new UITexture(getScene().getEngine(), 160, 12);
@@ -39,11 +41,8 @@ public abstract class WorldTextObject
                 spriteSheet = image;
             }
 
-            // TODO don't remake each time
-            textWriter = new UITextWriter(getScene().getEngine(), getScene(), image, font);
-
-            textWriter.setText(text);
-//            System.out.println(image.isLoaded());
+            textWriter.setImageDest(image);
+            textWriter.setText(text, font);
 
             getScene().addTextToWrite(textWriter);
         }

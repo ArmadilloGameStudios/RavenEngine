@@ -38,14 +38,14 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
             background.clearID();
             addChild(background);
 
-            background.setY(getHeight() * 2f - background.getHeight() * 2f);
+            background.setY(getHeight() - background.getHeight());
         }
 
         title = new UILabel<>(scene, "", width, height);
         UIFont font = title.getFont();
         font.setSmall(true);
-        title.setY(title.getY() - 10);
-        title.setX(title.getX() + 14);
+        title.setY(title.getY() - 5);
+        title.setX(title.getX() + 7);
         title.load();
         title.setDestination(Layer.Destination.ToolTip);
         title.clearID();
@@ -55,8 +55,8 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
         font = text.getFont();
         font.setSmall(true);
         font.setWrap(true);
-        text.setY(text.getY() - 38);
-        text.setX(text.getX() + 10);
+        text.setY(text.getY() - 19);
+        text.setX(text.getX() + 5);
         text.load();
         text.setDestination(Layer.Destination.ToolTip);
         text.clearID();
@@ -77,9 +77,10 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
         this.title.load();
     }
 
+    boolean getting = false;
     @Override
     public float getZ() {
-        return 1.0f;
+        return .5f;
     }
 
     @Override
@@ -108,13 +109,12 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
     @Override
     public float getY() {
 
-//      float y = GameProperties.getScreenHeight() - height * 2f - (float) (getScene().getEngine().getMouse().getY() * 2f                                     /                                      GameProperties.getScaling());
-        float y = GameProperties.getScreenHeight() - height * 2f - (float) (getScene().getEngine().getMouse().getY() * 2f) * GameProperties.getScreenHeight() / (GameProperties.getDisplayHeight() * GameProperties.getScaling());
+      float y = GameProperties.getDisplayHeight() / GameProperties.getScaling() - height - (float) (getScene().getEngine().getMouse().getY() / GameProperties.getScaling());
+//        float y = GameProperties.getDisplayHeight() - height - (float) (getScene().getEngine().getMouse().getY()) * GameProperties.getDisplayHeight() / (GameProperties.getDisplayHeight() * GameProperties.getScaling());
 
         if (background != null) {
-            if (y - background.getHeight() * 2f < 0)
-            {
-                y += background.getHeight() * 2f;
+            if (y - background.getHeight() < 0) {
+                y += background.getHeight();
             }
         }
 
@@ -129,13 +129,12 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
 
     @Override
     public float getX() {
-//      float x = (float) (getScene().getEngine().getMouse().getX() * 2f                                    /                                     GameProperties.getScaling());
-        float x = (float) (getScene().getEngine().getMouse().getX() * 2f * GameProperties.getScreenWidth()) / (GameProperties.getDisplayWidth() * GameProperties.getScaling());
+      float x = (float) (getScene().getEngine().getMouse().getX() / GameProperties.getScaling());
+//        float x = (float) (getScene().getEngine().getMouse().getX() * GameProperties.getDisplayWidth()) / (GameProperties.getDisplayWidth() * GameProperties.getScaling());
 
         if (background != null) {
-            if (background.getWidth() * 2f + x > GameProperties.getScreenWidth() * 2f / GameProperties.getScaling())
-            {
-                x -= background.getWidth() * 2f;
+            if (background.getWidth() + x > GameProperties.getDisplayWidth() / GameProperties.getScaling()) {
+                x -= background.getWidth();
             }
         }
 
@@ -146,4 +145,5 @@ public class UIToolTip<S extends Scene> extends UIObject<S, UIObject<S, Parentab
     public void setX(float x) {
         throw new UnsupportedOperationException();
     }
+
 }

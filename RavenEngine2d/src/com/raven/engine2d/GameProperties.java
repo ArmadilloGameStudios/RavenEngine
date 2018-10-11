@@ -1,8 +1,8 @@
 package com.raven.engine2d;
 
 import com.raven.engine2d.util.math.Vector2i;
-import javafx.util.Pair;
 
+import javax.sound.sampled.FloatControl;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -15,27 +15,12 @@ import java.util.List;
 public class GameProperties {
     private static float animationSpeed = 1.0f;
     private static int scaling = 2;
-    private static int height = 1080, width = 1920;
+//    private static int height = 1080, width = 1920;
     private static int dheight = 1080, dwidth = 1920;
     private static String mainDirectory;
     private static List<Vector2i> resolutionList = new ArrayList<>();
     private static int sfx = 100, music = 100;
-
-    public static int getScreenWidth() {
-        return width;
-    }
-
-    public static void setScreenWidth(int width) {
-        GameProperties.width = width;
-    }
-
-    public static int getScreenHeight() {
-        return height;
-    }
-
-    public static void setScreenHeight(int height) {
-        GameProperties.height = height;
-    }
+    private static boolean vsync = false;
 
     public static int getDisplayWidth() {
         return dwidth;
@@ -100,6 +85,14 @@ public class GameProperties {
 
     public static List<Vector2i> getResolutionList() {
         return resolutionList;
+    }
+
+    public static void setVSync(boolean vsync) {
+        GameProperties.vsync = vsync;
+    }
+
+    public static boolean getVSync() {
+        return vsync;
     }
 
     private GameProperties() {}

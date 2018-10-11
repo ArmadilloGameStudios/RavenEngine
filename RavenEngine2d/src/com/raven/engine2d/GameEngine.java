@@ -2,6 +2,7 @@ package com.raven.engine2d;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.glFinish;
 
 import java.io.File;
 import java.util.*;
@@ -16,7 +17,6 @@ import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.input.Keyboard;
 import com.raven.engine2d.input.Mouse;
 import com.raven.engine2d.worldobject.GameObject;
-import org.lwjgl.system.CallbackI;
 
 import javax.sound.sampled.*;
 
@@ -81,16 +81,13 @@ public class GameEngine<G extends Game<G>> {
     private int frame = 0;
     private float framesdt = 0;
 
+
     public void run() {
         System.out.println("Started Run");
 
         System.out.println("Starting Steam API");
         try {
-//            if (SteamAPI.isSteamRunning()) {
             steamInit = SteamAPI.init();
-//            } else {
-//                steamInit = false;
-//            }
         } catch (SteamException se) {
             System.out.println("Couldn't load steam native libraries");
         }
@@ -128,11 +125,14 @@ public class GameEngine<G extends Game<G>> {
             }
 
             input(deltaTime);
-            draw();
-            window.printErrors("Draw Error: ");
 
             game.update(deltaTime);
+
             window.printErrors("Update Error: ");
+
+            draw();
+
+            window.printErrors("Draw Error: ");
 
 //            if (frame % 60 == 0) {
 //                System.out.println("FPS: " + 1000f / (framesdt / 60f) + " MPF: " + framesdt / 60f);
@@ -141,14 +141,20 @@ public class GameEngine<G extends Game<G>> {
 
             glfwSwapBuffers(window.getWindowHandler()); // swap the color buffers
 
+            glFinish();
+
             window.printErrors("Swap Error: ");
 
             long currentTime = System.nanoTime();
             deltaTime = (currentTime - start) / 1000000.0f;
             systemTime = currentTime / 1000000L;
 
-            framesdt += deltaTime;
-            frame++;
+            if (deltaTime > 20) {
+                System.out.println("Lag: " + deltaTime);
+            }
+
+//            framesdt += deltaTime;
+//            frame++;
 
             window.printErrors("Errors: ");
         }
@@ -175,7 +181,7 @@ public class GameEngine<G extends Game<G>> {
     private void input(float delta) {
         glfwPollEvents();
 
-        int id = window.getMainShader().getWorldObjectID();
+        int id = window.getCompilationShader().getWorldObjectID();
 
         GameObject hover = null;
         if (id != 0) {
@@ -312,6 +318,10 @@ public class GameEngine<G extends Game<G>> {
 
                 audioMap.put(audioName, clip);
 
+//                System.out.println(audioName);
+//                System.out.println(clip.getLineInfo());
+//                System.out.println(Arrays.stream(clip.getControls()).map(Control::getType).collect(Collectors.toList()));
+
                 return clip;
 
             } catch (Exception e) {
@@ -321,6 +331,28 @@ public class GameEngine<G extends Game<G>> {
         }
 
         return null;
+    }
+
+    final public boolean changeSongVolume(int volume, Clip clip) {
+        if (clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+            FloatControl gainControl = (FloatControl) clip
+                    .getControl(FloatControl.Type.MASTER_GAIN);
+
+            float dB = (float) (Math.log(volume / 100f) / Math.log(10.0) * 20.0);
+            gainControl.setValue(dB);
+
+            return true;
+        } else if (clip.isControlSupported(FloatControl.Type.VOLUME)) {
+            FloatControl gainControl = (FloatControl) clip
+                    .getControl(FloatControl.Type.VOLUME);
+
+            float dB = (float) (Math.log(volume / 100f) / Math.log(10.0) * 20.0);
+            gainControl.setValue(dB);
+
+            return true;
+        }
+
+        return false;
     }
 
     // input

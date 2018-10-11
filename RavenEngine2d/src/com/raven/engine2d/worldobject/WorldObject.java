@@ -1,19 +1,16 @@
 package com.raven.engine2d.worldobject;
 
-import com.raven.engine2d.Game;
-import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.graphics2d.DrawStyle;
-import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.shader.LayerShader;
+import com.raven.engine2d.graphics2d.shader.RenderTarget;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
-import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
 
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.FloatControl;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -57,7 +54,7 @@ public abstract class WorldObject<
 
             if (data.has("animation")) {
                 animationName = data.getString("animation");
-                spriteAnimationState = new SpriteAnimationState(scene.getEngine().getAnimation(animationName));
+                spriteAnimationState = new SpriteAnimationState(this, scene.getEngine().getAnimation(animationName));
 
                 data.ifHas("animation_idle", i -> spriteAnimationState.setIdleAction(i.asString()));
             }
@@ -184,17 +181,18 @@ public abstract class WorldObject<
             clip.setMicrosecondPosition(0);
 
             // TODO shouldn't need to be done every time
-            FloatControl gainControl = (FloatControl) clip
-                    .getControl(FloatControl.Type.MASTER_GAIN);
-            float dB = (float) (Math.log(GameProperties.getSFXVolume() / 100f) / Math.log(10.0) * 20.0);
-            gainControl.setValue(dB);
-
-            clip.start();
+            if (getScene().getEngine().changeSongVolume(GameProperties.getSFXVolume(), clip)) {
+                clip.start();
+            } else {
+                System.out.println("Missing Audio Controls: " + name);
+            }
         }
     }
 
     public void setHighlight(Highlight h) {
         highlight = h;
+
+        needsRedraw();
 
 //        for (C child : children) {
 //            child.setHighlight(h);
@@ -213,9 +211,10 @@ public abstract class WorldObject<
         return spriteAnimationState;
     }
 
-    public void draw(MainShader shader) {
+    @Override
+    public void draw(LayerShader shader, RenderTarget target) {
         if (spriteSheet != null)
-            shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getWorldZ(), getHighlight(), DrawStyle.ISOMETRIC);
+            shader.draw(spriteSheet, target, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getWorldZ(), getHighlight(), DrawStyle.ISOMETRIC);
     }
 
     public void setParent(P parent) {
@@ -295,6 +294,11 @@ public abstract class WorldObject<
         scene.addGameObject(this);
 
         children.forEach(c -> c.setScene(scene));
+    }
+
+    @Override
+    public final void needsRedraw() {
+        getScene().getLayer(getDestination()).setNeedRedraw(true);
     }
 
     protected void setSpriteSheet(String spriteSheetName) {

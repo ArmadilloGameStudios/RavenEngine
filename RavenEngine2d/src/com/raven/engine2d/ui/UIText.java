@@ -1,7 +1,8 @@
 package com.raven.engine2d.ui;
 
 import com.raven.engine2d.graphics2d.DrawStyle;
-import com.raven.engine2d.graphics2d.shader.MainShader;
+import com.raven.engine2d.graphics2d.shader.LayerShader;
+import com.raven.engine2d.graphics2d.shader.RenderTarget;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.util.math.Vector2f;
@@ -11,6 +12,7 @@ public abstract class UIText<S extends Scene>
         extends UIObject<S, UIObject<S, Parentable<UIObject>>> {
 
     private String text;
+    private String currentText;
     private final String backgroundSrc;
     private UITexture image;
     private UITextWriter textWriter;
@@ -26,8 +28,10 @@ public abstract class UIText<S extends Scene>
     public UIText(S scene, String text, String backgroundSrc) {
         super(scene);
 
-        this.text = text;
+        currentText = this.text = text;
         this.backgroundSrc = backgroundSrc;
+
+        textWriter = new UITextWriter(getScene().getEngine(), getScene());
     }
 
     public UIFont getFont() {
@@ -50,20 +54,21 @@ public abstract class UIText<S extends Scene>
             image.load(getScene());
             getScene().getEngine().getWindow().printErrors("post cat (ut) ");
         }
-        // TODO don't remake each time
-        textWriter = new UITextWriter(getScene().getEngine(), getScene(), image, font, handler);
 
         if (backgroundSrc != null)
             textWriter.setBackground(backgroundSrc);
 
-        textWriter.setText(text);
-//        image.load(getScene());
+        textWriter.setImageDest(image);
+        textWriter.setText(text, font);
+        textWriter.setHandler(handler);
+
+        needsRedraw();
 
         getScene().addTextToWrite(textWriter);
     }
 
-    public void draw(MainShader shader) {
-        shader.draw(image, getSpriteAnimationState(), getWorldPosition(), null, getID(), getWorldZ(), null, DrawStyle.UI);
+    public void draw(LayerShader shader, RenderTarget target) {
+        shader.draw(image, target, getSpriteAnimationState(), getWorldPosition(), null, getID(), getWorldZ(), null, DrawStyle.UI);
     }
 
     @Override

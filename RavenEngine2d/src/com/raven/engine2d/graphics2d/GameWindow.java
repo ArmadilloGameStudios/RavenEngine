@@ -1,30 +1,31 @@
 package com.raven.engine2d.graphics2d;
 
-import com.codedisaster.steamworks.SteamAPI;
-import com.codedisaster.steamworks.SteamException;
-import com.codedisaster.steamworks.SteamUtils;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.GameProperties;
+import com.raven.engine2d.database.GameData;
+import com.raven.engine2d.graphics2d.shader.CompilationShader;
+import com.raven.engine2d.graphics2d.shader.LayerShader;
 import com.raven.engine2d.graphics2d.shader.Shader;
-import com.raven.engine2d.graphics2d.shader.MainShader;
 import com.raven.engine2d.graphics2d.shader.TextShader;
-import org.lwjgl.PointerBuffer;
+import com.raven.engine2d.util.math.Vector2f;
+import com.raven.engine2d.util.math.Vector2i;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
-import sun.java2d.HeadlessGraphicsEnvironment;
 
-import java.awt.*;
+import java.io.File;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
+import static com.raven.engine2d.GameProperties.getResolutionList;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitors;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.opengl.ARBImaging.GL_TABLE_TOO_LARGE;
 import static org.lwjgl.opengl.GL11.*;
@@ -40,7 +41,8 @@ public class GameWindow {
     // The window handle
     private long window;
 
-    private MainShader mainShader;
+    private LayerShader layerShader;
+    private CompilationShader compilationShader;
     private TextShader textShader;
 
     private GameEngine engine;
@@ -60,13 +62,22 @@ public class GameWindow {
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
 
-        long monitor = glfwGetPrimaryMonitor();
-        GLFWVidMode vidmode = glfwGetVideoMode(monitor);
-
-        GameProperties.setDisplayWidth(vidmode.width());
-        GameProperties.setDisplayHeight(vidmode.height());
-
+//        long monitor = glfwGetPrimaryMonitor();
+        long monitor = glfwGetMonitors().get(0);
         glfwGetVideoModes(monitor).stream().forEach(m -> GameProperties.addResolution(m.width(), m.height()));
+
+        GameData res = engine.getGame().loadGameData("settings").get(0);
+
+        if (res.has("width") && res.has("height")) {
+            GameProperties.setDisplayWidth(res.getInteger("width"));
+            GameProperties.setDisplayHeight(res.getInteger("height"));
+        } else {
+            List<Vector2i> reses = GameProperties.getResolutionList();
+            Vector2i vec = reses.get(reses.size() - 1);
+            GameProperties.setDisplayWidth(vec.x);
+            GameProperties.setDisplayHeight(vec.y);
+        }
+
 
         // Configure GLFW
         glfwDefaultWindowHints();
@@ -80,6 +91,7 @@ public class GameWindow {
         }
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
 
         // Create the window
         window = glfwCreateWindow(
@@ -87,6 +99,21 @@ public class GameWindow {
                 GameProperties.getDisplayHeight(),
                 engine.getGame().getTitle(), monitor,
                 NULL);
+
+        try {
+            int[] x, y;
+            ByteBuffer buffer = STBImage.stbi_load(
+                    GameProperties.getMainDirectory() + File.separator + "sprites" + File.separator + "Icon.png",
+                    x = new int[1], y = new int[1], new int[1], STBImage.STBI_rgb_alpha);
+
+            GLFWImage image = GLFWImage.malloc();
+            image.set(x[0], y[0], buffer);
+            GLFWImage.Buffer imagebf = GLFWImage.malloc(1);
+            imagebf.put(0, image);
+            glfwSetWindowIcon(window, imagebf);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
@@ -100,15 +127,17 @@ public class GameWindow {
             glfwGetWindowSize(window, pWidth, pHeight);
 
             // Center the window
-            glfwSetWindowPos(window, (vidmode.width() - pWidth.get(0)) / 2,
-                    (vidmode.height() - pHeight.get(0)) / 2);
+//            glfwSetWindowPos(window,
+//                    (GameProperties.getDisplayWidth() - pWidth.get(0)) / 2,
+//                    (GameProperties.getDisplayHeight() - pHeight.get(0)) / 2);
         } // the stack frame is popped automatically
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
 
-        // Enable v-sync
-        glfwSwapInterval(GL_TRUE);
+        // Enable v-sync?
+        glfwSwapInterval(GameProperties.getVSync() ? 1 : 0);
+
 
         // Make the window visible
         glfwShowWindow(window);
@@ -123,7 +152,8 @@ public class GameWindow {
 
         GLCapabilities cat = GL.createCapabilities();
 
-        mainShader = new MainShader(engine, this);
+        layerShader = new LayerShader(engine, this);
+        compilationShader = new CompilationShader(engine, this);
         textShader = new TextShader(engine, this);
 
         // Enable depth test
@@ -152,10 +182,14 @@ public class GameWindow {
         return window;
     }
 
-    public MainShader getMainShader() {
-//        mainShader.release();
-//        mainShader = new MainShader(engine, this);
-        return mainShader;
+    public LayerShader getLayerShader() {
+//        layerShader.release();
+//        layerShader = new LayerShader(engine, this);
+        return layerShader;
+    }
+
+    public CompilationShader getCompilationShader() {
+        return compilationShader;
     }
 
     public TextShader getTextShader() {
@@ -180,36 +214,38 @@ public class GameWindow {
     }
 
     public void printErrors(String tag) {
-        int err;
-        while ((err = glGetError()) != GL_NO_ERROR) {
-            switch (err) {
-                case GL_INVALID_ENUM:
-                    System.out.println(tag + " GL_INVALID_ENUM 0x" + Integer.toHexString(err));
-                    break;
-                case GL_INVALID_VALUE:
-                    System.out.println(tag + " GL_INVALID_VALUE 0x" + Integer.toHexString(err));
-                    break;
-                case GL_INVALID_OPERATION:
-                    System.out.println(tag + " GL_INVALID_OPERATION 0x" + Integer.toHexString(err));
-                    break;
-                case GL_STACK_OVERFLOW:
-                    System.out.println(tag + " GL_STACK_OVERFLOW 0x" + Integer.toHexString(err));
-                    break;
-                case GL_OUT_OF_MEMORY:
-                    System.out.println(tag + " GL_OUT_OF_MEMORY 0x" + Integer.toHexString(err));
-                    break;
-                case GL_INVALID_FRAMEBUFFER_OPERATION:
-                    System.out.println(tag + " GL_INVALID_FRAMEBUFFER_OPERATION 0x" + Integer.toHexString(err));
-                    break;
-                case GL_CONTEXT_LOST:
-                    System.out.println(tag + " GL_CONTEXT_LOST 0x" + Integer.toHexString(err));
-                    break;
-                case GL_TABLE_TOO_LARGE:
-                    System.out.println(tag + " GL_TABLE_TOO_LARGE 0x" + Integer.toHexString(err));
-                    break;
-                default:
-                    System.out.println(tag + " 0x" + Integer.toHexString(err));
-                    break;
+        if (false) {
+            int err;
+            while ((err = glGetError()) != GL_NO_ERROR) {
+                switch (err) {
+                    case GL_INVALID_ENUM:
+                        System.out.println(tag + " GL_INVALID_ENUM 0x" + Integer.toHexString(err));
+                        break;
+                    case GL_INVALID_VALUE:
+                        System.out.println(tag + " GL_INVALID_VALUE 0x" + Integer.toHexString(err));
+                        break;
+                    case GL_INVALID_OPERATION:
+                        System.out.println(tag + " GL_INVALID_OPERATION 0x" + Integer.toHexString(err));
+                        break;
+                    case GL_STACK_OVERFLOW:
+                        System.out.println(tag + " GL_STACK_OVERFLOW 0x" + Integer.toHexString(err));
+                        break;
+                    case GL_OUT_OF_MEMORY:
+                        System.out.println(tag + " GL_OUT_OF_MEMORY 0x" + Integer.toHexString(err));
+                        break;
+                    case GL_INVALID_FRAMEBUFFER_OPERATION:
+                        System.out.println(tag + " GL_INVALID_FRAMEBUFFER_OPERATION 0x" + Integer.toHexString(err));
+                        break;
+                    case GL_CONTEXT_LOST:
+                        System.out.println(tag + " GL_CONTEXT_LOST 0x" + Integer.toHexString(err));
+                        break;
+                    case GL_TABLE_TOO_LARGE:
+                        System.out.println(tag + " GL_TABLE_TOO_LARGE 0x" + Integer.toHexString(err));
+                        break;
+                    default:
+                        System.out.println(tag + " 0x" + Integer.toHexString(err));
+                        break;
+                }
             }
         }
     }
@@ -223,10 +259,17 @@ public class GameWindow {
     }
 
     public void setDimension(int width, int height) {
-        GameProperties.setScreenWidth(width);
-        GameProperties.setScreenHeight(height);
+        // TODO restart window
+        GameProperties.setDisplayWidth(width);
+        GameProperties.setDisplayHeight(height);
 
-        mainShader.release();
-        mainShader = new MainShader(engine, this);
+        glfwSetWindowSize(window, width, height);
+
+        layerShader.release();
+        layerShader = new LayerShader(engine, this);
+
+        compilationShader.release();
+        compilationShader = new CompilationShader(engine, this);
+
     }
 }

@@ -1,5 +1,6 @@
 package com.raven.engine2d.scene;
 
+import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.util.math.Matrix4f;
 
 /**
@@ -82,8 +83,8 @@ public class Camera {
     }
 
     private void updateProjectionMatrix() {
-        Matrix4f.perspective(60f, ((float) com.raven.engine2d.GameProperties.getScreenWidth())
-                / ((float) com.raven.engine2d.GameProperties.getScreenHeight()), near, far, projectionMatrix);
+        Matrix4f.perspective(60f, ((float) GameProperties.getDisplayHeight())
+                / ((float) GameProperties.getDisplayHeight()), near, far, projectionMatrix);
     }
 
     public void update(float deltaTime) {

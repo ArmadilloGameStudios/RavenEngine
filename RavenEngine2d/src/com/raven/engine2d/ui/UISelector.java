@@ -41,7 +41,7 @@ public class UISelector<S extends Scene, V extends Object> extends UIObject<S, U
                 uiText.load();
             }
         };
-        leftBtn.setY(8);
+        leftBtn.setY(4);
         addChild(leftBtn);
 
         rightBtn = new UIButton<S>(scene, rightBtnSrc, "selectorbutton") {
@@ -56,12 +56,12 @@ public class UISelector<S extends Scene, V extends Object> extends UIObject<S, U
                 uiText.load();
             }
         };
-        rightBtn.setY(8);
-        rightBtn.setX(200 + rightBtn.getWidth() * 2);
+        rightBtn.setY(4);
+        rightBtn.setX(100 + rightBtn.getWidth());
         addChild(rightBtn);
 
         uiTitle = new UILabel<>(scene, title, 100, 24);
-        uiTitle.setX(70);
+        uiTitle.setX(32);
         uiTitle.setY(0);
         UIFont f = uiTitle.getFont();
         f.setSmall(true);
@@ -69,8 +69,8 @@ public class UISelector<S extends Scene, V extends Object> extends UIObject<S, U
         addChild(uiTitle);
 
         uiText = new UILabel<>(scene, displays.get(index), 100, 24);
-        uiText.setX(70);
-        uiText.setY(-20);
+        uiText.setX(32);
+        uiText.setY(-10);
         f = uiText.getFont();
         f.setSmall(true);
         uiText.load();

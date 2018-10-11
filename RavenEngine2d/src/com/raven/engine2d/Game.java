@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -102,13 +103,19 @@ public abstract class Game<G extends Game<G>> {
             song.setMicrosecondPosition(0);
 
             // TODO shouldn't need to be done every time
-            FloatControl gainControl = (FloatControl) song
-                    .getControl(FloatControl.Type.MASTER_GAIN);
-            float dB = (float) (Math.log(GameProperties.getMusicVolume() / 100f) / Math.log(10.0) * 20.0);
-            gainControl.setValue(dB);
-
-            song.start();
+            if (engine.changeSongVolume(GameProperties.getMusicVolume(), song)) {
+                song.loop(-1);
+                song.start();
+            } else {
+                song = null;
+                System.out.println("Missing Audio Controls: " + name);
+            }
         }
+    }
+
+    public void changeSongVolume(int value) {
+        if (song != null)
+            engine.changeSongVolume(value, song);
     }
 
     abstract public void setup();
@@ -123,15 +130,22 @@ public abstract class Game<G extends Game<G>> {
 
     abstract public boolean saveGame();
 
-    protected boolean saveDataTables(List<GameDataTable> gdtToSave) {
+    protected void saveDataTablesThreaded(List<GameDataTable> gdtToSave) {
+        Thread t = new Thread(() -> saveDataTables(gdtToSave, "save"));
+        t.start();
+
+
+    }
+
+    private boolean saveDataTables(List<GameDataTable> gdtToSave, String folder) {
         boolean success = true;
 
         try {
             for (GameDataTable table : gdtToSave) {
-                Path p = Paths.get(getMainDirectory(), "save", table.getName());
+                Path p = Paths.get(getMainDirectory(), folder, table.getName());
                 File f = p.toFile();
 
-                if (f.getParentFile().exists())
+                if (!f.getParentFile().exists())
                     f.getParentFile().mkdirs();
 
                 if (!f.exists())
@@ -139,6 +153,38 @@ public abstract class Game<G extends Game<G>> {
 
                 Files.write(p, table.toFileString().getBytes(), StandardOpenOption.CREATE);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+            success = false;
+        }
+
+        return success;
+    }
+
+    public void deleteDataTables(String name) {
+        Path p = Paths.get(getMainDirectory(), name);
+
+        Arrays.stream(p.toFile().listFiles()).forEach(File::delete);
+    }
+
+    protected void saveDataTableThreaded(GameDataTable gdtToSave) {
+        Thread t = new Thread(() -> saveDataTable(gdtToSave));
+        t.start();
+
+
+    }
+
+    private boolean saveDataTable(GameDataTable gdtToSave) {
+        boolean success = true;
+
+        try {
+            Path p = Paths.get(getMainDirectory(), gdtToSave.getName());
+            File f = p.toFile();
+
+            if (!f.exists())
+                f.createNewFile();
+
+            Files.write(p, gdtToSave.toFileString().getBytes(), StandardOpenOption.CREATE);
         } catch (IOException e) {
             e.printStackTrace();
             success = false;
@@ -161,35 +207,11 @@ public abstract class Game<G extends Game<G>> {
         return null;
     }
 
-    abstract public boolean saveSettings();
-
-    protected boolean saveSettingsDataTables(GameDataTable table) {
-        boolean success = true;
+    public GameDataList loadGameData(String file) {
+        Path savePath = Paths.get(getMainDirectory());
 
         try {
-            Path p = Paths.get(getMainDirectory(), "settings");
-            File f = p.toFile();
-
-            if (f.getParentFile().exists())
-                f.getParentFile().mkdirs();
-
-            if (!f.exists())
-                f.createNewFile();
-
-            Files.write(p, table.toFileString().getBytes(), StandardOpenOption.CREATE);
-        } catch (IOException e) {
-            e.printStackTrace();
-            success = false;
-        }
-
-        return success;
-    }
-
-    protected static GameDataList loadSettingsGameData(String mainDirectory) {
-        Path savePath = Paths.get(mainDirectory);
-
-        try {
-            return GameDataReader.readFile(savePath.resolve("settings"));
+            return GameDataReader.readFile(savePath.resolve(file));
         } catch (IOException e) {
             e.printStackTrace();
         }

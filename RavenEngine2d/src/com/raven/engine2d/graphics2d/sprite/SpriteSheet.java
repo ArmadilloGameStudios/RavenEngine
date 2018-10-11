@@ -42,12 +42,9 @@ public class SpriteSheet extends ShaderTexture {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public void load(Scene scene) {
-        getEngine().getWindow().printErrors("pre load");
-
         if (!loaded) {
             buffer.flip();
 
@@ -55,7 +52,6 @@ public class SpriteSheet extends ShaderTexture {
             glActiveTexture(GL_TEXTURE0);
             textureName = glGenTextures();
             glBindTexture(GL_TEXTURE_2D, textureName);
-//                System.out.println("Gen SpriteSheet: " + textureName);
 
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
                     width, height,
@@ -68,8 +64,6 @@ public class SpriteSheet extends ShaderTexture {
             scene.addLoadedShaderTexture(this);
             loaded = true;
         }
-
-        getEngine().getWindow().printErrors("post load");
     }
 
     @Override
@@ -93,5 +87,9 @@ public class SpriteSheet extends ShaderTexture {
 
     public int getWidth() {
         return width;
+    }
+
+    public CharSequence getFilePath() {
+        return filePath;
     }
 }

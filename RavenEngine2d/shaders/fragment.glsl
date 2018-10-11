@@ -8,8 +8,6 @@ uniform vec3 id;
 uniform float z;
 uniform vec4 highlight;
 
-uniform vec2 position;
-
 in vec2 texture_coords;
 
 void main() {
@@ -25,7 +23,7 @@ void main() {
     vec3 color = mix(sprite.rgb, highlight.xyz, highlight.a * part);
 
     frag_color = vec4(color, sprite.a);
-//    frag_color = vec4(z, z, z, 1);
+
     if (id != vec3(0))
         frag_id = id;
     else
