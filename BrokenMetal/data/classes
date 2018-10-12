@@ -32,4 +32,12 @@
     bonus: {
         ability: "Heal",
     }
+},
+{
+    name: "gunner",
+    desc: "shoots things, a lot.\n\n+1 attack"
+
+    bonus: {
+        attacks: 1,
+    }
 }

@@ -34,6 +34,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.*;
@@ -535,7 +536,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             oldPawn.updateDetailText();
         }
 
-        if (activePawn != null) {
+        if (activePawn != null && oldPawn != activePawn) {
             activePawn.updateDetailText();
         }
 
@@ -545,7 +546,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         setState(SELECT_DEFAULT);
     }
 
-    private void updateActionSelect() {
+    public void updateActionSelect() {
         if (activePawn != null && activePawn.getTeam(true) == 0)
             actionSelect.setPawn(activePawn);
         else
@@ -912,7 +913,12 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             // find target
             Terrain parentTerrain = activePawn.getParent();
 
-            Collection<Terrain> range = parentTerrain.selectRange(activeAbility.style, activeAbility.size, activeAbility.passesWall, activeAbility.passesPawn);
+            Collection<Terrain> range;
+            if (activeAbility.target != Ability.Target.SELF)
+                range = parentTerrain.selectRange(activeAbility.style, activeAbility.size, activeAbility.passesWall, activeAbility.passesPawn);
+            else {
+                range = Arrays.asList(activePawn.getParent());
+            }
 
             if (range.size() > 0) {
                 for (Terrain n : range) {
@@ -1134,6 +1140,9 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             target.heal(activeAbility.restore);
             setActiveAbility(null);
             setActivePawn(activePawn);
+        } else {
+            getActivePawn().doAbilityAffect(activeAbility);
+            getActivePawn().updateDetailText();
         }
     }
 

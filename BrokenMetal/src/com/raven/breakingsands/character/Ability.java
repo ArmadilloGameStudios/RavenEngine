@@ -6,15 +6,20 @@ import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.database.GameDatable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Ability implements GameDatable {
 
     private GameData gameData;
 
     public Pawn owner;
 
-    public enum Type {SELF, AURORA, TARGET, TRIGGER}
+    public enum Type {SELF, AURORA, TARGET, TRIGGER, BUTTON}
 
     public enum Trigger {ATTACK, KILL, DAMAGE, FLOOR, UNMOVED}
+
+    public enum Condition {NO_ATTACKS}
 
     public static class Target {
         static final public int ALL = 0b1111, SELF = 0b1000, ALLY = 0b0001, ENEMY = 0b0010, EMPTY = 0b0100, NOT_SELF = 0x0111;
@@ -25,6 +30,7 @@ public class Ability implements GameDatable {
     public String name, upgrade;
     public String description = "";
     public String weapon;
+    public String buttonIcon;
     public Type type;
     public Trigger trigger;
     public int target;
@@ -41,6 +47,7 @@ public class Ability implements GameDatable {
             taunt, push_blast, hook_pull,
             hack, instant_hack, transferable, cure,
             blink, recall, recall_unit, heal, rest_heal;
+    public List<Condition> conditions;
 
     public Ability bonusAbility;
 
@@ -54,6 +61,7 @@ public class Ability implements GameDatable {
 
         gameData.ifHas("action", a -> action = a.asBoolean());
         gameData.ifHas("icon", a -> icon = a.asString());
+        gameData.ifHas("button_icon", u -> buttonIcon = u.asString());
 
         if (weapon != null) {
             if (!description.equals("")) {
@@ -104,6 +112,9 @@ public class Ability implements GameDatable {
                 break;
             case "trigger":
                 type = Type.TRIGGER;
+                break;
+            case "button":
+                type = Type.BUTTON;
                 break;
         }
 
@@ -176,6 +187,17 @@ public class Ability implements GameDatable {
             }
         }, () -> style = RangeStyle.DIAMOND);
 
+        gameData.ifHas("conditions", c -> {
+            conditions = new ArrayList<>();
+
+            c.asList().forEach(s -> {
+                switch (s.asString()) {
+                    case "no_attacks":
+                        conditions.add(Condition.NO_ATTACKS);
+                        break;
+                }
+            });
+        });
 
         gameData.ifHas("replace", r -> replace = r.asString());
         gameData.ifHas("passes_pawn", p -> passesPawn = p.asBoolean());

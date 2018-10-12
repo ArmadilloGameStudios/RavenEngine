@@ -46,7 +46,7 @@ public class SpriteAnimationFrame {
         if (gdFrame.has("width")) {
             width = gdFrame.getInteger("width");
 
-            gdAction.ifHas("width", a -> flip_x_offset = width - a.asInteger());
+            gdAction.ifHas("width", a -> flip_x_offset = (width - a.asInteger()) / 2);
         } else {
             width = gdAction.getInteger("width");
         }
@@ -54,7 +54,7 @@ public class SpriteAnimationFrame {
         if (gdFrame.has("height")) {
             height = gdFrame.getInteger("height");
 
-            gdAction.ifHas("height", a -> y_offset -= height - a.asInteger());
+            gdAction.ifHas("height", a -> y_offset -= (height - a.asInteger()) / 2);
         } else {
             height = gdAction.getInteger("height");
         }

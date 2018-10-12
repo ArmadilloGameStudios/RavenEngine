@@ -6,6 +6,7 @@ import com.raven.breakingsands.scenes.hud.UIBottomCenterContainer;
 import com.raven.engine2d.ui.UIButton;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
     private UIAbilityButton btnPushBlast, btnHookPull, btnHack, btnBlink, btnRecall, btnHeal;
     private UIButton<BattleScene> btnMove, btnAttack, btnUndo, btnCancel, btnLevel, btnEnd;
+    private List<UIAbilityButton> abilityBtns = new LinkedList<>();
     private List<UIButton<BattleScene>> btns = new ArrayList<>();
     private boolean disable;
     private Pawn pawn;
@@ -446,6 +448,12 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
     }
 
     public void setPawn(Pawn pawn) {
+        if (pawn != this.pawn) {
+            btns.removeAll(abilityBtns);
+            abilityBtns.forEach(this::removeChild);
+            abilityBtns.clear();
+        }
+
         if (getScene().getActiveTeam() == 0) {
             btnUndo.setDisable(false);
             btnUndo.setActive(false);
@@ -582,6 +590,13 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             } else {
                 btnHeal.setVisibility(false);
             }
+
+            // insert ability buttons
+            this.pawn = pawn;
+            pawn.getAbilities().stream()
+                    .filter(a -> a.type == Ability.Type.BUTTON && abilityBtns.stream().noneMatch(b -> a == b.getAbility()))
+                    .forEach(this::insertAbilityButton);
+            abilityBtns.forEach(this::checkAbilityButton);
         }
 
         btnEnd.setDisable(
@@ -592,5 +607,78 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
         pack();
 
         this.pawn = pawn;
+    }
+
+    private void insertAbilityButton(Ability ability) {
+        UIAbilityButton btn = new UIAbilityButton(getScene(),
+                ability.buttonIcon != null ? ability.buttonIcon : "sprites/push icon.png",
+                "iconbutton") {
+            @Override
+            public void handleMouseClick() {
+                if (ability.target == Ability.Target.SELF) {
+                    getScene().getActivePawn().setUnmoved(false);
+
+                    if (ability.uses != null) {
+                        ability.remainingUses--;
+                        ability.usedThisTurn = true;
+                    }
+
+                    pawn.doAbilityAffect(ability);
+                    pawn.updateDetailText();
+
+                    getScene().updateActionSelect();
+                    getScene().setActivePawn(pawn);
+                } else {
+                    if (!isDisabled()) {
+                        if (isActive()) {
+                            setActive(false);
+                            getScene().setActiveAbility(null);
+                            getScene().setState(SELECT_DEFAULT);
+                        } else {
+                            btns.forEach(b -> b.setActive(false));
+                            setActive(true);
+                            getScene().setActiveAbility(getAbility());
+                            getScene().setState(BattleScene.State.SELECT_ABILITY);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void handleMouseEnter() {
+                System.out.println("enter");
+                super.handleMouseEnter();
+
+                if (!isDisabled())
+                    if (!isActive()) {
+                        getScene().setTempAbility(getAbility());
+                        getScene().setTempState(BattleScene.State.SELECT_ABILITY);
+                    }
+            }
+
+            @Override
+            public void handleMouseLeave() {
+                System.out.println("leave");
+                super.handleMouseLeave();
+
+                if (!isDisabled())
+                    if (!isActive()) {
+                        getScene().clearTempAbility();
+                        getScene().clearTempState();
+                    }
+            }
+        };
+        btn.setAbility(ability);
+        btns.add(btn);
+        insertChild(0, btn);
+        abilityBtns.add(btn);
+        btn.setToolTip(ability.name, ability.description);
+    }
+
+    private void checkAbilityButton(UIAbilityButton btn) {
+        Ability ability = btn.getAbility();
+        btn.setVisibility(true);
+        btn.setDisable(!pawn.canAbility(ability));
+//        btn.setActive(btn.getActive());
     }
 }

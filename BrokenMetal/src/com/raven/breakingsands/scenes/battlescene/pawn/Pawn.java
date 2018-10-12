@@ -254,7 +254,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     public boolean canMove() {
         boolean canMove = true;
 
-        canMove &= remainingMovement > 0;
+        canMove &= getRemainingMovement() > 0;
 
 //        canMove &= remainingAttacks == maxAttacks;
 //
@@ -266,14 +266,14 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public boolean canLevel() {
-//        return true;
-        return xp >= getNextLevelXp();
+        return true;
+//        return xp >= getNextLevelXp();
     }
 
     public boolean canAttack() {
         final boolean[] canMove = {true};
 
-        canMove[0] &= remainingAttacks > 0;
+        canMove[0] &= getRemainingAttacks() > 0;
 
         abilities.stream().filter(a -> a.upgrade == null).forEach(a -> {
             if (a.useRegainType == Ability.UseRegainType.TURN)
@@ -286,6 +286,22 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public boolean canAbility(Ability ability) {
+
+        final boolean[] canAbility = {true};
+
+        if (ability.conditions != null) {
+            ability.conditions.forEach(c -> {
+                switch (c) {
+                    case NO_ATTACKS:
+                        canAbility[0] &= remainingAttacks <= 0;
+                        break;
+                }
+            });
+        }
+
+        if (!canAbility[0])
+            return false;
+
         if (ability.recall_unit) {
             return true;
         }
@@ -302,21 +318,19 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             return false;
         }
 
-        final boolean[] canMove = {true};
-
-        canMove[0] &= !hasAttacked || ability.remain;
+        canAbility[0] &= !hasAttacked || ability.remain;
 
         abilities.stream().filter(a -> a.upgrade == null).forEach(a -> {
             if (a == ability) {
-                canMove[0] &= a.uses == null || (a.remainingUses > 0);
+                canAbility[0] &= a.uses == null || (a.remainingUses > 0);
             } else if (a.useRegainType == Ability.UseRegainType.TURN) {
-                canMove[0] &= a.uses == null || (!a.usedThisTurn || a.remainingUses.equals(a.uses) || a.remain);
+                canAbility[0] &= a.uses == null || (!a.usedThisTurn || a.remainingUses.equals(a.uses) || a.remain);
             } else {
-                canMove[0] &= a.uses == null || (!a.usedThisTurn || a.remain);
+                canAbility[0] &= a.uses == null || (!a.usedThisTurn || a.remain);
             }
         });
 
-        return canMove[0];
+        return canAbility[0];
     }
 
     public void setUnmoved(boolean b) {
@@ -381,6 +395,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         bonus.ifHas("movement", gd -> {
             maxMovement += gd.asInteger();
             remainingMovement += gd.asInteger();
+        });
+        bonus.ifHas("attacks", gd -> {
+            maxAttacks += gd.asInteger();
+            remainingAttacks += gd.asInteger();
         });
 
         // add ability to the pawn if it is part of the class upgrade
@@ -886,7 +904,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     public void reduceAttacks() {
         hasAttacked = true;
-        remainingAttacks = Math.max(maxAttacks - 1, 0);
+        remainingAttacks = Math.max(remainingAttacks - 1, 0);
     }
 
     public boolean damage(int dealtDamage, ActionFinishHandler onAttackDone) {

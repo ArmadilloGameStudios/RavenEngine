@@ -75,16 +75,6 @@
     restore: 1
 },
 {
-    name: "Rage",
-    type: "trigger",
-    trigger: "kill",
-    target: "self",
-    desc: "+1 attack\nafter killing an enemy",
-    icon: "sprites/ability hex rage.png",
-
-    restore_attack: 1
-},
-{
     name: "Turtle",
     type: "trigger",
     trigger: "unmoved",
@@ -113,6 +103,41 @@
     icon: "sprites/ability hex slow.png",
 
     bonus_movement: 1
+},
+{
+    name: "Sprint",
+
+    type: "button",
+    target: "self",
+    desc: "+2 movement\nonce per floor",
+    icon: "sprites/ability hex fast double.png",
+    button_icon: "sprites/move icon.png",
+
+    action: true,
+    use_regain_type: "level",
+    uses: 1
+
+    remain: true,
+
+    bonus_movement: 2
+},
+{
+    name: "Bonus Attack",
+
+    type: "button",
+    target: "self",
+    desc: "+1 attack\nonce per floor",
+    icon: "sprites/ability hex fast double.png",
+    button_icon: "sprites/attack icon.png",
+    conditions: ["no_attacks"]
+
+    action: true,
+    use_regain_type: "level",
+    uses: 1
+
+    remain: true,
+
+    restore_attack: 1
 },
 {
     name: "Plasma Blade",
@@ -205,7 +230,6 @@
     class: "tank",
     type: "aurora",
     target: "enemy",
-    requires_not: "Ext. Taunt",
 
     passes_pawn: true,
     size: 4,
@@ -324,7 +348,6 @@
     class: "hacker",
     type: "self",
     upgrade: "Hack",
-    requires_not: "Instant Hack",
 
     remain: true,
 
@@ -353,7 +376,6 @@
     class: "hacker",
     type: "self",
     upgrade: "Hack",
-    requires_not: "Extended Hack",
 
     size: 1,
 
@@ -613,4 +635,66 @@
     trigger: "floor",
 
     rest_heal: true,
+},
+{
+    name: "Rage",
+    type: "trigger",
+    trigger: "kill",
+    target: "self",
+    desc: "+1 attack\nafter killing an enemy",
+    icon: "sprites/ability hex rage.png",
+
+    class: "gunner",
+
+    restore_attack: 1
+},
+{
+    name: "Frenzy",
+    type: "trigger",
+    trigger: "kill",
+    target: "self",
+    desc: "+1 attack\n+1 movement\nafter killing an enemy",
+    icon: "sprites/ability hex rage.png",
+
+    replace: "Rage",
+
+    class: "gunner",
+
+    restore_attack: 1,
+    restore_movement: 1,
+},
+{
+    name: "Quick Swap",
+    type: "self",
+    desc: "Swaping weapons doesn't take an attack",
+
+    class: "gunner",
+},
+{
+    name: "Power Attack",
+    type: "self",
+    desc: "more damage",
+
+    class: "gunner",
+},
+{
+    name: "x2 Power Attack",
+    type: "self",
+    desc: "more damage",
+
+    class: "gunner",
+},
+{
+    name: "More Powerful Attack",
+    type: "self",
+    desc: "more damage",
+
+    class: "gunner",
+},
+{
+    name: "Focus Shot",
+    type: "self",
+    desc: "more damage",
+
+    class: "gunner",
 },
