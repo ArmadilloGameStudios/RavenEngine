@@ -19,8 +19,6 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
     private UIButton<BattleScene> btnMove, btnAttack, btnUndo, btnCancel, btnLevel, btnEnd;
     private List<UIButton<BattleScene>> btns = new ArrayList<>();
     private boolean disable;
-    private BattleScene.State oldState = SELECT_DEFAULT;
-    private Ability oldAbility;
     private Pawn pawn;
 
     public UIActionSelect(BattleScene scene) {
@@ -36,12 +34,12 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                     if (isActive()) {
                         setActive(false);
                         getScene().setActiveAbility(null);
-                        scene.setState(oldState = SELECT_DEFAULT);
+                        scene.setState(SELECT_DEFAULT);
                     } else {
                         btns.forEach(b -> b.setActive(false));
                         setActive(true);
                         getScene().setActiveAbility(getAbility());
-                        scene.setState(oldState = BattleScene.State.SELECT_ABILITY);
+                        scene.setState(BattleScene.State.SELECT_ABILITY);
                     }
                 }
             }
@@ -52,10 +50,8 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive()) {
-                        oldAbility = scene.getActiveAbility();
-                        scene.setActiveAbility(getAbility());
-                        oldState = scene.getState();
-                        scene.setState(BattleScene.State.SELECT_ABILITY);
+                        scene.setTempAbility(getAbility());
+                        scene.setTempState(BattleScene.State.SELECT_ABILITY);
                     }
             }
 
@@ -65,8 +61,8 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive()) {
-                        scene.setActiveAbility(oldAbility);
-                        scene.setState(oldState);
+                        scene.clearTempAbility();
+                        scene.clearTempState();
                     }
             }
         };
@@ -85,12 +81,12 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                     if (isActive()) {
                         setActive(false);
                         getScene().setActiveAbility(null);
-                        scene.setState(oldState = SELECT_DEFAULT);
+                        scene.setState(SELECT_DEFAULT);
                     } else {
                         btns.forEach(b -> b.setActive(false));
                         setActive(true);
                         getScene().setActiveAbility(getAbility());
-                        scene.setState(oldState = BattleScene.State.SELECT_ABILITY);
+                        scene.setState(BattleScene.State.SELECT_ABILITY);
                     }
                 }
             }
@@ -101,10 +97,8 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive()) {
-                        oldAbility = scene.getActiveAbility();
-                        scene.setActiveAbility(getAbility());
-                        oldState = scene.getState();
-                        scene.setState(BattleScene.State.SELECT_ABILITY);
+                        scene.setTempAbility(getAbility());
+                        scene.setTempState(BattleScene.State.SELECT_ABILITY);
                     }
             }
 
@@ -114,8 +108,8 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive()) {
-                        scene.setActiveAbility(oldAbility);
-                        scene.setState(oldState);
+                        scene.clearTempAbility();
+                        scene.clearTempState();
                     }
             }
         };
@@ -134,12 +128,12 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                     if (isActive()) {
                         setActive(false);
                         getScene().setActiveAbility(null);
-                        scene.setState(oldState = SELECT_DEFAULT);
+                        scene.setState(SELECT_DEFAULT);
                     } else {
                         btns.forEach(b -> b.setActive(false));
                         setActive(true);
                         getScene().setActiveAbility(getAbility());
-                        scene.setState(oldState = BattleScene.State.SELECT_ABILITY);
+                        scene.setState(BattleScene.State.SELECT_ABILITY);
                     }
                 }
             }
@@ -150,10 +144,8 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive()) {
-                        oldAbility = scene.getActiveAbility();
-                        scene.setActiveAbility(getAbility());
-                        oldState = scene.getState();
-                        scene.setState(BattleScene.State.SELECT_ABILITY);
+                        scene.setTempAbility(getAbility());
+                        scene.setTempState(BattleScene.State.SELECT_ABILITY);
                     }
             }
 
@@ -163,8 +155,8 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive()) {
-                        scene.setActiveAbility(oldAbility);
-                        scene.setState(oldState);
+                        scene.clearTempAbility();
+                        scene.clearTempState();
                     }
             }
         };
@@ -190,13 +182,9 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive()) {
-                        ;
-                        oldAbility = scene.getActiveAbility();
-                        scene.setActiveAbility(getAbility());
-                        oldState = scene.getState();
-                        scene.setState(BattleScene.State.SELECT_ABILITY);
+                        scene.setTempAbility(getAbility());
+                        scene.setTempState(BattleScene.State.SELECT_ABILITY);
                     }
-
             }
 
             @Override
@@ -205,8 +193,8 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive()) {
-                        scene.setActiveAbility(oldAbility);
-                        scene.setState(oldState);
+                        scene.clearTempAbility();
+                        scene.clearTempState();
                     }
             }
         };
@@ -225,14 +213,13 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                     if (isActive()) {
                         setActive(false);
                         getScene().setActiveAbility(null);
-                        scene.setState(oldState = SELECT_DEFAULT);
+                        scene.setState(SELECT_DEFAULT);
                     } else {
                         btns.forEach(b -> b.setActive(false));
                         setActive(true);
                         getScene().setActiveAbility(getAbility());
-                        scene.setState(oldState = BattleScene.State.SELECT_ABILITY);
+                        scene.setState(BattleScene.State.SELECT_ABILITY);
                     }
-
                 }
             }
 
@@ -242,13 +229,9 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive()) {
-                        ;
-                        oldAbility = scene.getActiveAbility();
-                        scene.setActiveAbility(getAbility());
-                        oldState = scene.getState();
-                        scene.setState(BattleScene.State.SELECT_ABILITY);
+                        scene.setTempAbility(getAbility());
+                        scene.setTempState(BattleScene.State.SELECT_ABILITY);
                     }
-
             }
 
             @Override
@@ -257,10 +240,9 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive()) {
-                        scene.setActiveAbility(oldAbility);
-                        scene.setState(oldState);
+                        scene.clearTempAbility();
+                        scene.clearTempState();
                     }
-
             }
         };
         btnHookPull.setVisibility(false);
@@ -278,14 +260,13 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                     if (isActive()) {
                         setActive(false);
                         getScene().setActiveAbility(null);
-                        scene.setState(oldState = SELECT_DEFAULT);
+                        scene.setState(SELECT_DEFAULT);
                     } else {
                         btns.forEach(b -> b.setActive(false));
                         setActive(true);
                         getScene().setActiveAbility(getAbility());
-                        scene.setState(oldState = BattleScene.State.SELECT_ABILITY);
+                        scene.setState(BattleScene.State.SELECT_ABILITY);
                     }
-
                 }
             }
 
@@ -295,12 +276,9 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive()) {
-                        oldAbility = scene.getActiveAbility();
-                        scene.setActiveAbility(getAbility());
-                        oldState = scene.getState();
-                        scene.setState(BattleScene.State.SELECT_ABILITY);
+                        scene.setTempAbility(getAbility());
+                        scene.setTempState(BattleScene.State.SELECT_ABILITY);
                     }
-
             }
 
             @Override
@@ -309,10 +287,9 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive()) {
-                        scene.setActiveAbility(oldAbility);
-                        scene.setState(oldState);
+                        scene.clearTempAbility();
+                        scene.clearTempState();
                     }
-
             }
         };
         btnHack.setVisibility(false);
@@ -329,11 +306,11 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                 if (!isDisabled())
                     if (isActive()) {
                         setActive(false);
-                        scene.setState(oldState = SELECT_DEFAULT);
+                        scene.setState(SELECT_DEFAULT);
                     } else {
                         btns.forEach(b -> b.setActive(false));
                         btnMove.setActive(true);
-                        scene.setState(oldState = BattleScene.State.SELECT_MOVE);
+                        scene.setState(BattleScene.State.SELECT_MOVE);
                     }
             }
 
@@ -343,8 +320,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive()) {
-                        oldState = scene.getState();
-                        scene.setState(BattleScene.State.SELECT_MOVE);
+                        scene.setTempState(BattleScene.State.SELECT_MOVE);
                     }
 
             }
@@ -355,7 +331,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive())
-                        scene.setState(oldState);
+                        scene.clearTempState();
 
             }
         };
@@ -372,11 +348,11 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                 if (!isDisabled())
                     if (isActive()) {
                         setActive(false);
-                        scene.setState(oldState = SELECT_DEFAULT);
+                        scene.setState(SELECT_DEFAULT);
                     } else {
                         btns.forEach(b -> b.setActive(false));
                         btnAttack.setActive(true);
-                        scene.setState(oldState = BattleScene.State.SELECT_ATTACK);
+                        scene.setState(BattleScene.State.SELECT_ATTACK);
                     }
             }
 
@@ -386,8 +362,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive()) {
-                        oldState = scene.getState();
-                        scene.setState(BattleScene.State.SELECT_ATTACK);
+                        scene.setTempState(BattleScene.State.SELECT_ATTACK);
                     }
 
             }
@@ -398,7 +373,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
                 if (!isDisabled())
                     if (!isActive())
-                        scene.setState(oldState);
+                        scene.clearTempState();
 
             }
         };
@@ -613,9 +588,6 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                 getScene().getActiveTeam() != 0 ||
                         getScene().getState() == MOVING ||
                         getScene().getState() == ATTACKING);
-
-        if (pawn != this.pawn)
-            oldState = SELECT_DEFAULT;
 
         pack();
 

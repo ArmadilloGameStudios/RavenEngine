@@ -416,7 +416,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                         this.removeAbility(a);
 
                         if (a.uses != null) {
-                        int addUses = ability.uses - a.uses;
+                            int addUses = ability.uses - a.uses;
                             ability.remainingUses = a.remainingUses + addUses;
                         }
                     });

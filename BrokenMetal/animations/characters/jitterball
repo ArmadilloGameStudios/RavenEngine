@@ -36,7 +36,7 @@
              { time: 50, x: 64, xoffset: -5, yoffset: -3 },
              { time: 50, x: 96, xoffset: -7, yoffset: -4 },
              { time: 50, x: 128, xoffset: -9, yoffset: -5 },
-             { time: 50, x: 160, xoffset: -1, yoffset: -6 },
+             { time: 50, x: 160, xoffset: -11, yoffset: -6 },
              { time: 50, x: 192, xoffset: -13, yoffset: -7 },
              { time: 50, x: 224, xoffset: -15, yoffset: -8 },]
 },

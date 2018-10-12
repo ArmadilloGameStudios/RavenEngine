@@ -78,7 +78,7 @@
     team: 1,
     hp: 6,
     resistance: 1,
-    movement: 3,
+    movement: 4,
     weapon: "Red Plasma Blade",
     weapon_hack: "Plasma Blade",
     xp_gain: 9,
@@ -116,4 +116,20 @@
     xp_gain: 18,
 
     weight: 40
+},
+{
+    name: "Goliath",
+    sprite: "sprites/guarddrone.png",
+    animation: "guarddrone",
+    sprite_hack: "sprites/guarddronehack.png",
+    standing: true,
+    team: 1,
+    hp: 8,
+    movement: 2,
+    resistance: 2,
+    weapon: "Double Blast",
+    weapon_hack: "Blue Double Blast",
+    xp_gain: 25,
+
+    weight: 35,
 },

@@ -27,6 +27,8 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
         this.state = state;
         Ability ability = getScene().getActiveAbility();
 
+        setVisibility(getParent().isMouseHovering());
+
         switch (state) {
             case SELECTABLE:
                 if (getParent().getPawn() == getScene().getActivePawn()) {
@@ -44,24 +46,51 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
                     setText("");
                     break;
                 }
-            case ATTACKABLE:
+                if (!getParent().isMouseHovering()) {
+                    setVisibility(false);
+                    break;
+                }
             case ATTACK:
                 Pawn pawn = getParent().getPawn();
-                if (pawn != null && getScene().getActivePawn() != null) {
-                    Weapon w = getScene().getActivePawn().getWeapon();
-                    int damage = pawn.getDamage(w.getDamage(), w.getPiercing() + getScene().getActivePawn().getBonusPiercing(), w.getShots());
 
-                    if (damage >= pawn.getRemainingHitPoints()) {
-                        setText("kill -" + damage);
+                if (pawn != null) {
+
+                    Pawn attacker;
+                    if (getScene().getState() == BattleScene.State.SHOW_ATTACK) {
+                        if (pawn.getTeam(true) == 0)
+                            attacker = getScene().getTargetPawn();
+                        else
+                            attacker = getScene().getActivePawn();
                     } else {
-                        setText("attack -" + damage);
+                        attacker = getScene().getActivePawn();
                     }
-                } else {
-                    if (pawn != null)
-                        setText(pawn.getName());
-                    else
-                        setText("attack");
+
+                    if (pawn != null && attacker != null) {
+                        Weapon w = attacker.getWeapon();
+                        int damage = pawn.getDamage(w.getDamage(), w.getPiercing() + attacker.getBonusPiercing(), w.getShots());
+
+                        if (damage >= pawn.getRemainingHitPoints() + pawn.getRemainingShield()) {
+                            setText("kill -" + damage);
+                        } else {
+                            setText("attack -" + damage);
+                        }
+
+                        setVisibility(true);
+                    } else {
+                        if (pawn != null)
+                            setText(pawn.getName());
+                        else
+                            setText("attack");
+                        setVisibility(true);
+                    }
                 }
+                break;
+            case ATTACKABLE:
+                pawn = getParent().getPawn();
+                if (pawn != null)
+                    setText(pawn.getName());
+                else
+                    setText("attack");
                 break;
             case ABILITY:
             case ABILITYABLE:

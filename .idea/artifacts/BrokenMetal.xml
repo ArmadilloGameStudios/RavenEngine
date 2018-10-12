@@ -1,13 +1,13 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="BrokenMetal">
     <output-path>$PROJECT_DIR$/out/artifacts/BrokenMetal</output-path>
-    <root id="archive" name="BrokenMetal.jar">
+    <root id="archive" name="ProjectBreakingSands.jar">
       <element id="module-output" name="RavenEngine2d" />
       <element id="module-output" name="BrokenMetal" />
       <element id="directory" name="RavenEngine2d">
         <element id="dir-copy" path="$PROJECT_DIR$/RavenEngine2d" />
       </element>
-      <element id="directory" name="ProjectBreakingSands">
+      <element id="directory" name="BrokenMetal">
         <element id="dir-copy" path="$PROJECT_DIR$/BrokenMetal" />
       </element>
       <element id="directory" name="META-INF">
