@@ -641,6 +641,7 @@
     desc: "next shot\n+<temp_damage> damage.",
     type: "button",
     target: "self",
+    button_icon: "sprites/icon power attack.png"
 
     conditions: ["no_temp_damage", "has_attacks"],
 
@@ -730,6 +731,7 @@
     name: "Focus Attack",
     desc: "next attack\n+2 range (non-melee)\n+2 piercing",
     icon: "sprites/ability hex accurate.png",
+    button_icon: "sprites/icon focus attack.png"
 
     type: "button",
     target: "self",
