@@ -616,18 +616,20 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             @Override
             public void handleMouseClick() {
                 if (ability.target == Ability.Target.SELF) {
-                    getScene().getActivePawn().setUnmoved(false);
+                    if (!isDisabled()) {
+                        getScene().getActivePawn().setUnmoved(false);
 
-                    if (ability.uses != null) {
-                        ability.remainingUses--;
-                        ability.usedThisTurn = true;
+                        if (ability.uses != null) {
+                            ability.remainingUses--;
+                            ability.usedThisTurn = true;
+                        }
+
+                        pawn.doAbilityAffect(ability);
+                        pawn.updateDetailText();
+
+                        getScene().updateActionSelect();
+                        getScene().setActivePawn(pawn);
                     }
-
-                    pawn.doAbilityAffect(ability);
-                    pawn.updateDetailText();
-
-                    getScene().updateActionSelect();
-                    getScene().setActivePawn(pawn);
                 } else {
                     if (!isDisabled()) {
                         if (isActive()) {
@@ -646,7 +648,6 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
             @Override
             public void handleMouseEnter() {
-                System.out.println("enter");
                 super.handleMouseEnter();
 
                 if (!isDisabled())
@@ -658,7 +659,6 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
             @Override
             public void handleMouseLeave() {
-                System.out.println("leave");
                 super.handleMouseLeave();
 
                 if (!isDisabled())
@@ -672,13 +672,21 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
         btns.add(btn);
         insertChild(0, btn);
         abilityBtns.add(btn);
-        btn.setToolTip(ability.name, ability.description);
     }
 
     private void checkAbilityButton(UIAbilityButton btn) {
         Ability ability = btn.getAbility();
+
         btn.setVisibility(true);
         btn.setDisable(!pawn.canAbility(ability));
+
+        btn.setAbility(btn.getAbility());
+
+        btn.setToolTip(ability.name, ability.getDescription());
+
+        pawn.getAbilities().stream()
+                .filter(a -> a.action && a.upgrade != null && a.upgrade.equals(btn.getAbility().name))
+                .forEach(btn::addBonusAbility);
 //        btn.setActive(btn.getActive());
     }
 }

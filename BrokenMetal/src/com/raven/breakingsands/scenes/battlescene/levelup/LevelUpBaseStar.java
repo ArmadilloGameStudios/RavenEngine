@@ -24,7 +24,8 @@ public class LevelUpBaseStar extends LevelUpStar {
             abilityButton8, abilityButton9,
             abilityButton10, abilityButton11,
             classButton1, classButton2,
-            classButton3, classButton4;
+            classButton3, classButton4,
+            classButton5;
 
     private List<LevelUpHexButton> abilityButtonList = new ArrayList<>();
     private List<LevelUpHexButton> classButtonList = new ArrayList<>();
@@ -136,6 +137,12 @@ public class LevelUpBaseStar extends LevelUpStar {
         addChild(classButton4);
         classButtonList.add(classButton4);
 
+        classButton5 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.CLASS);
+        classButton5.setY(40);
+//        classButton5.setX(-30);
+        addChild(classButton5);
+        classButtonList.add(classButton5);
+
         // Connections
 //        addChild(new LevelUpHexConnection(getScene(), startButton, abilityButton1));
         addChild(new LevelUpHexConnection(getScene(), startButton, abilityButton2));
@@ -172,6 +179,8 @@ public class LevelUpBaseStar extends LevelUpStar {
         addChild(new LevelUpHexConnection(getScene(), classButton3, abilityButton11));
         addChild(new LevelUpHexConnection(getScene(), classButton4, abilityButton11));
         addChild(new LevelUpHexConnection(getScene(), classButton4, abilityButton12));
+        addChild(new LevelUpHexConnection(getScene(), classButton5, abilityButton12));
+        addChild(new LevelUpHexConnection(getScene(), classButton5, abilityButton7));
     }
 
     @Override
@@ -252,7 +261,7 @@ public class LevelUpBaseStar extends LevelUpStar {
         // classes
         List<GameData> classes = new GameDataList(GameDatabase.all("classes"));
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             int index = r.nextInt(classes.size());
             GameData c = classes.remove(index);
 

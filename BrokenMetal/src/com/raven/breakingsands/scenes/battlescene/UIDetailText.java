@@ -690,7 +690,7 @@ public class UIDetailText
                 abilityImg.setSpriteAnimation(new SpriteAnimationState(this, getScene().getEngine().getAnimation("hexbutton")));
                 addChild(abilityImg);
 
-                abilityImg.setToolTip(a.name, a.description);
+                abilityImg.setToolTip(a.name, a.getDescription());
 
                 abilityImgList.put(a, abilityImg);
             }

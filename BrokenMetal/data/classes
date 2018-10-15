@@ -35,9 +35,9 @@
 },
 {
     name: "gunner",
-    desc: "shoots things, a lot.\n\n+1 attack"
+    desc: "shoots things, a lot.\n\ngain ability: power attack"
 
     bonus: {
-        attacks: 1,
+        ability: "Power Shot",
     }
 }

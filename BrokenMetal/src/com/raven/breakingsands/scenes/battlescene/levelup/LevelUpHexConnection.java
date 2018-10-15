@@ -76,10 +76,12 @@ public class LevelUpHexConnection extends UIImage<BattleScene> {
         Ability b = buttonB.getAbility();
 
         if (a != null && b != null) {
-            if (a.replace != null && !b.name.equals(a.replace)) {
+            if (a.replace != null && !b.name.equals(a.replace) ||
+                    a.requires != null && !b.name.equals(a.requires)) {
                 setVisibility(false);
                 return;
-            } else if (b.replace != null && !a.name.equals(b.replace)) {
+            } else if (b.replace != null && !a.name.equals(b.replace) ||
+                    b.requires != null && !a.name.equals(b.requires)) {
                 setVisibility(false);
                 return;
             } else {
@@ -89,10 +91,10 @@ public class LevelUpHexConnection extends UIImage<BattleScene> {
             setVisibility(true);
         }
 
-        if (buttonA.getType() == LevelUpHexButton.Type.CLASS && b != null && b.replace != null) {
+        if (buttonA.getType() == LevelUpHexButton.Type.CLASS && b != null && (b.replace != null || b.requires != null)) {
             setVisibility(false);
             return;
-        } else if (buttonB.getType() == LevelUpHexButton.Type.CLASS && a != null && a.replace != null) {
+        } else if (buttonB.getType() == LevelUpHexButton.Type.CLASS && a != null && (a.replace != null || b.requires != null)) {
             setVisibility(false);
             return;
         }
