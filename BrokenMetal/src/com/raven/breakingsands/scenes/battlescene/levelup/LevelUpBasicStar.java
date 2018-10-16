@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class LevelUpBaseStar extends LevelUpStar {
+public class LevelUpBasicStar extends LevelUpStar {
 
     private Vector2f pos = new Vector2f();
 
@@ -33,7 +33,7 @@ public class LevelUpBaseStar extends LevelUpStar {
 
     private Pawn pawn;
 
-    public LevelUpBaseStar(UILevelUp uiLevelUp) {
+    public LevelUpBasicStar(UILevelUp uiLevelUp) {
         super(uiLevelUp.getScene());
 
         startButton = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.START);

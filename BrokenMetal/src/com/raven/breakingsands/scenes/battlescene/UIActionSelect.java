@@ -17,7 +17,7 @@ import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELEC
 public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
     private UIAbilityButton btnPushBlast, btnHookPull, btnHack, btnBlink, btnRecall, btnHeal;
-    private UIButton<BattleScene> btnMove, btnAttack, btnUndo, btnCancel, btnLevel, btnEnd;
+    private UIButton<BattleScene> btnMove, btnAttack, btnSwitch, btnUndo, btnCancel, btnLevel, btnEnd;
     private List<UIAbilityButton> abilityBtns = new LinkedList<>();
     private List<UIButton<BattleScene>> btns = new ArrayList<>();
     private boolean disable;
@@ -366,7 +366,6 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                     if (!isActive()) {
                         scene.setTempState(BattleScene.State.SELECT_ATTACK);
                     }
-
             }
 
             @Override
@@ -382,6 +381,42 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
         btnAttack.setToolTipSrc("attack");
         addChild(btnAttack);
         btns.add(btnAttack);
+
+        btnSwitch = new UIButton<BattleScene>(scene,
+                "sprites/icon swap attack.png",
+                "iconbutton") {
+
+            @Override
+            public void handleMouseClick() {
+                if (!btnLevel.isDisabled()) {
+                    getScene().pawnSwitchWeapons();
+                }
+            }
+
+//            @Override
+//            public void handleMouseEnter() {
+//                super.handleMouseEnter();
+//
+//                if (!isDisabled())
+//                    if (!isActive()) {
+//                        scene.setTempState(BattleScene.State.SELECT_ATTACK);
+//                    }
+//
+//            }
+//
+//            @Override
+//            public void handleMouseLeave() {
+//                super.handleMouseLeave();
+//
+//                if (!isDisabled())
+//                    if (!isActive())
+//                        scene.clearTempState();
+//
+//            }
+        };
+        btnSwitch.setToolTipSrc("switch");
+        addChild(btnSwitch);
+        btns.add(btnSwitch);
 
         btnCancel = new UIButton<BattleScene>(scene,
                 "sprites/cancel icon.png",
@@ -467,6 +502,8 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
             btnAttack.setDisable(disable);
             btnAttack.setActive(false);
+            btnSwitch.setDisable(disable);
+            btnSwitch.setActive(false);
             btnCancel.setDisable(disable);
             btnCancel.setActive(false);
             btnMove.setDisable(disable);
@@ -497,6 +534,9 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
             btnAttack.setDisable(!pawn.canAttack());
             btnAttack.setActive(btnAttack.getActive() && pawn == this.pawn);
+            btnSwitch.setDisable((pawn.getWeapons().size() <= 1) ||
+                    (!pawn.canAttack() && pawn.getAbilities().stream().noneMatch(a -> a.quick_swap)));
+            btnSwitch.setActive(btnSwitch.getActive() && pawn == this.pawn);
             btnMove.setDisable(!pawn.canMove());
             btnMove.setActive(btnMove.getActive() && pawn == this.pawn);
 //            btnUndo.setDisable(false);

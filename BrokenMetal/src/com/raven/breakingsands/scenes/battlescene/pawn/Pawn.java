@@ -43,6 +43,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     // instance
+    private List<Weapon> weapons = new ArrayList<>();
     private Weapon weapon;
     private String name = "", charClass = "amateur", spriteNormal, spriteHack, weaponHack;
     private GameData weaponNormal;
@@ -129,8 +130,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             }
             setWeapon(gameData.getData("weapon"));
         } else {
-            weapon = new Weapon(scene, db.getTable("weapon").getRandom(scene.getRandom()));
+            setWeapon(new Weapon(scene, db.getTable("weapon").getRandom(scene.getRandom())));
         }
+
 
         // abilities
         if (gameData.has("abilities")) {
@@ -729,6 +731,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         return weapon;
     }
 
+    public List<Weapon> getWeapons() {
+        return weapons;
+    }
+
     public void setWeapon(String weapon) {
         GameDatabase.all("weapon").stream()
                 .filter(w -> w.getString("name").equals(weapon))
@@ -749,6 +755,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             removeChild(weapon);
 
         this.weapon = weapon;
+        if (!weapons.contains(weapon))
+            weapons.add(weapon);
 
         if (weapon != null) {
             addChild(weapon);

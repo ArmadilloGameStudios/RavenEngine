@@ -689,6 +689,8 @@
     desc: "Swaping weapons doesn't take an attack",
     icon: "sprites/ability hex swap.png",
 
+    quick_swap: true,
+
     class: "gunner",
 },
 {

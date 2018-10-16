@@ -48,7 +48,8 @@ public class Ability implements GameDatable {
     public boolean action, remain, passesPawn, passesWall, usedThisTurn,
             taunt, push_blast, hook_pull,
             hack, instant_hack, transferable, cure,
-            blink, recall, recall_unit, heal, rest_heal;
+            blink, recall, recall_unit, heal, rest_heal,
+            quick_swap;
     public List<Condition> conditions;
 
     public Ability bonusAbility;
@@ -66,39 +67,42 @@ public class Ability implements GameDatable {
         gameData.ifHas("button_icon", u -> buttonIcon = u.asString());
 
         if (weapon != null) {
-            if (!description.equals("")) {
-                description += "\n";
-            }
 
             GameData gdWeapon = GameDatabase.all("weapon").stream()
                     .filter(gd -> gd.getString("name").equals(weapon))
                     .findFirst().get();
 
-            description += "damage: " + gdWeapon.getInteger("damage") + "\n";
-            gdWeapon.ifHas("piercing",
-                    gd -> description += "piercing: " + gd.asInteger() + "\n",
-                    () -> description += "piercing: 0\n");
-            gdWeapon.ifHas("shots",
-                    gd -> description += "shots: " + gd.asInteger() + "\n",
-                    () -> description += "shots: 1\n");
+            description = Weapon.getDescription(gdWeapon, description);
 
-            if (gdWeapon.getString("type").equals("ranged")) {
-                if (gdWeapon.has("range")) {
-                    if (gdWeapon.getData("range").isList()) {
-                        GameDataList rl = gdWeapon.getList("range");
-                        description += "range: " + rl.get(0) + "-" + rl.get(1) + "\nranged";
-                    } else {
-                        if (gdWeapon.getInteger("range") == 1)
-                            description += "range: 1\nranged";
-                        else
-                            description += "range: 1-" + gdWeapon.getInteger("range") + "\nranged";
-                    }
-                } else {
-                    description += "range: 1\nranged";
-                }
-            } else {
-                description += "range: 1\nmelee";
-            }
+//            if (!description.equals("")) {
+//                description += "\n";
+//            }
+//
+//            description += "damage: " + gdWeapon.getInteger("damage") + "\n";
+//            gdWeapon.ifHas("piercing",
+//                    gd -> description += "piercing: " + gd.asInteger() + "\n",
+//                    () -> description += "piercing: 0\n");
+//            gdWeapon.ifHas("shots",
+//                    gd -> description += "shots: " + gd.asInteger() + "\n",
+//                    () -> description += "shots: 1\n");
+//
+//            if (gdWeapon.getString("type").equals("ranged")) {
+//                if (gdWeapon.has("range")) {
+//                    if (gdWeapon.getData("range").isList()) {
+//                        GameDataList rl = gdWeapon.getList("range");
+//                        description += "range: " + rl.get(0) + "-" + rl.get(1) + "\nranged";
+//                    } else {
+//                        if (gdWeapon.getInteger("range") == 1)
+//                            description += "range: 1\nranged";
+//                        else
+//                            description += "range: 1-" + gdWeapon.getInteger("range") + "\nranged";
+//                    }
+//                } else {
+//                    description += "range: 1\nranged";
+//                }
+//            } else {
+//                description += "range: 1\nmelee";
+//            }
         }
 
         switch (gameData.getString("type")) {
@@ -233,6 +237,7 @@ public class Ability implements GameDatable {
         gameData.ifHas("temp_range", r -> temp_range = r.asInteger());
         gameData.ifHas("temp_piercing", r -> temp_piercing = r.asInteger());
         gameData.ifHas("bonus_movement", r -> bonus_movement = r.asInteger());
+        gameData.ifHas("quick_swap", r -> quick_swap = r.asBoolean());
 
         if (gameData.has("remaining_uses")) {
             gameData.ifHas("remaining_uses", u -> remainingUses = u.asInteger());
@@ -350,8 +355,8 @@ public class Ability implements GameDatable {
     private void updateShowDescription() {
 
         if (description != null)
-        showDescription = description
-                .replace("temp_damage", temp_damage != null ? Integer.toString(temp_damage) : "");
+            showDescription = description
+                    .replace("temp_damage", temp_damage != null ? Integer.toString(temp_damage) : "");
         else
             showDescription = "";
 

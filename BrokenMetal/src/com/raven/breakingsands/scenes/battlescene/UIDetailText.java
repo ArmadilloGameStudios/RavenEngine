@@ -1,6 +1,7 @@
 package com.raven.breakingsands.scenes.battlescene;
 
 import com.raven.breakingsands.character.Ability;
+import com.raven.breakingsands.character.Weapon;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
 import com.raven.engine2d.GameEngine;
 import com.raven.engine2d.graphics2d.sprite.SpriteAnimationState;
@@ -27,6 +28,7 @@ public class UIDetailText
     private UIImage<BattleScene> pawnImg;
 
     private Map<Ability, UIImage<BattleScene>> abilityImgList = new HashMap<>();
+    private Map<Weapon, UIImage<BattleScene>> weaponImgList = new HashMap<>();
 
     private SelectionDetails details;
 
@@ -683,11 +685,38 @@ public class UIDetailText
             uiShots.load();
         }
 
+        int offset = 6;
+
         // add new abilities
         pawn.getAbilities().stream().filter(a -> !a.action).forEach(a -> {
             if (abilityImgList.keySet().stream().noneMatch(ai -> ai == a)) {
                 UIImage<BattleScene> abilityImg = new UIImage<>(getScene(), 10, 9, a.icon);
                 abilityImg.setSpriteAnimation(new SpriteAnimationState(this, getScene().getEngine().getAnimation("hexbutton")));
+                abilityImg.addMouseHandler(new MouseHandler() {
+                    @Override
+                    public void handleMouseClick() {
+
+                    }
+
+                    @Override
+                    public void handleMouseEnter() {
+                        if (getScene().getActiveTeam() == 0) {
+                            getScene().setTempPawn(pawn);
+                            getScene().setTempAbility(a);
+                            getScene().setTempState(BattleScene.State.SELECT_ABILITY);
+                        }
+                    }
+
+                    @Override
+                    public void handleMouseLeave() {
+                        getScene().clearTempState();
+                    }
+
+                    @Override
+                    public void handleMouseHover(float delta) {
+
+                    }
+                });
                 addChild(abilityImg);
 
                 abilityImg.setToolTip(a.name, a.getDescription());
@@ -714,7 +743,53 @@ public class UIDetailText
         // order images
         abilityImgList.forEach((ai, img) -> {
             img.setX(getWidth() + 1 + i.get() * 11);
-            img.setY(10);
+            img.setY(10 + offset);
+            i.getAndIncrement();
+        });
+
+        // add new weapons
+        pawn.getWeapons().forEach(w -> {
+            if (weaponImgList.keySet().stream().noneMatch(wi -> wi == w)) {
+                UIImage<BattleScene> weaponImg = new UIImage<>(getScene(), 10, 9, "sprites/gun hex.png");
+                weaponImg.setSpriteAnimation(new SpriteAnimationState(this, getScene().getEngine().getAnimation("hexbutton")));
+                weaponImg.addMouseHandler(new MouseHandler() {
+                    @Override
+                    public void handleMouseClick() {
+
+                    }
+
+                    @Override
+                    public void handleMouseEnter() {
+                        if (getScene().getActiveTeam() == 0) {
+                            getScene().setTempPawn(pawn);
+                            getScene().setTempWeapon(w);
+                            getScene().setTempState(BattleScene.State.SELECT_ATTACK);
+                        }
+                    }
+
+                    @Override
+                    public void handleMouseLeave() {
+                        getScene().clearTempState();
+                    }
+
+                    @Override
+                    public void handleMouseHover(float delta) {
+
+                    }
+                });
+                addChild(weaponImg);
+
+                weaponImg.setToolTip(w.getName(), Weapon.getDescription(w.toGameData(), null));
+
+                weaponImgList.put(w, weaponImg);
+            }
+        });
+
+        i.set(0);
+        // order images
+        weaponImgList.forEach((wi, img) -> {
+            img.setX(getWidth() + 1 + i.get() * 11);
+            img.setY(10 - offset);
             i.getAndIncrement();
         });
     }

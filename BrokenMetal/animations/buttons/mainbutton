@@ -14,5 +14,5 @@
     name: "disable",
     width: 100,
     height: 32,
-    frames: [{ time: 1000, y: 0 }]
+    frames: [{ time: 1000, y: 64 }]
 }

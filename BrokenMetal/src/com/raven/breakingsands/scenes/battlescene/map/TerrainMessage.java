@@ -8,6 +8,8 @@ import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.ui.UIFont;
 import com.raven.engine2d.worldobject.WorldTextObject;
 
+import java.util.Optional;
+
 public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
     private Terrain.State state;
 
@@ -51,51 +53,59 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
                     break;
                 }
             case ATTACK:
-                Pawn pawn = getParent().getPawn();
-
-                if (pawn != null) {
-
-                    Pawn attacker;
-                    if (getScene().getState() == BattleScene.State.SHOW_ATTACK) {
-                        if (pawn.getTeam(true) == 0)
-                            attacker = getScene().getTargetPawn();
-                        else
-                            attacker = getScene().getActivePawn();
-                    } else {
-                        attacker = getScene().getActivePawn();
-                    }
-
-                    if (pawn != null && attacker != null) {
-                        Weapon w = attacker.getWeapon();
-                        int damage = pawn.getDamage(w.getDamage(), w.getPiercing() + attacker.getBonusPiercing(), w.getShots(), attacker.getTempDamage());
-
-                        if (damage >= pawn.getRemainingHitPoints() + pawn.getRemainingShield()) {
-                            setText("kill -" + damage);
-                        } else {
-                            setText("attack -" + damage);
-                        }
-
-                        setVisibility(true);
-                    } else {
-                        if (pawn != null)
-                            setText(pawn.getName());
-                        else
-                            setText("attack");
-                        setVisibility(true);
-                    }
-                }
+                showDamage();
                 break;
             case ATTACKABLE:
-                pawn = getParent().getPawn();
-                if (pawn != null)
-                    setText(pawn.getName());
-                else
-                    setText("attack");
+                if (getScene().isTempState()) {
+                    showDamage();
+                } else {
+                    Pawn pawn = getParent().getPawn();
+                    if (pawn != null)
+                        setText(pawn.getName());
+                    else
+                        setText("attack");
+                }
                 break;
             case ABILITY:
             case ABILITYABLE:
                 setText(ability.name);
                 break;
+        }
+    }
+
+    private void showDamage() {
+        Pawn pawn = getParent().getPawn();
+
+        if (pawn != null) {
+
+            Pawn attacker;
+            if (getScene().getState() == BattleScene.State.SHOW_ATTACK) {
+                if (pawn.getTeam(true) == 0)
+                    attacker = getScene().getTargetPawn();
+                else
+                    attacker = getScene().getActivePawn();
+            } else {
+                attacker = getScene().getActivePawn();
+            }
+
+            if (attacker != null) {
+                Weapon w = Optional.ofNullable(getScene().getTempWeapon()).orElse(attacker.getWeapon());
+                int damage = pawn.getDamage(w.getDamage(), w.getPiercing() + attacker.getBonusPiercing(), w.getShots(), attacker.getTempDamage());
+
+                if (damage >= pawn.getRemainingHitPoints() + pawn.getRemainingShield()) {
+                    setText("kill -" + damage);
+                } else {
+                    setText("attack -" + damage);
+                }
+
+                setVisibility(true);
+            } else {
+                if (pawn != null)
+                    setText(pawn.getName());
+                else
+                    setText("attack");
+                setVisibility(true);
+            }
         }
     }
 
