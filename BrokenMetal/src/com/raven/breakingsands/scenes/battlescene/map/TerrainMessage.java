@@ -100,11 +100,16 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
 
                 setVisibility(true);
             } else {
-                if (pawn != null)
+                if (getScene().getState() == BattleScene.State.SHOW_ATTACK) {
+                    if (getParent().isMouseHovering())
+                        setText(pawn.getName());
+                    else {
+                        setVisibility(false);
+                    }
+                } else {
                     setText(pawn.getName());
-                else
-                    setText("attack");
-                setVisibility(true);
+                    setVisibility(true);
+                }
             }
         }
     }
@@ -121,6 +126,6 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
 
     @Override
     public float getZ() {
-        return 10 + getParent().getZ();
+        return getParent().getZ();
     }
 }

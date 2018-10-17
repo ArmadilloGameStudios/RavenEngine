@@ -121,6 +121,13 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         GameDatabase db = scene.getEngine().getGameDatabase();
 
+        // weapons
+        gameData.ifHas("weapons", ws -> {
+            ws.asList().forEach(w -> {
+                setWeapon(new Weapon(scene, w));
+            });
+        });
+
         // weapon
         if (gameData.has("weapon")) {
             if (gameData.has("weapon_normal")) {
@@ -132,7 +139,6 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         } else {
             setWeapon(new Weapon(scene, db.getTable("weapon").getRandom(scene.getRandom())));
         }
-
 
         // abilities
         if (gameData.has("abilities")) {
@@ -200,6 +206,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         map.put("bonus_movement", new GameData(bonusMovement));
         map.put("xp_gain", new GameData(xpGain));
         map.put("weapon", weapon.toGameData());
+        List<Weapon> weaponsRemoved = new ArrayList<>(weapons);
+        weaponsRemoved.remove(weapon);
+        map.put("weapons", new GameDataList(weaponsRemoved).toGameData());
         map.put("abilities", new GameDataList(abilities).toGameData());
         if (hack != null) {
             map.put("hack", hack.toGameData());
@@ -277,8 +286,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public boolean canLevel() {
-        return true;
-//        return xp >= getNextLevelXp();
+//        return true;
+        return xp >= getNextLevelXp();
     }
 
     public boolean canAttack() {
@@ -1028,6 +1037,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             if (this.spriteHack != null)
                 this.setSpriteSheet(spriteHack);
             if (this.weaponHack != null) {
+                weapons.remove(this.weapon);
                 setWeapon(this.weaponHack);
             }
         } else if (this.hack != null) {
@@ -1040,6 +1050,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             if (this.spriteNormal != null)
                 this.setSpriteSheet(spriteNormal);
             if (this.weaponNormal != null) {
+                weapons.remove(this.weapon);
                 setWeapon(this.weaponNormal);
             }
         }
