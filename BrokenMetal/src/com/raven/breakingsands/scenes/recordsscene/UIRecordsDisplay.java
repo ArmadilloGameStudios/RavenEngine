@@ -28,19 +28,19 @@ public class UIRecordsDisplay extends UIObject<RecordsScene, UIContainer<Records
         UIFont font = lblRecords.getFont();
         font.setSmall(false);
         font.setHighlight(true);
-        lblRecords.setX(90);
-        lblRecords.setY(472);
+        lblRecords.setX(45);
+        lblRecords.setY(236);
         lblRecords.load();
         addChild(lblRecords);
 
-        int y = 430;
+        int y = 215;
 
         UILabel<RecordsScene> lblRank = new UILabel<>(getScene(), "Rank", 100, 10);
         font = lblRank.getFont();
         font.setSmall(true);
         font.setHighlight(true);
         lblRank.setY(y);
-        lblRank.setX(20);
+        lblRank.setX(10);
         lblRank.load();
         addChild(lblRank);
 
@@ -49,7 +49,7 @@ public class UIRecordsDisplay extends UIObject<RecordsScene, UIContainer<Records
         font.setSmall(true);
         font.setHighlight(true);
         lblFloor.setY(y);
-        lblFloor.setX(200);
+        lblFloor.setX(100);
         lblFloor.load();
         addChild(lblFloor);
 
@@ -58,7 +58,7 @@ public class UIRecordsDisplay extends UIObject<RecordsScene, UIContainer<Records
         font.setSmall(true);
         font.setHighlight(true);
         lblDate.setY(y);
-        lblDate.setX(380);
+        lblDate.setX(190);
         lblDate.load();
         addChild(lblDate);
 
@@ -69,14 +69,14 @@ public class UIRecordsDisplay extends UIObject<RecordsScene, UIContainer<Records
                 .collect(Collectors.toCollection(GameDataList::new));
 
         for (int i = 0; i < 20; i++) {
-            y -= 20;
+            y -= 10;
 
             UILabel<RecordsScene> lbl = new UILabel<>(getScene(), (i + 1) + ")", 100, 10);
             font = lbl.getFont();
             font.setSmall(true);
             font.setHighlight(true);
             lbl.setY(y);
-            lbl.setX(20);
+            lbl.setX(10);
             lbl.load();
             addChild(lbl);
 
@@ -89,7 +89,7 @@ public class UIRecordsDisplay extends UIObject<RecordsScene, UIContainer<Records
                 font.setSmall(true);
                 font.setHighlight(true);
                 lbl2.setY(y);
-                lbl2.setX(200);
+                lbl2.setX(100);
                 lbl2.load();
                 addChild(lbl2);
 
@@ -100,7 +100,7 @@ public class UIRecordsDisplay extends UIObject<RecordsScene, UIContainer<Records
                 font.setSmall(true);
                 font.setHighlight(true);
                 lbl4.setY(y);
-                lbl4.setX(380);
+                lbl4.setX(190);
                 lbl4.load();
                 addChild(lbl4);
             } else {
@@ -111,7 +111,7 @@ public class UIRecordsDisplay extends UIObject<RecordsScene, UIContainer<Records
                 font.setSmall(true);
                 font.setHighlight(true);
                 lbl2.setY(y);
-                lbl2.setX(200);
+                lbl2.setX(100);
                 lbl2.load();
                 addChild(lbl2);
 
@@ -122,7 +122,7 @@ public class UIRecordsDisplay extends UIObject<RecordsScene, UIContainer<Records
                 font.setSmall(true);
                 font.setHighlight(true);
                 lbl4.setY(y);
-                lbl4.setX(380);
+                lbl4.setX(190);
                 lbl4.load();
                 addChild(lbl4);
             }
@@ -135,8 +135,8 @@ public class UIRecordsDisplay extends UIObject<RecordsScene, UIContainer<Records
             }
         };
 
-        btnClose.setX(-btnClose.getWidth() + getWidth());
-        btnClose.setY(-btnClose.getHeight());
+        btnClose.setX(-btnClose.getWidth() / 2 + getWidth() / 2);
+        btnClose.setY(-btnClose.getHeight() / 2);
         btnClose.load();
         addChild(btnClose);
     }

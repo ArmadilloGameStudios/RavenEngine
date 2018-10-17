@@ -26,6 +26,6 @@ public class UIDefeat extends UICenterContainer<BattleScene> {
         pack();
 
         btnMenu.setZ(.02f);
-        btnMenu.setY(10);
+        btnMenu.setY(5);
     }
 }

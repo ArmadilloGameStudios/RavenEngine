@@ -33,7 +33,7 @@ public abstract class UIAbilityButton extends UIButton<BattleScene> {
         abilityImg.setSpriteAnimation(new SpriteAnimationState(abilityImg, getScene().getEngine().getAnimation("hexbutton")));
         addChild(abilityImg);
 
-        abilityImg.setToolTip(ability.name, ability.description);
+        abilityImg.setToolTip(ability.name, ability.getDescription());
 
         abilityImg.setY(getHeight() + 1 + (abilityImgList.size() / 2) * 11);
         if (abilityImgList.size() % 2 == 0) {

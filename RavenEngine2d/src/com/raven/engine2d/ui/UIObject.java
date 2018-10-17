@@ -63,6 +63,13 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
             children.add(obj);
     }
 
+    public final void insertChild(int index, UIObject obj) {
+        if (!children.contains(obj))
+            children.add(index, obj);
+
+        addChild(obj);
+    }
+
     public void removeChild(UIObject obj) {
         children.remove(obj);
         scene.removeGameObject(obj);

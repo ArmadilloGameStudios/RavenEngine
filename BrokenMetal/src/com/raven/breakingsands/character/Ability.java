@@ -6,15 +6,20 @@ import com.raven.engine2d.database.GameDataList;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.database.GameDatable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Ability implements GameDatable {
 
     private GameData gameData;
 
     public Pawn owner;
 
-    public enum Type {SELF, AURORA, TARGET, TRIGGER}
+    public enum Type {SELF, AURORA, TARGET, TRIGGER, BUTTON}
 
     public enum Trigger {ATTACK, KILL, DAMAGE, FLOOR, UNMOVED}
+
+    public enum Condition {NO_TEMP_DAMAGE, HAS_ATTACKS, NO_ATTACKS}
 
     public static class Target {
         static final public int ALL = 0b1111, SELF = 0b1000, ALLY = 0b0001, ENEMY = 0b0010, EMPTY = 0b0100, NOT_SELF = 0x0111;
@@ -23,24 +28,29 @@ public class Ability implements GameDatable {
     public enum UseRegainType {TURN, LEVEL}
 
     public String name, upgrade;
-    public String description = "";
+    private String description = "";
+    private String showDescription = "";
     public String weapon;
+    public String buttonIcon;
     public Type type;
     public Trigger trigger;
     public int target;
     public RangeStyle style;
     public UseRegainType useRegainType = UseRegainType.TURN;
-    public String replace, icon = "sprites/ability hex.png";
+    public String replace, requires, icon = "sprites/ability hex.png";
 
     public Integer size, damage, uses;
     public Integer remainingUses;
-    public Integer hp, shield, movement, resistance, piercing, maxRange, minRange, xpModifier,
+    public Integer hp, shield, attacks, movement, resistance, piercing, maxRange, minRange, xpModifier,
             restore, restore_attack, restore_movement, restore_shield,
-            temp_resistance, bonus_movement;
+            temp_resistance, temp_damage, temp_range, temp_piercing,
+            bonus_movement;
     public boolean action, remain, passesPawn, passesWall, usedThisTurn,
             taunt, push_blast, hook_pull,
             hack, instant_hack, transferable, cure,
-            blink, recall, recall_unit, heal, rest_heal;
+            blink, recall, recall_unit, heal, rest_heal,
+            quick_swap;
+    public List<Condition> conditions;
 
     public Ability bonusAbility;
 
@@ -54,41 +64,45 @@ public class Ability implements GameDatable {
 
         gameData.ifHas("action", a -> action = a.asBoolean());
         gameData.ifHas("icon", a -> icon = a.asString());
+        gameData.ifHas("button_icon", u -> buttonIcon = u.asString());
 
         if (weapon != null) {
-            if (!description.equals("")) {
-                description += "\n";
-            }
 
             GameData gdWeapon = GameDatabase.all("weapon").stream()
                     .filter(gd -> gd.getString("name").equals(weapon))
                     .findFirst().get();
 
-            description += "damage: " + gdWeapon.getInteger("damage") + "\n";
-            gdWeapon.ifHas("piercing",
-                    gd -> description += "piercing: " + gd.asInteger() + "\n",
-                    () -> description += "piercing: 0\n");
-            gdWeapon.ifHas("shots",
-                    gd -> description += "shots: " + gd.asInteger() + "\n",
-                    () -> description += "shots: 1\n");
+            description = Weapon.getDescription(gdWeapon, description);
 
-            if (gdWeapon.getString("type").equals("ranged")) {
-                if (gdWeapon.has("range")) {
-                    if (gdWeapon.getData("range").isList()) {
-                        GameDataList rl = gdWeapon.getList("range");
-                        description += "range: " + rl.get(0) + "-" + rl.get(1) + "\nranged";
-                    } else {
-                        if (gdWeapon.getInteger("range") == 1)
-                            description += "range: 1\nranged";
-                        else
-                            description += "range: 1-" + gdWeapon.getInteger("range") + "\nranged";
-                    }
-                } else {
-                    description += "range: 1\nranged";
-                }
-            } else {
-                description += "range: 1\nmelee";
-            }
+//            if (!description.equals("")) {
+//                description += "\n";
+//            }
+//
+//            description += "damage: " + gdWeapon.getInteger("damage") + "\n";
+//            gdWeapon.ifHas("piercing",
+//                    gd -> description += "piercing: " + gd.asInteger() + "\n",
+//                    () -> description += "piercing: 0\n");
+//            gdWeapon.ifHas("shots",
+//                    gd -> description += "shots: " + gd.asInteger() + "\n",
+//                    () -> description += "shots: 1\n");
+//
+//            if (gdWeapon.getString("type").equals("ranged")) {
+//                if (gdWeapon.has("range")) {
+//                    if (gdWeapon.getData("range").isList()) {
+//                        GameDataList rl = gdWeapon.getList("range");
+//                        description += "range: " + rl.get(0) + "-" + rl.get(1) + "\nranged";
+//                    } else {
+//                        if (gdWeapon.getInteger("range") == 1)
+//                            description += "range: 1\nranged";
+//                        else
+//                            description += "range: 1-" + gdWeapon.getInteger("range") + "\nranged";
+//                    }
+//                } else {
+//                    description += "range: 1\nranged";
+//                }
+//            } else {
+//                description += "range: 1\nmelee";
+//            }
         }
 
         switch (gameData.getString("type")) {
@@ -104,6 +118,9 @@ public class Ability implements GameDatable {
                 break;
             case "trigger":
                 type = Type.TRIGGER;
+                break;
+            case "button":
+                type = Type.BUTTON;
                 break;
         }
 
@@ -176,8 +193,26 @@ public class Ability implements GameDatable {
             }
         }, () -> style = RangeStyle.DIAMOND);
 
+        gameData.ifHas("conditions", c -> {
+            conditions = new ArrayList<>();
+
+            c.asList().forEach(s -> {
+                switch (s.asString()) {
+                    case "no_attacks":
+                        conditions.add(Condition.NO_ATTACKS);
+                        break;
+                    case "has_attacks":
+                        conditions.add(Condition.HAS_ATTACKS);
+                        break;
+                    case "no_temp_damage":
+                        conditions.add(Condition.NO_TEMP_DAMAGE);
+                        break;
+                }
+            });
+        });
 
         gameData.ifHas("replace", r -> replace = r.asString());
+        gameData.ifHas("requires", r -> requires = r.asString());
         gameData.ifHas("passes_pawn", p -> passesPawn = p.asBoolean());
         gameData.ifHas("passes_wall", p -> passesWall = p.asBoolean());
         gameData.ifHas("transferable", t -> transferable = t.asBoolean());
@@ -186,6 +221,7 @@ public class Ability implements GameDatable {
         gameData.ifHas("damage", d -> damage = d.asInteger());
         gameData.ifHas("hp", h -> hp = h.asInteger());
         gameData.ifHas("shield", s -> shield = s.asInteger());
+        gameData.ifHas("attacks", m -> attacks = m.asInteger());
         gameData.ifHas("movement", m -> movement = m.asInteger());
         gameData.ifHas("resistance", r -> resistance = r.asInteger());
         gameData.ifHas("piercing", r -> piercing = r.asInteger());
@@ -197,7 +233,11 @@ public class Ability implements GameDatable {
         gameData.ifHas("restore_movement", r -> restore_movement = r.asInteger());
         gameData.ifHas("restore_shield", r -> restore_shield = r.asInteger());
         gameData.ifHas("temp_resistance", r -> temp_resistance = r.asInteger());
+        gameData.ifHas("temp_damage", r -> temp_damage = r.asInteger());
+        gameData.ifHas("temp_range", r -> temp_range = r.asInteger());
+        gameData.ifHas("temp_piercing", r -> temp_piercing = r.asInteger());
         gameData.ifHas("bonus_movement", r -> bonus_movement = r.asInteger());
+        gameData.ifHas("quick_swap", r -> quick_swap = r.asBoolean());
 
         if (gameData.has("remaining_uses")) {
             gameData.ifHas("remaining_uses", u -> remainingUses = u.asInteger());
@@ -220,6 +260,8 @@ public class Ability implements GameDatable {
         gameData.ifHas("heal", h -> heal = h.asBoolean());
         gameData.ifHas("rest_heal", h -> rest_heal = h.asBoolean());
         gameData.ifHas("ability", h -> bonusAbility = new Ability(h));
+
+        updateShowDescription();
     }
 
     @Override
@@ -239,6 +281,12 @@ public class Ability implements GameDatable {
                 this.size = ability.size;
             else
                 this.size += ability.size;
+        }
+        if (ability.temp_damage != null) {
+            if (this.temp_damage == null)
+                this.temp_damage = ability.temp_damage;
+            else
+                this.temp_damage += ability.temp_damage;
         }
         if (ability.shield != null) {
             if (this.shield == null)
@@ -300,6 +348,22 @@ public class Ability implements GameDatable {
         this.remain |= ability.remain;
         this.passesPawn |= ability.passesPawn;
         this.passesWall |= ability.passesWall;
+
+        updateShowDescription();
+    }
+
+    private void updateShowDescription() {
+
+        if (description != null)
+            showDescription = description
+                    .replace("temp_damage", temp_damage != null ? Integer.toString(temp_damage) : "");
+        else
+            showDescription = "";
+
+    }
+
+    public String getDescription() {
+        return showDescription;
     }
 
     @Override

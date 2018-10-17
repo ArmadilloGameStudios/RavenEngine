@@ -156,15 +156,19 @@ public class LevelUpAdvancedStar extends LevelUpStar {
                 .collect(Collectors.toList());
 
         List<Ability> requiresNeeded = abilities.stream()
-                .filter(a -> a.replace != null)
+                .filter(a -> a.replace != null || a.requires != null)
                 .collect(Collectors.toList());
         Map<Ability, Ability> needed = abilities.stream()
                 .filter(a ->
                         requiresNeeded.stream()
-                                .anyMatch(n -> n.replace.equals(a.name)))
+                                .anyMatch(n ->
+                                        n.replace != null && n.replace.equals(a.name) ||
+                                        n.requires != null && n.requires.equals(a.name)))
                 .collect(Collectors.toMap(
                         a -> a,
-                        a -> requiresNeeded.stream().filter(n -> n.replace.equals(a.name)).findFirst().get()));
+                        a -> requiresNeeded.stream().filter(n ->
+                                n.replace != null && n.replace.equals(a.name) ||
+                                n.requires != null && n.requires.equals(a.name)).findFirst().get()));
 
         List<Ability> remaining = new ArrayList<>(abilities);
         remaining.removeAll(requiresNeeded);

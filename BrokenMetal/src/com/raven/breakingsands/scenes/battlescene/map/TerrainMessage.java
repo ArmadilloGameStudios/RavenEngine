@@ -8,6 +8,8 @@ import com.raven.engine2d.scene.Layer;
 import com.raven.engine2d.ui.UIFont;
 import com.raven.engine2d.worldobject.WorldTextObject;
 
+import java.util.Optional;
+
 public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
     private Terrain.State state;
 
@@ -27,6 +29,8 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
         this.state = state;
         Ability ability = getScene().getActiveAbility();
 
+        setVisibility(getParent().isMouseHovering());
+
         switch (state) {
             case SELECTABLE:
                 if (getParent().getPawn() == getScene().getActivePawn()) {
@@ -44,19 +48,18 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
                     setText("");
                     break;
                 }
-            case ATTACKABLE:
+                if (!getParent().isMouseHovering()) {
+                    setVisibility(false);
+                    break;
+                }
             case ATTACK:
-                Pawn pawn = getParent().getPawn();
-                if (pawn != null && getScene().getActivePawn() != null) {
-                    Weapon w = getScene().getActivePawn().getWeapon();
-                    int damage = pawn.getDamage(w.getDamage(), w.getPiercing() + getScene().getActivePawn().getBonusPiercing(), w.getShots());
-
-                    if (damage >= pawn.getRemainingHitPoints()) {
-                        setText("kill -" + damage);
-                    } else {
-                        setText("attack -" + damage);
-                    }
+                showDamage();
+                break;
+            case ATTACKABLE:
+                if (getScene().isTempState()) {
+                    showDamage();
                 } else {
+                    Pawn pawn = getParent().getPawn();
                     if (pawn != null)
                         setText(pawn.getName());
                     else
@@ -67,6 +70,47 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
             case ABILITYABLE:
                 setText(ability.name);
                 break;
+        }
+    }
+
+    private void showDamage() {
+        Pawn pawn = getParent().getPawn();
+
+        if (pawn != null) {
+
+            Pawn attacker;
+            if (getScene().getState() == BattleScene.State.SHOW_ATTACK) {
+                if (pawn.getTeam(true) == 0)
+                    attacker = getScene().getTargetPawn();
+                else
+                    attacker = getScene().getActivePawn();
+            } else {
+                attacker = getScene().getActivePawn();
+            }
+
+            if (attacker != null) {
+                Weapon w = Optional.ofNullable(getScene().getTempWeapon()).orElse(attacker.getWeapon());
+                int damage = pawn.getDamage(w.getDamage(), w.getPiercing() + attacker.getBonusPiercing(), w.getShots(), attacker.getTempDamage());
+
+                if (damage >= pawn.getRemainingHitPoints() + pawn.getRemainingShield()) {
+                    setText("kill -" + damage);
+                } else {
+                    setText("attack -" + damage);
+                }
+
+                setVisibility(true);
+            } else {
+                if (getScene().getState() == BattleScene.State.SHOW_ATTACK) {
+                    if (getParent().isMouseHovering())
+                        setText(pawn.getName());
+                    else {
+                        setVisibility(false);
+                    }
+                } else {
+                    setText(pawn.getName());
+                    setVisibility(true);
+                }
+            }
         }
     }
 
@@ -82,6 +126,6 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
 
     @Override
     public float getZ() {
-        return 10 + getParent().getZ();
+        return getParent().getZ();
     }
 }

@@ -185,7 +185,7 @@
     effect: "blue disk",
 
     tags: [ ],
-}
+},
 {
     name: "Demon Disk",
     type: "ranged",
@@ -195,7 +195,7 @@
     },
 
     damage: 5,
-    range: 1,
+    range: 2,
     piercing: 0,
     style: "straight",
     effect: "disk",
@@ -212,7 +212,7 @@
     },
 
     damage: 5,
-    range: 1,
+    range: 2,
     piercing: 0,
     style: "straight",
     effect: "blue disk",
@@ -250,6 +250,41 @@
     damage: 10,
     range: 1,
     piercing: 0,
+    effect: "blue disk",
+
+    tags: [ ],
+},
+{
+    name: "Double Blast",
+    type: "ranged",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    damage: 3,
+    shots: 2,
+    range: [2, 5],
+    piercing: 1,
+    style: "straight",
+    effect: "disk",
+
+    tags: [ ],
+}
+{
+    name: "Blue Double Blast",
+    display: "Double Blast",
+    type: "ranged",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    damage: 3,
+    shots: 2,
+    range: [2, 5],
+    piercing: 1,
+    style: "straight",
     effect: "blue disk",
 
     tags: [ ],
