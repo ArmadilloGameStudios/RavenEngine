@@ -21,6 +21,9 @@ public class GameProperties {
     private static List<Vector2i> resolutionList = new ArrayList<>();
     private static int sfx = 100, music = 100;
     private static boolean vsync = false;
+    private static int windowMode = 0;
+
+    public static final int FULLSCREEN = 0, WINDOWED = 1, WINDOWED_BOARDERLESS = 2;
 
     public static int getDisplayWidth() {
         return dwidth;
@@ -93,6 +96,14 @@ public class GameProperties {
 
     public static boolean getVSync() {
         return vsync;
+    }
+
+    public static void setWindowMode(int windowMode) {
+        GameProperties.windowMode = windowMode;
+    }
+
+    public static Integer getWindowMode() {
+        return windowMode;
     }
 
     private GameProperties() {}

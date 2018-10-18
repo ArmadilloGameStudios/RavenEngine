@@ -286,8 +286,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public boolean canLevel() {
-//        return true;
-        return xp >= getNextLevelXp();
+        return true;
+//        return xp >= getNextLevelXp();
     }
 
     public boolean canAttack() {

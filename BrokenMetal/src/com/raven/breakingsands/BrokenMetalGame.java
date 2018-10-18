@@ -34,6 +34,7 @@ public class BrokenMetalGame extends Game<BrokenMetalGame> {
         settings.ifHas("height", s -> GameProperties.setDisplayHeight(s.asInteger()));
         settings.ifHas("scaling", s -> GameProperties.setScaling(s.asInteger()));
         settings.ifHas("vsync", s -> GameProperties.setVSync(s.asBoolean()));
+        settings.ifHas("win_mode", s -> GameProperties.setWindowMode(s.asInteger()));
     }
 
     @Override
@@ -103,6 +104,7 @@ public class BrokenMetalGame extends Game<BrokenMetalGame> {
         map.put("height", new GameData(GameProperties.getDisplayHeight()));
         map.put("scaling", new GameData(GameProperties.getScaling()));
         map.put("vsync", new GameData(GameProperties.getVSync()));
+        map.put("win_mode", new GameData(GameProperties.getWindowMode()));
 
         GameDataTable settings = new GameDataTable("settings");
         settings.add(new GameData(map));

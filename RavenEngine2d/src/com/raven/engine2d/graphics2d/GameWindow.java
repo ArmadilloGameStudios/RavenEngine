@@ -62,9 +62,6 @@ public class GameWindow {
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
 
-//        long monitor = glfwGetPrimaryMonitor();
-        long monitor = glfwGetMonitors().get(0);
-        glfwGetVideoModes(monitor).stream().forEach(m -> GameProperties.addResolution(m.width(), m.height()));
 
         GameData res = engine.getGame().loadGameData("settings").get(0);
 
@@ -93,12 +90,30 @@ public class GameWindow {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
 
+        if (GameProperties.getWindowMode() == GameProperties.WINDOWED_BOARDERLESS)
+            glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+        else
+            glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
+
+//        long monitor = glfwGetPrimaryMonitor();
+        long monitor = glfwGetMonitors().get(0);
+        glfwGetVideoModes(monitor).stream().forEach(m -> GameProperties.addResolution(m.width(), m.height()));
+
         // Create the window
-        window = glfwCreateWindow(
-                GameProperties.getDisplayWidth(),
-                GameProperties.getDisplayHeight(),
-                engine.getGame().getTitle(), monitor,
-                NULL);
+        if (GameProperties.getWindowMode() == GameProperties.FULLSCREEN)
+            window = glfwCreateWindow(
+                    GameProperties.getDisplayWidth(),
+                    GameProperties.getDisplayHeight(),
+                    engine.getGame().getTitle(),
+                    monitor,
+                    NULL);
+        else
+            window = glfwCreateWindow(
+                    GameProperties.getDisplayWidth(),
+                    GameProperties.getDisplayHeight(),
+                    engine.getGame().getTitle(),
+                    NULL,
+                    NULL);
 
         try {
             int[] x, y;

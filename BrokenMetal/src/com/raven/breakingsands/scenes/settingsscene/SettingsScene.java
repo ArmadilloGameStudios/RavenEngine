@@ -105,8 +105,8 @@ public class SettingsScene extends Scene<BrokenMetalGame> {
         container.addChild(sfxVolumeSel);
 
         // v-sync
-         List<Boolean> booleans = Arrays.asList(true, false);
-         List<String> booleansStrings = Arrays.asList("yes", "no");
+        List<Boolean> booleans = Arrays.asList(true, false);
+        List<String> booleansStrings = Arrays.asList("yes", "no");
 
 
         AtomicReference<Boolean> selectedVSync = new AtomicReference<>(booleans.get(1));
@@ -124,6 +124,27 @@ public class SettingsScene extends Scene<BrokenMetalGame> {
                 selectedVSync.get());
         container.addChild(vSyncSel);
 
+
+        // window
+        List<Integer> windows = Arrays.asList(0, 1, 2);
+        List<String> windowsStrings = Arrays.asList("fullscreen", "windowed", "boarderless");
+
+
+        AtomicReference<Integer> selectedWindow = new AtomicReference<>(windows.get(0));
+        windows.stream()
+                .filter(l -> l == GameProperties.getWindowMode())
+                .findFirst()
+                .ifPresent(selectedWindow::set);
+
+        UISelector<SettingsScene, Integer> windowSel = new UISelector<>(this,
+                "sprites/selector.png",
+                "sprites/selectorleftbutton.png",
+                "sprites/selectorrightbutton.png",
+                "window (restart)",
+                windows, windowsStrings,
+                selectedWindow.get());
+        container.addChild(windowSel);
+
         UITextButton<SettingsScene> doneBtn = new UITextButton<SettingsScene>(this, "apply", "sprites/button.png", "mainbutton") {
             @Override
             public void handleMouseClick() {
@@ -131,6 +152,7 @@ public class SettingsScene extends Scene<BrokenMetalGame> {
                 GameProperties.setMusicVolume(musicVolumeSel.getValue());
                 GameProperties.setSFXVolume(sfxVolumeSel.getValue());
                 GameProperties.setVSync(vSyncSel.getValue());
+                GameProperties.setWindowMode(windowSel.getValue());
 
                 Vector2i dim = resolutionSel.getValue();
                 getEngine().getWindow().setDimension(dim.x, dim.y);

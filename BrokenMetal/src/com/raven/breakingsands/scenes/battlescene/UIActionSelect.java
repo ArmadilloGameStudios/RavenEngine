@@ -388,7 +388,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
             @Override
             public void handleMouseClick() {
-                if (!btnLevel.isDisabled()) {
+                if (!isDisabled()) {
                     getScene().pawnSwitchWeapons();
                 }
             }

@@ -700,7 +700,7 @@ public class UIDetailText
 
                     @Override
                     public void handleMouseEnter() {
-                        if (getScene().getActiveTeam() == 0) {
+                        if (getScene().getActiveTeam() == 0 && BattleScene.stateIsSelect(getScene().getState(), true)) {
                             getScene().setTempPawn(pawn);
                             getScene().setTempAbility(a);
                             getScene().setTempState(BattleScene.State.SELECT_ABILITY);
@@ -760,7 +760,7 @@ public class UIDetailText
 
                     @Override
                     public void handleMouseEnter() {
-                        if (getScene().getActiveTeam() == 0) {
+                        if (getScene().getActiveTeam() == 0 && BattleScene.stateIsSelect(getScene().getState(), true)) {
                             getScene().setTempPawn(pawn);
                             getScene().setTempWeapon(w);
                             getScene().setTempState(BattleScene.State.SELECT_ATTACK);
