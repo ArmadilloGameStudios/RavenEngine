@@ -455,7 +455,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             @Override
             public void handleMouseClick() {
                 if (!isDisabled()) {
-                    getScene().reloadGame();
+                    getScene().undo();
                 }
             }
         };

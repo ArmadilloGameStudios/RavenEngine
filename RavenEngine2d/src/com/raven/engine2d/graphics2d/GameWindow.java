@@ -7,12 +7,9 @@ import com.raven.engine2d.graphics2d.shader.CompilationShader;
 import com.raven.engine2d.graphics2d.shader.LayerShader;
 import com.raven.engine2d.graphics2d.shader.Shader;
 import com.raven.engine2d.graphics2d.shader.TextShader;
-import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector2i;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
-import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.stb.STBImage;
@@ -22,11 +19,10 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
+import java.util.Objects;
 
-import static com.raven.engine2d.GameProperties.getResolutionList;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.opengl.ARBImaging.GL_TABLE_TOO_LARGE;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
@@ -65,16 +61,6 @@ public class GameWindow {
 
         GameData res = engine.getGame().loadGameData("settings").get(0);
 
-        if (res.has("width") && res.has("height")) {
-            GameProperties.setDisplayWidth(res.getInteger("width"));
-            GameProperties.setDisplayHeight(res.getInteger("height"));
-        } else {
-            List<Vector2i> reses = GameProperties.getResolutionList();
-            Vector2i vec = reses.get(reses.size() - 1);
-            GameProperties.setDisplayWidth(vec.x);
-            GameProperties.setDisplayHeight(vec.y);
-        }
-
 
         // Configure GLFW
         glfwDefaultWindowHints();
@@ -90,14 +76,25 @@ public class GameWindow {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
 
-        if (GameProperties.getWindowMode() == GameProperties.WINDOWED_BOARDERLESS)
+        if (GameProperties.getWindowMode() == GameProperties.WINDOWED_BORDERLESS)
             glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
         else
             glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
 
 //        long monitor = glfwGetPrimaryMonitor();
         long monitor = glfwGetMonitors().get(0);
-        glfwGetVideoModes(monitor).stream().forEach(m -> GameProperties.addResolution(m.width(), m.height()));
+        Objects.requireNonNull(glfwGetVideoModes(monitor)).stream().forEach(m -> GameProperties.addResolution(m.width(), m.height()));
+
+        if (res.has("width") && GameProperties.getResolutionList().stream().anyMatch(v2 -> v2.x == res.getInteger("width")) &&
+                res.has("height") && GameProperties.getResolutionList().stream().anyMatch(v2 -> v2.y == res.getInteger("height"))) {
+            GameProperties.setDisplayWidth(res.getInteger("width"));
+            GameProperties.setDisplayHeight(res.getInteger("height"));
+        } else {
+            List<Vector2i> reses = GameProperties.getResolutionList();
+            Vector2i vec = reses.get(reses.size() - 1);
+            GameProperties.setDisplayWidth(vec.x);
+            GameProperties.setDisplayHeight(vec.y);
+        }
 
         // Create the window
         if (GameProperties.getWindowMode() == GameProperties.FULLSCREEN)
@@ -274,7 +271,6 @@ public class GameWindow {
     }
 
     public void setDimension(int width, int height) {
-        // TODO restart window
         GameProperties.setDisplayWidth(width);
         GameProperties.setDisplayHeight(height);
 

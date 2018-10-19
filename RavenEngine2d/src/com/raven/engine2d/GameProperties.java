@@ -23,7 +23,7 @@ public class GameProperties {
     private static boolean vsync = false;
     private static int windowMode = 0;
 
-    public static final int FULLSCREEN = 0, WINDOWED = 1, WINDOWED_BOARDERLESS = 2;
+    public static final int FULLSCREEN = 0, WINDOWED = 1, WINDOWED_BORDERLESS = 2;
 
     public static int getDisplayWidth() {
         return dwidth;

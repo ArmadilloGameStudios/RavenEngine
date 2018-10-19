@@ -127,7 +127,7 @@ public class SettingsScene extends Scene<BrokenMetalGame> {
 
         // window
         List<Integer> windows = Arrays.asList(0, 1, 2);
-        List<String> windowsStrings = Arrays.asList("fullscreen", "windowed", "boarderless");
+        List<String> windowsStrings = Arrays.asList("fullscreen", "windowed", "borderless");
 
 
         AtomicReference<Integer> selectedWindow = new AtomicReference<>(windows.get(0));

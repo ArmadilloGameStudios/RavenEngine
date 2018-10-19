@@ -73,6 +73,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     private Random random = new Random(seed);
 
     private Map map;
+    private boolean loading = true;
 
     private HashMap<Terrain, Path<Terrain>> pathMap;
     private Path<Terrain> currentPath;
@@ -117,8 +118,8 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         map.put("map", this.map.toGameData());
         map.put("difficulty", new GameData(difficulty));
         map.put("id", new GameData(getGame().getGameID()));
-        map.put("activeTeam", new GameData(activeTeam));
-        map.put("activePawn", new GameData(pawns.indexOf(activePawn)));
+        map.put("activeteam", new GameData(activeTeam));
+        map.put("activepawn", new GameData(pawns.indexOf(activePawn)));
 
         return new GameData(map);
     }
@@ -201,6 +202,8 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
     @Override
     public void onEnterScene() {
+        loading = true;
+
         System.out.println("Seed: " + seed);
 
         setBackgroundColor(new Vector3f(0f, 0f, 0f));
@@ -280,9 +283,9 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         topContainer.pack();
 
         if (loadGameData != null) {
-            activeTeam = loadGameData.getInteger("activeTeam");
-            if (loadGameData.getInteger("activePawn") >= 0) {
-                Pawn a = pawns.get(loadGameData.getInteger("activePawn"));
+            activeTeam = loadGameData.getInteger("activeteam");
+            if (loadGameData.getInteger("activepawn") >= 0) {
+                Pawn a = pawns.get(loadGameData.getInteger("activepawn"));
                 setActivePawn(a);
             } else
                 setActivePawn(null);
@@ -317,7 +320,9 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 //        System.out.println(getTerrainMap().getTerrainList().stream().filter(t -> t.getPawn() != null).count());
 
         if (loadGameData == null)
-            getGame().saveGame();
+            getGame().saveGame(true);
+
+        loading = false;
     }
 
     private void addPawns() {
@@ -554,8 +559,13 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             activePawn.updateDetailText();
         }
 
-        if (activeTeam == 1)
-            getGame().saveGame();
+        if (!loading) {
+            if (activeTeam == 1)
+                getGame().saveGame();
+            else {
+                getGame().saveGame(false);
+            }
+        }
 
         clearTempState();
         setState(SELECT_DEFAULT);
@@ -1093,11 +1103,19 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     }
 
     // actions - should be the prime way of interacting with the battle scene state
-    public void reloadGame() {
+    public void undo() {
 //        activePawn.setReady(false);
 //
 //        pawnDeselect();
-        getGame().loadGame();
+        GameDataList saves = getGame().getSaves();
+        System.out.println("Save Count: " + saves.size());
+
+        if (saves.size() > 1) {
+            getGame().prepTransitionScene(new BattleScene(getGame(), saves.get(saves.size() - 2)));
+            saves.remove(saves.size() - 1);
+        } else if (saves.size() > 0) {
+            getGame().prepTransitionScene(new BattleScene(getGame(), saves.get(saves.size() - 1)));
+        }
     }
 
     public void pawnEnd() {
