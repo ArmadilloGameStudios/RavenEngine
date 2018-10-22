@@ -236,7 +236,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             addChild(map);
             map.getTerrainList().forEach(Terrain::setPawnIndex);
         } else {
-            difficulty = 10;
+//            difficulty = 15;
             // Terrain
             map = new Map(this, difficulty);
             map.generate();
@@ -358,7 +358,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
         // add enemies
         // create xp to burn
-        int xpBank = 3 * Math.max(difficulty, 1) * Math.max(difficulty / 3, 1) + (difficulty - 1) * 3;
+        int xpBank = 3 * Math.max(difficulty, 1) + (difficulty - 1) * 6;
 
         // create and populate map
         HashMap<Terrain, Integer> mapSpawn = new HashMap<>();
