@@ -668,7 +668,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                         pawn.updateDetailText();
 
                         getScene().updateActionSelect();
-                        getScene().setActivePawn(pawn);
+                        getScene().setActivePawn(pawn, true);
                     }
                 } else {
                     if (!isDisabled()) {

@@ -209,7 +209,7 @@ public class UIWeaponSelect extends UIObject<BattleScene, UIContainer<BattleScen
     public void close() {
         setVisibility(false);
         getScene().setPaused(false);
-        getScene().setActivePawn(pawn);
+        getScene().setActivePawn(pawn, true);
     }
 
     @Override

@@ -122,7 +122,7 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
         clearReward();
         setVisibility(false);
         getScene().setPaused(false);
-        getScene().setActivePawn(pawn);
+        getScene().setActivePawn(pawn, true);
     }
 
     public void setPawn(Pawn pawn) {
