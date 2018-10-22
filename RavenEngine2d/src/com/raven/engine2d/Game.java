@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public abstract class Game<G extends Game<G>> {
     private GameEngine<G> engine;
@@ -30,6 +32,8 @@ public abstract class Game<G extends Game<G>> {
     private Clip song;
 
     private boolean isRunning;
+
+    private ExecutorService threadPool = Executors.newSingleThreadExecutor();
 
     public Game() {
         isRunning = true;
@@ -131,10 +135,7 @@ public abstract class Game<G extends Game<G>> {
     abstract public boolean saveGame();
 
     protected void saveDataTablesThreaded(List<GameDataTable> gdtToSave) {
-        Thread t = new Thread(() -> saveDataTables(gdtToSave, "save"));
-        t.start();
-
-
+        threadPool.execute(() -> saveDataTables(gdtToSave, "save"));
     }
 
     private boolean saveDataTables(List<GameDataTable> gdtToSave, String folder) {
@@ -148,10 +149,10 @@ public abstract class Game<G extends Game<G>> {
                 if (!f.getParentFile().exists())
                     f.getParentFile().mkdirs();
 
-                if (!f.exists())
-                    f.createNewFile();
+                if (f.exists())
+                    Files.delete(p);
 
-                Files.write(p, table.toFileString().getBytes(), StandardOpenOption.CREATE);
+                Files.write(p, table.toFileString().getBytes(), StandardOpenOption.CREATE_NEW);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -168,9 +169,7 @@ public abstract class Game<G extends Game<G>> {
     }
 
     protected void saveDataTableThreaded(GameDataTable gdtToSave) {
-        Thread t = new Thread(() -> saveDataTable(gdtToSave));
-        t.start();
-
+        threadPool.execute(() -> saveDataTable(gdtToSave));
 
     }
 

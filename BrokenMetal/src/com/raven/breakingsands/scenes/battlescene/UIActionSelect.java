@@ -388,7 +388,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
             @Override
             public void handleMouseClick() {
-                if (!btnLevel.isDisabled()) {
+                if (!isDisabled()) {
                     getScene().pawnSwitchWeapons();
                 }
             }
@@ -455,7 +455,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             @Override
             public void handleMouseClick() {
                 if (!isDisabled()) {
-                    getScene().reloadGame();
+                    getScene().undo();
                 }
             }
         };
@@ -668,7 +668,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                         pawn.updateDetailText();
 
                         getScene().updateActionSelect();
-                        getScene().setActivePawn(pawn);
+                        getScene().setActivePawn(pawn, true);
                     }
                 } else {
                     if (!isDisabled()) {

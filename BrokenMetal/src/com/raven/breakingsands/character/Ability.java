@@ -271,7 +271,7 @@ public class Ability implements GameDatable {
         }
         gameData.asMap().put("used_this_turn", new GameData(usedThisTurn));
 
-        return gameData;
+        return new GameData(gameData);
     }
 
     public void upgrade(Ability ability, boolean add) {

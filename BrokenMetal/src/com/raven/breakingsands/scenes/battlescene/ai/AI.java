@@ -429,7 +429,7 @@ public class AI implements Runnable {
         }
 
         if (select != null) {
-            scene.setActivePawn(select);
+            scene.setActivePawn(select, true);
             return;
         }
 
@@ -437,7 +437,7 @@ public class AI implements Runnable {
             scene.setActiveTeam(0);
         } else {
             activePawn.setReady(false);
-            scene.setActivePawn(null);
+            scene.setActivePawn(null, true);
         }
     }
 }
