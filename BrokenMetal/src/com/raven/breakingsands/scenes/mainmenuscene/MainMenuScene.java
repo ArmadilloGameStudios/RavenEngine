@@ -2,9 +2,12 @@ package com.raven.breakingsands.scenes.mainmenuscene;
 
 import com.raven.breakingsands.BrokenMetalGame;
 import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
+import com.raven.breakingsands.scenes.hud.UIUpperRightContainer;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.scene.Scene;
+import com.raven.engine2d.ui.UIFont;
+import com.raven.engine2d.ui.UILabel;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -83,6 +86,17 @@ public class MainMenuScene extends Scene<BrokenMetalGame> {
         container.addChild(exitBtn);
 
         container.pack();
+
+        // version
+        UIUpperRightContainer<MainMenuScene> rightContainer = new UIUpperRightContainer<>(this);
+        UILabel<MainMenuScene> version = new UILabel<>(this, "beta - 0.2.2", 60, 11);
+        rightContainer.addChild(version);
+        UIFont font = version.getFont();
+        font.setSide(UIFont.Side.RIGHT);
+        font.setSmall(true);
+        version.load();
+        addChild(rightContainer);
+        rightContainer.pack();
 
         // Music
 //        getGame().playSong("Chapter 50.wav");
