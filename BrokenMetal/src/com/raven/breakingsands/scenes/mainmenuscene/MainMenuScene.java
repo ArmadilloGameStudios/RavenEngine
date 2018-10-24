@@ -74,6 +74,10 @@ public class MainMenuScene extends Scene<BrokenMetalGame> {
         settingsButton.load();
         container.addChild(settingsButton);
 
+        CreditsButton creditsButton = new CreditsButton(this);
+        creditsButton.load();
+        container.addChild(creditsButton);
+
         ExitButton exitBtn = new ExitButton(this);
         exitBtn.load();
         container.addChild(exitBtn);
