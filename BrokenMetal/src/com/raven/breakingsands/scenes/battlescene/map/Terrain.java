@@ -169,37 +169,32 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     @Override
     public void handleMouseClick() {
         if (!getScene().isPaused())
-            switch (getScene().getState()) {
-                case SELECT_MOVE:
-                case SELECT_ATTACK:
-                case SELECT_ABILITY:
-                case SELECT_DEFAULT:
-                    switch (state) {
-                        case SELECTABLE:
-                            if (pawn != null) {
-                                if (pawn == getScene().getActivePawn()) {
-                                    getScene().pawnDeselect();
-                                } else if (pawn.getTeam(true) == getScene().getActiveTeam()) {
-                                    getScene().setActivePawn(pawn);
-                                }
+            if (BattleScene.stateIsSelect(getScene().getState(), false)) {
+                switch (state) {
+                    case SELECTABLE:
+                        if (pawn != null) {
+                            if (pawn == getScene().getActivePawn()) {
+                                getScene().pawnDeselect();
+                            } else if (pawn.getTeam(true) == getScene().getActiveTeam()) {
+                                getScene().setActivePawn(pawn, false);
                             }
-                            break;
-                        case MOVE:
-                            getScene().pawnMove();
-                            break;
-                        case ATTACK:
-                            getScene().pawnAttack(getPawn());
-                            break;
-                        case ABILITY:
-                            getScene().pawnAbility(this);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
+                        }
+                        break;
+                    case MOVE:
+                        getScene().pawnMove();
+                        break;
+                    case ATTACK:
+                        getScene().pawnAttack(getPawn());
+                        break;
+                    case ABILITY:
+                        getScene().pawnAbility(this);
+                        break;
+                    default:
+                        break;
+                }
             }
 
-        terrainMessage.setState(state);
+//        terrainMessage.setState(state);
     }
 
     @Override
@@ -207,56 +202,55 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
         if (!getScene().isPaused()) {
 //            getScene().showToolTipSrc("damage");
 
-            switch (getScene().getState()) {
-                case SELECT_MOVE:
-                case SELECT_ATTACK:
-                case SELECT_ABILITY:
-                case SELECT_DEFAULT:
-                    if (pawn != null) {
-                        pawn.updateDetailText();
-                    }
+            if (BattleScene.stateIsSelect(getScene().getState(), true)) {
+                if (pawn != null) {
+                    pawn.updateDetailText();
+                }
 
-                    switch (state) {
-                        case MOVEABLE:
-                            getScene().selectPath(this);
-                            break;
-                        case ATTACKABLE:
-                            if (pawn != null && pawn.getTeam(false) != getScene().getActivePawn().getTeam(true))
-                                setState(State.ATTACK);
-                            break;
-                        case ABILITYABLE:
-                            Ability activeAbility = getScene().getActiveAbility();
-                            Pawn activePawn = getScene().getActivePawn();
+                if (getScene().getActivePawn() == null && pawn != null && pawn.getTeam(true) == 1) {
+                    getScene().setTargetPawn(pawn);
+                    getScene().setTempState(BattleScene.State.SHOW_ATTACK);
+                }
 
-                            if ((activeAbility.target & Ability.Target.EMPTY) != 0) {
-                                if (pawn == null) {
-                                    setState(State.ABILITY);
-                                }
+                switch (state) {
+                    case MOVEABLE:
+                        getScene().selectPath(this);
+                        break;
+                    case ATTACKABLE:
+                        if (pawn != null &&
+                                getScene().getActivePawn() != null &&
+                                pawn.getTeam(false) != getScene().getActivePawn().getTeam(true))
+                            setState(State.ATTACK);
+                        break;
+                    case ABILITYABLE:
+                        Ability activeAbility = getScene().getActiveAbility();
+                        Pawn activePawn = getScene().getActivePawn();
+
+                        if ((activeAbility.target & Ability.Target.EMPTY) != 0) {
+                            if (pawn == null) {
+                                setState(State.ABILITY);
                             }
+                        }
 
-                            if ((activeAbility.target & Ability.Target.ENEMY) != 0) {
-                                if (pawn != null && pawn.getTeam(true) != activePawn.getTeam(true)) {
-                                    setState(State.ABILITY);
-                                }
+                        if ((activeAbility.target & Ability.Target.ENEMY) != 0) {
+                            if (pawn != null && pawn.getTeam(true) != activePawn.getTeam(true)) {
+                                setState(State.ABILITY);
                             }
+                        }
 
-                            if ((activeAbility.target & Ability.Target.ALLY) != 0) {
-                                if (pawn != null && pawn.getTeam(true) == activePawn.getTeam(true)) {
-                                    setState(State.ABILITY);
-                                }
+                        if ((activeAbility.target & Ability.Target.ALLY) != 0) {
+                            if (pawn != null && pawn.getTeam(true) == activePawn.getTeam(true)) {
+                                setState(State.ABILITY);
                             }
-                            break;
-                    }
-                    break;
+                        }
+                        break;
+                    case UNSELECTABLE:
+                        break;
+                }
             }
 
-            selectHighlight();
             terrainMessage.setState(state);
-            terrainMessage.setVisibility(true);
-        }
-
-        if (pawn != null) {
-            terrainMessage.setVisibility(true);
+            selectHighlight();
         }
     }
 
@@ -264,31 +258,28 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
     public void handleMouseLeave() {
         if (!getScene().isPaused()) {
             getScene().hideToolTip();
-            switch (getScene().getState()) {
-                case SELECT_MOVE:
-                case SELECT_ATTACK:
-                case SELECT_ABILITY:
-                case SELECT_DEFAULT:
-                    if (pawn != null) {
-                        pawn.updateDetailText();
-                    }
+            getScene().clearTempState();
 
-                    getScene().clearPath();
+            if (BattleScene.stateIsSelect(getScene().getState(), true)) {
+                if (pawn != null) {
+                    pawn.updateDetailText();
+                }
 
-                    if (state == State.ATTACK) {
-                        setState(State.ATTACKABLE);
-                    }
-                    if (state == State.ABILITY) {
-                        setState(State.ABILITYABLE);
-                    }
-                    break;
+                getScene().clearPath();
+
+                if (state == State.ATTACK) {
+                    setState(State.ATTACKABLE);
+                }
+                if (state == State.ABILITY) {
+                    setState(State.ABILITYABLE);
+                }
             }
 
 
             selectHighlight();
-        }
 
-        terrainMessage.setVisibility(false);
+            terrainMessage.setVisibility(false);
+        }
     }
 
     @Override
@@ -314,6 +305,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             case SELECT_ATTACK:
             case SELECT_MOVE:
             case SELECT_ABILITY:
+            case SHOW_ATTACK:
                 return getMovementNodes(flags);
         }
 
@@ -452,10 +444,8 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
         this.state = state;
 
-        if (isMouseHovering() && state != State.UNSELECTABLE) {
+        if (terrainMessage != null)
             terrainMessage.setState(state);
-            terrainMessage.setVisibility(true);
-        }
 
         switch (state) {
             case UNSELECTABLE:
@@ -463,14 +453,14 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             case SELECTABLE:
                 break;
             case MOVEABLE:
-                if (this.pawn == getScene().getActivePawn()) {
+                if (this.pawn == getScene().getActivePawn() && getScene().getState() != BattleScene.State.SHOW_ATTACK) {
                     this.state = State.SELECTABLE;
                 } else if (this.isMouseHovering()) {
                     getScene().selectPath(this);
                 }
                 break;
             case MOVE:
-                if (this.pawn == getScene().getActivePawn()) {
+                if (this.pawn == getScene().getActivePawn() && getScene().getState() != BattleScene.State.SHOW_ATTACK) {
                     this.state = State.SELECTABLE;
                 }
                 break;
@@ -486,6 +476,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                 break;
         }
 
+
         selectHighlight();
     }
 
@@ -494,6 +485,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
             case MOVING:
                 setHighlight(BattleScene.OFF);
                 break;
+            case SHOW_ATTACK:
             case SELECT_MOVE:
             case SELECT_ATTACK:
             case SELECT_ABILITY:
@@ -519,7 +511,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                             break;
                         case MOVEABLE:
                             if (pawn != null) {
-                                setHighlight(BattleScene.GREEN);
+                                setHighlight(BattleScene.BLUE);
                             } else {
                                 if (passable) {
                                     setHighlight(BattleScene.BLUE);
@@ -529,7 +521,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                             break;
                         case MOVE:
                             if (pawn != null) {
-                                setHighlight(BattleScene.GREEN);
+                                setHighlight(BattleScene.BLUE);
                             } else {
                                 if (passable) {
                                     setHighlight(BattleScene.BLUE_CHANGING);

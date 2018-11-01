@@ -43,6 +43,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     // instance
+    private List<Weapon> weapons = new ArrayList<>();
     private Weapon weapon;
     private String name = "", charClass = "amateur", spriteNormal, spriteHack, weaponHack;
     private GameData weaponNormal;
@@ -52,7 +53,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             maxMovement, remainingMovement,
             resistance, bonusResistance, maxAttacks = 1, remainingAttacks,
             bonusPiercing, bonusMinRange, bonusMaxRange, bonusMovement,
-            temp_resistance = 0,
+            tempResistance = 0, tempDamage = 0, tempRange = 0, tempPiercing = 0,
             xpModifier = 1, xpGain;
     private Hack hack;
     private boolean unmoved = true;
@@ -110,10 +111,22 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         gameData.ifHas("total_attacks", m -> maxAttacks = m.asInteger());
         gameData.ifHas("remaining_attacks", m -> remainingAttacks = m.asInteger());
         gameData.ifHas("bonus_movement", m -> bonusMovement = m.asInteger());
+        gameData.ifHas("temp_range", m -> tempRange = m.asInteger());
+        gameData.ifHas("temp_piercing", m -> tempPiercing = m.asInteger());
+        gameData.ifHas("temp_damage", m -> tempDamage = m.asInteger());
+        gameData.ifHas("temp_resistance", m -> tempResistance = m.asInteger());
+
         gameData.ifHas("xp_gain", x -> xpGain = x.asInteger());
         gameData.ifHas("xp_modifier", x -> xpModifier = x.asInteger());
 
         GameDatabase db = scene.getEngine().getGameDatabase();
+
+        // weapons
+        gameData.ifHas("weapons", ws -> {
+            ws.asList().forEach(w -> {
+                setWeapon(new Weapon(scene, w));
+            });
+        });
 
         // weapon
         if (gameData.has("weapon")) {
@@ -124,7 +137,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             }
             setWeapon(gameData.getData("weapon"));
         } else {
-            weapon = new Weapon(scene, db.getTable("weapon").getRandom(scene.getRandom()));
+            setWeapon(new Weapon(scene, db.getTable("weapon").getRandom(scene.getRandom())));
         }
 
         // abilities
@@ -184,11 +197,18 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         map.put("bonus_piercing", new GameData(bonusPiercing));
         map.put("bonus_min_range", new GameData(bonusMinRange));
         map.put("bonus_max_range", new GameData(bonusMaxRange));
+        map.put("temp_range", new GameData(tempRange));
+        map.put("temp_piercing", new GameData(tempPiercing));
+        map.put("temp_damage", new GameData(tempDamage));
+        map.put("temp_resistance", new GameData(tempResistance));
         map.put("total_attacks", new GameData(maxAttacks));
         map.put("remaining_attacks", new GameData(remainingAttacks));
         map.put("bonus_movement", new GameData(bonusMovement));
         map.put("xp_gain", new GameData(xpGain));
         map.put("weapon", weapon.toGameData());
+        List<Weapon> weaponsRemoved = new ArrayList<>(weapons);
+        weaponsRemoved.remove(weapon);
+        map.put("weapons", new GameDataList(weaponsRemoved).toGameData());
         map.put("abilities", new GameDataList(abilities).toGameData());
         if (hack != null) {
             map.put("hack", hack.toGameData());
@@ -254,7 +274,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     public boolean canMove() {
         boolean canMove = true;
 
-        canMove &= remainingMovement > 0;
+        canMove &= getRemainingMovement() > 0;
 
 //        canMove &= remainingAttacks == maxAttacks;
 //
@@ -273,7 +293,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     public boolean canAttack() {
         final boolean[] canMove = {true};
 
-        canMove[0] &= remainingAttacks > 0;
+        canMove[0] &= getRemainingAttacks() > 0;
 
         abilities.stream().filter(a -> a.upgrade == null).forEach(a -> {
             if (a.useRegainType == Ability.UseRegainType.TURN)
@@ -286,6 +306,28 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public boolean canAbility(Ability ability) {
+
+        final boolean[] canAbility = {true};
+
+        if (ability.conditions != null) {
+            ability.conditions.forEach(c -> {
+                switch (c) {
+                    case NO_ATTACKS:
+                        canAbility[0] &= remainingAttacks <= 0;
+                        break;
+                    case HAS_ATTACKS:
+                        canAbility[0] &= remainingAttacks > 0;
+                        break;
+                    case NO_TEMP_DAMAGE:
+                        canAbility[0] &= tempDamage <= 0;
+                        break;
+                }
+            });
+        }
+
+        if (!canAbility[0])
+            return false;
+
         if (ability.recall_unit) {
             return true;
         }
@@ -302,21 +344,19 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             return false;
         }
 
-        final boolean[] canMove = {true};
-
-        canMove[0] &= !hasAttacked || ability.remain;
+        canAbility[0] &= !hasAttacked || ability.remain;
 
         abilities.stream().filter(a -> a.upgrade == null).forEach(a -> {
             if (a == ability) {
-                canMove[0] &= a.uses == null || (a.remainingUses > 0);
+                canAbility[0] &= a.uses == null || (a.remainingUses > 0);
             } else if (a.useRegainType == Ability.UseRegainType.TURN) {
-                canMove[0] &= a.uses == null || (!a.usedThisTurn || a.remainingUses.equals(a.uses) || a.remain);
+                canAbility[0] &= a.uses == null || (!a.usedThisTurn || a.remainingUses.equals(a.uses) || a.remain);
             } else {
-                canMove[0] &= a.uses == null || (!a.usedThisTurn || a.remain);
+                canAbility[0] &= a.uses == null || (!a.usedThisTurn || a.remain);
             }
         });
 
-        return canMove[0];
+        return canAbility[0];
     }
 
     public void setUnmoved(boolean b) {
@@ -336,15 +376,19 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public int getResistance() {
-        return resistance + bonusResistance + temp_resistance;
+        return resistance + bonusResistance + tempResistance;
+    }
+
+    public int getTempDamage() {
+        return tempDamage;
     }
 
     public int getBonusResistance() {
-        return bonusResistance + temp_resistance;
+        return bonusResistance + tempResistance;
     }
 
     public int getBonusPiercing() {
-        return bonusPiercing;
+        return bonusPiercing + tempPiercing;
     }
 
     public int getBonusMinRange() {
@@ -352,7 +396,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     }
 
     public int getBonusMaxRange() {
-        return getWeapon().getWeaponType() == WeaponType.MELEE ? 0 : bonusMaxRange;
+        return getWeapon().getWeaponType() == WeaponType.MELEE ? 0 : (bonusMaxRange + tempRange);
     }
 
     public int getResistance(boolean b) {
@@ -381,6 +425,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         bonus.ifHas("movement", gd -> {
             maxMovement += gd.asInteger();
             remainingMovement += gd.asInteger();
+        });
+        bonus.ifHas("attacks", gd -> {
+            maxAttacks += gd.asInteger();
+            remainingAttacks += gd.asInteger();
         });
 
         // add ability to the pawn if it is part of the class upgrade
@@ -416,7 +464,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                         this.removeAbility(a);
 
                         if (a.uses != null) {
-                        int addUses = ability.uses - a.uses;
+                            int addUses = ability.uses - a.uses;
                             ability.remainingUses = a.remainingUses + addUses;
                         }
                     });
@@ -431,6 +479,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 if (ability.shield != null) {
                     maxShield += ability.shield;
                     remainingShield += ability.shield;
+                }
+                if (ability.attacks != null) {
+                    maxAttacks += ability.attacks;
+                    remainingAttacks += ability.attacks;
                 }
                 if (ability.movement != null) {
                     maxMovement += ability.movement;
@@ -554,7 +606,16 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 this.bonusMovement += a.bonus_movement;
             }
             if (a.temp_resistance != null) {
-                this.temp_resistance += a.temp_resistance;
+                this.tempResistance += a.temp_resistance;
+            }
+            if (a.temp_damage != null) {
+                this.tempDamage += a.temp_damage;
+            }
+            if (a.temp_range != null) {
+                this.tempRange += a.temp_range;
+            }
+            if (a.temp_piercing != null) {
+                this.tempPiercing += a.temp_piercing;
             }
             if (a.rest_heal) { // Shouldn't trigger?
                 System.out.println("Ummm.....");
@@ -679,6 +740,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         return weapon;
     }
 
+    public List<Weapon> getWeapons() {
+        return weapons;
+    }
+
     public void setWeapon(String weapon) {
         GameDatabase.all("weapon").stream()
                 .filter(w -> w.getString("name").equals(weapon))
@@ -699,6 +764,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             removeChild(weapon);
 
         this.weapon = weapon;
+        if (!weapons.contains(weapon))
+            weapons.add(weapon);
 
         if (weapon != null) {
             addChild(weapon);
@@ -712,7 +779,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         remainingMovement = maxMovement;
         remainingAttacks = maxAttacks;
 
-        temp_resistance = 0;
+        tempResistance = 0;
 
         abilities.forEach(a -> {
             if (a.uses != null && a.useRegainType == Ability.UseRegainType.TURN) {
@@ -842,15 +909,18 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         weapon.runAttackAnimation(directionUp);
     }
 
-    public int getDamage(int damage, int percing, int shots) {
-        int remainingResistance = Math.max(getResistance() - percing, 0);
-        return Math.max(Math.max(damage - remainingResistance, 0) * shots, 1);
+    public int getDamage(int damage, int piercing, int shots, int tempDamage) {
+        int remainingResistance = Math.max(getResistance() - piercing, 0);
+        return Math.max(Math.max(damage - remainingResistance, 0) * (shots - 1) + Math.max((damage + tempDamage) - remainingResistance, 0), 1);
     }
 
-    public void attack(Pawn target, int damage, int percing, int shots, ActionFinishHandler onAttackDone) {
+    public void attack(Pawn target, int damage, int piercing, int shots, ActionFinishHandler onAttackDone) {
         reduceAttacks();
 
-        int dealtDamage = target.getDamage(damage, percing, shots);
+        int dealtDamage = target.getDamage(damage, piercing, shots, tempDamage);
+        tempDamage = 0;
+        tempPiercing = 0;
+        tempRange = 0;
 
         triggerAbilities(Ability.Trigger.ATTACK);
 
@@ -886,7 +956,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
     public void reduceAttacks() {
         hasAttacked = true;
-        remainingAttacks = Math.max(maxAttacks - 1, 0);
+        remainingAttacks = Math.max(remainingAttacks - 1, 0);
     }
 
     public boolean damage(int dealtDamage, ActionFinishHandler onAttackDone) {
@@ -967,6 +1037,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             if (this.spriteHack != null)
                 this.setSpriteSheet(spriteHack);
             if (this.weaponHack != null) {
+                weapons.remove(this.weapon);
                 setWeapon(this.weaponHack);
             }
         } else if (this.hack != null) {
@@ -979,6 +1050,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             if (this.spriteNormal != null)
                 this.setSpriteSheet(spriteNormal);
             if (this.weaponNormal != null) {
+                weapons.remove(this.weapon);
                 setWeapon(this.weaponNormal);
             }
         }
@@ -1054,6 +1126,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         bonusShieldLoss = 0;
         bonusMovement = 0;
         remainingShield = maxShield;
+        tempRange = 0;
+        tempPiercing = 0;
+        tempDamage = 0;
+        tempResistance = 0;
 
         abilities.forEach(a -> {
             if (a.uses != null) {
@@ -1140,6 +1216,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             }
 
             details.damage = Integer.toString(getWeapon().getDamage());
+            if (tempDamage != 0) {
+                details.damage += "+" + tempDamage;
+            }
             details.piercing = Integer.toString(getWeapon().getPiercing());
             if (getBonusPiercing() > 0) {
                 details.piercing += "+" + getBonusPiercing();

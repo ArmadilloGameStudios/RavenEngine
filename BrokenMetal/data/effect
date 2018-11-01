@@ -9,6 +9,16 @@
     animation: "blue disk"
 },
 {
+    name: "orange disk",
+    sprite: "sprites/orange disk.png",
+    animation: "disk"
+},
+{
+    name: "black disk",
+    sprite: "sprites/orange disk.png",
+    animation: "blue disk"
+},
+{
     name: "blue blast",
     sprite: "sprites/blue blast.png",
     animation: "blue blast"

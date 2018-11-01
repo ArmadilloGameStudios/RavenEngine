@@ -17,7 +17,7 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
     private UILabel<BattleScene> lblLevelUp;
     private UILabel<BattleScene> lblDesc;
     private UITextButton<BattleScene> btnConfirmCancel;
-    private LevelUpBaseStar starBasic;
+    private LevelUpBasicStar starBasic;
     private LevelUpAdvancedStar starAdvanced;
 
     private Object reward;
@@ -67,7 +67,7 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
         btnConfirmCancel.load();
         addChild(btnConfirmCancel);
 
-        starBasic = new LevelUpBaseStar(this);
+        starBasic = new LevelUpBasicStar(this);
         starBasic.setX(getWidth() / 4);
         starBasic.setY(getHeight() / 4);
         addChild(starBasic);
@@ -122,7 +122,7 @@ public class UILevelUp extends UIObject<BattleScene, UIContainer<BattleScene>> {
         clearReward();
         setVisibility(false);
         getScene().setPaused(false);
-        getScene().setActivePawn(pawn);
+        getScene().setActivePawn(pawn, true);
     }
 
     public void setPawn(Pawn pawn) {

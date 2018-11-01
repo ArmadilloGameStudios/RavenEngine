@@ -34,9 +34,10 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_DEFAULT;
+import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.*;
 
 public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     public static Highlight
@@ -59,11 +60,12 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     private UIUpperRightContainer<BattleScene> bottomRightContainer;
     private UIActionSelect actionSelect;
     private UILevelUp uiLevelUp;
+    private UIWeaponSelect uiWeaponSelect;
     private UIDefeat uiDefeat;
     private UIFloorDisplay uiFloorDisplay;
 
     public enum State {
-        MOVING, ATTACKING, SELECT_DEFAULT, SELECT_MOVE, SELECT_ATTACK, SELECT_ABILITY
+        MOVING, ATTACKING, SELECT_DEFAULT, SELECT_MOVE, SELECT_ATTACK, SHOW_ATTACK, SELECT_ABILITY
     }
 
     //    private long seed = 1499045290341207917L;
@@ -71,6 +73,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     private Random random = new Random(seed);
 
     private Map map;
+    private boolean loading = true;
 
     private HashMap<Terrain, Path<Terrain>> pathMap;
     private Path<Terrain> currentPath;
@@ -79,13 +82,17 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     private List<Pawn> pawns = new CopyOnWriteArrayList<>();
     private List<Pawn> playersPawns;
     private Pawn activePawn;
+    private Pawn tempPawn;
+    private Weapon tempWeapon;
     private Pawn targetPawn;
 
     private int difficulty;
     private int activeTeam = 0;
     private Ability activeAbility;
+    private Ability tempAbility;
 
     private State state = SELECT_DEFAULT;
+    private State tempState = null;
 
     private ExecutorService aiExecutorService = Executors.newSingleThreadExecutor();
     private AI ai = new AI(this);
@@ -111,8 +118,8 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         map.put("map", this.map.toGameData());
         map.put("difficulty", new GameData(difficulty));
         map.put("id", new GameData(getGame().getGameID()));
-        map.put("activeTeam", new GameData(activeTeam));
-        map.put("activePawn", new GameData(pawns.indexOf(activePawn)));
+        map.put("activeteam", new GameData(activeTeam));
+        map.put("activepawn", new GameData(pawns.indexOf(activePawn)));
 
         return new GameData(map);
     }
@@ -146,6 +153,8 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
                             menu.setVisibility(false);
                         if (uiLevelUp.isVisible())
                             uiLevelUp.close();
+                        if (uiWeaponSelect.isVisible())
+                            uiWeaponSelect.close();
                         setPaused(false);
 
                         if (uiDefeat.isVisible()) {
@@ -193,6 +202,8 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
     @Override
     public void onEnterScene() {
+        loading = true;
+
         System.out.println("Seed: " + seed);
 
         setBackgroundColor(new Vector3f(0f, 0f, 0f));
@@ -225,6 +236,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             addChild(map);
             map.getTerrainList().forEach(Terrain::setPawnIndex);
         } else {
+//            difficulty = 15;
             // Terrain
             map = new Map(this, difficulty);
             map.generate();
@@ -242,6 +254,14 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         centerContainer.addChild(uiLevelUp);
         centerContainer.pack();
         uiLevelUp.setVisibility(false);
+
+        // weapon select
+        centerContainer = new UICenterContainer<>(this);
+        addChild(centerContainer);
+        uiWeaponSelect = new UIWeaponSelect(this);
+        centerContainer.addChild(uiWeaponSelect);
+        centerContainer.pack();
+        uiWeaponSelect.setVisibility(false);
 
         // uiDefeat
         uiDefeat = new UIDefeat(this);
@@ -263,12 +283,12 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         topContainer.pack();
 
         if (loadGameData != null) {
-            activeTeam = loadGameData.getInteger("activeTeam");
-            if (loadGameData.getInteger("activePawn") >= 0) {
-                Pawn a = pawns.get(loadGameData.getInteger("activePawn"));
-                setActivePawn(a);
+            activeTeam = loadGameData.getInteger("activeteam");
+            if (loadGameData.getInteger("activepawn") >= 0) {
+                Pawn a = pawns.get(loadGameData.getInteger("activepawn"));
+                setActivePawn(a, false);
             } else
-                setActivePawn(null);
+                setActivePawn(null, false);
         } else {
             addPawns();
 
@@ -300,7 +320,9 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 //        System.out.println(getTerrainMap().getTerrainList().stream().filter(t -> t.getPawn() != null).count());
 
         if (loadGameData == null)
-            getGame().saveGame();
+            getGame().saveGame(true);
+
+        loading = false;
     }
 
     private void addPawns() {
@@ -336,7 +358,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
         // add enemies
         // create xp to burn
-        int xpBank = 3 * Math.max(difficulty, 1) * Math.max(difficulty / 3, 1) + (difficulty - 1) * 3;
+        int xpBank = 3 * Math.max(difficulty, 1) + (difficulty - 1) * 6;
 
         // create and populate map
         HashMap<Terrain, Integer> mapSpawn = new HashMap<>();
@@ -363,7 +385,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             spawnPawn(1, t, mapSpawn.get(t));
         });
 
-        setActivePawn(null);
+        setActivePawn(null, false);
         setState(SELECT_DEFAULT);
     }
 
@@ -398,7 +420,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
         PURPLE_CHANGING.a = BLUE_CHANGING.a = RED_CHANGING.a = GREEN_CHANGING.a = YELLOW_CHANGING.a = a;
 
-        switch (state) {
+        switch (getState()) {
             case MOVING:
 //                movePawn(deltaTime);
                 break;
@@ -476,7 +498,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             animationState.setActionIdle();
 
             current.setPawn(activePawn);
-            setActivePawn(activePawn);
+            setActivePawn(activePawn, true);
 
             setState(State.SELECT_DEFAULT);
         }
@@ -522,7 +544,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         return map;
     }
 
-    public void setActivePawn(Pawn pawn) {
+    public void setActivePawn(Pawn pawn, boolean save) {
         if (checkVictoryDefeat()) return;
 
         Pawn oldPawn = this.activePawn;
@@ -533,17 +555,23 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             oldPawn.updateDetailText();
         }
 
-        if (activePawn != null) {
+        if (activePawn != null && oldPawn != activePawn) {
             activePawn.updateDetailText();
         }
 
-        if (activeTeam == 1)
-            getGame().saveGame();
+        if (!loading) {
+            if (activeTeam == 1)
+                getGame().saveGame();
+            else if (save) {
+                getGame().saveGame(false);
+            }
+        }
 
+        clearTempState();
         setState(SELECT_DEFAULT);
     }
 
-    private void updateActionSelect() {
+    public void updateActionSelect() {
         if (activePawn != null && activePawn.getTeam(true) == 0)
             actionSelect.setPawn(activePawn);
         else
@@ -554,6 +582,17 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         return activePawn;
     }
 
+    public Pawn getActivePawn(boolean temp) {
+        if (temp)
+            return tempPawn != null ? tempPawn : activePawn;
+        else
+            return getActivePawn();
+    }
+
+    public Pawn getTargetPawn() {
+        return targetPawn;
+    }
+
     public int getActiveTeam() {
         return activeTeam;
     }
@@ -561,7 +600,8 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     public void setActiveTeam(int team) {
 
         if (team != activeTeam) {
-            activeAbility = null;
+            setActiveAbility(null);
+
         }
         // check hack
 //        if (team != activeTeam) {
@@ -595,24 +635,91 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             pawn.updateDetailText();
         }
 
-        setActivePawn(null);
+        setActivePawn(null, activeTeam == 0);
     }
 
     public Ability getActiveAbility() {
-        return activeAbility;
+        return tempAbility != null ? tempAbility : activeAbility;
     }
 
     public void setActiveAbility(Ability ability) {
         this.activeAbility = ability;
+        this.tempAbility = null;
+    }
+
+    public void clearTempAbility() {
+        tempAbility = null;
+    }
+
+    public void setTempAbility(Ability ability) {
+        tempAbility = ability;
+    }
+
+    public void setTempPawn(Pawn pawn) {
+        this.tempPawn = pawn;
+    }
+
+    public void setTempWeapon(Weapon w) {
+        this.tempWeapon = w;
+    }
+
+    public Weapon getTempWeapon() {
+        return tempWeapon;
     }
 
     public void setTargetPawn(Pawn targetPawn) {
         this.targetPawn = targetPawn;
     }
 
+    public static boolean stateIsSelect(State state, boolean show) {
+        if (state == SHOW_ATTACK) {
+            return show;
+        }
+
+        switch (state) {
+            case SELECT_DEFAULT:
+            case SELECT_ATTACK:
+            case SELECT_MOVE:
+            case SELECT_ABILITY:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public State getState() {
+        return tempState != null ? tempState : state;
+    }
+
+    public boolean isTempState() {
+        return tempState != null;
+    }
+
     public void setState(State state) {
         this.state = state;
+        this.tempState = null;
 
+        setStateStuff(state);
+    }
+
+    public void setTempState(State state) {
+        this.tempState = state;
+
+        setStateStuff(state);
+    }
+
+    public void clearTempState() {
+        if (this.tempState != null) {
+            this.tempState = null;
+            this.tempAbility = null;
+            this.tempPawn = null;
+            this.tempWeapon = null;
+
+            setStateStuff(state);
+        }
+    }
+
+    private void setStateStuff(State state) {
         updateActionSelect();
 
         switch (state) {
@@ -622,14 +729,14 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
                     map.setState(Terrain.State.UNSELECTABLE);
                     currentPath = null;
 
-                    if (activePawn != null) {
+                    if (getActivePawn(true) != null) {
                         setStateSelectDefault();
                     } else {
                         setSelectablePawn();
                     }
                 } else {
-                    if (activePawn != null) {
-                        activePawn.getAnimationState().setActionIdle();
+                    if (getActivePawn(true) != null) {
+                        getActivePawn(true).getAnimationState().setActionIdle();
                     }
 
                     currentPath = null;
@@ -645,7 +752,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
                     map.setState(Terrain.State.UNSELECTABLE);
                     currentPath = null;
 
-                    if (activePawn != null) {
+                    if (getActivePawn(true) != null) {
                         setStateSelectMove();
                     }
                 }
@@ -657,7 +764,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
                     map.setState(Terrain.State.UNSELECTABLE);
                     currentPath = null;
 
-                    if (activePawn != null) {
+                    if (getActivePawn(true) != null) {
                         setStateSelectAttack();
                     }
                 }
@@ -669,8 +776,19 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
                     map.setState(Terrain.State.UNSELECTABLE);
                     currentPath = null;
 
-                    if (activePawn != null) {
+                    if (getActivePawn(true) != null) {
                         setStateSelectAbility();
+                    }
+                }
+                break;
+            case SHOW_ATTACK:
+                if (activeTeam == 0) {
+                    // clean
+                    map.setState(Terrain.State.UNSELECTABLE);
+                    currentPath = null;
+
+                    if (targetPawn != null) {
+                        setStateShowAttack();
                     }
                 }
                 break;
@@ -685,12 +803,49 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
                 movePawn();
                 break;
-
             case ATTACKING:
                 actionSelect.setPawn(null);
                 setStateAttacking();
                 break;
         }
+    }
+
+    private void setStateShowAttack() {
+        if (targetPawn.getMaxMovement() > 0) {
+            // find movement
+            Terrain parentTerrain = targetPawn.getParent();
+
+            PathFinder<Terrain, Terrain.PathFlag> pf = new PathFinder<>();
+
+            pathMap = pf.findDistance(parentTerrain, targetPawn.getMaxMovement(), EnumSet.of(Terrain.PathFlag.PASS_PAWN));
+
+            if (!pathMap.containsKey(targetPawn.getParent()))
+                pathMap.put(targetPawn.getParent(), null);
+
+            if (pathMap.size() > 0) {
+                // map as moveable
+                for (Terrain t : pathMap.keySet()) {
+                    t.setState(Terrain.State.MOVEABLE);
+                }
+
+                // map attacks
+                Weapon w = targetPawn.getWeapon();
+                for (Terrain t : pathMap.keySet()) {
+                    t.selectRange(w.getStyle(), w.getRangeMin(), w.getRangeMax(), false, true)
+                            .forEach(r -> {
+                                Pawn p = r.getPawn();
+                                if (p != null && p.getTeam(true) == 0)
+                                    r.setState(Terrain.State.ATTACK);
+                                else
+                                    r.setState(Terrain.State.ATTACKABLE);
+                            });
+                }
+            }
+
+
+        }
+
+//        setSelectablePawn();
     }
 
     private void setSelectablePawn() {
@@ -715,23 +870,23 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
         activePawn.runAttackAnimation(targetPawn, () -> {
             if (activePawn.getRemainingHitPoints() > 0) {
-                activePawn.getScene().setActivePawn(activePawn);
+                activePawn.getScene().setActivePawn(activePawn, true);
             } else {
-                setActivePawn(null);
+                setActivePawn(null, true);
             }
         });
     }
 
     private void setStateSelectDefault() {
-        activePawn.getAnimationState().setActionIdle(false);
+        getActivePawn(true).getAnimationState().setActionIdle(false);
 
-        Terrain parentTerrain = activePawn.getParent();
+        Terrain parentTerrain = getActivePawn(true).getParent();
 
-        if (activePawn.canMove()) {
+        if (getActivePawn(true).canMove()) {
             // find movement
             PathFinder<Terrain, Terrain.PathFlag> pf = new PathFinder<>();
 
-            pathMap = pf.findDistance(parentTerrain, activePawn.getRemainingMovement());
+            pathMap = pf.findDistance(parentTerrain, getActivePawn(true).getRemainingMovement());
 
             if (pathMap.size() > 0) {
                 for (Terrain t : pathMap.keySet()) {
@@ -740,13 +895,19 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             }
         }
 
-        if (activePawn.canAttack()) {
+        if (getActivePawn(true).canAttack()) {
             // find attack
-            Collection<Terrain> range = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRangeMax() + activePawn.getBonusMaxRange(), false, false);
+            Weapon w;
+            if (tempWeapon != null) {
+                w = tempWeapon;
+            } else {
+                w = getActivePawn(true).getWeapon();
+            }
+            Collection<Terrain> range = parentTerrain.selectRange(w.getStyle(), w.getRangeMin(), w.getRangeMax() + getActivePawn(true).getBonusMaxRange(), false, false);
 
             if (range.size() > 0) {
                 for (Terrain n : range) {
-                    if (n.getPawn() != null && n.getPawn().getTeam(true) != activePawn.getTeam(true)) {
+                    if (n.getPawn() != null && n.getPawn().getTeam(true) != getActivePawn(true).getTeam(true)) {
 
 //                    n.cover = rangeMap.get(n);
                         n.setState(Terrain.State.ATTACKABLE);
@@ -759,15 +920,15 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     }
 
     private void setStateSelectMove() {
-        activePawn.getAnimationState().setActionIdle(false);
+        getActivePawn(true).getAnimationState().setActionIdle(false);
 
-        if (activePawn.canMove()) {  // TODO add ability
+        if (getActivePawn(true).canMove()) {  // TODO add ability
             // find movement
-            Terrain parentTerrain = activePawn.getParent();
+            Terrain parentTerrain = getActivePawn(true).getParent();
 
             PathFinder<Terrain, Terrain.PathFlag> pf = new PathFinder<>();
 
-            pathMap = pf.findDistance(parentTerrain, activePawn.getRemainingMovement());
+            pathMap = pf.findDistance(parentTerrain, getActivePawn(true).getRemainingMovement());
 
             if (pathMap.size() > 0) {
                 for (Terrain t : pathMap.keySet()) {
@@ -780,13 +941,20 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     }
 
     private void setStateSelectAttack() {
-        activePawn.getAnimationState().setActionIdle(false);
+        getActivePawn(true).getAnimationState().setActionIdle(false);
 
-        if (activePawn.canAttack()) {
+        if (getActivePawn(true).canAttack() || isTempState()) {
             // find attack
-            Terrain parentTerrain = activePawn.getParent();
+            Terrain parentTerrain = getActivePawn(true).getParent();
 
-            Collection<Terrain> range = parentTerrain.selectRange(activePawn.getWeapon().getStyle(), activePawn.getWeapon().getRangeMin(), activePawn.getWeapon().getRangeMax() + activePawn.getBonusMaxRange(), false, false);
+            Weapon w;
+            if (tempWeapon != null) {
+                w = tempWeapon;
+            } else {
+                w = getActivePawn(true).getWeapon();
+            }
+
+            Collection<Terrain> range = parentTerrain.selectRange(w.getStyle(), w.getRangeMin(), w.getRangeMax() + getActivePawn(true).getBonusMaxRange(), false, false);
 
             if (range.size() > 0) {
                 for (Terrain n : range) {
@@ -797,17 +965,35 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             }
         }
 
-        setSelectablePawn();
+        if (!isTempState())
+            setSelectablePawn();
     }
 
     private void setStateSelectAbility() {
-        activePawn.getAnimationState().setActionIdle(false);
+        getActivePawn(true).getAnimationState().setActionIdle(false);
 
-        if (activePawn.canAbility(activeAbility)) {
+        Ability activeAbility = getActiveAbility();
+
+        if (activeAbility != null && (getActivePawn(true).canAbility(activeAbility) || isTempState())) {
             // find target
-            Terrain parentTerrain = activePawn.getParent();
+            Terrain parentTerrain = getActivePawn(true).getParent();
 
-            Collection<Terrain> range = parentTerrain.selectRange(activeAbility.style, activeAbility.size, activeAbility.passesWall, activeAbility.passesPawn);
+            Collection<Terrain> range;
+
+
+            if (activeAbility.target != Ability.Target.SELF)
+                if (activeAbility.size != null) {
+                    range = parentTerrain.selectRange(
+                            activeAbility.style,
+                            activeAbility.size,
+                            activeAbility.passesWall,
+                            activeAbility.passesPawn);
+                } else {
+                    range = getTerrainMap().getTerrainList();
+                }
+            else {
+                range = Collections.singletonList(getActivePawn(true).getParent());
+            }
 
             if (range.size() > 0) {
                 for (Terrain n : range) {
@@ -818,7 +1004,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
                     }
 
                     if ((activeAbility.target & Ability.Target.ENEMY) != 0) {
-                        if ((n.getPawn() == null && activeAbility.size >= 0) || n.getPawn() != null && n.getPawn().getTeam(true) != activePawn.getTeam(true)) {
+                        if ((n.getPawn() == null && Optional.ofNullable(activeAbility.size).orElse(0) >= 0) || n.getPawn() != null && n.getPawn().getTeam(true) != getActivePawn(true).getTeam(true)) {
                             n.setState(Terrain.State.ABILITYABLE);
                         }
                     }
@@ -832,7 +1018,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 //                            System.out.println(n.getPawn() != activePawn);
 //                            System.out.println(n.getPawn().getTeam(true) == activePawn.getTeam(true));
                         }
-                        if ((n.getPawn() == null && activeAbility.size >= 0) || n.getPawn() != null && n.getPawn() != activePawn && n.getPawn().getTeam(true) == activePawn.getTeam(true)) {
+                        if ((n.getPawn() == null && Optional.ofNullable(activeAbility.size).orElse(0) >= 0) || n.getPawn() != null && n.getPawn() != getActivePawn(true) && n.getPawn().getTeam(true) == getActivePawn(true).getTeam(true)) {
                             n.setState(Terrain.State.ABILITYABLE);
                         }
                     }
@@ -840,17 +1026,13 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             }
 
             if ((activeAbility.target & Ability.Target.SELF) != 0) {
-                activePawn.getParent().setState(Terrain.State.ABILITYABLE);
+                getActivePawn(true).getParent().setState(Terrain.State.ABILITYABLE);
             }
         }
 
 //        if (!activeAbility.recall_unit)
-
-        setSelectablePawn();
-    }
-
-    public State getState() {
-        return state;
+        if (!isTempState())
+            setSelectablePawn();
     }
 
     public Random getRandom() {
@@ -921,11 +1103,19 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     }
 
     // actions - should be the prime way of interacting with the battle scene state
-    public void reloadGame() {
+    public void undo() {
 //        activePawn.setReady(false);
 //
 //        pawnDeselect();
-        getGame().loadGame();
+        GameDataList saves = getGame().getSaves();
+        System.out.println("Save Count: " + saves.size());
+
+        if (saves.size() > 1) {
+            getGame().prepTransitionScene(new BattleScene(getGame(), saves.get(saves.size() - 2)));
+            saves.remove(saves.size() - 1);
+        } else if (saves.size() > 0) {
+            getGame().prepTransitionScene(new BattleScene(getGame(), saves.get(saves.size() - 1)));
+        }
     }
 
     public void pawnEnd() {
@@ -936,7 +1126,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     }
 
     public void pawnDeselect() {
-        if (activePawn != null && activeAbility != null && activeAbility.recall_unit) {
+        if (activePawn != null && getActiveAbility() != null && getActiveAbility().recall_unit) {
             activePawn.getAbilities().forEach(a -> {
                 if (a.recall) {
                     a.remainingUses = a.uses;
@@ -944,9 +1134,9 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             });
         }
 
-        activeAbility = null;
+        setActiveAbility(null);
 
-        setActivePawn(null);
+        setActivePawn(null, false);
     }
 
     public void pawnMove() {
@@ -962,6 +1152,8 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
     public void pawnAbility(Terrain terrain) {
         activePawn.setUnmoved(false);
+
+        Ability activeAbility = getActiveAbility();
 
         if (activeAbility.uses != null) {
             activeAbility.remainingUses--;
@@ -990,19 +1182,19 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
             to.ifPresent(t -> t.setPawn(terrain.getPawn()));
 
-            setActivePawn(activePawn);
+            setActivePawn(activePawn, true);
         } else if (activeAbility.hack) {
             terrain.getPawn().hack(new Hack(terrain.getPawn(), activePawn, 0, activeAbility));
 //            pawn.ready();
 
             if (activeAbility.cure) {
                 activePawn.hack(null);
-                setActivePawn(null);
+                setActivePawn(null, true);
             } else {
                 if (activePawn.isReady()) {
-                    setActivePawn(activePawn);
+                    setActivePawn(activePawn, true);
                 } else {
-                    setActivePawn(null);
+                    setActivePawn(null, true);
                 }
             }
         } else if (activeAbility.blink) {
@@ -1014,7 +1206,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
                 oldTerrain.setPawn(pawn);
             }
 
-            setActivePawn(activePawn);
+            setActivePawn(activePawn, true);
         } else if (activeAbility.recall) {
             abilityTerrain = terrain;
             map.setState(Terrain.State.UNSELECTABLE);
@@ -1024,13 +1216,16 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             setStateSelectAbility();
         } else if (activeAbility.recall_unit) {
             abilityTerrain.setPawn(terrain.getPawn());
-            activeAbility = null;
-            setActivePawn(activePawn);
+            setActiveAbility(null);
+            setActivePawn(activePawn, true);
         } else if (activeAbility.heal) {
             Pawn target = terrain.getPawn();
             target.heal(activeAbility.restore);
-            activeAbility = null;
-            setActivePawn(activePawn);
+            setActiveAbility(null);
+            setActivePawn(activePawn, true);
+        } else {
+            getActivePawn().doAbilityAffect(activeAbility);
+            getActivePawn().updateDetailText();
         }
     }
 
@@ -1040,9 +1235,17 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         uiLevelUp.setPawn(getActivePawn());
     }
 
+    public void pawnSwitchWeapons() {
+        if (activePawn != null && activePawn.getTeam(true) == 0) {
+            this.setPaused(true);
+            uiWeaponSelect.setVisibility(true);
+            uiWeaponSelect.setPawn(getActivePawn());
+        }
+    }
+
     public void pawnPushBlast(Ability blast) { // TODO change to make more generic on button click
-        if (activeAbility.uses != null) {
-            activeAbility.remainingUses--;
+        if (getActiveAbility().uses != null) {
+            getActiveAbility().remainingUses--;
         }
 
         List<Pawn> pawns = this.pawns.stream()
@@ -1062,10 +1265,10 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
                 }
             });
 
-            activePawn.attack(p, activeAbility.damage, 0, 1, null);
+            activePawn.attack(p, getActiveAbility().damage, 0, 1, null);
         });
 
         activePawn.reduceAttacks();
-        setActivePawn(activePawn);
+        setActivePawn(activePawn, true);
     }
 }

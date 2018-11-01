@@ -14,11 +14,17 @@ import com.raven.engine2d.scene.Scene;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 public class BrokenMetalGame extends Game<BrokenMetalGame> {
 
     private static String mainDirectory = "BrokenMetal";
     private int gameId;
+
+    private GameDataTable gdtToSave = new GameDataTable("current_save");
 
     public static void main(String[] args) {
         GameEngine.Launch(new BrokenMetalGame());
@@ -34,6 +40,7 @@ public class BrokenMetalGame extends Game<BrokenMetalGame> {
         settings.ifHas("height", s -> GameProperties.setDisplayHeight(s.asInteger()));
         settings.ifHas("scaling", s -> GameProperties.setScaling(s.asInteger()));
         settings.ifHas("vsync", s -> GameProperties.setVSync(s.asBoolean()));
+        settings.ifHas("win_mode", s -> GameProperties.setWindowMode(s.asInteger()));
     }
 
     @Override
@@ -63,14 +70,25 @@ public class BrokenMetalGame extends Game<BrokenMetalGame> {
 
     @Override
     public boolean saveGame() {
-        List<GameDataTable> gdtToSave = new ArrayList<>();
+        return saveGame(true);
+    }
 
+    public boolean saveGame(boolean clearSaves) {
         Scene scene = getCurrentScene();
+
+        System.out.println("Clear Saves: " + clearSaves);
 
         if (scene instanceof BattleScene) {
             saveRecords();
-            gdtToSave.add(new GameDataTable("current_save", ((BattleScene) scene)));
-            saveDataTablesThreaded(gdtToSave);
+
+            if (clearSaves) {
+                this.gdtToSave.clear();
+            }
+
+            this.gdtToSave.add(((BattleScene) scene).toGameData());
+            GameDataTable gdtToSave = new GameDataTable(this.gdtToSave.getName(), (List<GameData>) this.gdtToSave);
+
+            saveDataTablesThreaded(Collections.singletonList(gdtToSave));
             return true;
         } else {
             System.out.println("Saving Failed");
@@ -85,9 +103,9 @@ public class BrokenMetalGame extends Game<BrokenMetalGame> {
     @Override
     public boolean loadGame() {
 
-        List<GameData> currentSave = loadSavedGameData("current_save");
-        if (currentSave != null && currentSave.size() > 0) {
-            prepTransitionScene(new BattleScene(this, loadSavedGameData("current_save").get(0)));
+        gdtToSave = new GameDataTable("current_save", loadSavedGameData("current_save"));
+        if (gdtToSave != null && gdtToSave.size() > 0) {
+            prepTransitionScene(new BattleScene(this, gdtToSave.get(gdtToSave.size() - 1)));
             return true;
         } else {
             System.out.println("Loading Failed");
@@ -103,6 +121,7 @@ public class BrokenMetalGame extends Game<BrokenMetalGame> {
         map.put("height", new GameData(GameProperties.getDisplayHeight()));
         map.put("scaling", new GameData(GameProperties.getScaling()));
         map.put("vsync", new GameData(GameProperties.getVSync()));
+        map.put("win_mode", new GameData(GameProperties.getWindowMode()));
 
         GameDataTable settings = new GameDataTable("settings");
         settings.add(new GameData(map));
@@ -139,7 +158,7 @@ public class BrokenMetalGame extends Game<BrokenMetalGame> {
         }
 
 
-        this.saveDataTableThreaded(new GameDataTable("records", (List<? extends GameDatable>)records));
+        this.saveDataTableThreaded(new GameDataTable("records", (List<? extends GameDatable>) records));
     }
 
     public void setGameID(int id) {
@@ -148,5 +167,9 @@ public class BrokenMetalGame extends Game<BrokenMetalGame> {
 
     public int getGameID() {
         return gameId;
+    }
+
+    public GameDataTable getSaves() {
+        return gdtToSave;
     }
 }

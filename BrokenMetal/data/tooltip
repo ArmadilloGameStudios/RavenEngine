@@ -94,6 +94,11 @@
     text: "show all possible areas this unit can attack."
 },
 {
+    src: "switch",
+    title: "switch",
+    text: "switch weapons."
+},
+{
     src: "move",
     title: "move",
     text: "show all possible areas this unit can move."

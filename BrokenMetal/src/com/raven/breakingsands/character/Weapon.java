@@ -77,6 +77,46 @@ public class Weapon
         return data;
     }
 
+    private static String description;
+    public static String getDescription(GameData gdWeapon, String name) {
+
+        if (name != null && !name.equals("")) {
+            description = name + "\n";
+        } else {
+            description = "";
+//            gdWeapon.ifHas("name", s -> description += s + "\n");
+        }
+
+        description += "damage: " + gdWeapon.getInteger("damage") + "\n";
+
+        gdWeapon.ifHas("piercing",
+                gd -> description += "piercing: " + gd.asInteger() + "\n",
+                () -> description += "piercing: 0\n");
+        gdWeapon.ifHas("shots",
+                gd -> description += "shots: " + gd.asInteger() + "\n",
+                () -> description += "shots: 1\n");
+
+        if (gdWeapon.getString("type").equals("ranged")) {
+            if (gdWeapon.has("range")) {
+                if (gdWeapon.getData("range").isList()) {
+                    GameDataList rl = gdWeapon.getList("range");
+                    description += "range: " + rl.get(0) + "-" + rl.get(1) + "\nranged";
+                } else {
+                    if (gdWeapon.getInteger("range") == 1)
+                        description += "range: 1\nranged";
+                    else
+                        description += "range: 1-" + gdWeapon.getInteger("range") + "\nranged";
+                }
+            } else {
+                description += "range: 1\nranged";
+            }
+        } else {
+            description += "range: 1\nmelee";
+        }
+
+        return description;
+    }
+
     private GameData gameData;
     private int damage, piercing = 0, rangeMax, rangeMin, shots;
     private boolean directional, passesPawn, selfDestruct;
