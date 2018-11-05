@@ -64,6 +64,11 @@
     text: "Ends your turn, letting the enemy go."
 },
 {
+    src: "next floor",
+    title: "next floor",
+    text: "Travel to the next floor."
+},
+{
     src: "level up",
     title: "level up",
     text: "level up the unit. giving the unit access to new weapons and abilities."

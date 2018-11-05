@@ -17,10 +17,10 @@ import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELEC
 public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
     private UIAbilityButton btnPushBlast, btnHookPull, btnHack, btnBlink, btnRecall, btnHeal;
-    private UIButton<BattleScene> btnMove, btnAttack, btnSwitch, btnUndo, btnCancel, btnLevel, btnEnd, btnNextLevel;
+    private UIButton<BattleScene> btnMove, btnAttack, btnSwitch, btnUndo, btnCancel, btnLevel, btnEnd;
     private List<UIAbilityButton> abilityBtns = new LinkedList<>();
     private List<UIButton<BattleScene>> btns = new ArrayList<>();
-    private boolean disable;
+    private boolean disable, nextLevel;
     private Pawn pawn;
 
     public UIActionSelect(BattleScene scene) {
@@ -470,7 +470,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             @Override
             public void handleMouseClick() {
                 if (!isDisabled()) {
-                    getScene().pawnEnd();
+                    getScene().pawnEnd(nextLevel);
                 }
 
             }
@@ -478,22 +478,6 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
         btnEnd.setToolTipSrc("end turn");
         addChild(btnEnd);
         btns.add(btnEnd);
-
-        btnNextLevel = new UIButton<BattleScene>(scene,
-                "sprites/icon end turn.png",
-                "iconbuttonlarge") {
-
-            @Override
-            public void handleMouseClick() {
-                if (!isDisabled()) {
-                    getScene().victory();
-                }
-
-            }
-        };
-        btnNextLevel.setToolTip("next floor", "travel to the next floor");
-        addChild(btnNextLevel);
-        btns.add(btnNextLevel);
 
         pack();
     }
@@ -661,9 +645,16 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                         getScene().getState() == MOVING ||
                         getScene().getState() == ATTACKING);
 
-        btnNextLevel.setDisable(!(getScene().getActiveTeam() == 0 &&
+        if (nextLevel = (getScene().getActiveTeam() == 0 &&
                 getScene().getPawns().stream()
-                        .noneMatch(p -> p.getTeam(true) == 1)));
+                        .noneMatch(p -> p.getTeam(true) == 1))) {
+            btnEnd.setSprite("sprites/icon end floor.png");
+            btnEnd.setToolTipSrc("next floor");
+        } else {
+            btnEnd.setSprite("sprites/icon end turn.png");
+            btnEnd.setToolTipSrc("end turn");
+        }
+
 //        btnNextLevel.setVisibility(true);
 //        btnNextLevel.setDisable(disable);
 //        btnNextLevel.setActive(false);

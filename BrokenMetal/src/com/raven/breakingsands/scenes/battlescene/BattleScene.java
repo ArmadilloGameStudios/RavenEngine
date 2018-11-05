@@ -1115,10 +1115,13 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         }
     }
 
-    public void pawnEnd() {
+    public void pawnEnd(boolean nextFloor) {
         pawns.stream()
                 .filter(p -> p.getTeam(true) == 0)
                 .forEach(p -> p.setReady(false));
+
+        if (nextFloor) victory();
+
         setActiveTeam(1);
     }
 
