@@ -17,7 +17,7 @@ import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELEC
 public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
     private UIAbilityButton btnPushBlast, btnHookPull, btnHack, btnBlink, btnRecall, btnHeal;
-    private UIButton<BattleScene> btnMove, btnAttack, btnSwitch, btnUndo, btnCancel, btnLevel, btnEnd;
+    private UIButton<BattleScene> btnMove, btnAttack, btnSwitch, btnUndo, btnCancel, btnLevel, btnEnd, btnNextLevel;
     private List<UIAbilityButton> abilityBtns = new LinkedList<>();
     private List<UIButton<BattleScene>> btns = new ArrayList<>();
     private boolean disable;
@@ -479,6 +479,22 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
         addChild(btnEnd);
         btns.add(btnEnd);
 
+        btnNextLevel = new UIButton<BattleScene>(scene,
+                "sprites/icon end turn.png",
+                "iconbuttonlarge") {
+
+            @Override
+            public void handleMouseClick() {
+                if (!isDisabled()) {
+                    getScene().victory();
+                }
+
+            }
+        };
+        btnNextLevel.setToolTip("next floor", "travel to the next floor");
+        addChild(btnNextLevel);
+        btns.add(btnNextLevel);
+
         pack();
     }
 
@@ -529,7 +545,8 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             btnHeal.setDisable(disable);
             btnHeal.setActive(false);
             btnHeal.setVisibility(false);
-        } else /*if (pawn != this.pawn)*/ {
+        } else {
+
             btnCancel.setDisable(!(pawn.getMaxMovement() == pawn.getRemainingMovement()));
 
             btnAttack.setDisable(!pawn.canAttack());
@@ -643,6 +660,14 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                 getScene().getActiveTeam() != 0 ||
                         getScene().getState() == MOVING ||
                         getScene().getState() == ATTACKING);
+
+        btnNextLevel.setDisable(!(getScene().getActiveTeam() == 0 &&
+                getScene().getPawns().stream()
+                        .noneMatch(p -> p.getTeam(true) == 1)));
+//        btnNextLevel.setVisibility(true);
+//        btnNextLevel.setDisable(disable);
+//        btnNextLevel.setActive(false);
+//        btnNextLevel.setVisibility(false);
 
         pack();
 

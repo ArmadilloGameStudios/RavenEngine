@@ -17,7 +17,7 @@
         [
             { type: "floor", x: 1, y: 1, tags: [ "start" ] },
             { type: "floor", x: 2, y: 1, tags: [ "start" ] },
-            { type: "floor", x: 1, y: 2, wall: [ "corner", "out" ], tags: [ "start" ] },
+            { type: "floor", x: 1, y: 2, tags: [ "start" ] },
             { type: "floor", x: 2, y: 2, tags: [ "start" ] },
 
             { x: 1, y: 0 },
@@ -32,7 +32,7 @@
         [
             { type: "floor", x: 1, y: 1, tags: [ "start" ] },
             { type: "floor", x: 2, y: 1, tags: [ "start" ] },
-            { type: "floor", x: 1, y: 2, wall: [ "corner", "out" ], tags: [ "start" ] },
+            { type: "floor", x: 1, y: 2, tags: [ "start" ] },
             { type: "floor", x: 2, y: 2, tags: [ "start" ] },
 
             { x: 1, y: 0 },
@@ -45,7 +45,7 @@
         [
             { type: "floor", x: 1, y: 1, tags: [ "start" ] },
             { type: "floor", x: 2, y: 1, tags: [ "start" ] },
-            { type: "floor", x: 1, y: 2, wall: [ "corner", "out" ], tags: [ "start" ] },
+            { type: "floor", x: 1, y: 2, tags: [ "start" ] },
             { type: "floor", x: 2, y: 2, tags: [ "start" ] },
 
             { x: 0, y: 1 },
@@ -58,7 +58,7 @@
         [
             { type: "floor", x: 1, y: 1, tags: [ "start" ] },
             { type: "floor", x: 2, y: 1, tags: [ "start" ] },
-            { type: "floor", x: 1, y: 2, wall: [ "corner", "out" ], tags: [ "start" ] },
+            { type: "floor", x: 1, y: 2, tags: [ "start" ] },
             { type: "floor", x: 2, y: 2, tags: [ "start" ] },
 
             { x: 1, y: 0 },
@@ -71,7 +71,7 @@
         [
             { type: "floor", x: 1, y: 1, tags: [ "start" ] },
             { type: "floor", x: 2, y: 1, tags: [ "start" ] },
-            { type: "floor", x: 1, y: 2, wall: [ "corner", "out" ], tags: [ "start" ] },
+            { type: "floor", x: 1, y: 2, tags: [ "start" ] },
             { type: "floor", x: 2, y: 2, tags: [ "start" ] },
 
             { x: 1, y: 0 },
@@ -996,7 +996,7 @@
 
     width: 2,
     height: 3,
-``
+
     entrance: [{ side: 2, location: 0, length: 2, name: "c" }],
 
     terminal: true,
@@ -1007,8 +1007,8 @@
         { x: 0, y: 1 },
         { x: 1, y: 1 },
         { x: 0, y: 2 },
-        { x: -1, y: 2, tags: [ "spawn" ] },
         { x: 1, y: 2 },
+        { x: -1, y: 2, tags: [ "spawn" ] },
         { x: 2, y: 2, tags: [ "spawn" ] },
     ]
 },
@@ -1023,9 +1023,9 @@
     terminal: true,
 
     terrain: [
+        { x: 2, y: 0, tags: [ "spawn" ] },
         { x: -1, y: 0, tags: [ "spawn" ] },
         { x: 0, y: 0 },
-        { x: 2, y: 0, tags: [ "spawn" ] },
         { x: 1, y: 0 },
         { x: 0, y: 1 },
         { x: 1, y: 1 },

@@ -76,8 +76,6 @@ public class BrokenMetalGame extends Game<BrokenMetalGame> {
     public boolean saveGame(boolean clearSaves) {
         Scene scene = getCurrentScene();
 
-        System.out.println("Clear Saves: " + clearSaves);
-
         if (scene instanceof BattleScene) {
             saveRecords();
 

@@ -180,10 +180,10 @@ public abstract class Game<G extends Game<G>> {
             Path p = Paths.get(getMainDirectory(), gdtToSave.getName());
             File f = p.toFile();
 
-            if (!f.exists())
-                f.createNewFile();
+            if (f.exists())
+                Files.delete(p);
 
-            Files.write(p, gdtToSave.toFileString().getBytes(), StandardOpenOption.CREATE);
+            Files.write(p, gdtToSave.toFileString().getBytes(), StandardOpenOption.CREATE_NEW);
         } catch (IOException e) {
             e.printStackTrace();
             success = false;

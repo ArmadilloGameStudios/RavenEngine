@@ -1020,6 +1020,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         updateDetailText();
     }
 
+    public void setXpGain(int xpGain) {
+        this.xpGain = xpGain;
+    }
+
     public void hack(Hack hack) {
         if (hack != null) {
 

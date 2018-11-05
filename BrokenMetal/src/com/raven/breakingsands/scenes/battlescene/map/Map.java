@@ -32,7 +32,7 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
     public Map(BattleScene scene, int level) {
         super(scene);
 
-        this.size = Math.min(level / 4 + 1, 4);
+        this.size = Math.min(level / 4 + 1, 3) + 1;
     }
 
     public Map(BattleScene scene, GameData gameData) {
@@ -50,8 +50,14 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
         return new GameData(map);
     }
 
+    private boolean isValid() {
+        return !(structures.size() == 0 ||
+                !structures.contains(firstStructure) ||
+                terrain.stream().noneMatch(Terrain::isSpawn));
+    }
+
     public void generate() {
-        while (structures.size() == 0 || !structures.contains(firstStructure) || terrain.stream().noneMatch(Terrain::isSpawn)) {
+        while (!isValid()) {
 
             removeAllChildren();
             structures.clear();
@@ -239,10 +245,6 @@ public class Map extends WorldObject<BattleScene, BattleScene, WorldObject>
 
     public List<Terrain> getTerrainList() {
         return terrain;
-    }
-
-    public void setPawn(Terrain t, Pawn p) {
-        t.setPawn(p);
     }
 
     public void setState(Terrain.State state) {
