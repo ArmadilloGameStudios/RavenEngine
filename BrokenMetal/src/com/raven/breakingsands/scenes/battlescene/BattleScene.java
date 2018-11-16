@@ -34,7 +34,6 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.*;
@@ -236,7 +235,8 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             addChild(map);
             map.getTerrainList().forEach(Terrain::setPawnIndex);
         } else {
-//            difficulty = 15;
+//            difficulty = 50;
+
             // Terrain
             map = new Map(this, difficulty);
             map.generate();
@@ -295,8 +295,10 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             // restore shield
             pawns.forEach(Pawn::prepLevel);
 
-            // make sure the abilites are correct
-            pawns.forEach(p -> p.getParent().setPawn(p));
+            // make sure the abilities are correct
+            pawns.forEach(p -> p
+                    .getParent()
+                    .setPawn(p));
             pawns.forEach(Pawn::runFloorAbilities);
 
             setActiveTeam(0);
@@ -341,7 +343,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
                 Optional<Terrain> o = terrainList.stream()
                         .filter(t -> t.isPassable(true) && t.isStart()).findAny();
 
-                o.ifPresent(t -> map.setPawn(t, p));
+                o.ifPresent(t -> t.setPawn(p));
             }
         } else {
             playersPawns.forEach(p -> {
@@ -352,13 +354,13 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
                 Optional<Terrain> o = terrainList.stream()
                         .filter(t -> t.isPassable(true) && t.isStart()).findAny();
 
-                o.ifPresent(t -> map.setPawn(t, p));
+                o.ifPresent(t -> t.setPawn(p));
             });
         }
 
         // add enemies
         // create xp to burn
-        int xpBank = 3 * Math.max(difficulty, 1) + (difficulty - 1) * 6;
+        int xpBank = 3 * Math.max(difficulty, 1) + (difficulty * 2 - 2) * 3;
 
         // create and populate map
         HashMap<Terrain, Integer> mapSpawn = new HashMap<>();
@@ -402,7 +404,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
             if (p != null) {
                 pawns.add(p);
-                map.setPawn(terrain, p);
+                terrain.setPawn(p);
             }
         }
     }
@@ -545,7 +547,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     }
 
     public void setActivePawn(Pawn pawn, boolean save) {
-        if (checkVictoryDefeat()) return;
+        if (checkDefeat()) return;
 
         Pawn oldPawn = this.activePawn;
 
@@ -601,7 +603,6 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 
         if (team != activeTeam) {
             setActiveAbility(null);
-
         }
         // check hack
 //        if (team != activeTeam) {
@@ -1079,12 +1080,9 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         this.currentPath = currentPath;
     }
 
-    public boolean checkVictoryDefeat() {
+    public boolean checkDefeat() {
         // TODO give xp for hacked pawns
-        if (pawns.stream().noneMatch(p -> p.getTeam(true) != 0)) {
-            victory();
-            return true;
-        } else if (pawns.stream().noneMatch(p -> p.getTeam(true) == 0)) {
+        if (pawns.stream().noneMatch(p -> p.getTeam(true) == 0)) {
             defeat();
             return true;
         }
@@ -1108,7 +1106,6 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
 //
 //        pawnDeselect();
         GameDataList saves = getGame().getSaves();
-        System.out.println("Save Count: " + saves.size());
 
         if (saves.size() > 1) {
             getGame().prepTransitionScene(new BattleScene(getGame(), saves.get(saves.size() - 2)));
@@ -1118,10 +1115,13 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         }
     }
 
-    public void pawnEnd() {
+    public void pawnEnd(boolean nextFloor) {
         pawns.stream()
                 .filter(p -> p.getTeam(true) == 0)
                 .forEach(p -> p.setReady(false));
+
+        if (nextFloor) victory();
+
         setActiveTeam(1);
     }
 

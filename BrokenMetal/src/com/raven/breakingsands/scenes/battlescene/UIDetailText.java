@@ -197,7 +197,7 @@ public class UIDetailText
         addChild(uiWeapon);
 
         // Attacks
-        uiAttacks = new UILabel<>(getScene(), "-", 80, 10);
+        uiAttacks = new UILabel<>(getScene(), "-", 82, 10);
         font = uiAttacks.getFont();
         font.setSmall(true);
         font.setHighlight(false);
@@ -436,7 +436,7 @@ public class UIDetailText
         addChild(uiWeapon);
 
         // Attacks
-        uiAttacks = new UILabel<>(getScene(), "-", 80, 10);
+        uiAttacks = new UILabel<>(getScene(), "-", 86, 10);
         font = uiAttacks.getFont();
         font.setSmall(true);
         font.setHighlight(false);

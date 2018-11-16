@@ -4,8 +4,11 @@ import com.raven.breakingsands.ZLayer;
 import com.raven.breakingsands.character.Ability;
 import com.raven.breakingsands.character.RangeStyle;
 import com.raven.breakingsands.scenes.battlescene.BattleScene;
+import com.raven.breakingsands.scenes.battlescene.UIDetailText;
 import com.raven.breakingsands.scenes.battlescene.decal.Wall;
+import com.raven.breakingsands.scenes.battlescene.pawn.OnDieHandler;
 import com.raven.breakingsands.scenes.battlescene.pawn.Pawn;
+import com.raven.breakingsands.scenes.battlescene.pawn.PawnFactory;
 import com.raven.engine2d.GameProperties;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDatabase;
@@ -553,6 +556,10 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                 setHighlight(BattleScene.OFF);
                 break;
         }
+    }
+
+    public void setStart(boolean b) {
+        start = b;
     }
 
     public boolean isStart() {

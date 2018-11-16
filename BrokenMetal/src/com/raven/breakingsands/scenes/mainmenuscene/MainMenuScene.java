@@ -89,7 +89,7 @@ public class MainMenuScene extends Scene<BrokenMetalGame> {
 
         // version
         UIUpperRightContainer<MainMenuScene> rightContainer = new UIUpperRightContainer<>(this);
-        UILabel<MainMenuScene> version = new UILabel<>(this, "beta - 0.2.2", 60, 11);
+        UILabel<MainMenuScene> version = new UILabel<>(this, "beta - 0.3", 60, 11);
         rightContainer.addChild(version);
         UIFont font = version.getFont();
         font.setSide(UIFont.Side.RIGHT);

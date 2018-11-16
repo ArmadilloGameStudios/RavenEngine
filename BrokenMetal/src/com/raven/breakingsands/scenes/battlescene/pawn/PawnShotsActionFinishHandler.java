@@ -28,7 +28,6 @@ public class PawnShotsActionFinishHandler implements ActionFinishHandler {
 
     @Override
     public void onActionFinish() {
-
         if (shotCount.get() > 1) {
 
             shotCount.addAndGet(-1);

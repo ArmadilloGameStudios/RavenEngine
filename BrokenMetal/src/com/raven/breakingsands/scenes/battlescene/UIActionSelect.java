@@ -20,7 +20,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
     private UIButton<BattleScene> btnMove, btnAttack, btnSwitch, btnUndo, btnCancel, btnLevel, btnEnd;
     private List<UIAbilityButton> abilityBtns = new LinkedList<>();
     private List<UIButton<BattleScene>> btns = new ArrayList<>();
-    private boolean disable;
+    private boolean disable, nextLevel;
     private Pawn pawn;
 
     public UIActionSelect(BattleScene scene) {
@@ -470,7 +470,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             @Override
             public void handleMouseClick() {
                 if (!isDisabled()) {
-                    getScene().pawnEnd();
+                    getScene().pawnEnd(nextLevel);
                 }
 
             }
@@ -529,7 +529,8 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             btnHeal.setDisable(disable);
             btnHeal.setActive(false);
             btnHeal.setVisibility(false);
-        } else /*if (pawn != this.pawn)*/ {
+        } else {
+
             btnCancel.setDisable(!(pawn.getMaxMovement() == pawn.getRemainingMovement()));
 
             btnAttack.setDisable(!pawn.canAttack());
@@ -643,6 +644,21 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                 getScene().getActiveTeam() != 0 ||
                         getScene().getState() == MOVING ||
                         getScene().getState() == ATTACKING);
+
+        if (nextLevel = (getScene().getActiveTeam() == 0 &&
+                getScene().getPawns().stream()
+                        .noneMatch(p -> p.getTeam(true) == 1))) {
+            btnEnd.setSprite("sprites/icon end floor.png");
+            btnEnd.setToolTipSrc("next floor");
+        } else {
+            btnEnd.setSprite("sprites/icon end turn.png");
+            btnEnd.setToolTipSrc("end turn");
+        }
+
+//        btnNextLevel.setVisibility(true);
+//        btnNextLevel.setDisable(disable);
+//        btnNextLevel.setActive(false);
+//        btnNextLevel.setVisibility(false);
 
         pack();
 
