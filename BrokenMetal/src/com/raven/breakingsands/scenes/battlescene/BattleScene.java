@@ -235,7 +235,7 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
             addChild(map);
             map.getTerrainList().forEach(Terrain::setPawnIndex);
         } else {
-//            difficulty = 15;
+//            difficulty = 50;
 
             // Terrain
             map = new Map(this, difficulty);

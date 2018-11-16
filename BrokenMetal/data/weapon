@@ -293,35 +293,125 @@
 {
     name: "Double Blast",
     type: "ranged",
+    animation: "pistol",
 
     audio: {
         attack: "guard_drone_attack.wav"
     },
 
-    damage: 3,
+    directional: true,
+
+    damage: 2,
     shots: 2,
-    range: [2, 5],
+    range: [3, 5],
     piercing: 1,
     style: "straight",
-    effect: "disk",
+    effect: "red blast",
 
     tags: [ ],
-}
+},
 {
     name: "Blue Double Blast",
     display: "Double Blast",
     type: "ranged",
+    animation: "pistol",
 
     audio: {
         attack: "guard_drone_attack.wav"
     },
+
+    directional: true,
 
     damage: 3,
     shots: 2,
     range: [2, 5],
     piercing: 1,
     style: "straight",
-    effect: "blue disk",
+    effect: "blue blast",
+
+    tags: [ ],
+},
+{
+    name: "Orange Double Blast",
+    display: "Double Blast v2",
+    type: "ranged",
+    animation: "pistol",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    directional: true,
+
+    damage: 3,
+    shots: 2,
+    range: [2, 5],
+    piercing: 2,
+    style: "straight",
+    effect: "orange blast",
+
+    tags: [ ],
+},
+{
+    name: "Blue Orange Double Blast",
+    display: "Double Blast v2",
+    type: "ranged",
+    animation: "pistol",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    directional: true,
+
+    damage: 3,
+    shots: 2,
+    range: [2, 5],
+    piercing: 2,
+    style: "straight",
+    effect: "blue blast",
+
+    tags: [ ],
+},
+{
+    name: "Black Double Blast",
+    display: "Double Blast v3",
+    type: "ranged",
+    animation: "pistol",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    directional: true,
+
+    damage: 3,
+    shots: 3,
+    range: [2, 5],
+    piercing: 2,
+    style: "straight",
+    effect: "black blast",
+
+    tags: [ ],
+},
+{
+    name: "Blue Black Double Blast",
+    display: "Double Blast v3",
+    type: "ranged",
+    animation: "pistol",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    directional: true,
+
+    damage: 3,
+    shots: 3,
+    range: [2, 5],
+    piercing: 2,
+    style: "straight",
+    effect: "black blast",
 
     tags: [ ],
 },

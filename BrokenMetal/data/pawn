@@ -118,18 +118,18 @@
     weight: 40
 },
 {
-    name: "Goliath",
-    sprite: "sprites/guarddrone.png",
-    animation: "guarddrone",
-    sprite_hack: "sprites/guarddronehack.png",
+    name: "Gigasarus",
+    sprite: "sprites/goliath.png",
+    animation: "gigasarus",
+    sprite_hack: "sprites/goliathhack.png",
     standing: true,
-    team: 0,
+    team: 1,
     hp: 8,
-    movement: 2,
+    movement: 4,
     resistance: 2,
     weapon: "Double Blast",
     weapon_hack: "Blue Double Blast",
-    xp_gain: 25,
+    xp_gain: 24,
 
     weight: 35,
 },
@@ -145,7 +145,7 @@
     movement: 3,
     weapon: "Orange Guard Disk",
     weapon_hack: "Blue Orange Guard Disk",
-    xp_gain: 22,
+    xp_gain: 30,
 
     weight: 1,
 },
@@ -161,7 +161,7 @@
     movement: 4,
     weapon: "Orange Plasma Blade",
     weapon_hack: "Plasma Blade",
-    xp_gain: 27,
+    xp_gain: 36,
 
     weight: 1,
 },
@@ -177,7 +177,7 @@
     movement: 2,
     weapon: "Orange Demon Disk",
     weapon_hack: "Blue Orange Demon Disk",
-    xp_gain: 33,
+    xp_gain: 42,
 
     weight: 1
 },
@@ -193,9 +193,25 @@
     movement: 7,
     weapon: "Kamikaze",
     weapon_hack: "Blue Kamikaze",
-    xp_gain: 39,
+    xp_gain: 48,
 
     weight: 1
+},
+{
+    name: "Gigasarus v2",
+    sprite: "sprites/goliath orange.png",
+    animation: "gigasarus",
+    sprite_hack: "sprites/goliathhack.png",
+    standing: true,
+    team: 1,
+    hp: 8,
+    movement: 4,
+    resistance: 2,
+    weapon: "Orange Double Blast",
+    weapon_hack: "Blue Orange Double Blast",
+    xp_gain: 54,
+
+    weight: 1,
 },
 {
     name: "Guardian v3",
@@ -209,7 +225,7 @@
     movement: 4,
     weapon: "Black Guard Disk",
     weapon_hack: "Blue Black Guard Disk",
-    xp_gain: 45,
+    xp_gain: 60,
 
     weight: 0,
 },
@@ -225,7 +241,7 @@
     movement: 4,
     weapon: "Black Plasma Blade",
     weapon_hack: "Plasma Blade",
-    xp_gain: 51,
+    xp_gain: 66,
 
     weight: 0,
 },
@@ -241,7 +257,7 @@
     movement: 2,
     weapon: "Black Demon Disk",
     weapon_hack: "Blue Black Demon Disk",
-    xp_gain: 57,
+    xp_gain: 72,
 
     weight: 0
 },
@@ -257,7 +273,23 @@
     movement: 7,
     weapon: "Kamikaze",
     weapon_hack: "Blue Kamikaze",
-    xp_gain: 63,
+    xp_gain: 78,
 
     weight: 0
-}
+},
+{
+    name: "Gigasarus v3",
+    sprite: "sprites/goliath black.png",
+    animation: "gigasarus",
+    sprite_hack: "sprites/goliathhack.png",
+    standing: true,
+    team: 1,
+    hp: 8,
+    movement: 4,
+    resistance: 3,
+    weapon: "Black Double Blast",
+    weapon_hack: "Blue Black Double Blast",
+    xp_gain: 84,
+
+    weight: 0,
+},

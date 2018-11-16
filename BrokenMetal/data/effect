@@ -19,7 +19,22 @@
     animation: "blue disk"
 },
 {
+    name: "red blast",
+    sprite: "sprites/red blast.png",
+    animation: "blue blast"
+},
+{
     name: "blue blast",
     sprite: "sprites/blue blast.png",
+    animation: "blue blast"
+},
+{
+    name: "orange blast",
+    sprite: "sprites/orange blast.png",
+    animation: "blue blast"
+},
+{
+    name: "black blast",
+    sprite: "sprites/black blast.png",
     animation: "blue blast"
 },
