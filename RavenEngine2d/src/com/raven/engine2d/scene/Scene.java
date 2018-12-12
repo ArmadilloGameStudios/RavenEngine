@@ -6,17 +6,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.raven.engine2d.Game;
 import com.raven.engine2d.GameEngine;
+import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.GameWindow;
 import com.raven.engine2d.graphics2d.shader.CompilationShader;
 import com.raven.engine2d.graphics2d.shader.LayerShader;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.graphics2d.shader.TextShader;
+import com.raven.engine2d.input.Keyboard;
 import com.raven.engine2d.ui.UIObject;
 import com.raven.engine2d.ui.UITextWriter;
 import com.raven.engine2d.ui.UIToolTip;
 import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import com.raven.engine2d.worldobject.GameObject;
+import com.raven.engine2d.worldobject.KeyboardHandler;
 import com.raven.engine2d.worldobject.Parentable;
 
 import javax.sound.sampled.Clip;
@@ -288,4 +291,6 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     public UIToolTip getToolTip() {
         return toolTip;
     }
+
+    public abstract DrawStyle getDrawStyle();
 }

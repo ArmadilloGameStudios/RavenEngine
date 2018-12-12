@@ -1,9 +1,31 @@
 {
-    name: "Wall, Red Light",
+    name: "Wall, Indent",
     animation: "wall_north",
     sprite: "sprites/wall_north_a.png",
     standing: true,
-    tags: [ "wall", "red light", "north" ]
+    tags: [ "wall", "north" ]
+},
+{
+    name: "Wall, Double Indent",
+    animation: "wall_north",
+    sprite: "sprites/wall_north_d.png",
+    standing: true,
+    tags: [ "wall", "north" ]
+},
+{
+    name: "Wall",
+    animation: "wall_north",
+    sprite: "sprites/wall_north_b.png",
+    standing: true,
+    tags: [ "wall", "north" ]
+    weight: 5
+},
+{
+    name: "Wall, Cracked",
+    animation: "wall_north",
+    sprite: "sprites/wall_north_c.png",
+    standing: true,
+    tags: [ "wall", "north" ]
 },
 {
     name: "Wall, Red Light",

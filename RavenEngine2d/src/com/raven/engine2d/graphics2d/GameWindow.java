@@ -85,15 +85,17 @@ public class GameWindow {
         long monitor = glfwGetMonitors().get(0);
         Objects.requireNonNull(glfwGetVideoModes(monitor)).stream().forEach(m -> GameProperties.addResolution(m.width(), m.height()));
 
-        if (res.has("width") && GameProperties.getResolutionList().stream().anyMatch(v2 -> v2.x == res.getInteger("width")) &&
-                res.has("height") && GameProperties.getResolutionList().stream().anyMatch(v2 -> v2.y == res.getInteger("height"))) {
-            GameProperties.setDisplayWidth(res.getInteger("width"));
-            GameProperties.setDisplayHeight(res.getInteger("height"));
-        } else {
-            List<Vector2i> reses = GameProperties.getResolutionList();
-            Vector2i vec = reses.get(reses.size() - 1);
-            GameProperties.setDisplayWidth(vec.x);
-            GameProperties.setDisplayHeight(vec.y);
+        if (GameProperties.getUseResolution()) {
+            if (res.has("width") && GameProperties.getResolutionList().stream().anyMatch(v2 -> v2.x == res.getInteger("width")) &&
+                    res.has("height") && GameProperties.getResolutionList().stream().anyMatch(v2 -> v2.y == res.getInteger("height"))) {
+                GameProperties.setDisplayWidth(res.getInteger("width"));
+                GameProperties.setDisplayHeight(res.getInteger("height"));
+            } else {
+                List<Vector2i> reses = GameProperties.getResolutionList();
+                Vector2i vec = reses.get(reses.size() - 1);
+                GameProperties.setDisplayWidth(vec.x);
+                GameProperties.setDisplayHeight(vec.y);
+            }
         }
 
         // Create the window

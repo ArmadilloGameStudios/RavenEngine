@@ -1,0 +1,5 @@
+{
+    name: "Mouse",
+    sprite: "sprites/mouse.png",
+    animation: "mouse",
+}

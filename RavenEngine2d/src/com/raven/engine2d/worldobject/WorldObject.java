@@ -111,10 +111,12 @@ public abstract class WorldObject<
     }
 
     public void setX(float x) {
+        this.needsRedraw();
         position.x = x;
     }
 
     public void moveX(float x) {
+        this.needsRedraw();
         setX(getX() + x);
     }
 
@@ -123,10 +125,12 @@ public abstract class WorldObject<
     }
 
     public void setY(float y) {
+        this.needsRedraw();
         position.y = y;
     }
 
     public void moveY(float y) {
+        this.needsRedraw();
         setY(getY() + y);
     }
 
@@ -148,11 +152,13 @@ public abstract class WorldObject<
     }
 
     public void setPosition(int x, int y) {
+        this.needsRedraw();
         this.position.x = x;
         this.position.y = y;
     }
 
     public void setPosition(Vector2f position) {
+        this.needsRedraw();
         this.position.x = position.x;
         this.position.y = position.y;
     }
@@ -214,7 +220,7 @@ public abstract class WorldObject<
     @Override
     public void draw(LayerShader shader, RenderTarget target) {
         if (spriteSheet != null)
-            shader.draw(spriteSheet, target, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getWorldZ(), getHighlight(), DrawStyle.ISOMETRIC);
+            shader.draw(spriteSheet, target, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getWorldZ(), getHighlight(), getScene().getDrawStyle());
     }
 
     public void setParent(P parent) {

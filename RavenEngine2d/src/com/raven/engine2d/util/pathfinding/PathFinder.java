@@ -4,12 +4,12 @@ import java.util.*;
 
 public class PathFinder<N extends PathNode<N, E>, E extends Enum<E>> {
 
+
     public HashMap<N, Path<N>> findDistance(N start, int dist) {
         return findDistance(start, dist, start.getEmptyNodeEnumSet());
     }
 
     public HashMap<N, Path<N>> findDistance(N start, int dist, EnumSet<E> flags) {
-//        dist += 1; // take the starting cost into account
 
         HashMap<N, Path<N>> nodeMap = new HashMap<>();
         HashMap<N, Path<N>> unresolvedPaths = new HashMap<>();

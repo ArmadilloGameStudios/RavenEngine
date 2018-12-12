@@ -132,6 +132,10 @@ public class LayerShader extends Shader {
 
         switch (style) {
             default:
+            case STANDARD:
+                x = ((int) (position.x * 16 + offset.x));
+                y = ((int) (position.y * 16 + offset.y));
+                break;
             case ISOMETRIC:
                 x = ((int) (position.y * isoWidth + position.x * isoWidth + offset.x));
                 y = ((int) (position.y * isoHeight - position.x * isoHeight + offset.y));

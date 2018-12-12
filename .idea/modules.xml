@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BrokenMetal/BrokenMetal.iml" filepath="$PROJECT_DIR$/BrokenMetal/BrokenMetal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MouseEpic/MouseEpic.iml" filepath="$PROJECT_DIR$/MouseEpic/MouseEpic.iml" />
       <module fileurl="file://$PROJECT_DIR$/RavenEngine2d/RavenEngine2d.iml" filepath="$PROJECT_DIR$/RavenEngine2d/RavenEngine2d.iml" />
     </modules>
   </component>

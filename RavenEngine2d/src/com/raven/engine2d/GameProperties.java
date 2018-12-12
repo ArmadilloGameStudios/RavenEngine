@@ -22,6 +22,7 @@ public class GameProperties {
     private static int sfx = 100, music = 100;
     private static boolean vsync = false;
     private static int windowMode = 0;
+    private static boolean useResolution = true;
 
     public static final int FULLSCREEN = 0, WINDOWED = 1, WINDOWED_BORDERLESS = 2;
 
@@ -88,6 +89,14 @@ public class GameProperties {
 
     public static List<Vector2i> getResolutionList() {
         return resolutionList;
+    }
+
+    public static boolean getUseResolution() {
+        return useResolution;
+    }
+
+    public static void setUseResolution(boolean useResolution) {
+        GameProperties.useResolution = useResolution;
     }
 
     public static void setVSync(boolean vsync) {
