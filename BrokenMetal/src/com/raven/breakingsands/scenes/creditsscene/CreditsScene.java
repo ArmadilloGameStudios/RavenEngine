@@ -4,6 +4,7 @@ import com.raven.breakingsands.BrokenMetalGame;
 import com.raven.breakingsands.scenes.hud.UICenterContainer;
 import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
 import com.raven.breakingsands.scenes.settingsscene.SettingsScene;
+import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.ui.UIContainer;
 import com.raven.engine2d.ui.UIFont;
@@ -13,6 +14,11 @@ import com.raven.engine2d.ui.UITextButton;
 public class CreditsScene extends Scene<BrokenMetalGame> {
     public CreditsScene(BrokenMetalGame game) {
         super(game);
+    }
+
+    @Override
+    public DrawStyle getDrawStyle() {
+        return DrawStyle.ISOMETRIC;
     }
 
     @Override

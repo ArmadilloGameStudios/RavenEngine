@@ -2,6 +2,7 @@ package com.raven.breakingsands.scenes.recordsscene;
 
 import com.raven.breakingsands.BrokenMetalGame;
 import com.raven.breakingsands.scenes.hud.UICenterContainer;
+import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.scene.Scene;
 
 public class RecordsScene extends Scene<BrokenMetalGame> {
@@ -10,6 +11,11 @@ public class RecordsScene extends Scene<BrokenMetalGame> {
 
     public RecordsScene(BrokenMetalGame game) {
         super(game);
+    }
+
+    @Override
+    public DrawStyle getDrawStyle() {
+        return DrawStyle.ISOMETRIC;
     }
 
     @Override

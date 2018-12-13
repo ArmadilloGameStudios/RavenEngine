@@ -4,6 +4,7 @@ import com.raven.breakingsands.BrokenMetalGame;
 import com.raven.breakingsands.scenes.hud.UIBottomLeftContainer;
 import com.raven.breakingsands.scenes.hud.UIUpperRightContainer;
 import com.raven.engine2d.GameProperties;
+import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.ui.UIFont;
@@ -117,5 +118,10 @@ public class MainMenuScene extends Scene<BrokenMetalGame> {
         if (GLFW.GLFW_KEY_ESCAPE == key && GLFW.GLFW_PRESS == action) {
             getGame().exit();
         }
+    }
+
+    @Override
+    public DrawStyle getDrawStyle() {
+        return DrawStyle.ISOMETRIC;
     }
 }

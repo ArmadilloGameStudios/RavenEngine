@@ -3,6 +3,7 @@ package com.raven.breakingsands.scenes.splashscreenscene;
 import com.raven.breakingsands.BrokenMetalGame;
 import com.raven.breakingsands.scenes.hud.UICenterContainer;
 import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
+import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.ui.UIImage;
 
@@ -18,6 +19,11 @@ public class SplashScreenScene extends Scene<BrokenMetalGame> {
         container.addChild(splash);
 
         container.pack();
+    }
+
+    @Override
+    public DrawStyle getDrawStyle() {
+        return DrawStyle.ISOMETRIC;
     }
 
     @Override

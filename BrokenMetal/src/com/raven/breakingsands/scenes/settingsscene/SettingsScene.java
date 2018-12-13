@@ -4,6 +4,7 @@ import com.raven.breakingsands.BrokenMetalGame;
 import com.raven.breakingsands.scenes.hud.UICenterContainer;
 import com.raven.breakingsands.scenes.mainmenuscene.MainMenuScene;
 import com.raven.engine2d.GameProperties;
+import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.scene.Scene;
 import com.raven.engine2d.ui.UISelector;
 import com.raven.engine2d.ui.UITextButton;
@@ -22,6 +23,11 @@ public class SettingsScene extends Scene<BrokenMetalGame> {
     @Override
     public void loadShaderTextures() {
 
+    }
+
+    @Override
+    public DrawStyle getDrawStyle() {
+        return DrawStyle.ISOMETRIC;
     }
 
     @Override

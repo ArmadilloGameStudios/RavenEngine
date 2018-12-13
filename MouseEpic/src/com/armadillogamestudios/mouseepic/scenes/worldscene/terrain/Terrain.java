@@ -10,9 +10,7 @@ import com.raven.engine2d.worldobject.WorldObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Terrain extends WorldObject<WorldScene, WorldScene, WorldObject> {
-
-    protected static GameData grass, coast_left, coast_right, coast_bottom, coast_top;
+public class Terrain extends WorldObject<WorldScene, WorldScene, WorldObject> {
 
     public static List<SpriteSheet> getSpriteSheets(WorldScene scene) {
         List<SpriteSheet> data = new ArrayList<>();
@@ -24,35 +22,15 @@ public abstract class Terrain extends WorldObject<WorldScene, WorldScene, WorldO
         return data;
     }
 
-    public static void loadData() {
-        for (GameData gameData : GameDatabase.all("terrain")) {
-            switch (gameData.getString("name").toLowerCase()) {
-                case "grass":
-                    grass = gameData;
-                    break;
-                case "grass coast left":
-                    coast_left = gameData;
-                    break;
-                case "grass coast right":
-                    coast_right = gameData;
-                    break;
-                case "grass coast bottom":
-                    coast_bottom = gameData;
-                    break;
-                case "grass coast top":
-                    coast_top = gameData;
-                    break;
-            }
-        }
-    }
+    private GameData gameData;
 
     public Terrain(WorldScene scene, GameData data, int x, int y) {
         super(scene, data);
 
+        gameData = data;
+
         data.ifHas("idle_animations", i -> {
             String idle = i.asList().getRandom(getScene().getRandom()).asString();
-
-            System.out.println(idle);
 
             getAnimationState().setIdleAction(idle);
             getAnimationState().setActionIdle();
@@ -60,6 +38,10 @@ public abstract class Terrain extends WorldObject<WorldScene, WorldScene, WorldO
 
         setX(x);
         setY(y);
+    }
+
+    public GameData getGameData() {
+        return gameData;
     }
 
     @Override
