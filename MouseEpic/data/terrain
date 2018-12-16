@@ -8,7 +8,9 @@
     top: "grass",
     bottom: "grass",
 
-    weight: 10
+    type: ["Grass", "Ground"],
+
+    weight: 15
 },
 {
     name: "Grass Coast Left",
@@ -19,6 +21,8 @@
     right: "grass",
     top: "grass",
     bottom: "grass",
+
+    type: ["Grass", "Ground", "Coast"],
 },
 {
     name: "Grass Coast Right",
@@ -29,6 +33,8 @@
     right: "coast right",
     top: "grass",
     bottom: "grass",
+
+    type: ["Grass", "Ground", "Coast"],
 },
 {
     name: "Grass Coast Bottom",
@@ -39,6 +45,8 @@
     right: "grass",
     top: "grass",
     bottom: "coast bottom",
+
+    type: ["Grass", "Ground", "Coast"],
 },
 {
     name: "Grass Coast Top",
@@ -49,6 +57,8 @@
     right: "grass",
     top: "coast top",
     bottom: "grass",
+
+    type: ["Grass", "Ground", "Coast"],
 }
 {
     name: "Grass Coast Top Left",
@@ -59,6 +69,8 @@
     right: "grass",
     top: "coast top",
     bottom: "grass",
+
+    type: ["Grass", "Ground", "Coast"],
 },
 {
     name: "Grass Coast Top Right",
@@ -69,6 +81,8 @@
     right: "coast right",
     top: "coast top",
     bottom: "grass",
+
+    type: ["Grass", "Ground", "Coast"],
 },
 {
     name: "Grass Coast Bottom Left",
@@ -79,6 +93,8 @@
     right: "grass",
     top: "grass",
     bottom: "coast bottom",
+
+    type: ["Grass", "Ground", "Coast"],
 },
 {
     name: "Grass Coast Bottom Right",
@@ -89,6 +105,8 @@
     right: "coast right",
     top: "grass",
     bottom: "coast bottom",
+
+    type: ["Grass", "Ground", "Coast"],
 },
 {
     name: "Dry Grass",
@@ -100,6 +118,8 @@
     top: ["dry", "dry bottom"],
     bottom: ["dry", "dry top"],
 
+    type: ["Dry", "Ground"],
+
     weight: 10
 },
 {
@@ -107,10 +127,12 @@
     sprite: "sprites/grass.png"
     animation: "dry grass",
     idle_animations: ["idle7"],
-    left: "dry left",
+    left: "dry",
     right: "grass",
     top: "grass",
     bottom: "grass",
+
+    type: ["Dry", "Ground"],
 
     weight: 3
 },
@@ -120,9 +142,11 @@
     animation: "dry grass",
     idle_animations: ["idle8"],
     left: "grass",
-    right: "dry right",
+    right: "dry",
     top: "grass",
     bottom: "grass",
+
+    type: ["Dry", "Ground"],
 
     weight: 3
 },
@@ -133,8 +157,10 @@
     idle_animations: ["idle9"],
     left: "grass",
     right: "grass",
-    top: "dry top",
+    top: "dry",
     bottom: "grass",
+
+    type: ["Dry", "Ground"],
 
     weight: 3
 },
@@ -146,7 +172,9 @@
     left: "grass",
     right: "grass",
     top: "grass",
-    bottom: "dry bottom",
+    bottom: "dry",
+
+    type: ["Dry", "Ground"],
 
     weight: 3
 },
@@ -155,10 +183,12 @@
     sprite: "sprites/grass.png"
     animation: "dry grass",
     idle_animations: ["idle11"],
-    left: "dry left",
+    left: "dry",
     right: "grass",
-    top: "dry top",
+    top: "dry",
     bottom: "grass",
+
+    type: ["Dry", "Ground"],
 
     weight: 2
 },
@@ -168,9 +198,11 @@
     animation: "dry grass",
     idle_animations: ["idle12"],
     left: "grass",
-    right: "dry right",
-    top: "dry top",
+    right: "dry",
+    top: "dry",
     bottom: "grass",
+
+    type: ["Dry", "Ground"],
 
     weight: 2
 },
@@ -180,9 +212,11 @@
     animation: "dry grass",
     idle_animations: ["idle13"],
     left: "grass",
-    right: "dry right",
+    right: "dry",
     top: "grass",
-    bottom: "dry bottom",
+    bottom: "dry",
+
+    type: ["Dry", "Ground"],
 
     weight: 2
 },
@@ -191,10 +225,12 @@
     sprite: "sprites/grass.png"
     animation: "dry grass",
     idle_animations: ["idle14"],
-    left: "dry left",
+    left: "dry",
     right: "grass",
     top: "grass",
-    bottom: "dry bottom",
+    bottom: "dry",
+
+    type: ["Dry", "Ground"],
 
     weight: 2
 },
@@ -207,6 +243,8 @@
     right: "dry right",
     top: "grass",
     bottom: "grass",
+
+    type: ["Dry", "Ground"],
 },
 {
     name: "Grass Dry Top Bottom",
@@ -217,18 +255,22 @@
     right: "grass",
     top: "dry top",
     bottom: "dry bottom",
+
+    type: ["Dry", "Ground"],
 },
 {
     name: "Tree Top Left",
     sprite: "sprites/grass.png"
     animation: "tree",
     idle_animations: ["idle1"],
-    left: ["dry", "dry right"],
+    left: "grass",
     right: "tree top",
-    top: ["dry", "dry bottom"],
+    top: "grass",
     bottom: "tree left",
 
-    weight: 2
+    type: ["Tree"],
+
+    passable: false
 },
 {
     name: "Tree Top Right",
@@ -236,23 +278,29 @@
     animation: "tree",
     idle_animations: ["idle2"],
     left: "tree top",
-    right: ["dry", "dry left"],
-    top: ["dry", "dry bottom"],
+    right: "grass",
+    top: "grass",
     bottom: "tree right",
 
-    weight: 2
+    type: ["Tree"],
+
+    passable: false
 },
 {
     name: "Tree Bottom Left",
     sprite: "sprites/grass.png"
     animation: "tree",
     idle_animations: ["idle3"],
-    left: ["dry", "dry right"],
+    left: "grass",
     right: "tree bottom",
     top: "tree left",
-    bottom: ["dry", "dry top"],
+    bottom: "grass",
 
-    weight: 2
+    type: ["Tree"],
+
+    passable: false
+
+    weight: 3
 },
 {
     name: "Tree Bottom Right",
@@ -260,11 +308,15 @@
     animation: "tree",
     idle_animations: ["idle4"],
     left: "tree bottom",
-    right: ["dry", "dry left"],
+    right: ["grass"],
     top: "tree right",
-    bottom: ["dry", "dry top"],
+    bottom: "grass",
 
-    weight: 2
+    type: ["Tree"],
+
+    passable: false
+
+    weight: 3
 },
 {
     name: "Canopy Left",
@@ -276,7 +328,11 @@
     top: "tree left",
     bottom: "tree right",
 
-    weight: 2
+    type: ["Tree", "Canopy"],
+
+    passable: false
+
+    weight: 1
 },
 {
     name: "Canopy Right",
@@ -288,7 +344,11 @@
     top: "tree right",
     bottom: "tree left",
 
-    weight: 2
+    type: ["Tree", "Canopy"],
+
+    passable: false
+
+    weight: 1
 },
 {
     name: "Water",
@@ -299,5 +359,9 @@
     top: ["water", "coast bottom"],
     bottom: ["water", "coast top"],
 
-    weight: 10
+    type: ["Water"],
+
+    passable: false
+
+    weight: 25
 },

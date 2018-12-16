@@ -23,6 +23,7 @@ public class Terrain extends WorldObject<WorldScene, WorldScene, WorldObject> {
     }
 
     private GameData gameData;
+    private boolean passable;
 
     public Terrain(WorldScene scene, GameData data, int x, int y) {
         super(scene, data);
@@ -35,6 +36,8 @@ public class Terrain extends WorldObject<WorldScene, WorldScene, WorldObject> {
             getAnimationState().setIdleAction(idle);
             getAnimationState().setActionIdle();
         });
+
+        data.ifHas("passable", p -> passable = p.asBoolean(), () -> passable = true);
 
         setX(x);
         setY(y);
@@ -52,5 +55,9 @@ public class Terrain extends WorldObject<WorldScene, WorldScene, WorldObject> {
     @Override
     public float getZ() {
         return .1f;
+    }
+
+    public boolean isPassable() {
+        return passable;
     }
 }

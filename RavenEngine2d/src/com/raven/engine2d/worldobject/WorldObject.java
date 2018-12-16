@@ -138,6 +138,10 @@ public abstract class WorldObject<
         setPosition(getPosition().add(amount, getPosition()));
     }
 
+    public void move(float x, float y) {
+        setPosition(getPosition().add(x, y, getPosition()));
+    }
+
     public Vector2f getPosition() {
         return position;
     }

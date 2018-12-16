@@ -19,6 +19,13 @@ public class Vector2f {
         return out;
     }
 
+    public Vector2f add(float x, float y, Vector2f out) {
+        out.x = this.x + x;
+        out.y = this.y + y;
+
+        return out;
+    }
+
     public Vector2f subtract(Vector2f other, Vector2f out) {
         out.x = this.x - other.x;
         out.y = this.y - other.y;

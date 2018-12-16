@@ -45,8 +45,14 @@ public class TerrainFactory extends Factory<Terrain> {
 
         if (results.size() > 0)
             return new Terrain(scene, results.getRandom(scene.getRandom()), x, y);
-        else
+        else {
+            System.out.println("Missin " +
+                            " Left: " + (left != null ? left.getGameData().getData("right") : null) +
+                            " Right: " + (right != null ? right.getGameData().getData("left") : null) +
+                            " Top: " +  (top != null ? top.getGameData().getData("bottom") : null) +
+                            " Bottom: " +  (bottom != null ? bottom.getGameData().getData("top") : null));
             return null;
+        }
     }
 
     private Stream<GameData> filterStream(Stream<GameData> stream, Terrain terrain, String from, String to) {
@@ -86,6 +92,8 @@ public class TerrainFactory extends Factory<Terrain> {
     public void clear() {
         left = null;
         bottom = null;
+        right = null;
+        top = null;
         x = 0;
         y = 0;
     }

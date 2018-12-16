@@ -5,6 +5,8 @@ import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Layer;
+import com.raven.engine2d.util.math.Vector2f;
+import com.raven.engine2d.util.math.Vector4f;
 import com.raven.engine2d.worldobject.KeyboardHandler;
 import com.raven.engine2d.worldobject.MouseHandler;
 
@@ -28,6 +30,8 @@ public class MouseEntity extends Entity {
     private boolean movingDown;
     private boolean movingRight;
     private boolean movingLeft;
+
+    private Vector4f size = new Vector4f(.2f, .05f, .6f, .5f);
 
     public static void loadData() {
         for (GameData gameData : GameDatabase.all("mouse")) {
@@ -91,6 +95,11 @@ public class MouseEntity extends Entity {
     }
 
     @Override
+    public Vector4f getRect() {
+        return size;
+    }
+
+    @Override
     public float getZ() {
         return .2f;
     }
@@ -99,29 +108,25 @@ public class MouseEntity extends Entity {
     public void onUpdate(float deltaTime) {
         if (movingUp) {
             if (movingRight) {
-                moveX(deltaTime / 500f);
-                moveY(deltaTime / 500f);
+                move(deltaTime / 500f, deltaTime / 500f);
             } else if (movingLeft) {
-                moveX(-deltaTime / 500f);
-                moveY(deltaTime / 500f);
+                move(-deltaTime / 500f, deltaTime / 500f);
             } else {
-                moveY(deltaTime / 350f);
+                move(0, deltaTime / 350f);
             }
         } else if (movingDown) {
             if (movingRight) {
-                moveX(deltaTime / 500f);
-                moveY(-deltaTime / 500f);
+                move(deltaTime / 500f, -deltaTime / 500f);
             } else if (movingLeft) {
-                moveX(-deltaTime / 500f);
-                moveY(-deltaTime / 500f);
+                move(-deltaTime / 500f, -deltaTime / 500f);
             } else {
-                moveY(-deltaTime / 350f);
+                move(0, -deltaTime / 350f);
             }
         } else {
             if (movingRight) {
-                moveX(deltaTime / 350f);
+                move(deltaTime / 350f, 0);
             } else if (movingLeft) {
-                moveX(-deltaTime / 350f);
+                move(-deltaTime / 350f, 0);
             }
         }
     }
