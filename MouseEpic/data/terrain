@@ -10,7 +10,7 @@
 
     type: ["Grass", "Ground"],
 
-    weight: 15
+    weight: 10
 },
 {
     name: "Grass Coast Left",
@@ -127,7 +127,7 @@
     sprite: "sprites/grass.png"
     animation: "dry grass",
     idle_animations: ["idle7"],
-    left: "dry",
+    left: "dry left",
     right: "grass",
     top: "grass",
     bottom: "grass",
@@ -142,7 +142,7 @@
     animation: "dry grass",
     idle_animations: ["idle8"],
     left: "grass",
-    right: "dry",
+    right: "dry right",
     top: "grass",
     bottom: "grass",
 
@@ -157,7 +157,7 @@
     idle_animations: ["idle9"],
     left: "grass",
     right: "grass",
-    top: "dry",
+    top: "dry top",
     bottom: "grass",
 
     type: ["Dry", "Ground"],
@@ -172,7 +172,7 @@
     left: "grass",
     right: "grass",
     top: "grass",
-    bottom: "dry",
+    bottom: "dry bottom",
 
     type: ["Dry", "Ground"],
 
@@ -183,9 +183,9 @@
     sprite: "sprites/grass.png"
     animation: "dry grass",
     idle_animations: ["idle11"],
-    left: "dry",
+    left: "dry left",
     right: "grass",
-    top: "dry",
+    top: "dry top",
     bottom: "grass",
 
     type: ["Dry", "Ground"],
@@ -198,8 +198,8 @@
     animation: "dry grass",
     idle_animations: ["idle12"],
     left: "grass",
-    right: "dry",
-    top: "dry",
+    right: "dry right",
+    top: "dry top",
     bottom: "grass",
 
     type: ["Dry", "Ground"],
@@ -212,9 +212,9 @@
     animation: "dry grass",
     idle_animations: ["idle13"],
     left: "grass",
-    right: "dry",
+    right: "dry right",
     top: "grass",
-    bottom: "dry",
+    bottom: "dry bottom",
 
     type: ["Dry", "Ground"],
 
@@ -225,10 +225,10 @@
     sprite: "sprites/grass.png"
     animation: "dry grass",
     idle_animations: ["idle14"],
-    left: "dry",
+    left: "dry left",
     right: "grass",
     top: "grass",
-    bottom: "dry",
+    bottom: "dry bottom",
 
     type: ["Dry", "Ground"],
 
@@ -300,7 +300,7 @@
 
     passable: false
 
-    weight: 3
+    weight: 1
 },
 {
     name: "Tree Bottom Right",
@@ -316,7 +316,7 @@
 
     passable: false
 
-    weight: 3
+    weight: 1
 },
 {
     name: "Canopy Left",
@@ -332,7 +332,7 @@
 
     passable: false
 
-    weight: 1
+    weight: 19
 },
 {
     name: "Canopy Right",
@@ -348,7 +348,7 @@
 
     passable: false
 
-    weight: 1
+    weight: 10
 },
 {
     name: "Water",
@@ -363,5 +363,5 @@
 
     passable: false
 
-    weight: 25
+    weight: 10
 },

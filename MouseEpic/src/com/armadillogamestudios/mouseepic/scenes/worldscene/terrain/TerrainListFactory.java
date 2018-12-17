@@ -19,17 +19,33 @@ public class TerrainListFactory extends Factory<GameDataList> {
     public void setLeft(GameDataList left) {
         this.left = left;
     }
+    public void setLeft(GameData left) {
+        this.left = new GameDataList();
+        this.left.add(left);
+    }
 
     public void setRight(GameDataList right) {
         this.right = right;
+    }
+    public void setRight(GameData right) {
+        this.right = new GameDataList();
+        this.right.add(right);
     }
 
     public void setBottom(GameDataList bottom) {
         this.bottom = bottom;
     }
+    public void setBottom(GameData bottom) {
+        this.bottom = new GameDataList();
+        this.bottom.add(bottom);
+    }
 
     public void setTop(GameDataList top) {
         this.top = top;
+    }
+    public void setTop(GameData top) {
+        this.top = new GameDataList();
+        this.top.add(top);
     }
 
     @Override

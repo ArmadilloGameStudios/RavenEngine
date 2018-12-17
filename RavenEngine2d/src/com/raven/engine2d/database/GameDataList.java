@@ -82,4 +82,9 @@ public class GameDataList extends ArrayList<GameData> implements GameDatable {
     public GameData toGameData() {
         return new GameData(this);
     }
+
+    @Override
+    public int hashCode() {
+        return System.identityHashCode(this);
+    }
 }
