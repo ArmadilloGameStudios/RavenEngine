@@ -332,7 +332,7 @@
 
     passable: false
 
-    weight: 19
+    weight: 10
 },
 {
     name: "Canopy Right",
@@ -363,5 +363,5 @@
 
     passable: false
 
-    weight: 10
+    weight: 25
 },

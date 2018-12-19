@@ -2,14 +2,15 @@ package com.armadillogamestudios.mouseepic.scenes.worldscene;
 
 import com.armadillogamestudios.mouseepic.MouseEpicGame;
 import com.armadillogamestudios.mouseepic.scenes.worldscene.terrain.Terrain;
-import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.scene.Scene;
+import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.*;
+import java.util.List;
+import java.util.Random;
 
 
 public class WorldScene extends Scene<MouseEpicGame> {
@@ -17,7 +18,7 @@ public class WorldScene extends Scene<MouseEpicGame> {
     private MouseEntity mouse;
     private WorldMap map;
 
-    private int size = 16;
+    private int size = 16 * 4;
 
     public WorldScene(MouseEpicGame game) {
         super(game);
@@ -36,10 +37,11 @@ public class WorldScene extends Scene<MouseEpicGame> {
         addChild(map);
 
         mouse = new MouseEntity(this);
-        mouse.setPosition(10, 5);
+        mouse.setPosition(6 + 16*3, 6+16*3);
 
         addChild(mouse);
 
+        centerView();
     }
 
     @Override
@@ -62,7 +64,6 @@ public class WorldScene extends Scene<MouseEpicGame> {
 
     @Override
     public void onUpdate(float deltaTime) {
-
     }
 
     @Override
@@ -110,5 +111,19 @@ public class WorldScene extends Scene<MouseEpicGame> {
 
     public WorldMap getWorldMap() {
         return map;
+    }
+
+    public WorldMap getMap() {
+        return map;
+    }
+
+    public void centerView() {
+        Vector2f view = getWorldOffset();
+        int max = (map.getSize() - 20) * -16;
+
+        view.x = Math.min(0, Math.max(max, (mouse.getX() - 9.5f) * -16f));
+        view.y = Math.min(0, Math.max(max, (mouse.getY() - 9.5f) * -16f));
+
+        map.needsRedraw();
     }
 }

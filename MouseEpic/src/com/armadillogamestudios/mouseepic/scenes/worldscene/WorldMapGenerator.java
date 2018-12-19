@@ -10,38 +10,50 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-class WorldMapGeneratorNeighborMap {
+class NeighborMap {
     // TODO add diagonals
 
-    public enum Side {LEFT, RIGHT, BOTTOM, TOP}
+    public enum Side {LEFT, RIGHT, BOTTOM, TOP,}
 
     private HashSet<GameData> neighborsLeft, neighborsRight, neighborsBottom, neighborsTop;
 
-    public WorldMapGeneratorNeighborMap(GameData source, GameDataList choices) {
+    public NeighborMap(GameData source, GameDataList choices) {
         TerrainListFactory terrainListFactory = new TerrainListFactory();
 
+        System.out.println();
+        System.out.println("List For: " + source.getString("name"));
+
+        // standard
         terrainListFactory.clear();
         terrainListFactory.setChoiceList(choices);
         terrainListFactory.setLeft(source);
         neighborsLeft = new HashSet<>(terrainListFactory.getInstance());
+        System.out.println("Left");
+        neighborsLeft.forEach(d -> System.out.println(d.getString("name")));
 
         terrainListFactory.clear();
         terrainListFactory.setChoiceList(choices);
         terrainListFactory.setRight(source);
         neighborsRight = new HashSet<>(terrainListFactory.getInstance());
+        System.out.println("Left");
+        neighborsRight.forEach(d -> System.out.println(d.getString("name")));
 
         terrainListFactory.clear();
         terrainListFactory.setChoiceList(choices);
         terrainListFactory.setBottom(source);
         neighborsBottom = new HashSet<>(terrainListFactory.getInstance());
+        System.out.println("Bottom");
+        neighborsBottom.forEach(d -> System.out.println(d.getString("name")));
 
         terrainListFactory.clear();
         terrainListFactory.setChoiceList(choices);
         terrainListFactory.setTop(source);
         neighborsTop = new HashSet<>(terrainListFactory.getInstance());
+        System.out.println("Top");
+        neighborsTop.forEach(d -> System.out.println(d.getString("name")));
     }
 
-    public HashSet<GameData> getSet(Side side) {
+    public HashSet<GameData> getSide(Side side) {
         switch (side) {
             default:
             case LEFT:
@@ -52,6 +64,14 @@ class WorldMapGeneratorNeighborMap {
                 return neighborsBottom;
             case TOP:
                 return neighborsTop;
+//            case LEFT_TOP:
+//                return neighborsLeftTop;
+//            case RIGHT_TOP:
+//                return neighborsRightTop;
+//            case LEFT_BOTTOM:
+//                return neighborsLeftBottom;
+//            case RIGHT_BOTTOM:
+//                return neighborsRightBottom;
         }
     }
 }
@@ -61,85 +81,154 @@ public class WorldMapGenerator {
     private WorldMapGenerator() {
     }
 
-    private static Map<GameData, WorldMapGeneratorNeighborMap> terrainNeighborMap;
-    private static GameData[] map;
-    private static int size;
+    private static Map<GameData, NeighborMap> terrainNeighborMap;
+    private static int regionSize;
     private static Random random;
 
     public static GameData[] generateMap(int size, Random random) {
-        WorldMapGenerator.size = size;
+        WorldMapGenerator.regionSize = size;
         WorldMapGenerator.random = random;
 
-        map = new GameData[size * size];
+        // create terrain neighbor sets
+        terrainNeighborMap = new HashMap<>();
+        GameDataTable terrainList = GameDatabase.all("terrain");
+        terrainList.forEach(t -> terrainNeighborMap.put(t, new NeighborMap(t, terrainList)));
 
-        generateSubRegion("pond");
+        // create subregions
+        GameDataList[] patchedMap = new GameDataList[regionSize * regionSize];
+
+        int s = 16;
+        int c = size / s;
+
+        for (int x = 0; x < c; x++) {
+            for (int y = 0; y < c; y++) {
+                GameDataList[] subregion;
+                if (random.nextInt(2) == 0) {
+                    subregion = generateSubRegion("pond");
+                } else {
+                    subregion = generateSubRegion("forrest");
+                }
+                patchMap(patchedMap, subregion, x * s, y * s, s);
+            }
+        }
+
+        GameData[] map = resolveMap(patchedMap);
 
         // clean up
-        GameData[] returnMap = map;
-        map = null;
         terrainNeighborMap = null;
         WorldMapGenerator.random = null;
 
-        return returnMap;
+        return map;
     }
 
-    private static void generateSubRegion(String subregion) {
+    private static GameDataList[] generateSubRegion(String subregion) {
         // load data
-        GameData subregionGameData = GameDatabase.all(subregion).get(0);
+        GameData subRegionGameData = GameDatabase.all(subregion).get(0);
+        int size = subRegionGameData.getInteger("size");
 
         // create potentials map
         Map<String, GameDataList> keyPotentialsMap = new HashMap<>();
         GameDataList[] mapOfPotentials = new GameDataList[size * size];
-        Deque<GameDataList> potentialsToResolve = new ArrayDeque<>();
-        HashMap<GameDataList, Integer> potentialIndexLookup = new HashMap<>();
 
-        // create terrain neighbor sets
-        terrainNeighborMap = new HashMap<>();
+        GameDataList srMapGameData = subRegionGameData.getList("map");
 
-        GameDataTable terrainList = GameDatabase.all("terrain");
-        terrainList.forEach(t -> terrainNeighborMap.put(t, new WorldMapGeneratorNeighborMap(t, terrainList)));
-
-        // process map
-        HashSet<Integer> toUpdateCompare = new HashSet<>();
-        Deque<Integer> toUpdate = new ArrayDeque<>();
-
-        GameDataList srMapGameData = subregionGameData.getList("map");
-
+        // loop through map
         AtomicInteger indexY = new AtomicInteger(size - 1);
         srMapGameData.stream().map(GameData::asList).forEach(srRowGameData -> {
 
             AtomicInteger indexX = new AtomicInteger(0);
             srRowGameData.forEach(srGameData -> {
+                String key = updateKeys(keyPotentialsMap, subRegionGameData, srGameData.asString());
 
-                String key = srGameData.asString().toLowerCase().replaceAll("\\s+", "");
-
-                if (!keyPotentialsMap.containsKey(key)) {
-
-                    GameData rule;
-                    switch (key) {
-                        case "":
-                            rule = subregionGameData.getData("default");
-                            break;
-                        default:
-                            rule = subregionGameData.getData(key);
-                            break;
-                    }
-
-                    keyPotentialsMap.put(key, getPotentialsFromRule(rule));
-                }
-
-                int i = pointToInt(indexX.get(), indexY.get());
+                int i = pointToInt(indexX.get(), indexY.get(), size);
 
                 mapOfPotentials[i] = new GameDataList(keyPotentialsMap.get(key));
-                potentialIndexLookup.put(mapOfPotentials[i], i);
-                toUpdate.add(i);
-                toUpdateCompare.add(i);
 
                 indexX.incrementAndGet();
             });
 
             indexY.decrementAndGet();
         });
+
+        // add sections
+        subRegionGameData.ifHas("sections", gds -> gds.asList().forEach(section -> {
+
+            System.out.println(section);
+
+            GameDataList sectionMap = section
+                    .getList("maps")
+                    .getRandom(random)
+                    .asList();
+
+            indexY.set(section.getInteger("y") + sectionMap.size() - 1);
+            sectionMap.stream().map(GameData::asList).forEach(sRowGameData -> {
+                AtomicInteger indexX = new AtomicInteger(section.getInteger("x"));
+
+                sRowGameData.forEach(sGameData -> {
+                    String key = updateKeys(keyPotentialsMap, subRegionGameData, sGameData.asString());
+
+                    int i = pointToInt(indexX.get(), indexY.get(), size);
+
+                    mapOfPotentials[i] = new GameDataList(keyPotentialsMap.get(key));
+
+                    indexX.incrementAndGet();
+                });
+
+                indexY.decrementAndGet();
+            });
+        }));
+
+        return mapOfPotentials;
+    }
+
+    private static String updateKeys(Map<String, GameDataList> keyPotentialsMap, GameData subRegionGameData, String key) {
+        key = key.toLowerCase().replaceAll("\\s+", "");
+
+        if (!keyPotentialsMap.containsKey(key)) {
+
+            GameData rule;
+            switch (key) {
+                case "":
+                    rule = subRegionGameData.getData("default");
+                    break;
+                default:
+                    rule = subRegionGameData.getData(key);
+                    break;
+            }
+
+            keyPotentialsMap.put(key, getPotentialsFromRule(rule));
+        }
+
+        return key;
+    }
+
+    private static void patchMap(GameDataList[] patchedMap, GameDataList[] subregion, int x, int y, int size) {
+        System.out.println(Arrays.stream(patchedMap).filter(Objects::nonNull).count());
+
+        for (int i = 0; i < size; i++) {
+            System.arraycopy(subregion, i * size, patchedMap, (x + i) * regionSize + y, size);
+        }
+
+        System.out.println(Arrays.stream(patchedMap).filter(Objects::nonNull).count());
+    }
+
+    private static GameData[] resolveMap(GameDataList[] mapOfPotentials) {// load data
+
+        GameData[] map = new GameData[regionSize * regionSize];
+
+        // create potentials map
+        Deque<GameDataList> potentialsToResolve = new ArrayDeque<>();
+        HashMap<GameDataList, Integer> potentialIndexLookup = new HashMap<>();
+
+        // process map
+        HashSet<Integer> toUpdateCompare = new HashSet<>();
+        Deque<Integer> toUpdate = new ArrayDeque<>();
+
+        for (int i = 0; i < regionSize * regionSize; i++) {
+            potentialIndexLookup.put(mapOfPotentials[i], i);
+            toUpdate.add(i);
+            toUpdateCompare.add(i);
+        }
 
         // randomize resolve queue
         List<GameDataList> toPick = new ArrayList<>(Arrays.asList(mapOfPotentials));
@@ -156,38 +245,74 @@ public class WorldMapGenerator {
                 int i = toUpdate.pop();
                 toUpdateCompare.remove(i);
 
-                int x = intToX(i);
-                int y = intToY(i);
+                int x = intToX(i, regionSize);
+                int y = intToY(i, regionSize);
 
-                GameDataList list = safeGatFromMap(mapOfPotentials, x, y, size);
+                GameDataList list = safeGatFromMap(mapOfPotentials, x, y, regionSize);
 
                 if (list.size() > 1) {
 
-                    GameDataList left = safeGatFromMap(mapOfPotentials, x - 1, y, size);
+                    GameDataList left = safeGatFromMap(mapOfPotentials, x - 1, y, regionSize);
                     if (left != null) {
-                        updated |= reduceList(WorldMapGeneratorNeighborMap.Side.LEFT, list, left);
+                        updated |= reduceList(NeighborMap.Side.LEFT, list, left);
                     }
 
-                    GameDataList right = safeGatFromMap(mapOfPotentials, x + 1, y, size);
+                    GameDataList right = safeGatFromMap(mapOfPotentials, x + 1, y, regionSize);
                     if (right != null) {
-                        updated |= reduceList(WorldMapGeneratorNeighborMap.Side.RIGHT, list, right);
+                        updated |= reduceList(NeighborMap.Side.RIGHT, list, right);
                     }
 
-                    GameDataList bottom = safeGatFromMap(mapOfPotentials, x, y - 1, size);
+                    GameDataList bottom = safeGatFromMap(mapOfPotentials, x, y - 1, regionSize);
                     if (bottom != null) {
-                        updated |= reduceList(WorldMapGeneratorNeighborMap.Side.BOTTOM, list, bottom);
+                        updated |= reduceList(NeighborMap.Side.BOTTOM, list, bottom);
                     }
 
-                    GameDataList top = safeGatFromMap(mapOfPotentials, x, y + 1, size);
+                    GameDataList top = safeGatFromMap(mapOfPotentials, x, y + 1, regionSize);
                     if (top != null) {
-                        updated |= reduceList(WorldMapGeneratorNeighborMap.Side.TOP, list, top);
+                        updated |= reduceList(NeighborMap.Side.TOP, list, top);
+                    }
+
+                    GameDataList compare = safeGatFromMap(mapOfPotentials, x - 1, y + 1, regionSize);
+                    if (compare != null && left != null && top != null) {
+                        updated |= reduceList(
+                                NeighborMap.Side.LEFT,
+                                NeighborMap.Side.TOP,
+                                list, left, top, compare);
+                    }
+
+                    compare = safeGatFromMap(mapOfPotentials, x - 1, y - 1, regionSize);
+                    if (compare != null && left != null && bottom != null) {
+                        updated |= reduceList(
+                                NeighborMap.Side.LEFT,
+                                NeighborMap.Side.BOTTOM,
+                                list, left, bottom, compare);
+                    }
+
+                    compare = safeGatFromMap(mapOfPotentials, x + 1, y + 1, regionSize);
+                    if (compare != null && top != null && right != null) {
+                        updated |= reduceList(
+                                NeighborMap.Side.RIGHT,
+                                NeighborMap.Side.TOP,
+                                list, right, top, compare);
+                    }
+
+                    compare = safeGatFromMap(mapOfPotentials, x + 1, y - 1, regionSize);
+                    if (compare != null && bottom != null && right != null) {
+                        updated |= reduceList(
+                                NeighborMap.Side.RIGHT,
+                                NeighborMap.Side.BOTTOM,
+                                list, right, bottom, compare);
                     }
 
                     if (updated) {
-                        addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x - 1, y);
-                        addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x + 1, y);
-                        addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x, y - 1);
-                        addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x, y + 1);
+                        addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x - 1, y, regionSize);
+                        addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x + 1, y, regionSize);
+                        addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x, y - 1, regionSize);
+                        addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x, y + 1, regionSize);
+                        addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x - 1, y - 1, regionSize);
+                        addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x + 1, y - 1, regionSize);
+                        addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x - 1, y + 1, regionSize);
+                        addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x + 1, y + 1, regionSize);
                     }
                 }
             }
@@ -200,22 +325,26 @@ public class WorldMapGenerator {
                     noNulls = false;
 
                     int i = potentialIndexLookup.get(toResolve);
-                    int x = intToX(i);
-                    int y = intToY(i);
+                    int x = intToX(i, regionSize);
+                    int y = intToY(i, regionSize);
 
                     GameData r = toResolve.getRandom(random);
                     toResolve.clear();
                     toResolve.add(r);
 
-                    addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x - 1, y);
-                    addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x + 1, y);
-                    addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x, y - 1);
-                    addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x, y + 1);
+                    addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x - 1, y, regionSize);
+                    addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x + 1, y, regionSize);
+                    addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x, y - 1, regionSize);
+                    addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x, y + 1, regionSize);
+                    addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x - 1, y - 1, regionSize);
+                    addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x + 1, y - 1, regionSize);
+                    addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x - 1, y + 1, regionSize);
+                    addIntToUpdate(toUpdate, toUpdateCompare, mapOfPotentials, x + 1, y + 1, regionSize);
                 }
             }
         }
 
-        for (int i = 0; i < size * size; i++) {
+        for (int i = 0; i < regionSize * regionSize; i++) {
             GameDataList list = mapOfPotentials[i];
 
             if (list.size() == 1) {
@@ -223,10 +352,12 @@ public class WorldMapGenerator {
                 map[i] = r;
             }
         }
+
+        return map;
     }
 
-    private static <G> void addIntToUpdate(Deque<Integer> que, HashSet<Integer> compare, G[] map, int x, int y) {
-        int i = pointToInt(x, y);
+    private static <G> void addIntToUpdate(Deque<Integer> que, HashSet<Integer> compare, G[] map, int x, int y, int size) {
+        int i = pointToInt(x, y, size);
 
         if (safeGatFromMap(map, x, y, size) != null && !compare.contains(i)) {
             que.add(i);
@@ -234,18 +365,59 @@ public class WorldMapGenerator {
         }
     }
 
-    private static boolean reduceList(WorldMapGeneratorNeighborMap.Side side, GameDataList toReduce, GameDataList neighbor) {
+    private static boolean reduceList(NeighborMap.Side side, GameDataList toReduce, GameDataList neighbor) {
         if (neighbor.size() == 0) return false;
 
         AtomicBoolean didReduce = new AtomicBoolean(false);
 
-        List<WorldMapGeneratorNeighborMap> compare = new ArrayList<>();
+        List<NeighborMap> compare = new ArrayList<>();
         neighbor.forEach(n -> compare.add(terrainNeighborMap.get(n)));
 
         GameDataList copy = new GameDataList(toReduce);
 
         copy.forEach(terrain -> {
-            if (compare.stream().noneMatch(set -> set.getSet(side).contains(terrain))) {
+            if (compare.stream().noneMatch(set -> set.getSide(side).contains(terrain))) {
+                toReduce.remove(terrain);
+                didReduce.set(true);
+            }
+        });
+
+        return didReduce.get();
+    }
+
+    private static boolean reduceList(
+            NeighborMap.Side sideA, NeighborMap.Side sideB,
+            GameDataList toReduce, GameDataList neighborA, GameDataList neighborB, GameDataList corner) {
+
+        if (neighborA.isEmpty() || neighborB.isEmpty() || corner.isEmpty()) return false; // error
+
+        AtomicBoolean didReduce = new AtomicBoolean(false);
+
+        List<NeighborMap> cornerCompare = new ArrayList<>();
+        corner.forEach(n -> cornerCompare.add(terrainNeighborMap.get(n)));
+
+        GameDataList copy = new GameDataList(toReduce);
+
+        copy.forEach(terrain -> {
+            if (neighborA.stream().noneMatch(na -> {
+                HashSet<GameData> compareA = terrainNeighborMap.get(na).getSide(sideA);
+
+                if (compareA.contains(terrain)) {
+                    return neighborB.stream().anyMatch(nb -> {
+                        HashSet<GameData> compareB = terrainNeighborMap.get(nb).getSide(sideB);
+
+                        if (compareB.contains(terrain)) {
+                            return corner.stream().anyMatch(nc -> {
+                                NeighborMap ncMap = terrainNeighborMap.get(nc);
+                                HashSet<GameData> compareCornerB = ncMap.getSide(sideA);
+                                HashSet<GameData> compareCornerA = ncMap.getSide(sideB);
+
+                                return compareCornerA.contains(na) && compareCornerB.contains(nb);
+                            });
+                        } else return false;
+                    });
+                } else return false;
+            })) {
                 toReduce.remove(terrain);
                 didReduce.set(true);
             }
@@ -264,7 +436,7 @@ public class WorldMapGenerator {
 
     private static <T> T safeGatFromMap(T[] map, int x, int y, int size) {
         if (x >= 0 && x < size && y >= 0 && y < size)
-            return map[pointToInt(x, y)];
+            return map[pointToInt(x, y, size)];
         else
             return null;
     }
@@ -277,15 +449,15 @@ public class WorldMapGenerator {
             return false;
     }
 
-    private static int pointToInt(int x, int y) {
+    private static int pointToInt(int x, int y, int size) {
         return x * size + y;
     }
 
-    private static int intToX(int i) {
+    private static int intToX(int i, int size) {
         return i / size;
     }
 
-    private static int intToY(int i) {
+    private static int intToY(int i, int size) {
         return i % size;
     }
 

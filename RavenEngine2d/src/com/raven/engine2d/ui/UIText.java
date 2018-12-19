@@ -67,8 +67,8 @@ public abstract class UIText<S extends Scene>
         getScene().addTextToWrite(textWriter);
     }
 
-    public void draw(LayerShader shader, RenderTarget target) {
-        shader.draw(image, target, getSpriteAnimationState(), getWorldPosition(), null, getID(), getWorldZ(), null, DrawStyle.UI);
+    public void draw(LayerShader shader) {
+        shader.draw(image, getSpriteAnimationState(), getWorldPosition(), null, getID(), getWorldZ(), null, DrawStyle.UI);
     }
 
     @Override

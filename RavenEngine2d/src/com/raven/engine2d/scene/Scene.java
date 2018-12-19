@@ -2,6 +2,7 @@ package com.raven.engine2d.scene;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.raven.engine2d.Game;
@@ -107,14 +108,12 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
             layerShader.clear(layer.getRenderTarget(), backgroundColor);
             for (GameObject o : layer.getChildren()) {
                 if (o.isVisible())
-                    o.draw(layerShader, layer.getRenderTarget());
+                    o.draw(layerShader);
 
                 getEngine().getWindow().printErrors("Draw " + layer.getDestination() + " Error: ");
             }
 
             layer.setNeedRedraw(false);
-
-//            System.out.println(layer.getDestination());
         }
     }
 

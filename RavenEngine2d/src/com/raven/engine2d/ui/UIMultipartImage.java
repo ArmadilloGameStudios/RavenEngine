@@ -40,19 +40,19 @@ public class UIMultipartImage<S extends Scene> extends UIImage<S> {
     }
 
     @Override
-    public void draw(LayerShader shader, RenderTarget target) {
+    public void draw(LayerShader shader) {
         offset.y = getHeight();
         offset.y -= spriteAnimationTop.getHeight();
-        shader.draw(getTexture(), target, spriteAnimationTop, getWorldPosition(), offset, getID(), getWorldZ(), null, DrawStyle.UI);
+        shader.draw(getTexture(), spriteAnimationTop, getWorldPosition(), offset, getID(), getWorldZ(), null, DrawStyle.UI);
 
 
         for (int i = 0; i < rows; i++) {
             offset.y -= spriteAnimationMid.getHeight();
-            shader.draw(getTexture(), target, spriteAnimationMid, getWorldPosition(), offset, getID(), getWorldZ(), null, DrawStyle.UI);
+            shader.draw(getTexture(), spriteAnimationMid, getWorldPosition(), offset, getID(), getWorldZ(), null, DrawStyle.UI);
 
         }
         offset.y -= spriteAnimationBottom.getHeight();
-        shader.draw(getTexture(), target, spriteAnimationBottom, getWorldPosition(), offset, getID(), getWorldZ(), null, DrawStyle.UI);
+        shader.draw(getTexture(), spriteAnimationBottom, getWorldPosition(), offset, getID(), getWorldZ(), null, DrawStyle.UI);
     }
 
     @Override

@@ -222,9 +222,9 @@ public abstract class WorldObject<
     }
 
     @Override
-    public void draw(LayerShader shader, RenderTarget target) {
+    public void draw(LayerShader shader) {
         if (spriteSheet != null)
-            shader.draw(spriteSheet, target, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getWorldZ(), getHighlight(), getScene().getDrawStyle());
+            shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), getID(), getWorldZ(), getHighlight(), getScene().getDrawStyle());
     }
 
     public void setParent(P parent) {

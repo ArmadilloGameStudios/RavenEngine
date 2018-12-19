@@ -95,7 +95,7 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable<? e
 
     public abstract void needsRedraw();
 
-    public abstract void draw(LayerShader shader, RenderTarget target);
+    public abstract void draw(LayerShader shader);
 
     public boolean isVisible() {
         if (getParent() instanceof GameObject) {

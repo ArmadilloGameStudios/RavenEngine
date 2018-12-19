@@ -5,10 +5,7 @@ import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Layer;
-import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector4f;
-import com.raven.engine2d.worldobject.KeyboardHandler;
-import com.raven.engine2d.worldobject.MouseHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,6 +125,10 @@ public class MouseEntity extends Entity {
             } else if (movingLeft) {
                 move(-deltaTime / 350f, 0);
             }
+        }
+
+        if (movingUp || movingDown || movingRight || movingLeft) {
+            getScene().centerView();
         }
     }
 }

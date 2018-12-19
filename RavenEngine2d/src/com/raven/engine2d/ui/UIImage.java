@@ -81,8 +81,8 @@ public class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObject>> 
     }
 
     @Override
-    public void draw(LayerShader shader, RenderTarget target) {
-        shader.draw(texture, target, spriteAnimation, getWorldPosition(), null, getID(), getWorldZ(), null, DrawStyle.UI);
+    public void draw(LayerShader shader) {
+        shader.draw(texture, spriteAnimation, getWorldPosition(), null, getID(), getWorldZ(), null, DrawStyle.UI);
     }
 
     @Override

@@ -56,4 +56,8 @@ public class WorldMap extends WorldObject<WorldScene, Terrain, WorldObject> {
     public float getZ() {
         return 0;
     }
+
+    public int getSize() {
+        return size;
+    }
 }

@@ -128,7 +128,8 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
         return scene;
     }
 
-    public void draw(LayerShader shader, RenderTarget target) {
+    @Override
+    public void draw(LayerShader shader) {
 
     }
 
