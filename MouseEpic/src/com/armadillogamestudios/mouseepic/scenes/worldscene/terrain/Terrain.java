@@ -9,6 +9,7 @@ import com.raven.engine2d.worldobject.WorldObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Terrain extends WorldObject<WorldScene, WorldScene, WorldObject> {
 
@@ -22,12 +23,20 @@ public class Terrain extends WorldObject<WorldScene, WorldScene, WorldObject> {
         return data;
     }
 
+    private List<TerrainTrigger> triggerList = new ArrayList<>();
     private GameData gameData;
     private boolean passable;
 
     public Terrain(WorldScene scene, GameData data, int x, int y) {
         super(scene, data);
 
+        loadGameData(data);
+
+        setX(x);
+        setY(y);
+    }
+
+    private void loadGameData(GameData data) {
         gameData = data;
 
         data.ifHas("idle_animations", i -> {
@@ -37,10 +46,26 @@ public class Terrain extends WorldObject<WorldScene, WorldScene, WorldObject> {
             getAnimationState().setActionIdle();
         });
 
+        passable = true;
         data.ifHas("passable", p -> passable = p.asBoolean(), () -> passable = true);
 
-        setX(x);
-        setY(y);
+        triggerList.clear();
+        data.ifHas("triggers", d -> d.asList().forEach(t -> triggerList.add(new TerrainTrigger(t))));
+    }
+
+    public void replace(GameData gameData) {
+
+        if (gameData.has("sprite")) {
+            setSpriteSheet(gameData.getString("sprite"));
+
+            if (gameData.has("animation")) {
+                String animationName = gameData.getString("animation");
+                setAnimation(animationName);
+                getAnimationState().setIdleAction("idle");
+            }
+        }
+
+        loadGameData(gameData);
     }
 
     public GameData getGameData() {
@@ -59,5 +84,19 @@ public class Terrain extends WorldObject<WorldScene, WorldScene, WorldObject> {
 
     public boolean isPassable() {
         return passable;
+    }
+
+    public void trigger(String effect) {
+        triggerList.stream()
+                .filter(t -> t.effect.equals(effect))
+                .collect(Collectors.toList())
+                .forEach(t -> {
+                    if (t.replaceTerrain != null) {
+                        GameDatabase.all("terrain").stream()
+                                .filter(gd -> gd.getString("name").equals(t.replaceTerrain))
+                                .findFirst()
+                                .ifPresent(this::replace);
+                    }
+                });
     }
 }

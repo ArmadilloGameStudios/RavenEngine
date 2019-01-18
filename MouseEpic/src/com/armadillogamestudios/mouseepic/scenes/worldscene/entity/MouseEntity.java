@@ -1,10 +1,14 @@
-package com.armadillogamestudios.mouseepic.scenes.worldscene;
+package com.armadillogamestudios.mouseepic.scenes.worldscene.entity;
 
-import com.armadillogamestudios.mouseepic.scenes.worldscene.entity.Entity;
+import com.armadillogamestudios.mouseepic.items.Item;
+import com.armadillogamestudios.mouseepic.scenes.worldscene.WorldScene;
+import com.armadillogamestudios.mouseepic.scenes.worldscene.terrain.Terrain;
+import com.armadillogamestudios.mouseepic.scenes.worldscene.terrain.TerrainTrigger;
 import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.database.GameDatabase;
 import com.raven.engine2d.graphics2d.sprite.SpriteSheet;
 import com.raven.engine2d.scene.Layer;
+import com.raven.engine2d.util.math.Vector2f;
 import com.raven.engine2d.util.math.Vector4f;
 
 import java.util.ArrayList;
@@ -23,12 +27,18 @@ public class MouseEntity extends Entity {
         return data;
     }
 
+    private float speed = 1.35f;
+
     private boolean movingUp;
     private boolean movingDown;
     private boolean movingRight;
     private boolean movingLeft;
 
+    private Item item = new Item();
+
     private Vector4f size = new Vector4f(.2f, .05f, .6f, .5f);
+    private Vector2f center = new Vector2f(size.x + size.z / 2f, size.y + size.w / 2f);
+    private Vector2f facing = new Vector2f();
 
     public static void loadData() {
         for (GameData gameData : GameDatabase.all("mouse")) {
@@ -69,21 +79,35 @@ public class MouseEntity extends Entity {
             getAnimationState().setAction("up", false);
             getAnimationState().setFlip(false);
             getAnimationState().setIdleAction("idle_up");
+            facing.x = 0;
+            facing.y = 1;
         } else if (movingDown) {
             getAnimationState().setAction("down", false);
             getAnimationState().setFlip(false);
             getAnimationState().setIdleAction("idle_down");
+            facing.x = 0;
+            facing.y = -1;
         } else if (movingRight) {
             getAnimationState().setAction("side", false);
             getAnimationState().setFlip(false);
             getAnimationState().setIdleAction("idle_side");
+            facing.x = 1;
+            facing.y = 0;
         } else if (movingLeft) {
             getAnimationState().setAction("side", false);
             getAnimationState().setFlip(true);
             getAnimationState().setIdleAction("idle_side");
+            facing.x = -1;
+            facing.y = 0;
         } else {
             getAnimationState().setActionIdle();
         }
+    }
+
+    public void useItem() {
+        Terrain terrain = getScene().getWorldMap().getTerrainAt(getX() + center.x + facing.x, getY() + center.y + facing.y);
+
+        terrain.trigger(item.getEffect().effect);
     }
 
     @Override
@@ -103,27 +127,31 @@ public class MouseEntity extends Entity {
 
     @Override
     public void onUpdate(float deltaTime) {
+        updateMovement(deltaTime);
+    }
+
+    private void updateMovement(float deltaTime) {
         if (movingUp) {
             if (movingRight) {
-                move(deltaTime / 500f, deltaTime / 500f);
+                move(speed * deltaTime / 500f,speed *  deltaTime / 500f);
             } else if (movingLeft) {
-                move(-deltaTime / 500f, deltaTime / 500f);
+                move(-speed * deltaTime / 500f, speed * deltaTime / 500f);
             } else {
-                move(0, deltaTime / 350f);
+                move(0, speed * deltaTime / 350f);
             }
         } else if (movingDown) {
             if (movingRight) {
-                move(deltaTime / 500f, -deltaTime / 500f);
+                move(speed * deltaTime / 500f, -speed * deltaTime / 500f);
             } else if (movingLeft) {
-                move(-deltaTime / 500f, -deltaTime / 500f);
+                move(-speed * deltaTime / 500f, -speed * deltaTime / 500f);
             } else {
-                move(0, -deltaTime / 350f);
+                move(0, -speed * deltaTime / 350f);
             }
         } else {
             if (movingRight) {
-                move(deltaTime / 350f, 0);
+                move(speed * deltaTime / 350f, 0);
             } else if (movingLeft) {
-                move(-deltaTime / 350f, 0);
+                move(-speed * deltaTime / 350f, 0);
             }
         }
 

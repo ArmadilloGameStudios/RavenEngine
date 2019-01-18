@@ -124,6 +124,10 @@ public class SpriteAnimationState {
         return flip;
     }
 
+    public void setAnimation(SpriteAnimation animation) {
+        this.animation = animation;
+    }
+
     public void addActionFinishHandler(ActionFinishHandler handler) {
         if (handler != null)
             if (processing)

@@ -1,7 +1,9 @@
 package com.armadillogamestudios.mouseepic.scenes.worldscene;
 
 import com.armadillogamestudios.mouseepic.MouseEpicGame;
+import com.armadillogamestudios.mouseepic.scenes.worldscene.entity.MouseEntity;
 import com.armadillogamestudios.mouseepic.scenes.worldscene.terrain.Terrain;
+import com.raven.engine2d.database.GameData;
 import com.raven.engine2d.graphics2d.DrawStyle;
 import com.raven.engine2d.graphics2d.shader.ShaderTexture;
 import com.raven.engine2d.scene.Scene;
@@ -14,30 +16,28 @@ import java.util.Random;
 
 
 public class WorldScene extends Scene<MouseEpicGame> {
-    private Random random = new Random();
+    private Random random;
     private MouseEntity mouse;
     private WorldMap map;
+    private int size;
 
-    private int size = 16 * 4;
-
-    public WorldScene(MouseEpicGame game) {
+    public WorldScene(MouseEpicGame game, int size, Random random, GameData[] gameDataMap) {
         super(game);
-        load();
+
+        this.size = size;
+        this.random = random;
+
+        load(gameDataMap);
     }
 
-
-    private void load() {
+    private void load(GameData[] gameDataMap) {
         MouseEntity.loadData();
 
-        getEngine().getGameDatabase().getTables().forEach(table -> {
-            System.out.println(table.getName());
-        });
-
-        map = new WorldMap(this, size);
+        map = new WorldMap(this, size, gameDataMap);
         addChild(map);
 
         mouse = new MouseEntity(this);
-        mouse.setPosition(6 + 16*3, 6+16*3);
+        mouse.setPosition(6 + 16 * 3, 6 + 16 * 3);
 
         addChild(mouse);
 
@@ -69,32 +69,37 @@ public class WorldScene extends Scene<MouseEpicGame> {
     @Override
     public void inputKey(int key, int action, int mods) {
         switch (key) {
-            case GLFW.GLFW_KEY_W:
+            case GLFW.GLFW_KEY_UP:
                 if (action == GLFW.GLFW_PRESS) {
                     mouse.setMovingUp(true);
                 } else if (action == GLFW.GLFW_RELEASE) {
                     mouse.setMovingUp(false);
                 }
                 break;
-            case GLFW.GLFW_KEY_S:
+            case GLFW.GLFW_KEY_DOWN:
                 if (action == GLFW.GLFW_PRESS) {
                     mouse.setMovingDown(true);
                 } else if (action == GLFW.GLFW_RELEASE) {
                     mouse.setMovingDown(false);
                 }
                 break;
-            case GLFW.GLFW_KEY_D:
+            case GLFW.GLFW_KEY_RIGHT:
                 if (action == GLFW.GLFW_PRESS) {
                     mouse.setMovingRight(true);
                 } else if (action == GLFW.GLFW_RELEASE) {
                     mouse.setMovingRight(false);
                 }
                 break;
-            case GLFW.GLFW_KEY_A:
+            case GLFW.GLFW_KEY_LEFT:
                 if (action == GLFW.GLFW_PRESS) {
                     mouse.setMovingLeft(true);
                 } else if (action == GLFW.GLFW_RELEASE) {
                     mouse.setMovingLeft(false);
+                }
+                break;
+            case GLFW.GLFW_KEY_E:
+                if (action == GLFW.GLFW_PRESS) {
+                    mouse.useItem();
                 }
                 break;
         }

@@ -44,6 +44,7 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     private List<ShaderTexture> textures = new CopyOnWriteArrayList<>();
 
     private boolean paused = false;
+    private float time = 0;
 
     private G game;
 
@@ -118,6 +119,8 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     }
 
     final public void update(float deltaTime) {
+        time += deltaTime;
+
         if (!isPaused())
             onUpdate(deltaTime);
 
@@ -245,6 +248,10 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
 
     public G getGame() {
         return game;
+    }
+
+    public float getTime() {
+        return time;
     }
 
     public void setPaused(boolean paused) {

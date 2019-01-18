@@ -20,37 +20,26 @@ class NeighborMap {
     public NeighborMap(GameData source, GameDataList choices) {
         TerrainListFactory terrainListFactory = new TerrainListFactory();
 
-        System.out.println();
-        System.out.println("List For: " + source.getString("name"));
-
         // standard
         terrainListFactory.clear();
         terrainListFactory.setChoiceList(choices);
         terrainListFactory.setLeft(source);
         neighborsLeft = new HashSet<>(terrainListFactory.getInstance());
-        System.out.println("Left");
-        neighborsLeft.forEach(d -> System.out.println(d.getString("name")));
 
         terrainListFactory.clear();
         terrainListFactory.setChoiceList(choices);
         terrainListFactory.setRight(source);
         neighborsRight = new HashSet<>(terrainListFactory.getInstance());
-        System.out.println("Left");
-        neighborsRight.forEach(d -> System.out.println(d.getString("name")));
 
         terrainListFactory.clear();
         terrainListFactory.setChoiceList(choices);
         terrainListFactory.setBottom(source);
         neighborsBottom = new HashSet<>(terrainListFactory.getInstance());
-        System.out.println("Bottom");
-        neighborsBottom.forEach(d -> System.out.println(d.getString("name")));
 
         terrainListFactory.clear();
         terrainListFactory.setChoiceList(choices);
         terrainListFactory.setTop(source);
         neighborsTop = new HashSet<>(terrainListFactory.getInstance());
-        System.out.println("Top");
-        neighborsTop.forEach(d -> System.out.println(d.getString("name")));
     }
 
     public HashSet<GameData> getSide(Side side) {
@@ -153,7 +142,6 @@ public class WorldMapGenerator {
         // add sections
         subRegionGameData.ifHas("sections", gds -> gds.asList().forEach(section -> {
 
-            System.out.println(section);
 
             GameDataList sectionMap = section
                     .getList("maps")
@@ -203,13 +191,9 @@ public class WorldMapGenerator {
     }
 
     private static void patchMap(GameDataList[] patchedMap, GameDataList[] subregion, int x, int y, int size) {
-        System.out.println(Arrays.stream(patchedMap).filter(Objects::nonNull).count());
-
         for (int i = 0; i < size; i++) {
             System.arraycopy(subregion, i * size, patchedMap, (x + i) * regionSize + y, size);
         }
-
-        System.out.println(Arrays.stream(patchedMap).filter(Objects::nonNull).count());
     }
 
     private static GameData[] resolveMap(GameDataList[] mapOfPotentials) {// load data

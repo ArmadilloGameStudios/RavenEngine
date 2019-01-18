@@ -364,4 +364,25 @@
     passable: false
 
     weight: 25
+
+    triggers: [{
+        effect: "Freeze",
+        replace_terrain: "Ice"
+    }]
+},
+{
+    name: "Ice",
+    sprite: "sprites/grass.png"
+    animation: "ice",
+
+    left: [],
+    right: [],
+    top: [],
+    bottom: [],
+
+    type: ["Ice"],
+
+    passable: true
+
+    weight: 0
 },

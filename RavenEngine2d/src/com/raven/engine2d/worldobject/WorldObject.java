@@ -316,4 +316,9 @@ public abstract class WorldObject<
         spriteSheet = scene.getEngine().getSpriteSheet(spriteSheetName);
         spriteSheet.load(scene);
     }
+
+    protected void setAnimation(String animationName) {
+        this.animationName = animationName;
+        this.spriteAnimationState.setAnimation(getScene().getEngine().getAnimation(animationName));
+    }
 }

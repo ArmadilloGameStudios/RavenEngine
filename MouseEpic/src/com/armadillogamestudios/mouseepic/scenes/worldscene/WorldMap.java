@@ -14,13 +14,11 @@ public class WorldMap extends WorldObject<WorldScene, Terrain, WorldObject> {
     private Terrain[] map;
     private int size;
 
-    public WorldMap(WorldScene scene, int size) {
+    public WorldMap(WorldScene scene, int size, GameData[] gameDataMap) {
         super(scene);
 
         this.size = size;
         map = new Terrain[size * size];
-
-        GameData[] gameDataMap = WorldMapGenerator.generateMap(size, scene.getRandom());
 
         AtomicInteger i = new AtomicInteger(0);
         Arrays.stream(gameDataMap).forEach(gd -> {
