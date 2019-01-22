@@ -2,10 +2,6 @@ package com.raven.engine.graphics3d.shader;
 
 import com.raven.engine.GameEngine;
 import com.raven.engine.GameProperties;
-import com.raven.engine.graphics3d.shader.Shader;
-import com.raven.engine.graphics3d.shader.WorldShader;
-import com.raven.engine.scene.light.Light;
-import org.lwjgl.opengl.GL43;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
@@ -17,7 +13,6 @@ import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
 import static org.lwjgl.opengl.GL32.glFramebufferTexture;
-import static org.lwjgl.opengl.GL43.GL_STENCIL_COMPONENTS;
 import static org.lwjgl.opengl.GL43.glCopyImageSubData;
 
 /**
@@ -38,7 +33,8 @@ public class WaterShader extends Shader {
             stencil_renderbuffer;
 
     private int
-            texture_color_location,
+            texture_terrain_location,
+            texture_reflect_location,
             texture_depth_location,
             time_location;
 
@@ -51,7 +47,8 @@ public class WaterShader extends Shader {
         glBindAttribLocation(getProgramHandel(), 1, "vertex_color");
         glBindAttribLocation(getProgramHandel(), 2, "vertex_normal");
 
-        texture_color_location = glGetUniformLocation(getProgramHandel(), "colorTexture");
+        texture_terrain_location = glGetUniformLocation(getProgramHandel(), "terrainTexture");
+        texture_reflect_location = glGetUniformLocation(getProgramHandel(), "reflectTexture");
         texture_depth_location = glGetUniformLocation(getProgramHandel(), "depthTexture");
 
         time_location = glGetUniformLocation(getProgramHandel(), "time");
@@ -118,7 +115,8 @@ public class WaterShader extends Shader {
                 GameProperties.getScreenWidth(),
                 GameProperties.getScreenHeight());
 
-        glUniform1i(texture_color_location, LightShader.LIGHT);
+        glUniform1i(texture_terrain_location, LightShader.LIGHT);
+        glUniform1i(texture_reflect_location, WaterReflectionShader.COLOR);
         glUniform1i(texture_depth_location, WorldShader.DEPTH);
 
         float time = GameEngine.getEngine().getSystemTime() / 400000f;

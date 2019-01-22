@@ -264,7 +264,7 @@ public class GameEngine implements Runnable {
     }
 
     public ModelData getModelData(String modelsrc) {
-        return modelDataMap.get(game.getMainDirectory() + File.separator + modelsrc);
+        return modelDataMap.get(game.getMainDirectory() + File.separator + modelsrc.replace("/", File.separator));
     }
 
     // input

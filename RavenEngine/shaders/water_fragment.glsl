@@ -24,7 +24,8 @@ layout (std140) uniform Matrices
 
 layout(location = 0) out vec3 frag_color;
 
-uniform sampler2D colorTexture;
+uniform sampler2D terrainTexture;
+uniform sampler2D reflectTexture;
 uniform sampler2D depthTexture;
 
 uniform float time = 0.0;
@@ -53,9 +54,9 @@ void main(void) {
     unprojected = matrix.inverse_projection * vec4(0, 0, texture(depthTexture, coord2).r, 1.0);
     float ground_camera_depth = (unprojected / unprojected.w).z;
 
-    float camera_depth = water_camera_depth - ground_camera_depth;
+    float ground_water_depth = water_camera_depth - ground_camera_depth;
 //    float ripple_mag = min((camera_depth) * .275, .4);
-    float ripple_mag = min((camera_depth) * 1.675, .5);
+    float ripple_mag = min((ground_water_depth) * 1.675, .5);
 
     vec3 water_uv = normalize(vec3(
         mix(d, e, f) * .03 * distance_smooth * ripple_mag,
@@ -64,13 +65,17 @@ void main(void) {
 
     float refract_depth = texture(depthTexture, coord2 + water_uv.xz * ripple_mag).r;
     vec3 refract_color;
+    vec4 rful = texture(reflectTexture, coord2 - water_uv.xz * ripple_mag).rgba;
+
+    vec3 reflect_color = mix(water_color, rful.rgb, rful.a / 3);
 
     if (refract_depth < gl_FragCoord.z) {
         refract_depth = depthTextureData.z;
-        refract_color = texture(colorTexture, coord2).rgb;
+        refract_color = texture(terrainTexture, coord2).rgb;
 //        frag_color = vec3(1.0);
     } else {
-        refract_color = texture(colorTexture, coord2 + water_uv.xz * ripple_mag).rgb;
+        refract_color =
+            texture(terrainTexture, coord2 + water_uv.xz * ripple_mag).rgb;
 //        frag_color = vec3(0.0);
     }
 
@@ -80,9 +85,9 @@ void main(void) {
 
     float depth = -worldPos.y;
 
-    refract_color = mix(refract_color, water_color, clamp(pow(depth, .5) * .8 + .2, 0.0, 1.0));
+    refract_color = mix(refract_color, reflect_color, clamp(pow(depth, .5) * .8 + .2, 0.0, 1.0));
 
-    frag_color = vec3(refract_color);
+    frag_color = (refract_color);
 
     float waterShininess = 2000;
 
@@ -93,4 +98,5 @@ void main(void) {
     vec3 specularComponent = specularCoefficient * light.color * light.intensity;
 
     frag_color += max(vec3(0.0), specularComponent);
+//    frag_color = vec3(rnful);
 }

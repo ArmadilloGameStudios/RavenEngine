@@ -1,13 +1,7 @@
 <component name="libraryTable">
   <library name="lwjgl">
-    <CLASSES>
-      <root url="file://$USER_HOME$/eclipse/lwjgl" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC />
-    <SOURCES>
-      <root url="file://$USER_HOME$/eclipse/lwjgl" />
-    </SOURCES>
-    <jarDirectory url="file://$USER_HOME$/eclipse/lwjgl" recursive="false" />
-    <jarDirectory url="file://$USER_HOME$/eclipse/lwjgl" recursive="false" type="SOURCES" />
+    <SOURCES />
   </library>
 </component>

@@ -157,6 +157,7 @@ public class GameWindow {
             } else {
                 worldShader = new WorldShader();
                 dirLightShader = new DirectionalLightShader();
+                waterReflectionShader = new WaterReflectionShader();
                 waterShader = new WaterShader(worldShader);
                 combinationShader = new CombinationShader(waterShader);
                 fxaaShader = new FXAAShader();

@@ -113,7 +113,6 @@ public class RandomScene extends Scene {
         for (ModelData data : Bush.getModelData())
             mds.add(data);
 
-
         return mds;
     }
 

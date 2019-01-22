@@ -2,6 +2,7 @@ package com.raven.sunny;
 
 import com.raven.engine.Game;
 import com.raven.engine.GameEngine;
+import com.raven.engine.GameProperties;
 import com.raven.engine.launcher.GameLauncher;
 import com.raven.engine.scene.Scene;
 import com.raven.sunny.scenes.RandomScene;
@@ -12,7 +13,13 @@ import com.raven.sunny.scenes.RandomScene;
 public class SunnyLittleIslandGame extends Game {
 
     public static void main(String[] args) {
-        GameLauncher.Open(new SunnyLittleIslandGame());
+        GameProperties.setMultisampleCount(0);
+        GameProperties.setWaterQuality(1);
+
+        GameProperties.setReflectTerrain(true);
+        GameProperties.setReflectObjects(true);
+
+        GameEngine.Launch(new SunnyLittleIslandGame());
         System.out.println("Lunched");
     }
 

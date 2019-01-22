@@ -51,14 +51,14 @@ public abstract class Scene {
         }
 
         // 4 Draw water
-//        WorldWaterShader worldWaterShader = window.getWorldWaterShader();
-//
-//        worldWaterShader.useProgram();
-//
-//        for (WorldObject o : layerWater.getGameObjectList()) {
-//            Shader.setModelMatrix(o.getModelMatrix());
-//            o.draw4ms();
-//        }
+        WorldWaterShader worldWaterShader = window.getWorldWaterShader();
+
+        worldWaterShader.useProgram();
+
+        for (WorldObject o : layerWater.getGameObjectList()) {
+            Shader.setModelMatrix(o.getModelMatrix());
+            o.draw4ms();
+        }
 
         // Blit World
         worldMSShader.blitComplexValue();
@@ -158,6 +158,20 @@ public abstract class Scene {
                     window.drawQuad();
                     break;
             }
+        }
+
+        // Water Reflection
+        WaterReflectionShader waterReflectionShader = window.getWaterReflectionShader();
+        waterReflectionShader.useProgram();
+
+        for (WorldObject o : layerDetails.getGameObjectList()) {
+            Shader.setModelMatrix(o.getModelMatrix());
+            o.draw4();
+        }
+
+        for (WorldObject o : layerTerrain.getGameObjectList()) {
+            Shader.setModelMatrix(o.getModelMatrix());
+            o.draw4();
         }
 
         // Water

@@ -9,7 +9,7 @@ uniform vec3 id;
 in vec3 color, normal;
 
 void main(void) {
-    frag_color = vec4(color, 0.0);
+    frag_color = vec4(color, 1.0);
     frag_normal = vec4((normalize(normal).xyz) * .5 + .5, 0.0);
 	frag_id = id;
 }

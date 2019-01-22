@@ -23,7 +23,7 @@ public class TerrainMap {
 
     public static Terrain genTerrain(Scene scene, int width, int height) {
         // Create starting vertices
-        Random r = new Random(0);
+        Random r = new Random();
         // int seed = -377377594;
         // int seed = -699290749;
         int seed = r.nextInt();
