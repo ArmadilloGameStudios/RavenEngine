@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class Hack implements GameDatable {
 
-    private int team, hp, shield, resistance;
+    private int team, damage, hp, shield, resistance, piercing, maxRange;
     private boolean instant, transferable;
     private Pawn hacker, pawn;
 
@@ -26,6 +26,12 @@ public class Hack implements GameDatable {
             this.shield = ability.shield;
         if (ability.resistance != null)
             this.resistance = ability.resistance;
+        if (ability.piercing != null)
+            this.piercing = ability.piercing;
+        if (ability.damage != null)
+            this.damage = ability.damage;
+        if (ability.maxRange != null)
+            this.maxRange = ability.maxRange;
         this.instant = ability.instant_hack;
         this.transferable = ability.transferable;
         if (this.transferable) initTransferable();
@@ -41,6 +47,10 @@ public class Hack implements GameDatable {
         this.team = data.getInteger("team");
         this.hp = data.getInteger("hp");
         this.shield = data.getInteger("shield");
+        this.resistance = data.getInteger("resistance");
+        this.damage = data.getInteger("damage");
+        this.piercing = data.getInteger("piercing");
+        this.maxRange = data.getInteger("max_range");
         this.instant = data.getBoolean("instant");
         this.transferable = data.getBoolean("transferable");
         if (this.transferable) initTransferable();
@@ -54,6 +64,10 @@ public class Hack implements GameDatable {
         map.put("team", new GameData(team));
         map.put("hp", new GameData(hp));
         map.put("shield", new GameData(shield));
+        map.put("resistance", new GameData(resistance));
+        map.put("damage", new GameData(damage));
+        map.put("piercing", new GameData(piercing));
+        map.put("max_range", new GameData(maxRange));
         map.put("instant", new GameData(instant));
         map.put("transferable", new GameData(transferable));
 
@@ -93,6 +107,18 @@ public class Hack implements GameDatable {
 
     public int getResistance() {
         return resistance;
+    }
+
+    public int getPiercing() {
+        return piercing;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public int getMaxRange() {
+        return maxRange;
     }
 
     public void setInstant(boolean instant) {

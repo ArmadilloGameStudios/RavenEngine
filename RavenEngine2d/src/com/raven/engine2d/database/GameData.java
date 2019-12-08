@@ -98,9 +98,14 @@ public class GameData implements GameDatable {
     }
 
     public GameData getData(String prop) {
+        GameData data = null;
+
         if (isData())
-            return asMap().get(prop.toLowerCase());
-        return null;
+            data = asMap().get(prop.toLowerCase());
+
+        // if (data == null) {}
+
+        return data;
     }
 
     public boolean isList() {

@@ -52,7 +52,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             maxShield, remainingShield, bonusShield, bonusShieldLoss,
             maxMovement, remainingMovement,
             resistance, bonusResistance, maxAttacks = 1, remainingAttacks,
-            bonusPiercing, bonusMinRange, bonusMaxRange, bonusMovement,
+            bonusDamage, bonusPiercing, bonusMinRange, bonusMaxRange, bonusMovement,
             tempResistance = 0, tempDamage = 0, tempRange = 0, tempPiercing = 0,
             xpModifier = 1, xpGain;
     private Hack hack;
@@ -105,6 +105,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
 
         gameData.ifHas("remaining_movement", m -> remainingMovement = m.asInteger());
         gameData.ifHas("resistance", m -> resistance = m.asInteger());
+        gameData.ifHas("bonus_damage", m -> bonusDamage = m.asInteger());
         gameData.ifHas("bonus_piercing", m -> bonusPiercing = m.asInteger());
         gameData.ifHas("bonus_min_range", m -> bonusMinRange = m.asInteger());
         gameData.ifHas("bonus_max_range", m -> bonusMaxRange = m.asInteger());
@@ -194,6 +195,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         map.put("movement", new GameData(maxMovement));
         map.put("remaining_movement", new GameData(remainingMovement));
         map.put("resistance", new GameData(resistance));
+        map.put("bonus_damage", new GameData(bonusDamage));
         map.put("bonus_piercing", new GameData(bonusPiercing));
         map.put("bonus_min_range", new GameData(bonusMinRange));
         map.put("bonus_max_range", new GameData(bonusMaxRange));
@@ -379,13 +381,14 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
         return resistance + bonusResistance + tempResistance;
     }
 
-    public int getTempDamage() {
-        return tempDamage;
+    public int getBonusDamage() {
+        return bonusDamage + tempDamage;
     }
 
     public int getBonusResistance() {
         return bonusResistance + tempResistance;
     }
+
 
     public int getBonusPiercing() {
         return bonusPiercing + tempPiercing;
@@ -536,15 +539,13 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             abilities.stream()
                     .filter(a -> a.name.equals(ability.upgrade))
                     .forEach(a -> {
-                        System.out.println(ability.name);
-                        System.out.println(ability);
                         if (ability.size != null) {
                             a.size -= ability.size;
                         }
                         if (ability.damage != null) {
                             a.damage -= ability.damage;
                         }
-                        if (ability.uses != null) { // TODO
+                        if (ability.uses != null) {
                             a.uses -= ability.uses;
                             a.remainingUses -= ability.uses;
                         }
@@ -622,6 +623,10 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
                 abilities.stream()
                         .filter(ab -> ab.heal)
                         .forEach(this::doAbilityAffect);
+            }
+            if (a.dismantle) {
+                getScene().removePawn(this);
+                getParent().removePawn();
             }
         }
     }
@@ -917,7 +922,7 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
     public void attack(Pawn target, int damage, int piercing, int shots, ActionFinishHandler onAttackDone) {
         reduceAttacks();
 
-        int dealtDamage = target.getDamage(damage, piercing, shots, tempDamage);
+        int dealtDamage = target.getDamage(damage, piercing, shots, getBonusDamage());
         tempDamage = 0;
         tempPiercing = 0;
         tempRange = 0;
@@ -1030,6 +1035,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             bonusHp += hack.getHP();
             bonusShield += hack.getShield();
             bonusResistance += hack.getResistance();
+            bonusPiercing += hack.getPiercing();
+            bonusMaxRange += hack.getMaxRange();
+            bonusDamage += hack.getDamage();
 
             if (hack.isInstant()) {
                 ready();
@@ -1048,6 +1056,9 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             bonusHp -= this.hack.getHP();
             bonusShield -= this.hack.getShield();
             bonusResistance -= this.hack.getResistance();
+            bonusPiercing -= this.hack.getPiercing();
+            bonusMaxRange -= this.hack.getMaxRange();
+            bonusDamage -= hack.getDamage();
 
             setReady(false);
 
@@ -1220,8 +1231,8 @@ public class Pawn extends WorldObject<BattleScene, Terrain, WorldObject>
             }
 
             details.damage = Integer.toString(getWeapon().getDamage());
-            if (tempDamage != 0) {
-                details.damage += "+" + tempDamage;
+            if (getBonusDamage() != 0) {
+                details.damage += "+" + getBonusDamage();
             }
             details.piercing = Integer.toString(getWeapon().getPiercing());
             if (getBonusPiercing() > 0) {

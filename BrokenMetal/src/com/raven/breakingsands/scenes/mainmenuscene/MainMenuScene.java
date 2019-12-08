@@ -87,20 +87,6 @@ public class MainMenuScene extends Scene<BrokenMetalGame> {
         container.addChild(exitBtn);
 
         container.pack();
-
-        // version
-        UIUpperRightContainer<MainMenuScene> rightContainer = new UIUpperRightContainer<>(this);
-        UILabel<MainMenuScene> version = new UILabel<>(this, "beta - 0.3", 60, 11);
-        rightContainer.addChild(version);
-        UIFont font = version.getFont();
-        font.setSide(UIFont.Side.RIGHT);
-        font.setSmall(true);
-        version.load();
-        addChild(rightContainer);
-        rightContainer.pack();
-
-        // Music
-//        getGame().playSong("Chapter 50.wav");
     }
 
     @Override

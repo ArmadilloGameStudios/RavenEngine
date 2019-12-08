@@ -515,6 +515,10 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
     public void removePawn(Pawn pawn) {
         removeUIDetails(pawn.getUIDetailText());
         pawns.remove(pawn);
+
+        if (getActivePawn() == pawn) {
+            setActivePawn(null, false);
+        }
     }
 
     public void removeUIDetails(UIDetailText object) {
@@ -1227,6 +1231,19 @@ public class BattleScene extends Scene<BrokenMetalGame> implements GameDatable {
         } else if (activeAbility.heal) {
             Pawn target = terrain.getPawn();
             target.heal(activeAbility.restore);
+            setActiveAbility(null);
+            setActivePawn(activePawn, true);
+        } else if (activeAbility.build_turret) {
+            Pawn p = new Pawn(this, GameDatabase.all("pawn").stream().filter(d -> d.getString("name").equals("turret")).findFirst().get());
+
+            p.hack(new Hack(p, activePawn, 0, activeAbility));
+
+            terrain.setPawn(p);
+            pawns.add(p);
+
+            p.setUIDetailText(new UIDetailText(this, p));
+            p.updateDetailText();
+
             setActiveAbility(null);
             setActivePawn(activePawn, true);
         } else {

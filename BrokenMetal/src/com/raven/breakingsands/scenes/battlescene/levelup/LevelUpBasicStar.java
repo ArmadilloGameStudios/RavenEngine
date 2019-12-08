@@ -25,7 +25,7 @@ public class LevelUpBasicStar extends LevelUpStar {
             abilityButton10, abilityButton11,
             classButton1, classButton2,
             classButton3, classButton4,
-            classButton5;
+            classButton5, classButton6;
 
     private List<LevelUpHexButton> abilityButtonList = new ArrayList<>();
     private List<LevelUpHexButton> classButtonList = new ArrayList<>();
@@ -139,9 +139,13 @@ public class LevelUpBasicStar extends LevelUpStar {
 
         classButton5 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.CLASS);
         classButton5.setY(40);
-//        classButton5.setX(-30);
         addChild(classButton5);
         classButtonList.add(classButton5);
+
+        classButton6 = new LevelUpHexButton(uiLevelUp, LevelUpHexButton.Type.CLASS);
+        classButton6.setY(-40);
+        addChild(classButton6);
+        classButtonList.add(classButton6);
 
         // Connections
 //        addChild(new LevelUpHexConnection(getScene(), startButton, abilityButton1));
@@ -175,6 +179,8 @@ public class LevelUpBasicStar extends LevelUpStar {
         addChild(new LevelUpHexConnection(getScene(), classButton1, abilityButton8));
         addChild(new LevelUpHexConnection(getScene(), classButton2, abilityButton8));
         addChild(new LevelUpHexConnection(getScene(), classButton2, abilityButton9));
+        addChild(new LevelUpHexConnection(getScene(), classButton6, abilityButton9));
+        addChild(new LevelUpHexConnection(getScene(), classButton6, abilityButton10));
         addChild(new LevelUpHexConnection(getScene(), classButton3, abilityButton10));
         addChild(new LevelUpHexConnection(getScene(), classButton3, abilityButton11));
         addChild(new LevelUpHexConnection(getScene(), classButton4, abilityButton11));
@@ -261,7 +267,7 @@ public class LevelUpBasicStar extends LevelUpStar {
         // classes
         List<GameData> classes = new GameDataList(GameDatabase.all("classes"));
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             int index = r.nextInt(classes.size());
             GameData c = classes.remove(index);
 

@@ -202,8 +202,7 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
 
     @Override
     public void handleMouseEnter() {
-        if (!getScene().isPaused()) {
-//            getScene().showToolTipSrc("damage");
+        if (!getScene().isPaused() && getScene().getActiveTeam() == 0) {
 
             if (BattleScene.stateIsSelect(getScene().getState(), true)) {
                 if (pawn != null) {
@@ -478,7 +477,6 @@ public class Terrain extends WorldObject<BattleScene, Structure, WorldObject>
                 }
                 break;
         }
-
 
         selectHighlight();
     }

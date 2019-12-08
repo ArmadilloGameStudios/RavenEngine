@@ -10,9 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.ATTACKING;
-import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.MOVING;
-import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.SELECT_DEFAULT;
+import static com.raven.breakingsands.scenes.battlescene.BattleScene.State.*;
 
 public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
 
@@ -540,10 +538,7 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
             btnSwitch.setActive(btnSwitch.getActive() && pawn == this.pawn);
             btnMove.setDisable(!pawn.canMove());
             btnMove.setActive(btnMove.getActive() && pawn == this.pawn);
-//            btnUndo.setDisable(false);
-//            btnUndo.setActive(false);
             btnCancel.setDisable(false);
-//            btnCancel.setActive(false);
 
             if (pawn.canLevel()) {
                 btnLevel.setDisable(false);
@@ -681,7 +676,8 @@ public class UIActionSelect extends UIBottomCenterContainer<BattleScene> {
                         }
 
                         pawn.doAbilityAffect(ability);
-                        pawn.updateDetailText();
+                        if (pawn != null)
+                            pawn.updateDetailText();
 
                         getScene().updateActionSelect();
                         getScene().setActivePawn(pawn, true);

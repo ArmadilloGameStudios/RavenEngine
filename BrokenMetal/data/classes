@@ -40,4 +40,12 @@
     bonus: {
         ability: "Power Shot",
     }
+},
+{
+    name: "builder",
+    desc: "able to build a stationary turret.\n\ngain ability: build turret"
+
+    bonus: {
+        ability: "Build Turret",
+    }
 }

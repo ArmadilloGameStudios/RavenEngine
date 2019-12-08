@@ -752,3 +752,131 @@
 
     class: "gunner",
 },
+{
+    name: "Build Turret",
+    desc: "build turret",
+
+    build_turret: true
+
+    button_icon: "sprites/icon build.png"
+
+    type: "button",
+    target: "empty",
+
+    use_regain_type: "level",
+    uses: 1,
+
+    size: 1,
+
+    action: true,
+
+    class: "builder",
+},
+{
+    name: "x2 Build Turret",
+    desc: "Can use Build Turret twice a floor",
+    icon: "sprites/ability hex twice.png",
+
+    type: "self",
+    upgrade: "Build Turret"
+
+    uses: 1
+
+    class: "builder",
+
+    action: true,
+},
+{
+    name: "Throw Turret",
+    desc: "Throw the turret up to 4 spaces",
+    icon: "sprites/ability hex improve.png",
+
+    type: "self",
+    upgrade: "Build Turret"
+
+    size: 3,
+
+    class: "builder",
+
+    action: true,
+},
+{
+    name: "Summon Turret",
+    desc: "Summon the turret on any empty space",
+    icon: "sprites/ability hex recall.png",
+
+    type: "self",
+    replace: "Throw Turret",
+    upgrade: "Build Turret"
+
+    passes_wall: true
+
+    size: -1,
+
+    class: "builder",
+
+    action: true,
+},
+{
+    name: "Defensive Turret",
+    desc: "make the turret stronger\n+5 hp\n+2 resistance",
+    icon: "sprites/ability hex protection.png",
+
+    type: "self",
+
+    upgrade: "Build Turret"
+
+    hp: 5,
+    resistance: 2,
+
+    class: "builder",
+
+    action: true,
+},
+{
+    name: "Quick Build Turret",
+    desc: "able to attack after building the turret",
+    icon: "sprites/ability hex fast.png",
+
+    type: "self",
+
+    instant_hack: true,
+    remain: true,
+
+    upgrade: "Build Turret"
+
+    class: "builder",
+
+    action: true,
+},
+{
+    name: "Destructive Turret",
+    desc: "make the turret stronger\n+2 damage\n+3 piercing",
+    icon: "sprites/ability hex accurate.png",
+
+    type: "self",
+
+    damage: 2,
+    piercing: 3,
+
+    upgrade: "Build Turret"
+
+    class: "builder",
+
+    action: true,
+},
+{
+    name: "Ranged Turret",
+    desc: "improve turret range\n+4 range",
+    icon: "sprites/ability hex improve.png",
+
+    type: "self",
+
+    upgrade: "Build Turret"
+
+    max_range: 4,
+
+    class: "builder",
+
+    action: true,
+},

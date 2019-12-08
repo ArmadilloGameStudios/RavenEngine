@@ -90,7 +90,7 @@ public class TerrainMessage extends WorldTextObject<BattleScene, Terrain> {
 
             if (attacker != null) {
                 Weapon w = Optional.ofNullable(getScene().getTempWeapon()).orElse(attacker.getWeapon());
-                int damage = pawn.getDamage(w.getDamage(), w.getPiercing() + attacker.getBonusPiercing(), w.getShots(), attacker.getTempDamage());
+                int damage = pawn.getDamage(w.getDamage(), w.getPiercing() + attacker.getBonusPiercing(), w.getShots(), attacker.getBonusDamage());
 
                 if (damage >= pawn.getRemainingHitPoints() + pawn.getRemainingShield()) {
                     setText("kill -" + damage);
