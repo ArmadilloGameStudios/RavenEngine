@@ -1,0 +1,63 @@
+{
+    name: "idle",
+    width: 16,
+    height: 16,
+    x: 96,
+    y: 0,
+
+    frames: [{time: 1000}]
+},
+{
+    name: "idle1",
+    width: 16,
+    height: 16,
+    x: 96,
+    y: 0,
+
+    frames: [{time: 1000}]
+},
+{
+    name: "idle2",
+    width: 16,
+    height: 16,
+    x: 112,
+    y: 0,
+
+    frames: [{time: 1000}]
+},
+{
+    name: "idle3",
+    width: 16,
+    height: 16,
+    x: 96,
+    y: 16,
+
+    frames: [{time: 1000}]
+},
+{
+    name: "idle4",
+    width: 16,
+    height: 16,
+    x: 112,
+    y: 16,
+
+    frames: [{time: 1000}]
+},
+{
+    name: "idle5",
+    width: 16,
+    height: 16,
+    x: 96,
+    y: 80,
+
+    frames: [{time: 1000}]
+},
+{
+    name: "idle6",
+    width: 16,
+    height: 16,
+    x: 112,
+    y: 80,
+
+    frames: [{time: 1000}]
+},

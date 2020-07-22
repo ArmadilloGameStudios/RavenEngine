@@ -1,0 +1,136 @@
+{
+    name: "idle",
+    width: 16,
+    height: 16,
+    x: 96,
+    y: 32,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle1",
+    width: 16,
+    height: 16,
+    x: 96,
+    y: 32,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle2",
+    width: 16,
+    height: 16,
+    x: 112,
+    y: 32,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle3",
+    width: 16,
+    height: 16,
+    x: 96,
+    y: 48,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle4",
+    width: 16,
+    height: 16,
+    x: 112,
+    y: 48,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle5",
+    width: 16,
+    height: 16,
+    x: 96,
+    y: 64,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle6",
+    width: 16,
+    height: 16,
+    x: 112,
+    y: 64,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle7",
+    width: 16,
+    height: 16,
+    x: 48,
+    y: 32,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle8",
+    width: 16,
+    height: 16,
+    x: 64,
+    y: 32,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle9",
+    width: 16,
+    height: 16,
+    x: 48,
+    y: 48,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle10",
+    width: 16,
+    height: 16,
+    x: 64,
+    y: 48,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle11",
+    width: 16,
+    height: 16,
+    x: 80,
+    y: 32,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle12",
+    width: 16,
+    height: 16,
+    x: 80,
+    y: 48,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle13",
+    width: 16,
+    height: 16,
+    x: 80,
+    y: 64,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle14",
+    width: 16,
+    height: 16,
+    x: 80,
+    y: 80,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle15",
+    width: 16,
+    height: 16,
+    x: 48,
+    y: 64,
+    frames: [{ time: 1000 }]
+},
+{
+    name: "idle16",
+    width: 16,
+    height: 16,
+    x: 64,
+    y: 64,
+    frames: [{ time: 1000 }]
+},

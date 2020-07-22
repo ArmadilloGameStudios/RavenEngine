@@ -2,7 +2,6 @@
     name: "amateur",
     sprite: "sprites/character1.png",
     animation: "character",
-    standing: true,
     team: 0,
     hp: 5,
     shield: 2
@@ -16,7 +15,6 @@
     name: "amateur",
     sprite: "sprites/character2.png",
     animation: "character",
-    standing: true,
     team: 0,
     hp: 5,
     shield: 2
@@ -30,7 +28,6 @@
     name: "amateur",
     sprite: "sprites/character3.png",
     animation: "character",
-    standing: true,
     team: 0,
     hp: 5,
     shield: 2
@@ -44,7 +41,6 @@
     name: "amateur",
     sprite: "sprites/character4.png",
     animation: "character",
-    standing: true,
     team: 0,
     hp: 5,
     shield: 2
@@ -53,6 +49,38 @@
     weapon: "Std. Pistol",
 
     weight: 100,
+},
+{
+    name: "turret",
+    sprite: "sprites/turret.png",
+    animation: "turret",
+    team: 1,
+    hp: 5,
+    shield: 0,
+    resistance: 0,
+    movement: 0,
+    weapon: "Cannon",
+
+    abilities: [
+        {
+            name: "dismantle",
+            desc: "removes the turret.",
+
+            icon: "sprites/ability hex accurate.png",
+            button_icon: "sprites/icon focus attack.png"
+
+            type: "button",
+            target: "self",
+
+            dismantle: true,
+
+            uses: 1,
+
+            action: true,
+        }
+    ]
+
+    weight: 50,
 },
 {
     name: "Guardian",

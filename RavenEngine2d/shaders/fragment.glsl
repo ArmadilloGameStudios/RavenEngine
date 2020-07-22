@@ -6,6 +6,7 @@ layout(location = 1) out vec3 frag_id;
 uniform sampler2D spriteSheet;
 uniform vec3 id;
 uniform float z;
+uniform float fade;
 uniform vec4 highlight;
 
 in vec2 texture_coords;
@@ -20,7 +21,7 @@ void main() {
 
     float part = min(1, dot(sprite.xyz, vec3(.6)));
 
-    vec3 color = mix(sprite.rgb, highlight.xyz, highlight.a * part);
+    vec3 color = mix(sprite.rgb, highlight.xyz, highlight.a * part) * fade;
 
     frag_color = vec4(color, sprite.a);
 

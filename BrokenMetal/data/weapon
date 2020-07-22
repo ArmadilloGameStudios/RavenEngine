@@ -584,3 +584,19 @@
 
     tags: [ ],
 },
+{
+    name: "Cannon",
+    type: "ranged",
+
+    audio: {
+        attack: "guard_drone_attack.wav"
+    },
+
+    damage: 3,
+    range: 4,
+    piercing: 2,
+    style: "straight",
+    effect: "blue disk",
+
+    tags: [ ],
+}
