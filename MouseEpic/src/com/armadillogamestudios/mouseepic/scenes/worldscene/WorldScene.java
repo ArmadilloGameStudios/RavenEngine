@@ -3,12 +3,12 @@ package com.armadillogamestudios.mouseepic.scenes.worldscene;
 import com.armadillogamestudios.mouseepic.MouseEpicGame;
 import com.armadillogamestudios.mouseepic.scenes.worldscene.entity.MouseEntity;
 import com.armadillogamestudios.mouseepic.scenes.worldscene.terrain.Terrain;
-import com.raven.engine2d.database.GameData;
-import com.raven.engine2d.graphics2d.DrawStyle;
-import com.raven.engine2d.graphics2d.shader.ShaderTexture;
-import com.raven.engine2d.scene.Scene;
-import com.raven.engine2d.util.math.Vector2f;
-import com.raven.engine2d.util.math.Vector3f;
+import com.armadillogamestudios.engine2d.database.GameData;
+import com.armadillogamestudios.engine2d.graphics2d.DrawStyle;
+import com.armadillogamestudios.engine2d.graphics2d.shader.ShaderTexture;
+import com.armadillogamestudios.engine2d.scene.Scene;
+import com.armadillogamestudios.engine2d.util.math.Vector2f;
+import com.armadillogamestudios.engine2d.util.math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
@@ -69,35 +69,35 @@ public class WorldScene extends Scene<MouseEpicGame> {
     @Override
     public void inputKey(int key, int action, int mods) {
         switch (key) {
-            case GLFW.GLFW_KEY_UP:
+            case GLFW.GLFW_KEY_W:
                 if (action == GLFW.GLFW_PRESS) {
                     mouse.setMovingUp(true);
                 } else if (action == GLFW.GLFW_RELEASE) {
                     mouse.setMovingUp(false);
                 }
                 break;
-            case GLFW.GLFW_KEY_DOWN:
+            case GLFW.GLFW_KEY_S:
                 if (action == GLFW.GLFW_PRESS) {
                     mouse.setMovingDown(true);
                 } else if (action == GLFW.GLFW_RELEASE) {
                     mouse.setMovingDown(false);
                 }
                 break;
-            case GLFW.GLFW_KEY_RIGHT:
+            case GLFW.GLFW_KEY_D:
                 if (action == GLFW.GLFW_PRESS) {
                     mouse.setMovingRight(true);
                 } else if (action == GLFW.GLFW_RELEASE) {
                     mouse.setMovingRight(false);
                 }
                 break;
-            case GLFW.GLFW_KEY_LEFT:
+            case GLFW.GLFW_KEY_A:
                 if (action == GLFW.GLFW_PRESS) {
                     mouse.setMovingLeft(true);
                 } else if (action == GLFW.GLFW_RELEASE) {
                     mouse.setMovingLeft(false);
                 }
                 break;
-            case GLFW.GLFW_KEY_E:
+            case GLFW.GLFW_KEY_SPACE:
                 if (action == GLFW.GLFW_PRESS) {
                     mouse.useItem();
                 }

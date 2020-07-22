@@ -1,10 +1,10 @@
 package com.armadillogamestudios.mouseepic;
 
 import com.armadillogamestudios.mouseepic.scenes.LoadWorldScene;
-import com.raven.engine2d.Game;
-import com.raven.engine2d.GameEngine;
-import com.raven.engine2d.GameProperties;
-import com.raven.engine2d.scene.Scene;
+import com.armadillogamestudios.engine2d.Game;
+import com.armadillogamestudios.engine2d.GameEngine;
+import com.armadillogamestudios.engine2d.GameProperties;
+import com.armadillogamestudios.engine2d.scene.Scene;
 
 public class MouseEpicGame extends Game<MouseEpicGame> {
 

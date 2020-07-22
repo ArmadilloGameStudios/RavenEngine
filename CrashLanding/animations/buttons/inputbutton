@@ -1,0 +1,18 @@
+{
+    "name": "idle",
+    "width": 300,
+    "height": 32,
+    "frames": [{ "time": 1000, "y": 0 }]
+},
+{
+    "name": "hover",
+    "width": 300,
+    "height": 32,
+    "frames": [{ "time": 1000, "y": 32 }]
+},
+{
+    "name": "disable",
+    "width": 300,
+    "height": 32,
+    "frames": [{ "time": 1000, "y": 64 }]
+}

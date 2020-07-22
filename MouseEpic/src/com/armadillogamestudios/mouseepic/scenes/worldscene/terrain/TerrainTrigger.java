@@ -1,6 +1,6 @@
 package com.armadillogamestudios.mouseepic.scenes.worldscene.terrain;
 
-import com.raven.engine2d.database.GameData;
+import com.armadillogamestudios.engine2d.database.GameData;
 
 public class TerrainTrigger {
     public String effect;

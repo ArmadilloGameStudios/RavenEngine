@@ -1,9 +1,9 @@
 package com.armadillogamestudios.mouseepic.scenes.worldscene;
 
 import com.armadillogamestudios.mouseepic.scenes.worldscene.terrain.Terrain;
-import com.raven.engine2d.database.GameData;
-import com.raven.engine2d.scene.Layer;
-import com.raven.engine2d.worldobject.WorldObject;
+import com.armadillogamestudios.engine2d.database.GameData;
+import com.armadillogamestudios.engine2d.scene.Layer;
+import com.armadillogamestudios.engine2d.worldobject.WorldObject;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;

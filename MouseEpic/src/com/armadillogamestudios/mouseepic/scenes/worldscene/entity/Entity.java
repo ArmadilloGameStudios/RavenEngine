@@ -3,10 +3,10 @@ package com.armadillogamestudios.mouseepic.scenes.worldscene.entity;
 import com.armadillogamestudios.mouseepic.scenes.worldscene.WorldMap;
 import com.armadillogamestudios.mouseepic.scenes.worldscene.WorldScene;
 import com.armadillogamestudios.mouseepic.scenes.worldscene.terrain.Terrain;
-import com.raven.engine2d.database.GameData;
-import com.raven.engine2d.util.math.Vector2f;
-import com.raven.engine2d.util.math.Vector4f;
-import com.raven.engine2d.worldobject.WorldObject;
+import com.armadillogamestudios.engine2d.database.GameData;
+import com.armadillogamestudios.engine2d.util.math.Vector2f;
+import com.armadillogamestudios.engine2d.util.math.Vector4f;
+import com.armadillogamestudios.engine2d.worldobject.WorldObject;
 
 import java.util.Objects;
 import java.util.stream.Stream;

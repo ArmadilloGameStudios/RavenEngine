@@ -1,10 +1,10 @@
 package com.armadillogamestudios.mouseepic.scenes.worldscene;
 
 import com.armadillogamestudios.mouseepic.scenes.worldscene.terrain.TerrainListFactory;
-import com.raven.engine2d.database.GameData;
-import com.raven.engine2d.database.GameDataList;
-import com.raven.engine2d.database.GameDataTable;
-import com.raven.engine2d.database.GameDatabase;
+import com.armadillogamestudios.engine2d.database.GameData;
+import com.armadillogamestudios.engine2d.database.GameDataList;
+import com.armadillogamestudios.engine2d.database.GameDataTable;
+import com.armadillogamestudios.engine2d.database.GameDatabase;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -92,11 +92,20 @@ public class WorldMapGenerator {
         for (int x = 0; x < c; x++) {
             for (int y = 0; y < c; y++) {
                 GameDataList[] subregion;
-                if (random.nextInt(2) == 0) {
-                    subregion = generateSubRegion("pond");
-                } else {
-                    subregion = generateSubRegion("forrest");
+
+                switch (random.nextInt(3)) {
+                    default:
+                    case 0:
+                        subregion = generateSubRegion("plane");
+                        break;
+                    case 1:
+                        subregion = generateSubRegion("plane");
+                        break;
+                    case 2:
+                        subregion = generateSubRegion("plane");
+                        break;
                 }
+
                 patchMap(patchedMap, subregion, x * s, y * s, s);
             }
         }
@@ -414,6 +423,7 @@ public class WorldMapGenerator {
         GameDataList list = new GameDataList(GameDatabase.all("terrain"));
         rule.ifHas("strict", r -> list.removeIf(d -> !d.getString("name").equals(r.asString())));
         rule.ifHas("type", r -> list.removeIf(d -> d.getList("type").stream().noneMatch(t -> t.asString().equals(r.asString()))));
+        rule.ifHas("types", l -> list.removeIf(d -> d.getList("type").stream().noneMatch(t -> l.asList().stream().anyMatch(r -> r.asString().equals(t.asString())))));
 
         return list;
     }
