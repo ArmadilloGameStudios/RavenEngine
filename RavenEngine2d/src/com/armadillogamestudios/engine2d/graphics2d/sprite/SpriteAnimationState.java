@@ -12,16 +12,16 @@ public class SpriteAnimationState {
     private SpriteAnimationAction activeAction;
     private SpriteAnimationFrame activeFrame;
 
-    private List<ActionFinishHandler> actionFinishHandlers = new ArrayList<>();
-    private List<ActionFinishHandler> actionFinishHandlersOverflow = new ArrayList<>();
+    private final List<ActionFinishHandler> actionFinishHandlers = new ArrayList<>();
+    private final List<ActionFinishHandler> actionFinishHandlersOverflow = new ArrayList<>();
 
     private float time = 0;
     private boolean flip = false;
     private boolean processing;
-    private GameObject<?, ?, ?> gameObject;
+    private final GameObject<?> gameObject;
     private String idleAction = "idle";
 
-    public SpriteAnimationState(GameObject<?, ?, ?> gameObject, SpriteAnimation animation) {
+    public SpriteAnimationState(GameObject<?> gameObject, SpriteAnimation animation) {
         this.gameObject = gameObject;
         this.animation = animation;
         this.activeAction = animation.getAction(idleAction);

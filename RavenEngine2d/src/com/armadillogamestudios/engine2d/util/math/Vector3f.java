@@ -218,4 +218,10 @@ public class Vector3f {
     public String toString() {
         return "" + x + ", " + y + ", " + z;
     }
+
+    public void set(Vector3f color) {
+        this.x = color.x;
+        this.y = color.y;
+        this.z = color.z;
+    }
 }

@@ -1,10 +1,10 @@
 package com.raven.sunny.terrain;
 
-import com.raven.engine.graphics3d.model.ModelData;
-import com.raven.engine.graphics3d.model.VertexData;
+import com.raven.engine.graphics3d.ModelData;
+import com.raven.engine.graphics3d.VertexData;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.util.SimplexNoise;
-import com.raven.engine.util.math.Vector3f;
+import com.raven.engine.util.Vector3f;
 import com.raven.engine.worldobject.WorldObject;
 import com.raven.sunny.Bush;
 import com.raven.sunny.Tree;

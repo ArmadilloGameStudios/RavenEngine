@@ -7,7 +7,7 @@ import com.armadillogamestudios.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.armadillogamestudios.engine2d.ui.*;
 import com.armadillogamestudios.engine2d.ui.container.UIContainer;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
-import com.armadillogamestudios.engine2d.worldobject.MouseHandler;
+import com.armadillogamestudios.engine2d.input.MouseHandler;
 
 import java.util.HashMap;
 import java.util.Map;

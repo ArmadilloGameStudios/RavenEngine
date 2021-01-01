@@ -1,22 +1,24 @@
 package com.raven.engine.scene;
 
 import com.raven.engine.GameProperties;
-import com.raven.engine.util.math.Matrix4f;
+import com.raven.engine.util.Matrix4f;
+import com.raven.engine.util.Vector3f;
 
 /**
  * Created by cookedbird on 11/15/17.
  */
 public class Camera {
-    float x, y, zoom = -30f, zoomMin = -2f, zoomMax = -50f, xr, yr = 40, yrMin = 25f, yrMax = 85;
-    float xs = x, ys = y, zooms = zoom, xrs = xr, yrs = yr, near = 2f, far = 200f, height = 0f;
-    private boolean interactable = true;
+    float x, y, zoom = -30f, zoomMin = -25f, zoomMax = -50f, xr, yr = 40, yrMin = 25f, yrMax = 85;
+    float xs = x, ys = y, zooms = zoom, xrs = xr, yrs = yr;
 
     private Matrix4f viewMatrix = new Matrix4f();
-    private Matrix4f projectionMatrix = new Matrix4f();
+    private Matrix4f projectionMatrix;
     private Matrix4f inverseProjectionViewMatrix = new Matrix4f();
 
     public Camera() {
-        updateProjectionMatrix();
+        projectionMatrix = Matrix4f.perspective(60f, ((float) GameProperties.getScreenWidth())
+                / ((float) GameProperties.getScreenHeight()), 2f, 200.0f);
+
         updateViewMatrix();
     }
 
@@ -52,39 +54,21 @@ public class Camera {
                 -zoom * .001f;
     }
 
-    public void setPosition(float x, float y) {
-        this.x = -x;
-        this.y = -y;
-    }
-
-    public void setHeight(float height) {
-        this.height = height;
-    }
-
-    private Matrix4f tempMat = new Matrix4f();
+    // has 'memory leak'
     private void updateViewMatrix() {
         // view
         viewMatrix.identity();
-        tempMat.identity();
 
-        viewMatrix.translate(0, 0, zooms, tempMat);
-        tempMat.rotate(yrs, 1f, 0f, 0f, viewMatrix);
+        viewMatrix.translate(0, 0, zooms);
+        viewMatrix.rotate(yrs, 1f, 0f, 0f);
 
-        viewMatrix.rotate(xrs, 0f, 1f, 0f, tempMat);
-        tempMat.translate(xs, height, ys, viewMatrix);
+        viewMatrix.rotate(xrs, 0f, 1f, 0f);
+        viewMatrix.translate(xs, 0, ys);
 
         // IPV
         inverseProjectionViewMatrix.identity();
-        tempMat.identity();
-
-        tempMat.multiply(projectionMatrix, inverseProjectionViewMatrix);
-        inverseProjectionViewMatrix.multiply(viewMatrix, tempMat);
-        tempMat.invert(inverseProjectionViewMatrix);
-    }
-
-    private void updateProjectionMatrix() {
-        Matrix4f.perspective(60f, ((float) GameProperties.getScreenWidth())
-                / ((float) GameProperties.getScreenHeight()), near, far, projectionMatrix);
+        inverseProjectionViewMatrix = inverseProjectionViewMatrix.multiply(projectionMatrix).multiply(viewMatrix);
+        inverseProjectionViewMatrix.invert();
     }
 
     public void update(float deltaTime) {
@@ -101,45 +85,5 @@ public class Camera {
 
     public float getPitch() {
         return yrs;
-    }
-
-    public void setInteractable(boolean interactable) {
-        this.interactable = interactable;
-    }
-
-    public boolean isInteractable() {
-        return interactable;
-    }
-    
-    public void setZoomMin(float zoomMin) {
-        this.zoomMin = zoomMin;
-    }
-
-    public void setZoomMax(float zoomMax) {
-        this.zoomMax = zoomMax;
-    }
-
-    public void setZoom(float zoom, boolean smooth) {
-        if (smooth) {
-            this.zoom = Math.min(zoomMin, Math.max(zoomMax, zoom));
-        } else {
-            this.zoom = this.zooms = Math.min(zoomMin, Math.max(zoomMax, zoom));
-        }
-    }
-
-    public void setNear(float near) {
-        this.near = near;
-
-        updateProjectionMatrix();
-    }
-
-    public void setFar(float far) {
-        this.far = far;
-
-        updateProjectionMatrix();
-    }
-
-    public void setYRotation(float yr) {
-        this.yr = this.yrs = yr;
     }
 }

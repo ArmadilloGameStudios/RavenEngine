@@ -1,37 +1,37 @@
 package com.armadillogamestudios.storyteller.gameengine.scene.scenario;
 
 import com.armadillogamestudios.engine2d.graphics2d.DrawStyle;
-import com.armadillogamestudios.engine2d.scene.Scene;
 import com.armadillogamestudios.engine2d.ui.UIFont;
-import com.armadillogamestudios.engine2d.ui.UILabel;
+import com.armadillogamestudios.engine2d.ui.UIImage;
 import com.armadillogamestudios.engine2d.ui.container.*;
 import com.armadillogamestudios.engine2d.util.math.Vector3f;
-import com.armadillogamestudios.storyteller.gameengine.StoryTeller;
+import com.armadillogamestudios.storyteller.gameengine.game.StoryTeller;
+import com.armadillogamestudios.storyteller.gameengine.scene.SceneStoryTeller;
+import com.armadillogamestudios.storyteller.gameengine.ui.UILabelStoryTeller;
 import com.armadillogamestudios.storyteller.scenario.Scenario;
-import com.armadillogamestudios.storyteller.scenario.prompt.Input;
+import com.armadillogamestudios.storyteller.scenario.prompt.input.Input;
 import com.armadillogamestudios.storyteller.scenario.prompt.Prompt;
-import com.armadillogamestudios.storyteller.scenario.prompt.SupplierInput;
+import com.armadillogamestudios.storyteller.scenario.prompt.input.PromptInput;
+import com.armadillogamestudios.storyteller.scenario.prompt.input.SupplierInput;
+import com.armadillogamestudios.storyteller.scenario.prompt.slider.PromptSlider;
 import com.armadillogamestudios.storyteller.stringformatter.StringColored;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ScenarioScene<S extends StoryTeller<S>>
-        extends Scene<S> {
+public final class ScenarioScene<G extends StoryTeller<G>>
+        extends SceneStoryTeller<G> {
 
     private Scenario scenario;
-    private UIContainer<ScenarioScene<?>> promptContainer, inputContainer, traitContainer;
+    private UIContainer<ScenarioScene<?>> promptContainer, traitContainer;
+    private InputContainer inputContainer;
+    private SliderContainer sliderContainer;
 
-    private final int buttonCount = 7;
-    private int buttonStart = 0;
-    private InputButton[] inputButtons = new InputButton[buttonCount];
+    private UIImage<ScenarioScene<?>> promptBackground;
+    private UILabelStoryTeller<ScenarioScene<?>> promptText, traitText;
 
-    private boolean showDisabled = false;
-
-    private UILabel<ScenarioScene<?>> promptText, traitText;
-
-    public ScenarioScene(S game, boolean newGame) {
+    public ScenarioScene(G game, boolean newGame) {
         super(game);
 
         if (newGame) {
@@ -54,10 +54,13 @@ public class ScenarioScene<S extends StoryTeller<S>>
 
         // UI
         // prompt
-        promptContainer = new UIContainer<>(this, UIContainer.Location.UPPER, UIContainer.Layout.HORIZONTAL);
+        promptContainer = new UIContainer<>(this, UIContainer.Location.UPPER, UIContainer.Layout.VERTICAL);
         addChild(promptContainer);
 
-        promptText = new UILabel<>(this, "", 500, 100);
+        promptBackground = new UIImage<>(this, 506, 106, "sprites/prompt.png");
+        promptContainer.addChild(promptBackground);
+
+        promptText = new UILabelStoryTeller<>(this, "", 500, 100);
         UIFont font = promptText.getFont();
         font.setSmall(true);
         font.setHighlight(false);
@@ -66,21 +69,22 @@ public class ScenarioScene<S extends StoryTeller<S>>
 
         promptContainer.pack();
 
+        promptText.setY(promptText.getY() + 101);
+        promptText.setX(promptText.getX() + 8);
+
         // input
-        inputContainer = new UIContainer<>(this, UIContainer.Location.BOTTOM, UIContainer.Layout.VERTICAL);
-        inputContainer.setIncludeInvisible(true);
+        inputContainer = new InputContainer(this);
         addChild(inputContainer);
 
-        for (int i = 0; i < buttonCount; i++) {
-            inputButtons[i] = new InputButton(this);
-            inputContainer.addChild(inputButtons[i]);
-        }
+        // input
+        sliderContainer = new SliderContainer(this);
+        addChild(sliderContainer);
 
         // trait
         traitContainer = new UIContainer<>(this, UIContainer.Location.LEFT, UIContainer.Layout.VERTICAL);
         addChild(traitContainer);
 
-        traitText = new UILabel<>(this, "", 500, 200);
+        traitText = new UILabelStoryTeller<>(this, "", 500, 200);
         font = traitText.getFont();
         font.setSmall(true);
         font.setHighlight(false);
@@ -104,57 +108,15 @@ public class ScenarioScene<S extends StoryTeller<S>>
         traitText.setText(prompt.getTargets()[0].getDescription());
         traitText.load();
 
-        List<Input> inputs;
-
-        if (showDisabled) {
-            inputs = new ArrayList<>(prompt.getInputs());
-        } else {
-            inputs = prompt.getInputs().stream().filter(Input::metRequirements).collect(Collectors.toList());
+        if (prompt.getType() == Prompt.Type.SLIDER) {
+            inputContainer.setVisibility(false);
+            sliderContainer.setVisibility(true);
+            sliderContainer.setPrompt((PromptSlider) prompt);
+        } else if (prompt.getType() == Prompt.Type.INPUT) {
+            sliderContainer.setVisibility(false);
+            inputContainer.setVisibility(true);
+            inputContainer.setPrompt((PromptInput) prompt);
         }
-
-        int iStart = 0;
-
-        if (buttonStart > 0) {
-            iStart = 1;
-
-            inputButtons[0].setVisibility(true);
-            inputButtons[0].setInput(new BackInput());
-        }
-
-        if (inputs.size() - buttonStart - iStart == buttonCount) {
-
-            for (int i = iStart; i < buttonCount; i++) {
-                inputButtons[i].setVisibility(true);
-                inputButtons[i].setInput(inputs.get(i - iStart + buttonStart));
-            }
-
-        } else if (inputs.size() - buttonStart < buttonCount) {
-
-            for (int i = iStart; i < buttonCount; i++) {
-                if (inputs.size() > i - iStart + buttonStart) {
-                    inputButtons[i].setVisibility(true);
-                    inputButtons[i].setInput(inputs.get(i - iStart + buttonStart));
-                } else {
-                    inputButtons[i].setVisibility(false);
-                    inputButtons[i].setInput(null);
-                }
-            }
-
-        } else {
-
-            for (int i = iStart; i < buttonCount; i++) {
-                if (i == buttonCount - 1) {
-                    inputButtons[i].setVisibility(true);
-                    inputButtons[i].setInput(new MoreInput());
-                } else {
-                    inputButtons[i].setVisibility(true);
-                    inputButtons[i].setInput(inputs.get(i - iStart + buttonStart));
-                }
-            }
-
-        }
-
-        inputContainer.pack();
     }
 
     @Override
@@ -168,11 +130,6 @@ public class ScenarioScene<S extends StoryTeller<S>>
     }
 
     @Override
-    public void inputKey(int key, int action, int mods) {
-
-    }
-
-    @Override
     public DrawStyle getDrawStyle() {
         return DrawStyle.STANDARD;
     }
@@ -182,36 +139,6 @@ public class ScenarioScene<S extends StoryTeller<S>>
     }
 
     public void resetButtonPosition() {
-        buttonStart = 0;
-    }
-
-    class MoreInput extends SupplierInput {
-
-        public MoreInput() {
-            super(
-                    "more...",
-                    (targets) -> buttonStart += buttonStart == 0 ? buttonCount - 1 : buttonCount - 2,
-                    () -> scenario.getPrompt());
-        }
-
-        @Override
-        public boolean triggersPromptEvents() {
-            return false;
-        }
-    }
-
-    class BackInput extends SupplierInput {
-
-        public BackInput() {
-            super(
-                    "back...",
-                    (targets) -> buttonStart -= buttonStart == buttonCount - 1 ? buttonCount - 1 : buttonCount - 2,
-                    () -> scenario.getPrompt());
-        }
-
-        @Override
-        public boolean triggersPromptEvents() {
-            return false;
-        }
+        inputContainer.resetButtonPosition();
     }
 }

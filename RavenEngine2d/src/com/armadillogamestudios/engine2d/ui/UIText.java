@@ -4,21 +4,21 @@ import com.armadillogamestudios.engine2d.graphics2d.DrawStyle;
 import com.armadillogamestudios.engine2d.graphics2d.shader.LayerShader;
 import com.armadillogamestudios.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.armadillogamestudios.engine2d.scene.Scene;
-import com.armadillogamestudios.engine2d.worldobject.Parentable;
+import com.armadillogamestudios.engine2d.worldobject.Highlight;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
 
-public abstract class UIText<S extends Scene>
-        extends UIObject<S, UIObject<S, Parentable<UIObject>>> {
+public abstract class UIText<S extends Scene<?>>
+        extends UIObject<S> {
 
     private final String backgroundSrc;
     private String text;
-    private String currentText;
+    private final String currentText;
     private UITexture image;
-    private UITextWriter textWriter;
+    private final UITextWriter textWriter;
 
-    private UIFont font = new UIFont();
+    private final UIFont font = new UIFont();
 
-    private Vector2f position = new Vector2f();
+    private final Vector2f position = new Vector2f();
     private UITextColorFeed colorFeed;
 
     public UIText(S scene, String text) {
@@ -49,9 +49,7 @@ public abstract class UIText<S extends Scene>
             else
                 image = new UITexture(getScene().getEngine(), (int) getWidth(), (int) getHeight());
 
-            getScene().getEngine().getWindow().printErrors("pre cat (ut) ");
             image.load(getScene());
-            getScene().getEngine().getWindow().printErrors("post cat (ut) ");
         }
 
         if (backgroundSrc != null)
@@ -68,12 +66,17 @@ public abstract class UIText<S extends Scene>
     }
 
     public void draw(LayerShader shader) {
-        shader.draw(image, getSpriteAnimationState(), getWorldPosition(), null, null, getID(), getWorldZ(), getFade(), getHighlight(), DrawStyle.UI);
+        try {
+            shader.draw(image, getSpriteAnimationState(), getWorldPosition(), null, null, getID(), getWorldZ(), getFade(), getHighlight(), DrawStyle.UI);
+        } catch (Exception e) {
+            System.out.println(this.getText());
+            throw e;
+        }
     }
 
     @Override
     public float getZ() {
-        return .02f;
+        return super.getZ() + .02f;
     }
 
     public void setAnimationAction(String action) {
@@ -125,7 +128,7 @@ public abstract class UIText<S extends Scene>
             getSpriteAnimationState().update(deltaTime);
         }
 
-        for (UIObject o : this.getChildren()) {
+        for (UIObject<?> o : this.getChildren()) {
             o.update(deltaTime);
         }
     }

@@ -1,6 +1,7 @@
 package com.raven.sunny.terrain;
 
-import com.raven.engine.util.math.Vector3f;
+import com.raven.engine.scene.Layer;
+import com.raven.engine.util.Vector3f;
 import com.raven.engine.worldobject.WorldObject;
 
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class TerrainData {
 
     public Vector3f getNormal() {
         // assuming 3 vectors
-        return vertices[1].subtract(vertices[0], new Vector3f()).cross(vertices[2].subtract(vertices[0], new Vector3f()), new Vector3f()).normalize(new Vector3f());
+        return vertices[1].subtract(vertices[0]).cross(vertices[2].subtract(vertices[0])).normalize();
     }
 
     public void setType(int type) {

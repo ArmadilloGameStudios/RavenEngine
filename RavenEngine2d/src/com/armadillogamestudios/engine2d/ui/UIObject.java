@@ -3,24 +3,21 @@ package com.armadillogamestudios.engine2d.ui;
 import com.armadillogamestudios.engine2d.graphics2d.shader.LayerShader;
 import com.armadillogamestudios.engine2d.scene.Layer;
 import com.armadillogamestudios.engine2d.scene.Scene;
-import com.armadillogamestudios.engine2d.ui.container.UIContainer;
 import com.armadillogamestudios.engine2d.worldobject.GameObject;
-import com.armadillogamestudios.engine2d.worldobject.MouseHandler;
-import com.armadillogamestudios.engine2d.worldobject.Parentable;
+import com.armadillogamestudios.engine2d.input.MouseHandler;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class UIObject<S extends Scene, P extends Parentable<? extends GameObject>>
-        extends GameObject<UIObject, P, UIObject> {
+public abstract class UIObject<S extends Scene<?>>
+        extends GameObject<UIObject<S>> {
 
-    private List<UIObject> children = new ArrayList<>();
+    private final List<UIObject<S>> children = new ArrayList<>();
 
     private float z = .01f;
-    private S scene;
-    private P parent;
-    private boolean parentIsUIObject = false;
+    private final S scene;
+    private GameObject<?> parent;
     private Layer.Destination destination = Layer.Destination.UI;
 
     public UIObject(S scene) {
@@ -29,12 +26,12 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
     }
 
     @Override
-    public void setParent(P parent) {
+    public void setParent(GameObject<?> parent) {
         this.parent = parent;
     }
 
     @Override
-    public P getParent() {
+    public GameObject<?> getParent() {
         return parent;
     }
 
@@ -43,7 +40,7 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
 
         this.onUpdate(deltaTime);
 
-        for (UIObject c : children) {
+        for (UIObject<S> c : children) {
             c.update(deltaTime);
         }
     }
@@ -53,26 +50,12 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
     }
 
     @Override
-    public final void addChild(UIObject obj) {
-        obj.parentIsUIObject = true;
-
+    public final void addChild(UIObject<S> obj) {
         if (obj.getParent() != this)
             obj.setParent(this);
 
         if (!children.contains(obj))
             children.add(obj);
-    }
-
-    public final void insertChild(int index, UIObject obj) {
-        if (!children.contains(obj))
-            children.add(index, obj);
-
-        addChild(obj);
-    }
-
-    public void removeChild(UIObject obj) {
-        children.remove(obj);
-        scene.removeGameObject(obj);
     }
 
     @Override
@@ -94,19 +77,19 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
     }
 
     @Override
-    public final List<UIObject> getChildren() {
+    public final List<UIObject<S>> getChildren() {
         return children;
     }
 
-    private List<UIObject> parentList = new ArrayList();
+    private final List<GameObject<?>> parentList = new ArrayList<>();
 
     @Override
-    public List<UIObject> getParentGameObjectList() {
+    public List<GameObject<?>> getParentGameObjectList() {
         parentList.clear();
 
-        if (parentIsUIObject) {
-            parentList.addAll(((UIObject) parent).getParentGameObjectList());
-            parentList.add((UIObject) parent);
+        if (getParent() instanceof UIObject<?>) {
+            parentList.addAll(parent.getParentGameObjectList());
+            parentList.add(parent);
         }
 
         return parentList;
@@ -114,11 +97,11 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
 
     public abstract Vector2f getPosition();
 
-    private Vector2f worldPos = new Vector2f();
+    private final Vector2f worldPos = new Vector2f();
 
     public Vector2f getWorldPosition() {
-        if (this.parentIsUIObject) {
-            return getPosition().add(((UIObject) getParent()).getWorldPosition(), worldPos);
+        if (getParent() instanceof UIObject<?>) {
+            return getPosition().add(((UIObject<?>) getParent()).getWorldPosition(), worldPos);
         } else {
             return getPosition();
         }
@@ -143,8 +126,8 @@ public abstract class UIObject<S extends Scene, P extends Parentable<? extends G
     }
 
     public float getWorldZ() {
-        if (getParent() instanceof UIObject) {
-            return getZ() + (((UIObject) getParent()).getWorldZ());
+        if (getParent() instanceof UIObject<?>) {
+            return getZ() + (((UIObject<?>) getParent()).getWorldZ());
         }
         return getZ();
     }

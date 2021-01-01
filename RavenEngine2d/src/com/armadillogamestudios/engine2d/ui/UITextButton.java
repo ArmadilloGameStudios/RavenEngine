@@ -4,7 +4,7 @@ import com.armadillogamestudios.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.armadillogamestudios.engine2d.scene.Scene;
 import com.armadillogamestudios.engine2d.worldobject.Highlight;
 
-public abstract class UITextButton<S extends Scene>
+public abstract class UITextButton<S extends Scene<?>>
     extends  UIButton<S> {
 
     private UIText<S> uiText;
@@ -34,6 +34,7 @@ public abstract class UITextButton<S extends Scene>
         uiText.getFont().setX(w);
         uiText.getFont().setY(h);
         uiText.getFont().setButton(true);
+        uiText.getFont().getButtonOffset().y = (int) uiText.getHeight();
         addChild(uiText);
     }
 

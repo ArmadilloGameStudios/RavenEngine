@@ -9,7 +9,7 @@ import com.raven.sunny.scenes.RandomScene;
 /**
  * Created by cookedbird on 5/8/17.
  */
-public class SunnyLittleIslandGame extends Game<SunnyLittleIslandGame> {
+public class SunnyLittleIslandGame extends Game {
 
     public static void main(String[] args) {
         GameLauncher.Open(new SunnyLittleIslandGame());
@@ -28,7 +28,7 @@ public class SunnyLittleIslandGame extends Game<SunnyLittleIslandGame> {
 
     @Override
     public Scene loadInitialScene() {
-        return new RandomScene(this);
+        return new RandomScene();
     }
 
     @Override
@@ -39,15 +39,5 @@ public class SunnyLittleIslandGame extends Game<SunnyLittleIslandGame> {
     @Override
     public String getMainDirectory() {
         return "SunnyLittleIsland";
-    }
-
-    @Override
-    public boolean saveGame() {
-        return false;
-    }
-
-    @Override
-    public boolean loadGame() {
-        return false;
     }
 }

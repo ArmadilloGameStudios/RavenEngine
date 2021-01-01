@@ -41,11 +41,11 @@ public class GameWindow {
     private CompilationShader compilationShader;
     private TextShader textShader;
 
-    private GameEngine engine;
+    private GameEngine<?> engine;
 
     private Shader activeShader;
 
-    public GameWindow(GameEngine engine) {
+    public GameWindow(GameEngine<?> engine) {
         this.engine = engine;
     }
 
@@ -81,22 +81,7 @@ public class GameWindow {
         else
             glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
 
-//        long monitor = glfwGetPrimaryMonitor();
         long monitor = glfwGetMonitors().get(0);
-        Objects.requireNonNull(glfwGetVideoModes(monitor)).stream().forEach(m -> GameProperties.addResolution(m.width(), m.height()));
-
-        if (GameProperties.getUseResolution()) {
-            if (res.has("width") && GameProperties.getResolutionList().stream().anyMatch(v2 -> v2.x == res.getInteger("width")) &&
-                    res.has("height") && GameProperties.getResolutionList().stream().anyMatch(v2 -> v2.y == res.getInteger("height"))) {
-                GameProperties.setDisplayWidth(res.getInteger("width"));
-                GameProperties.setDisplayHeight(res.getInteger("height"));
-            } else {
-                List<Vector2i> reses = GameProperties.getResolutionList();
-                Vector2i vec = reses.get(reses.size() - 1);
-                GameProperties.setDisplayWidth(vec.x);
-                GameProperties.setDisplayHeight(vec.y);
-            }
-        }
 
         // Create the window
         if (GameProperties.getWindowMode() == GameProperties.FULLSCREEN)
@@ -270,19 +255,5 @@ public class GameWindow {
 
     public void setActiveShader(Shader activeShader) {
         this.activeShader = activeShader;
-    }
-
-    public void setDimension(int width, int height) {
-        GameProperties.setDisplayWidth(width);
-        GameProperties.setDisplayHeight(height);
-
-        glfwSetWindowSize(window, width, height);
-
-        layerShader.release();
-        layerShader = new LayerShader(engine, this);
-
-        compilationShader.release();
-        compilationShader = new CompilationShader(engine, this);
-
     }
 }

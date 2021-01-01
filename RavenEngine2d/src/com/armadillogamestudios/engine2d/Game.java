@@ -123,7 +123,6 @@ public abstract class Game<G extends Game<G>> {
         settings.ifHas("sfx", s -> GameProperties.setSFXVolume(s.asInteger()));
         settings.ifHas("width", s -> GameProperties.setDisplayWidth(s.asInteger()));
         settings.ifHas("height", s -> GameProperties.setDisplayHeight(s.asInteger()));
-        settings.ifHas("scaling", s -> GameProperties.setScaling(s.asInteger()));
         settings.ifHas("vsync", s -> GameProperties.setVSync(s.asBoolean()));
         settings.ifHas("win_mode", s -> GameProperties.setWindowMode(s.asInteger()));
     }

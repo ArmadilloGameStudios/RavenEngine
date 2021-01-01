@@ -6,7 +6,7 @@ import com.armadillogamestudios.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.armadillogamestudios.engine2d.scene.Scene;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
 
-public class UIMultipartImage<S extends Scene> extends UIImage<S> {
+public class UIMultipartImage<S extends Scene<?>> extends UIImage<S> {
 
     private SpriteAnimationState spriteAnimationTop;
     private SpriteAnimationState spriteAnimationMid;

@@ -2,9 +2,14 @@
 
 layout (std140) uniform DirectionalLight
 {
+    mat4 view;
+    mat4 projection;
     vec3 color;
     float intensity;
     vec3 direction;
+    float length;
+    vec3 ambient;
+    float shadow_transparency;
 } sunLight;
 
 layout (std140) uniform Matrices
@@ -15,6 +20,7 @@ layout (std140) uniform Matrices
     mat4 inverse_view;
     mat4 projection;
     mat4 inverse_projection;
+    mat4 inverse_projection_view;
 } matrix;
 
 layout(location = 0) in vec3 vertex_pos;

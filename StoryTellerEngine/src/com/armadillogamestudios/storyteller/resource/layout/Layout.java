@@ -10,10 +10,10 @@ public class Layout {
     private List<LayoutTrait> traits;
 
     public Layout(GameData gameData) {
-        layout = gameData.getString("name");
+        layout = gameData.getString("key");
 
         gameData.ifHas("inherits", (d) -> inherits = d.asString());
-        gameData.ifHas("traits", (d) -> traits = d.asList().stream().map((t) -> new LayoutTrait(t.getString("name"), t.getInteger("value"))).collect(Collectors.toList()));
+        gameData.ifHas("traits", (d) -> traits = d.asList().stream().map((t) -> new LayoutTrait(t.getString("key"), t.getInteger("value"))).collect(Collectors.toList()));
     }
 
     public String getInherits() {
@@ -37,11 +37,11 @@ public class Layout {
     }
 
     public static class LayoutTrait {
-        public String name;
+        public String key;
         public int value;
 
-        public LayoutTrait(String name, int value) {
-            this.name = name;
+        public LayoutTrait(String key, int value) {
+            this.key = key;
             this.value = value;
         }
     }

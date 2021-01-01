@@ -1,6 +1,6 @@
 package com.raven.sunny.terrain;
 
-import com.raven.engine.graphics3d.model.ModelData;
+import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.worldobject.WorldObject;
 

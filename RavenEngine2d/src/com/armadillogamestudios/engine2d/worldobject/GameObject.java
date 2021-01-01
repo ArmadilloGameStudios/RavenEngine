@@ -1,24 +1,25 @@
 package com.armadillogamestudios.engine2d.worldobject;
 
 import com.armadillogamestudios.engine2d.graphics2d.shader.LayerShader;
+import com.armadillogamestudios.engine2d.input.MouseHandler;
 import com.armadillogamestudios.engine2d.scene.Layer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
-public abstract class GameObject<GO extends GameObject, P extends Parentable<? extends GameObject>, C extends GameObject>
-        implements Childable<P>, Parentable<C> {
+public abstract class GameObject<C extends GameObject<?>> {
 
     private static int last_id = 0;
-    private static HashMap<Integer, GameObject> gameObjectIDMap = new HashMap<>();
+    private static final HashMap<Integer, GameObject<?>> gameObjectIDMap = new HashMap<>();
 
     public static void resetObjectIDs() {
         gameObjectIDMap.clear();
         last_id = 0;
     }
 
-    public static GameObject getGameObjectFromID(int id) {
+    public static GameObject<?> getGameObjectFromID(int id) {
         return gameObjectIDMap.get(id);
     }
 
@@ -28,7 +29,7 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable<? e
     private Highlight highlight;
     private float fade = 1f;
     private boolean mouseHovering = false;
-    private List<MouseHandler> clickHandlers = new ArrayList<MouseHandler>();
+    private final List<MouseHandler> clickHandlers = new ArrayList<MouseHandler>();
 
     public GameObject() {
         // click id
@@ -110,10 +111,7 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable<? e
     public abstract void draw(LayerShader shader);
 
     public boolean isVisible() {
-        if (getParent() instanceof GameObject) {
-            return visibility & ((GameObject) getParent()).isVisible();
-        }
-        return visibility;
+        return visibility && (getParent() == null || getParent().isVisible());
     }
 
     public void setVisibility(boolean visibility) {
@@ -127,25 +125,24 @@ public abstract class GameObject<GO extends GameObject, P extends Parentable<? e
         }
     }
 
-
-
     public void setHighlight(Highlight h) {
         highlight = h;
 
         needsRedraw();
-
-//        for (C child : children) {
-//            child.setHighlight(h);
-//        }
     }
 
     public Highlight getHighlight() {
-        if (highlight == null && getParent() instanceof GameObject<?,?,?>) {
-            return ((GameObject<?,?,?>) getParent()).getHighlight();
+        if (highlight == null && getParent() != null) {
+            return getParent().getHighlight();
         }
 
         return highlight;
     }
 
-    public abstract List<? extends GO> getParentGameObjectList();
+    public abstract List<GameObject<?>> getParentGameObjectList();
+    public abstract GameObject<?> getParent();
+    public abstract void setParent(GameObject<?> parent);
+    public abstract void update(float delta);
+    public abstract void addChild(C obj);
+    public abstract List<C> getChildren();
 }

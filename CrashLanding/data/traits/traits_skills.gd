@@ -1,6 +1,8 @@
 [
     {
-        "name": "SKILL_EDUCATION",
+        "key": "SKILL_EDUCATION",
+
+        "type": "skill",
 
         "list": [
             {
@@ -18,7 +20,9 @@
         ]
     },
     {
-        "name": "SKILL_CRAFTING",
+        "key": "SKILL_CRAFTING",
+
+        "type": "skill",
 
         "list": [
             {
@@ -36,7 +40,9 @@
         ]
     },
     {
-        "name": "SKILL_DECEIT",
+        "key": "SKILL_DECEIT",
+
+        "type": "skill",
 
         "list": [
             {
@@ -54,7 +60,10 @@
         ]
     },
     {
-        "name": "SKILL_TOUGH",
+        "key": "SKILL_TOUGH",
+        "name": "TOUGHNESS",
+
+        "type": "skill",
 
         "list": [
             {
@@ -72,7 +81,9 @@
         ]
     },
     {
-        "name": "SKILL_MELEE",
+        "key": "SKILL_MELEE",
+
+        "type": "skill",
 
         "list": [
             {
@@ -86,24 +97,6 @@
             },
             {
                 "name": "martial master"
-            }
-        ]
-    },
-    {
-        "name": "SKILL_MUSIC",
-
-        "list": [
-            {
-                "name": "no music skill"
-            },
-            {
-                "name": "elementary music skill"
-            },
-            {
-                "name": "educated music skill"
-            },
-            {
-                "name": "formal music skill"
             }
         ]
     }

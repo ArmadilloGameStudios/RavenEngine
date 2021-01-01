@@ -2,18 +2,19 @@ package com.armadillogamestudios.engine2d.ui;
 
 import com.armadillogamestudios.engine2d.scene.Scene;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
-import com.armadillogamestudios.engine2d.worldobject.Parentable;
 
 import java.util.List;
 
-public class UISelector<S extends Scene, V extends Object> extends UIObject<S, UIObject<S, Parentable<UIObject>>> {
+public class UISelector<S extends Scene<?>, V> extends UIObject<S> {
 
-    private Vector2f position = new Vector2f();
-    private UIImage<S> image;
-    private UIButton<S> leftBtn, rightBtn;
-    private UILabel<S> uiText, uiTitle;
-    private List<V> values;
-    private List<String> displays;
+    private final Vector2f position = new Vector2f();
+    private final UIImage<S> image;
+    private final UIButton<S> leftBtn;
+    private final UIButton<S> rightBtn;
+    private final UILabel<S> uiText;
+    private final UILabel<S> uiTitle;
+    private final List<V> values;
+    private final List<String> displays;
     private int index;
 
     public UISelector(S scene,

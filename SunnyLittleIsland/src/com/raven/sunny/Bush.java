@@ -4,7 +4,7 @@ import com.raven.engine.GameEngine;
 import com.raven.engine.database.GameData;
 import com.raven.engine.database.GameDataList;
 import com.raven.engine.database.GameDatabase;
-import com.raven.engine.graphics3d.model.ModelData;
+import com.raven.engine.graphics3d.ModelData;
 import com.raven.engine.scene.Scene;
 import com.raven.engine.worldobject.MouseHandler;
 import com.raven.engine.worldobject.WorldObject;
@@ -23,25 +23,25 @@ public class Bush extends WorldObject {
     public Bush(Scene scene) {
         super(scene, dataList.getRandom().getString("model"));
 
-        scene.getLayerDetails().addChild(this);
+        scene.getLayerDetails().addWorldObject(this);
 
         Bush bush = this;
         this.addMouseHandler(new MouseHandler() {
             @Override
-            public void handleMouseClick() {
+            public void onMouseClick() {
                 bush.setY(-10f);
             }
 
             @Override
-            public void handleMouseEnter() {
+            public void onMouseEnter() {
             }
 
             @Override
-            public void handleMouseLeave() {
+            public void onMouseLeave() {
             }
 
             @Override
-            public void handleMouseHover(float delta) {
+            public void onMouseHover(float delta) {
             }
         });
     }

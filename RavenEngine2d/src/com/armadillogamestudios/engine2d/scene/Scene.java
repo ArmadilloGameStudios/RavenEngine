@@ -12,35 +12,39 @@ import com.armadillogamestudios.engine2d.graphics2d.shader.CompilationShader;
 import com.armadillogamestudios.engine2d.graphics2d.shader.LayerShader;
 import com.armadillogamestudios.engine2d.graphics2d.shader.ShaderTexture;
 import com.armadillogamestudios.engine2d.graphics2d.shader.TextShader;
+import com.armadillogamestudios.engine2d.input.KeyData;
+import com.armadillogamestudios.engine2d.input.KeyboardHandler;
+import com.armadillogamestudios.engine2d.ui.UITextInput;
 import com.armadillogamestudios.engine2d.worldobject.GameObject;
-import com.armadillogamestudios.engine2d.worldobject.Parentable;
 import com.armadillogamestudios.engine2d.ui.UITextWriter;
 import com.armadillogamestudios.engine2d.ui.UIToolTip;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
 import com.armadillogamestudios.engine2d.util.math.Vector3f;
+import org.lwjgl.glfw.GLFW;
 
 import javax.sound.sampled.Clip;
 
-public abstract class Scene<G extends Game<G>> implements Parentable<GameObject> {
-    private Layer layerTerrain = new Layer(Layer.Destination.Terrain);
-    private Layer layerDetails = new Layer(Layer.Destination.Details);
-    private Layer layerEffects = new Layer(Layer.Destination.Effects);
-    private Layer layerUI = new Layer(Layer.Destination.UI);
-    private Layer layerToolTip = new Layer(Layer.Destination.ToolTip);
+public abstract class Scene<G extends Game<G>> {
+    private final Layer layerTerrain = new Layer(Layer.Destination.Terrain);
+    private final Layer layerDetails = new Layer(Layer.Destination.Details);
+    private final Layer layerEffects = new Layer(Layer.Destination.Effects);
+    private final Layer layerUI = new Layer(Layer.Destination.UI);
+    private final Layer layerToolTip = new Layer(Layer.Destination.ToolTip);
 
-    private Vector3f backgroundColor = new Vector3f(0,0,0);
-    private Vector2f worldOffset = new Vector2f();
+    private final Vector3f backgroundColor = new Vector3f(0,0,0);
+    private final Vector2f worldOffset = new Vector2f();
 
-    private UIToolTip toolTip;
+    private UIToolTip<?> toolTip;
 
-    private List<GameObject> children = new ArrayList<>();
-    private List<UITextWriter> toWrite = new ArrayList<>();
-    private List<ShaderTexture> textures = new CopyOnWriteArrayList<>();
+    private final List<GameObject<?>> children = new ArrayList<>();
+    private final List<UITextWriter> toWrite = new ArrayList<>();
+    private final List<ShaderTexture> textures = new CopyOnWriteArrayList<>();
+    private final List<KeyboardHandler> keyboardHandlers = new ArrayList<>();
 
     private boolean paused = false;
     private float time = 0;
 
-    private G game;
+    private final G game;
 
     public Scene(G game) {
         this.game = game;
@@ -140,37 +144,29 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
         return null;
     }
 
-    @Override
-    public List<GameObject> getChildren() {
+    public List<GameObject<?>> getChildren() {
         return children;
     }
 
-    @Override
-    public void addChild(GameObject child) {
+    public void addChild(GameObject<?> child) {
         if (!children.contains(child))
             children.add(child);
     }
 
-    public void addGameObject(GameObject go) {
+    public void addGameObject(GameObject<?> go) {
         getLayer(go.getDestination()).addChild(go);
 
-        go.getChildren().forEach(c -> {
-            if (c instanceof GameObject)
-                addGameObject((GameObject) c);
-        });
+        go.getChildren().forEach(this::addGameObject);
     }
 
-    public void removeGameObject(GameObject go) {
+    public void removeGameObject(GameObject<?> go) {
         Layer layer = getLayer(go.getDestination());
 
         if (layer != null) {
             layer.removeChild(go);
         }
 
-        go.getChildren().forEach(c -> {
-            if (c instanceof GameObject)
-                removeGameObject((GameObject) c);
-        });
+        go.getChildren().forEach(this::removeGameObject);
     }
 
     public void addTextToWrite(UITextWriter textWriter) {
@@ -207,23 +203,23 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     public final void exitScene() {
         onExitScene();
 
-        for (GameObject obj : layerTerrain.getChildren()) {
+        for (GameObject<?> obj : layerTerrain.getChildren()) {
             obj.release();
         }
 
-        for (GameObject obj : layerDetails.getChildren()) {
+        for (GameObject<?> obj : layerDetails.getChildren()) {
             obj.release();
         }
 
-        for (GameObject obj : layerEffects.getChildren()) {
+        for (GameObject<?> obj : layerEffects.getChildren()) {
             obj.release();
         }
 
-        for (GameObject obj : layerUI.getChildren()) {
+        for (GameObject<?> obj : layerUI.getChildren()) {
             obj.release();
         }
 
-        for (GameObject obj : layerToolTip.getChildren()) {
+        for (GameObject<?> obj : layerToolTip.getChildren()) {
             obj.release();
         }
 
@@ -237,7 +233,7 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
     abstract public void onUpdate(float deltaTime);
 
     public void setBackgroundColor(Vector3f color) {
-        backgroundColor = color;
+        backgroundColor.set(color);
     }
 
     public G getGame() {
@@ -256,13 +252,25 @@ public abstract class Scene<G extends Game<G>> implements Parentable<GameObject>
         return paused;
     }
 
-    public abstract void inputKey(int key, int action, int mods);
+    private final KeyData key = new KeyData();
+    public void inputKey(int key, int action, int mods) {
+
+        if (action == GLFW.GLFW_PRESS) {
+            this.key.update(key, mods);
+
+            keyboardHandlers.forEach(keyboardHandler -> keyboardHandler.onInputKey(this.key));
+        }
+    }
+
+    public void addKeyboardHandler(KeyboardHandler keyboardHandler) {
+        keyboardHandlers.add(keyboardHandler);
+    }
 
     public Clip getClip(String name) {
         return null;
     }
 
-    protected void setToolTip(UIToolTip toolTip) {
+    protected void setToolTip(UIToolTip<?> toolTip) {
         if (this.toolTip != null)
             removeGameObject(this.toolTip);
 

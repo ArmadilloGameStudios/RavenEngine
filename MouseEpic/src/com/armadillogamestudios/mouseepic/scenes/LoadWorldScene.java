@@ -20,12 +20,7 @@ public class LoadWorldScene extends Scene<MouseEpicGame> {
     public LoadWorldScene(MouseEpicGame game) {
         super(game);
 
-        UIContainer<LoadWorldScene> container = new UIContainer<LoadWorldScene>(this) {
-            @Override
-            public int getLocation() {
-                return UIContainer.CENTER;
-            }
-        };
+        UIContainer<LoadWorldScene> container = new UIContainer<LoadWorldScene>(this, UIContainer.Location.CENTER, UIContainer.Layout.VERTICAL);
         addChild(container);
 
         UIImage<LoadWorldScene> splash = new UIImage<>(this, 314, 64, "sprites/armadillo.png");

@@ -1,6 +1,19 @@
 [
   {
-    "name": "AGE",
+    "key": "PLAYER",
+    "type": "player",
+    "list": [
+      {
+        "name": "ai"
+      },
+      {
+        "name": "player"
+      }
+    ]
+  },
+  {
+    "key": "AGE",
+    "type": "age",
     "list": [
       {
         "name": "unborn",
@@ -41,7 +54,8 @@
     ]
   },
   {
-    "name": "WEALTH",
+    "key": "WEALTH",
+    "type": "status",
     "default": "desc",
     "list": [
       {
@@ -59,7 +73,8 @@
     ]
   },
   {
-    "name": "STARTING_LOC",
+    "key": "STARTING_LOC",
+    "type": "status",
     "list": [
       {
         "name": "nowhere"
@@ -75,72 +90,6 @@
       },
       {
         "name": "the capital"
-      }
-    ]
-  },
-  {
-    "name": "STATUS_EMPLOYED",
-    "default": "title",
-    "remove_at_zero": true,
-    "list": [
-      {
-        "title": "unemployed"
-      },
-      {
-        "title": "hourly"
-      },
-      {
-        "title": "junior"
-      },
-      {
-        "title": "senior"
-      },
-      {
-        "title": "ceo"
-      }
-    ]
-  },
-  {
-    "name": "STATUS_GANG",
-    "default": "title",
-    "remove_at_zero": true,
-    "list": [
-      {
-        "title": "unassociated"
-      },
-      {
-        "title": "recruit"
-      },
-      {
-        "title": "member"
-      },
-      {
-        "title": "veteran"
-      },
-      {
-        "title": "leader"
-      }
-    ]
-  },
-  {
-    "name": "STATUS_CELEBRITY",
-    "default": "title",
-    "remove_at_zero": true,
-    "list": [
-      {
-        "title": "unknown"
-      },
-      {
-        "title": "recognizable"
-      },
-      {
-        "title": "mildly famous"
-      },
-      {
-        "title": "celebrity"
-      },
-      {
-        "title": "super star"
       }
     ]
   }

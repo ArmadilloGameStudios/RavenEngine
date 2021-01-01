@@ -6,12 +6,11 @@ import com.armadillogamestudios.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.armadillogamestudios.engine2d.graphics2d.sprite.SpriteSheet;
 import com.armadillogamestudios.engine2d.scene.Scene;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
-import com.armadillogamestudios.engine2d.worldobject.Parentable;
 
-public class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObject>> {
+public class UIImage<S extends Scene<?>> extends UIObject<S> {
 
-    private Vector2f position = new Vector2f();
-    private Vector2f offset = new Vector2f();
+    private final Vector2f position = new Vector2f();
+    private final Vector2f offset = new Vector2f();
     private SpriteSheet texture;
 
     private int width, height;
@@ -25,6 +24,16 @@ public class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObject>> 
 
         texture = scene.getEngine().getSpriteSheet(src);
         texture.load(scene);
+    }
+
+    public UIImage(S scene, String src) {
+        super(scene);
+
+        texture = scene.getEngine().getSpriteSheet(src);
+        texture.load(scene);
+
+        this.width = texture.getWidth();
+        this.height = texture.getHeight();
     }
 
     public final void setSprite(String src) {
@@ -118,19 +127,19 @@ public class UIImage<S extends Scene> extends UIObject<S, Parentable<UIObject>> 
         texture.release();
     }
 
-    public void setInternalTextureYOffset(float y) {
-        this.offset.y = y;
-    }
-
     public float getInternalTextureYOffset() {
         return this.offset.y;
     }
 
-    public void setInternalTextureXOffset(float x) {
-        this.offset.x = x;
+    public void setInternalTextureYOffset(float y) {
+        this.offset.y = y;
     }
 
     public float getInternalTextureXOffset() {
         return this.offset.x;
+    }
+
+    public void setInternalTextureXOffset(float x) {
+        this.offset.x = x;
     }
 }

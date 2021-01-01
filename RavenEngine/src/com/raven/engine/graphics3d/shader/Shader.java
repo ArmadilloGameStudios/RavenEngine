@@ -205,7 +205,7 @@ public abstract class Shader {
             iVal = BufferUtils.createIntBuffer(1);
             glGetProgramiv(program_handel, GL_VALIDATE_STATUS, iVal);
             if (GL_TRUE != iVal.get()) {
-                System.out.println("Program Failed: "
+                System.out.println("Program Failed: " + vertex_shader + " " + fragment_shader + " "
                         + glGetProgramInfoLog(program_handel));
             }
         } catch (IOException e) {

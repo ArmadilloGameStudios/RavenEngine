@@ -64,8 +64,8 @@ public class LayerShader extends Shader {
         super.useProgram();
 
         glViewport(0, 0,
-                GameProperties.getDisplayWidth() / GameProperties.getScaling(),
-                GameProperties.getDisplayHeight() / GameProperties.getScaling());
+                GameProperties.getWidth(),
+                GameProperties.getHeight());
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_GREATER);
@@ -87,8 +87,8 @@ public class LayerShader extends Shader {
         glDrawBuffers(buffers);
 
         glViewport(0, 0,
-                GameProperties.getDisplayWidth() / GameProperties.getScaling(),
-                GameProperties.getDisplayHeight() / GameProperties.getScaling());
+                GameProperties.getWidth(),
+                GameProperties.getHeight());
 
         glClearDepth(0.0);
         glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 0f);
@@ -112,8 +112,8 @@ public class LayerShader extends Shader {
         glBindFramebuffer(GL_FRAMEBUFFER, renderTarget.getFramebufferHandle());
 
         glViewport(0, 0,
-                GameProperties.getDisplayWidth() / GameProperties.getScaling(),
-                GameProperties.getDisplayHeight() / GameProperties.getScaling());
+                GameProperties.getWidth(),
+                GameProperties.getHeight());
 
         glClearDepth(0.0);
         glClear(GL_DEPTH_BUFFER_BIT);

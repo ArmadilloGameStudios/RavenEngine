@@ -1,7 +1,6 @@
 package com.armadillogamestudios.storyteller.resource;
 
-import com.armadillogamestudios.engine2d.database.GameDatabase;
-import com.armadillogamestudios.storyteller.gameengine.StoryTeller;
+import com.armadillogamestudios.storyteller.gameengine.game.StoryTeller;
 import com.armadillogamestudios.storyteller.resource.layout.Layout;
 import com.armadillogamestudios.storyteller.resource.trait.Trait;
 
@@ -32,7 +31,7 @@ public abstract class Resource {
 
         if (layout.hasTraits()) {
             layout.getTraits().forEach((trait) -> {
-                this.addTrait(trait.name, trait.value);
+                this.addTrait(trait.key, trait.value);
             });
         }
     }

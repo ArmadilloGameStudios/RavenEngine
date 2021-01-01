@@ -1,15 +1,16 @@
 package com.armadillogamestudios.storyteller.gameengine.scene.scenario;
 
 import com.armadillogamestudios.engine2d.ui.UIFont;
-import com.armadillogamestudios.engine2d.ui.UITextButton;
-import com.armadillogamestudios.storyteller.scenario.prompt.Input;
+import com.armadillogamestudios.storyteller.gameengine.game.StoryTeller;
+import com.armadillogamestudios.storyteller.gameengine.ui.UITextButtonStoryTeller;
+import com.armadillogamestudios.storyteller.scenario.prompt.input.Input;
 import com.armadillogamestudios.storyteller.stringformatter.StringColored;
 
-public class InputButton extends UITextButton<ScenarioScene<?>> {
+public class InputButton extends UITextButtonStoryTeller<ScenarioScene<? extends StoryTeller<?>>> {
 
     private Input input;
 
-    public InputButton(ScenarioScene<?> scene) {
+    public InputButton(ScenarioScene<? extends StoryTeller<?>> scene) {
         super(scene, "", "sprites/button_input.png", "inputbutton");
 
         UIFont font = this.getFont();

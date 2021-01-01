@@ -15,7 +15,7 @@ import com.armadillogamestudios.engine2d.util.Range;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
 import com.armadillogamestudios.engine2d.util.pathfinding.PathAdjacentNode;
 import com.armadillogamestudios.engine2d.util.pathfinding.PathNode;
-import com.armadillogamestudios.engine2d.worldobject.MouseHandler;
+import com.armadillogamestudios.engine2d.input.MouseHandler;
 import com.armadillogamestudios.engine2d.worldobject.WorldObject;
 
 import java.util.*;

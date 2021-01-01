@@ -1,6 +1,6 @@
 package com.armadillogamestudios.storyteller.resource.trait;
 
-import com.armadillogamestudios.storyteller.gameengine.StoryTeller;
+import com.armadillogamestudios.storyteller.gameengine.game.StoryTeller;
 
 public class Trait {
 
@@ -94,7 +94,7 @@ public class Trait {
     }
 
     public String getName() {
-        return traitDescription.getName();
+        return traitDescription.getKey();
     }
 
     @Override

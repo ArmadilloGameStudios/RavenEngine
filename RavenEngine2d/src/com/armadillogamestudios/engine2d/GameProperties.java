@@ -11,8 +11,10 @@ import java.util.List;
  * Created by cookedbird on 11/15/17.
  */
 public class GameProperties {
+    private static final int HEIGHT = 360, WIDTH = 640;
+
     private static float animationSpeed = 1.0f;
-    private static int scaling = 2;
+    //private static int scaling = 2;
 //    private static int height = 1080, width = 1920;
     private static int dheight = 1080, dwidth = 1920;
     private static String mainDirectory;
@@ -32,6 +34,10 @@ public class GameProperties {
         GameProperties.dwidth = width;
     }
 
+    public static int getWidth() {
+        return WIDTH;
+    }
+
     public static int getDisplayHeight() {
         return dheight;
     }
@@ -40,10 +46,8 @@ public class GameProperties {
         GameProperties.dheight = height;
     }
 
-    public static int getScaling() { return scaling; }
-
-    public static void setScaling(int scaling) {
-        GameProperties.scaling = scaling;
+    public static int getHeight() {
+        return HEIGHT;
     }
 
     public static String getMainDirectory() {

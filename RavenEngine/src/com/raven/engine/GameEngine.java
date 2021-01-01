@@ -254,9 +254,6 @@ public class GameEngine<G extends Game> implements Runnable {
         File modelDirectory = new File(game.getMainDirectory() + File.separator + "models");
         loadModels(modelDirectory);
 
-        File animationDir = new File(game.getMainDirectory() + File.separator + "animations");
-        loadAnimations(animationDir);
-
         // load database
         gdb = new GameDatabase();
         gdb.load();
@@ -287,19 +284,6 @@ public class GameEngine<G extends Game> implements Runnable {
 
     public ModelData getModelData(String modelsrc) {
         return modelDataMap.get(game.getMainDirectory() + File.separator + modelsrc);
-    }
-
-    private void loadAnimations(File base) {
-        for (File f : base.listFiles()) {
-            if (f.isFile()) {
-//                System.out.println("Animation: " + f.getPath());
-
-                animationMap.put(f.getPath(), RaniImporter.Import(f));
-
-            } else if (f.isDirectory()) {
-                loadAnimations(f);
-            }
-        }
     }
 
     public Animation getAnimation(String name) {

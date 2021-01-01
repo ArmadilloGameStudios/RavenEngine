@@ -2,17 +2,16 @@ package com.armadillogamestudios.engine2d.ui;
 
 import com.armadillogamestudios.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.armadillogamestudios.engine2d.scene.Scene;
-import com.armadillogamestudios.engine2d.worldobject.MouseHandler;
-import com.armadillogamestudios.engine2d.worldobject.Parentable;
+import com.armadillogamestudios.engine2d.input.MouseHandler;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
 
-public abstract class UIButton<S extends Scene>
-        extends UIObject<S, UIObject<S, Parentable<UIObject>>>
+public abstract class UIButton<S extends Scene<?>>
+        extends UIObject<S>
         implements MouseHandler {
 
-    private Vector2f position = new Vector2f();
+    private final Vector2f position = new Vector2f();
     private SpriteAnimationState spriteAnimationState;
-    private UIImage<S> image;
+    private final UIImage<S> image;
     private boolean disable, active, locked;
 
     public UIButton(S scene, String btnImgSrc, String animation) {

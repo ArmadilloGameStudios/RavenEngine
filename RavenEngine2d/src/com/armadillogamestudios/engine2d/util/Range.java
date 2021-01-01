@@ -1,20 +1,22 @@
 package com.armadillogamestudios.engine2d.util;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class Range implements Iterable<Integer> {
+public class Range {
 
-    private int start, end, dir;
+    public static List<Integer> of(int start, int end) {
+        List<Integer> list = new ArrayList<>();
 
-    public Range(int start, int end) {
-        this.start = start;
-        this.end = end;
-        this.dir = end < start ? -1 : 1;
+        iterator(start, end, end < start ? -1 : 1).forEachRemaining(list::add);
+
+        return list;
     }
 
-    @Override
-    public Iterator<Integer> iterator() {
+    public static List<Integer> of(int end) {
+        return of(0, end);
+    }
+
+    private static Iterator<Integer> iterator(int start, int end, int dir) {
         final int max = end;
 
         return new Iterator<Integer>() {
@@ -24,9 +26,9 @@ public class Range implements Iterable<Integer> {
             @Override
             public boolean hasNext() {
                 if (dir > 0) {
-                    return current <= max;
+                    return current < max;
                 }
-                return current >= max;
+                return current > max;
             }
 
             @Override

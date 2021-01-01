@@ -6,17 +6,15 @@ import com.armadillogamestudios.engine2d.ui.UITextWriter;
 import com.armadillogamestudios.engine2d.ui.UITexture;
 
 public abstract class WorldTextObject
-        <
-                S extends Scene,
-                P extends Parentable<WorldObject>>
-        extends WorldObject<S, P, WorldObject> {
+        <S extends Scene<?>>
+        extends WorldObject<S, WorldObject<S, ?>> {
 
     private String text;
 
     private UITexture image;
-    private UITextWriter textWriter;
+    private final UITextWriter textWriter;
 
-    private UIFont font = new UIFont();
+    private final UIFont font = new UIFont();
 
     public WorldTextObject(S scene) {
         super(scene);

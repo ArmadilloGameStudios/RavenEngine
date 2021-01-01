@@ -1,24 +1,22 @@
 package com.armadillogamestudios.storyteller.gameengine.scene.mainmenu;
 
-import com.armadillogamestudios.engine2d.GameProperties;
 import com.armadillogamestudios.engine2d.graphics2d.DrawStyle;
 import com.armadillogamestudios.engine2d.graphics2d.shader.ShaderTexture;
-import com.armadillogamestudios.engine2d.scene.Layer;
-import com.armadillogamestudios.engine2d.scene.Scene;
+import com.armadillogamestudios.engine2d.input.KeyData;
+import com.armadillogamestudios.engine2d.input.KeyboardHandler;
 import com.armadillogamestudios.engine2d.ui.container.UIContainer;
-import com.armadillogamestudios.engine2d.util.math.Vector2f;
-import com.armadillogamestudios.engine2d.util.math.Vector3f;
-import com.armadillogamestudios.storyteller.gameengine.StoryTeller;
-import org.lwjgl.glfw.GLFW;
+import com.armadillogamestudios.storyteller.gameengine.game.StoryTeller;
+import com.armadillogamestudios.storyteller.gameengine.scene.SceneStoryTeller;
+import com.armadillogamestudios.storyteller.gameengine.scene.scenario.ScenarioScene;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class MainMenuScene<S extends StoryTeller<S>> extends Scene<S> {
+public abstract class MainMenuScene<S extends StoryTeller<S>> extends SceneStoryTeller<S> implements KeyboardHandler {
 
-    // private DisplayPawn pawn;
+    private String[] savedGames;
 
     public MainMenuScene(S game) {
         super(game);
@@ -32,69 +30,48 @@ public class MainMenuScene<S extends StoryTeller<S>> extends Scene<S> {
     }
 
     @Override
-    public void onEnterScene() {
-
-        // Pawn
-//        pawn = new DisplayPawn(this);
-//        addChild(pawn);
-
-        // Background
-        setBackgroundColor(new Vector3f(0, 0, 0));
-
-        // UI
-        UIContainer<MainMenuScene> container = new UIContainer<>(this, UIContainer.Location.UPPER_RIGHT, UIContainer.Layout.VERTICAL);
-        addChild(container);
-
-        NewGameButton<S> newGameBtn = new NewGameButton<>(this);
-        newGameBtn.load();
-        container.addChild(newGameBtn);
-
+    public final void onEnterScene() {
         Path charPath = Paths.get(getGame().getMainDirectory(), "save");
 
         File sFile = charPath.toFile();
-        if (sFile != null) {
-            if (sFile.list() == null) {
-                sFile.mkdir();
-            }
-
-            String[] files = sFile.list();
-            if (files != null && files.length > 0) {
-                LoadGameButton loadBtn = new LoadGameButton(this, files);
-                loadBtn.load();
-                container.addChild(loadBtn);
-            }
+        if (sFile.list() == null) {
+            sFile.mkdir();
         }
 
-        SettingsButton settingsButton = new SettingsButton(this);
-        settingsButton.load();
-        container.addChild(settingsButton);
+        savedGames = sFile.list();
 
-        CreditsButton creditsButton = new CreditsButton(this);
-        creditsButton.load();
-        container.addChild(creditsButton);
+        loadUI();
 
-        ExitButton exitBtn = new ExitButton(this);
-        exitBtn.load();
-        container.addChild(exitBtn);
-
-        container.pack();
-
-        addChild(getGame().getMainMenuDecor(this));
+        addKeyboardHandler(this);
     }
 
-    @Override
-    public void onExitScene() {
+    protected abstract void loadUI();
+
+    public final boolean isLoadGame() {
+        return savedGames != null && savedGames.length > 0;
+    }
+
+    public final void onLoadGameClick() {
 
     }
 
-    @Override
-    public void onUpdate(float deltaTime) {
+    public final void onNewGameClick() {
+        getGame().prepTransitionScene(new ScenarioScene<>(getGame(), true));
+    }
 
+    public final void onSettingsClick() {
+    }
+
+    public final void onCreditsClick() {
+    }
+
+    public void onExitClick() {
+        getGame().exit();
     }
 
     @Override
-    public void inputKey(int key, int action, int mods) {
-        if (GLFW.GLFW_KEY_ESCAPE == key && GLFW.GLFW_PRESS == action) {
+    public void onInputKey(KeyData keyData) {
+        if (keyData.getKey() ==  KeyData.Key.ESCAPE) {
             getGame().exit();
         }
     }

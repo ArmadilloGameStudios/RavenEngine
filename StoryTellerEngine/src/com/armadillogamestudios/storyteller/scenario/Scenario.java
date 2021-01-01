@@ -1,15 +1,14 @@
 package com.armadillogamestudios.storyteller.scenario;
 
-import com.armadillogamestudios.storyteller.gameengine.StoryTeller;
+import com.armadillogamestudios.storyteller.gameengine.game.StoryTeller;
 import com.armadillogamestudios.storyteller.resource.actor.player.Player;
 import com.armadillogamestudios.storyteller.resource.location.World;
 import com.armadillogamestudios.storyteller.scenario.event.Event;
-import com.armadillogamestudios.storyteller.scenario.prompt.Input;
+import com.armadillogamestudios.storyteller.scenario.prompt.input.Input;
 import com.armadillogamestudios.storyteller.scenario.prompt.Prompt;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public abstract class Scenario {
     private List<Input> activeInputs = new ArrayList<>();

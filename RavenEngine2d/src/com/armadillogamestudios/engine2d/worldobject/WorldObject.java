@@ -13,28 +13,27 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class WorldObject<
-        S extends Scene,
-        P extends Parentable<? extends GameObject>,
-        C extends WorldObject>
-        extends GameObject<WorldObject, P, C> {
+        S extends Scene<?>,
+        C extends WorldObject<S, ?>>
+        extends GameObject<C> {
 
     private Map<String, GameData> audioData;
-    private Map<String, Clip> audioMap = new HashMap<>();
+    private final Map<String, Clip> audioMap = new HashMap<>();
 
-    private List<WorldObject> parentList = new ArrayList<>();
+    private final List<GameObject<?>> parentList = new ArrayList<>();
     private S scene;
 
-    private Vector2f position = new Vector2f();
+    private final Vector2f position = new Vector2f();
     private boolean standing;
 
-    private List<C> children = new CopyOnWriteArrayList<>();
+    private final List<C> children = new CopyOnWriteArrayList<>();
 
     private String spriteSheetName;
     ShaderTexture spriteSheet;
     private String animationName;
     private SpriteAnimationState spriteAnimationState;
 
-    private P parent;
+    private GameObject<?> parent;
 
     public WorldObject(S scene, GameData data) {
         this.scene = scene;
@@ -142,11 +141,11 @@ public abstract class WorldObject<
         return position;
     }
 
-    private Vector2f worldPos = new Vector2f();
+    private final Vector2f worldPos = new Vector2f();
 
     public Vector2f getWorldPosition() {
         if (getParent() instanceof WorldObject) {
-            return position.add(((WorldObject) getParent()).getWorldPosition(), worldPos);
+            return position.add(((WorldObject<?, ?>) getParent()).getWorldPosition(), worldPos);
         }
         return position;
     }
@@ -164,8 +163,8 @@ public abstract class WorldObject<
     }
 
     public float getWorldZ() {
-        if (getParent() instanceof WorldObject) {
-            return getZ() + (((WorldObject) getParent()).getWorldZ());
+        if (getParent() instanceof WorldObject<?,?>) {
+            return getZ() + (((WorldObject<?,?>) getParent()).getWorldZ());
         }
         return getZ();
     }
@@ -205,22 +204,20 @@ public abstract class WorldObject<
             shader.draw(spriteSheet, spriteAnimationState, getWorldPosition(), getScene().getWorldOffset(), null, getID(), getWorldZ(), getFade(), getHighlight(), getScene().getDrawStyle());
     }
 
-    public void setParent(P parent) {
+    public void setParent(GameObject<?> parent) {
         this.parent = parent;
     }
 
-    public P getParent() {
+    public GameObject<?> getParent() {
         return parent;
     }
 
     @Override
-    public List<WorldObject> getParentGameObjectList() {
+    public List<GameObject<?>> getParentGameObjectList() {
         parentList.clear();
 
-        if (parent instanceof WorldObject) {
-            parentList.addAll(((WorldObject) parent).getParentGameObjectList());
-            parentList.add((WorldObject) parent);
-        }
+        parentList.addAll(parent.getParentGameObjectList());
+        parentList.add(parent);
 
         return parentList;
     }

@@ -21,6 +21,30 @@ import static org.lwjgl.opengl.GL11.glFinish;
 
 public class GameEngine<G extends Game<G>> {
 
+    private final G game;
+    private GameWindow window;
+    private final List<GameObject<?>> oldMouseList = new ArrayList<>();
+    private GameDatabase gdb;
+    private final Map<String, SpriteSheet> spriteSheetsMap = new HashMap<>();
+    private final Map<String, SpriteAnimation> animationMap = new HashMap<>();
+    private final Map<String, Clip> audioMap = new HashMap<>();
+    private float deltaTime;
+    private long systemTime;
+    private boolean steamInit = false;
+    private final Mouse mouse = new Mouse();
+    private final Keyboard keyboard = new Keyboard();
+    private final int frame = 0;
+    private final float framesdt = 0;
+    private final List<GameObject<?>> newList = new ArrayList<>();
+
+    private GameEngine(G game) {
+        this.game = game;
+
+        game.setEngine(this);
+
+        systemTime = System.nanoTime() / 1000000L;
+    }
+
     public static <G extends Game<G>> GameEngine<G> Launch(G game) {
         GameEngine<G> engine = new GameEngine<>(game);
 
@@ -31,30 +55,9 @@ public class GameEngine<G extends Game<G>> {
         return engine;
     }
 
-    private G game;
-    private GameWindow window;
-    private List<GameObject> oldMouseList = new ArrayList<>();
-    private GameDatabase gdb;
-    private Map<String, SpriteSheet> spriteSheetsMap = new HashMap<>();
-    private Map<String, SpriteAnimation> animationMap = new HashMap<>();
-    private Map<String, Clip> audioMap = new HashMap<>();
-    private float deltaTime;
-    private long systemTime;
-    private boolean steamInit = false;
-    private Mouse mouse = new Mouse();
-    private Keyboard keyboard = new Keyboard();
-
     // Accessors
     public G getGame() {
         return game;
-    }
-
-    private GameEngine(G game) {
-        this.game = game;
-
-        game.setEngine(this);
-
-        systemTime = System.nanoTime() / 1000000L;
     }
 
     public float getDeltaTime() {
@@ -76,10 +79,6 @@ public class GameEngine<G extends Game<G>> {
     public Mouse getMouse() {
         return mouse;
     }
-
-    private int frame = 0;
-    private float framesdt = 0;
-
 
     public void run() {
         System.out.println("Started Run");
@@ -173,8 +172,6 @@ public class GameEngine<G extends Game<G>> {
     private void draw() {
         game.draw(window);
     }
-
-    private List<GameObject> newList = new ArrayList<>();
 
     private void input(float delta) {
         glfwPollEvents();

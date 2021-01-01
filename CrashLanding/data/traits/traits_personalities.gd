@@ -1,8 +1,11 @@
 [
     {
-        "name": "PERSONALITY_MOTIVATION",
+        "key": "PERSONALITY_MOTIVATION",
+        "name": "MOTIVATION",
 
         "starting_value": 2,
+
+        "type": "personality",
 
         "list": [
             {
@@ -23,9 +26,12 @@
         ]
     },
     {
-        "name": "PERSONALITY_CHARM",
+        "key": "PERSONALITY_CHARM",
+        "name": "CHARM",
 
         "starting_value": 2,
+
+        "type": "personality",
 
         "list": [
             {
@@ -42,6 +48,32 @@
             },
             {
                 "name": "enticing"
+            }
+        ]
+    },
+    {
+        "key": "PERSONALITY_EMPATHY",
+        "name": "EMPATHY",
+
+        "starting_value": 2,
+
+        "type": "personality",
+
+        "list": [
+            {
+                "name": "sadist"
+            },
+            {
+                "name": "apathetic"
+            },
+            {
+                "name": "caring"
+            },
+            {
+                "name": "empathetic"
+            },
+            {
+                "name": "empath"
             }
         ]
     }

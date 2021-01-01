@@ -5,7 +5,7 @@
     "height": 100,
     "frames": [
       {
-        "time": 1000,
+        "time": 2000,
         "y": 200
       },
       {
@@ -38,22 +38,22 @@
         "yoffset": 1
       },
       {
-        "time": 500,
+        "time": 1000,
         "y": 0,
         "yoffset": 2
       },
       {
-        "time": 500,
+        "time": 1000,
         "y": 100,
         "yoffset": 2
       },
       {
-        "time": 1000,
+        "time": 2000,
         "y": 200,
         "yoffset": 2
       },
       {
-        "time": 1000,
+        "time": 2000,
         "y": 200,
         "yoffset": 1
       }

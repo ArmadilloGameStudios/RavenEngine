@@ -16,24 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class UITextWriter {
 
-//    private static BufferedImage alphabetImage, alphabetSmallImage;
-//
-//    {
-//        try {
-//            alphabetImage = ImageIO.read(new File(
-//                    GameProperties.getMainDirectory() + File.separator +
-//                            "text" + File.separator +
-//                            "alphabet.png"));
-//
-//            alphabetSmallImage = ImageIO.read(new File(
-//                    GameProperties.getMainDirectory() + File.separator +
-//                            "text" + File.separator +
-//                            "alphabet_small.png"));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     private SpriteSheet alphabetImage, alphabetSmallImage;
 
     private UIFont font;
@@ -98,7 +80,6 @@ public class UITextWriter {
         y = 0; // 10
         lines = 0;
 
-        engine.getWindow().printErrors("rawr");
         shader.setWriteDestination(uiImage);
 
         if (background != null) {
@@ -273,7 +254,7 @@ public class UITextWriter {
                         }
                     } else {
 
-                        size.y = 8;
+                        size.y = 9;
 
                         if (font.getSide() == UIFont.Side.RIGHT) {
                             x -= cw - 1;
@@ -290,14 +271,14 @@ public class UITextWriter {
                             Vector2i o = font.getButtonOffset();
                             des.x += o.x;
                             des.y += o.y;
-                            src.y = 8;
+                            src.y = 9;
                             shader.write(size, src, des, alphabetSmallImage, highlight);
                         } else {
 
                             des.x = x;
                             des.y = y;
                             src.x = cx;
-                            src.y = 8;
+                            src.y = 9;
                             shader.write(size, src, des, alphabetSmallImage, highlight);
                         }
 

@@ -3,10 +3,10 @@ package com.armadillogamestudios.engine2d.ui;
 import com.armadillogamestudios.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.armadillogamestudios.engine2d.scene.Scene;
 
-public class UILabel<S extends Scene>
+public class UILabel<S extends Scene<?>>
         extends UIText<S> {
 
-    private int width, height;
+    private final int width, height;
 
     public UILabel(S scene, String text, int width, int height) {
         super(scene, text);

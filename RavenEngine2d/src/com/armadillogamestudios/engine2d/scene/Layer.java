@@ -15,21 +15,21 @@ public class Layer {
 
     private boolean needRedraw = true;
 
-    private Destination destination;
-    private List<GameObject> gameObjectList = new CopyOnWriteArrayList<>();
+    private final Destination destination;
+    private final List<GameObject<?>> gameObjectList = new CopyOnWriteArrayList<>();
 
-    private RenderTarget renderTarget;
+    private final RenderTarget renderTarget;
 
     public Layer(Destination destination) {
         this.destination = destination;
         renderTarget = new RenderTarget(LayerShader.COLOR, LayerShader.ID, LayerShader.DEPTH, false);
     }
 
-    public List<GameObject> getChildren() {
+    public List<GameObject<?>> getChildren() {
         return gameObjectList;
     }
 
-    public void addChild(GameObject obj) {
+    public void addChild(GameObject<?> obj) {
         if (!gameObjectList.contains(obj))
             gameObjectList.add(obj);
     }
@@ -42,7 +42,7 @@ public class Layer {
         return true; // needRedraw;
     }
 
-    public void removeChild(GameObject obj) {
+    public void removeChild(GameObject<?> obj) {
         gameObjectList.remove(obj);
     }
 

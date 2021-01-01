@@ -8,7 +8,9 @@ layout (std140) uniform DirectionalLight
     vec3 color;
     float intensity;
     vec3 direction;
+    float length;
     vec3 ambient;
+    float shadow_transparency;
 } light;
 
 layout (std140) uniform Matrices
