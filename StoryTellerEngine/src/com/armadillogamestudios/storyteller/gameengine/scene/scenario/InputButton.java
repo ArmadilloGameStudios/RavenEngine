@@ -11,7 +11,7 @@ public class InputButton extends UITextButtonStoryTeller<ScenarioScene<? extends
     private Input input;
 
     public InputButton(ScenarioScene<? extends StoryTeller<?>> scene) {
-        super(scene, "", "sprites/button_input.png", "inputbutton");
+        super(scene, "", "button_input.png", "inputbutton");
 
         UIFont font = this.getFont();
         font.setY(7);

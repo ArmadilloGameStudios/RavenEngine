@@ -1,4 +1,4 @@
-package com.armadillogamestudios.storyteller.gameengine.scene.mainmenu;
+package com.armadillogamestudios.storyteller.gameengine.scene;
 
 import com.armadillogamestudios.engine2d.graphics2d.DrawStyle;
 import com.armadillogamestudios.engine2d.graphics2d.shader.ShaderTexture;
@@ -14,23 +14,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public abstract class MainMenuScene<S extends StoryTeller<S>> extends SceneStoryTeller<S> implements KeyboardHandler {
+public abstract class MainMenuScene<G extends StoryTeller<G>> extends SceneStoryTeller<G> implements KeyboardHandler {
 
     private String[] savedGames;
 
-    public MainMenuScene(S game) {
+    public MainMenuScene(G game) {
         super(game);
-    }
 
-    @Override
-    public void loadShaderTextures() {
-        List<ShaderTexture> textures = getShaderTextures();
-
-        // textures.addAll(DisplayPawn.getSpriteSheets(this));
-    }
-
-    @Override
-    public final void onEnterScene() {
         Path charPath = Paths.get(getGame().getMainDirectory(), "save");
 
         File sFile = charPath.toFile();
@@ -40,12 +30,15 @@ public abstract class MainMenuScene<S extends StoryTeller<S>> extends SceneStory
 
         savedGames = sFile.list();
 
-        loadUI();
-
         addKeyboardHandler(this);
     }
 
-    protected abstract void loadUI();
+    @Override
+    public final void onInputKey(KeyData keyData) {
+        if (keyData.getKey() ==  KeyData.Key.ESCAPE) {
+            getGame().exit();
+        }
+    }
 
     public final boolean isLoadGame() {
         return savedGames != null && savedGames.length > 0;
@@ -56,7 +49,7 @@ public abstract class MainMenuScene<S extends StoryTeller<S>> extends SceneStory
     }
 
     public final void onNewGameClick() {
-        getGame().prepTransitionScene(new ScenarioScene<>(getGame(), true));
+        getGame().prepTransitionScene(getGame().getCreatePlayerScene());
     }
 
     public final void onSettingsClick() {
@@ -67,17 +60,5 @@ public abstract class MainMenuScene<S extends StoryTeller<S>> extends SceneStory
 
     public void onExitClick() {
         getGame().exit();
-    }
-
-    @Override
-    public void onInputKey(KeyData keyData) {
-        if (keyData.getKey() ==  KeyData.Key.ESCAPE) {
-            getGame().exit();
-        }
-    }
-
-    @Override
-    public DrawStyle getDrawStyle() {
-        return DrawStyle.STANDARD;
     }
 }

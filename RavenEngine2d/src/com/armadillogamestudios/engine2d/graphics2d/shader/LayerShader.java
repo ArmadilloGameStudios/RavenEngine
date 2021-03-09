@@ -126,7 +126,7 @@ public class LayerShader extends Shader {
 //        glDisable(GL_BLEND);
     }
 
-    private int isoHeight = 8, isoWidth = 16;
+    private final static int isoHeight = 8, isoWidth = 16;
 
     private Vector4f spriteRect = new Vector4f();
     private int[] viewRect = new int[4];
@@ -141,6 +141,10 @@ public class LayerShader extends Shader {
             case STANDARD:
                 x = ((position.x * 16f + offset.x));
                 y = ((position.y * 16f + offset.y));
+                break;
+            case STANDARD_12:
+                x = ((position.x * 12f + offset.x));
+                y = ((position.y * 12f + offset.y));
                 break;
             case ISOMETRIC:
                 x = ((int) (position.y * isoWidth + position.x * isoWidth + offset.x));

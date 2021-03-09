@@ -38,9 +38,9 @@ public class UITextWriter {
     public UITextWriter(GameEngine engine, Scene scene) {
         this.engine = engine;
 
-        alphabetImage = engine.getSpriteSheet("sprites/alphabet.png");
+        alphabetImage = engine.getSpriteSheet("alphabet.png");
         alphabetImage.load(scene);
-        alphabetSmallImage = engine.getSpriteSheet("sprites/alphabet_small.png");
+        alphabetSmallImage = engine.getSpriteSheet("alphabet_small.png");
         alphabetSmallImage.load(scene);
     }
 

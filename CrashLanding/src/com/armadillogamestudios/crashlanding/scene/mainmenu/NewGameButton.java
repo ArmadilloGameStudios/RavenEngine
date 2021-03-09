@@ -7,7 +7,7 @@ public class NewGameButton
         extends UITextButton<CrashLandingMainMenuScene> {
 
     public NewGameButton(CrashLandingMainMenuScene scene) {
-        super(scene, "new game", "sprites/button.png", "mainbutton");
+        super(scene, "new game", "button.png", "mainbutton");
         setTextHighlight(new Highlight(0f, 0f, 0f, 1f));
     }
 

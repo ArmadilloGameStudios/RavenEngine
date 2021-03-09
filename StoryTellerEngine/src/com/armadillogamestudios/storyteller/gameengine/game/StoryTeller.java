@@ -6,21 +6,19 @@ import com.armadillogamestudios.engine2d.database.GameData;
 import com.armadillogamestudios.engine2d.database.GameDataTable;
 import com.armadillogamestudios.engine2d.database.GameDatabase;
 import com.armadillogamestudios.engine2d.scene.Scene;
-import com.armadillogamestudios.engine2d.ui.container.UIContainer;
 import com.armadillogamestudios.engine2d.worldobject.Highlight;
 import com.armadillogamestudios.storyteller.gameengine.compator.TraitComparator;
+import com.armadillogamestudios.storyteller.gameengine.scene.CreatePlayerScene;
 import com.armadillogamestudios.storyteller.gameengine.scene.SceneStoryTeller;
 import com.armadillogamestudios.storyteller.gameengine.scene.splashscreen.SplashScreenScene;
-import com.armadillogamestudios.storyteller.gameengine.scene.mainmenu.MainMenuScene;
+import com.armadillogamestudios.storyteller.gameengine.scene.MainMenuScene;
 import com.armadillogamestudios.storyteller.manager.Manager;
 import com.armadillogamestudios.storyteller.resource.Resource;
 import com.armadillogamestudios.storyteller.resource.layout.Layout;
-import com.armadillogamestudios.storyteller.resource.trait.Trait;
 import com.armadillogamestudios.storyteller.resource.trait.TraitDescription;
 import com.armadillogamestudios.storyteller.scenario.Scenario;
 import com.armadillogamestudios.storyteller.scenario.prompt.Prompt;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
@@ -100,4 +98,6 @@ public abstract class StoryTeller<G extends StoryTeller<G>>
     public abstract List<String> getTraitOrder();
 
     public abstract MainMenuScene<G> getMainMenuScene();
+
+    public abstract CreatePlayerScene<G> getCreatePlayerScene();
 }

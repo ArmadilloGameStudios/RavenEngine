@@ -2,6 +2,7 @@ package com.armadillogamestudios.engine2d.database;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -86,5 +87,11 @@ public class GameDataList extends ArrayList<GameData> implements GameDatable {
     @Override
     public int hashCode() {
         return System.identityHashCode(this);
+    }
+
+    public GameData query(String trait, String value) {
+        return this.stream()
+                .filter(map -> map.has(trait) && map.getString(trait).equals(value))
+                .findAny().get();
     }
 }

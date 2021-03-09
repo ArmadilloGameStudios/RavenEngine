@@ -42,12 +42,12 @@ public final class ScenarioScene<G extends StoryTeller<G>>
     }
 
     @Override
-    public void loadShaderTextures() {
+    public void updateUI(float deltaTime) {
 
     }
 
     @Override
-    public void onEnterScene() {
+    protected void loadUI() {
 
         // Background
         setBackgroundColor(new Vector3f(0, 0, 0));
@@ -57,7 +57,7 @@ public final class ScenarioScene<G extends StoryTeller<G>>
         promptContainer = new UIContainer<>(this, UIContainer.Location.UPPER, UIContainer.Layout.VERTICAL);
         addChild(promptContainer);
 
-        promptBackground = new UIImage<>(this, 506, 106, "sprites/prompt.png");
+        promptBackground = new UIImage<>(this, 506, 106, "prompt.png");
         promptContainer.addChild(promptBackground);
 
         promptText = new UILabelStoryTeller<>(this, "", 500, 100);
@@ -117,21 +117,6 @@ public final class ScenarioScene<G extends StoryTeller<G>>
             inputContainer.setVisibility(true);
             inputContainer.setPrompt((PromptInput) prompt);
         }
-    }
-
-    @Override
-    public void onExitScene() {
-
-    }
-
-    @Override
-    public void onUpdate(float deltaTime) {
-
-    }
-
-    @Override
-    public DrawStyle getDrawStyle() {
-        return DrawStyle.STANDARD;
     }
 
     public final Scenario getScenario() {

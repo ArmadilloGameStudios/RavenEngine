@@ -6,6 +6,7 @@ import com.armadillogamestudios.engine2d.graphics2d.shader.LayerShader;
 import com.armadillogamestudios.engine2d.graphics2d.shader.ShaderTexture;
 import com.armadillogamestudios.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.armadillogamestudios.engine2d.scene.Scene;
+import com.armadillogamestudios.engine2d.ui.UIObject;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
 
 import javax.sound.sampled.Clip;
@@ -46,6 +47,7 @@ public abstract class WorldObject<
         if (data.has("sprite")) {
             spriteSheetName = data.getString("sprite");
             spriteSheet = scene.getEngine().getSpriteSheet(spriteSheetName);
+            spriteSheet.load(getScene());
 
             if (data.has("animation")) {
                 animationName = data.getString("animation");
@@ -216,8 +218,10 @@ public abstract class WorldObject<
     public List<GameObject<?>> getParentGameObjectList() {
         parentList.clear();
 
-        parentList.addAll(parent.getParentGameObjectList());
-        parentList.add(parent);
+        if (getParent() instanceof WorldObject<?, ?>) {
+            parentList.addAll(parent.getParentGameObjectList());
+            parentList.add(parent);
+        }
 
         return parentList;
     }

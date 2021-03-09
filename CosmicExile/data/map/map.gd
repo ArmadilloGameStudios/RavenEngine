@@ -1,0 +1,4 @@
+{
+  "setting": "test",
+  "tileset": "testset"
+}

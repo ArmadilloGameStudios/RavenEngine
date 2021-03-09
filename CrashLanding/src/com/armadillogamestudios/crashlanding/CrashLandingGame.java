@@ -1,10 +1,12 @@
 package com.armadillogamestudios.crashlanding;
 
 import com.armadillogamestudios.crashlanding.scenario.createplayer.CreatePlayerScenario;
+import com.armadillogamestudios.crashlanding.scene.createplayer.CrashLandingCreatePlayerScene;
 import com.armadillogamestudios.crashlanding.scene.mainmenu.CrashLandingMainMenuScene;
 import com.armadillogamestudios.engine2d.worldobject.Highlight;
 import com.armadillogamestudios.storyteller.gameengine.game.StoryTeller;
-import com.armadillogamestudios.storyteller.gameengine.scene.mainmenu.MainMenuScene;
+import com.armadillogamestudios.storyteller.gameengine.scene.CreatePlayerScene;
+import com.armadillogamestudios.storyteller.gameengine.scene.MainMenuScene;
 import com.armadillogamestudios.storyteller.scenario.Scenario;
 
 import java.util.Arrays;
@@ -38,6 +40,11 @@ public class CrashLandingGame extends StoryTeller<CrashLandingGame> {
     @Override
     public MainMenuScene<CrashLandingGame> getMainMenuScene() {
         return new CrashLandingMainMenuScene(this);
+    }
+
+    @Override
+    public CreatePlayerScene<CrashLandingGame> getCreatePlayerScene() {
+        return new CrashLandingCreatePlayerScene(this);
     }
 
     @Override

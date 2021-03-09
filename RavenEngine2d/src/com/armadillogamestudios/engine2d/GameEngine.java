@@ -178,7 +178,7 @@ public class GameEngine<G extends Game<G>> {
 
         int id = window.getCompilationShader().getWorldObjectID();
 
-        GameObject hover = null;
+        GameObject<?> hover = null;
         if (id != 0) {
             hover = GameObject.getGameObjectFromID(id);
         }
@@ -191,7 +191,7 @@ public class GameEngine<G extends Game<G>> {
 
             // clicks - might cause a problem with the order of enter and leave
             if (mouse.isLeftButtonClick()) {
-                for (GameObject o : oldMouseList) {
+                for (GameObject<?> o : oldMouseList) {
                     if (newList.contains(o))
                         o.onMouseClick();
                 }
@@ -200,7 +200,7 @@ public class GameEngine<G extends Game<G>> {
             }
 
             // hover
-            for (GameObject o : oldMouseList) {
+            for (GameObject<?> o : oldMouseList) {
                 if (newList.contains(o))
                     o.checkMouseMovement(true, delta);
                 else {
@@ -208,7 +208,7 @@ public class GameEngine<G extends Game<G>> {
                 }
             }
 
-            for (GameObject o : newList) {
+            for (GameObject<?> o : newList) {
                 if (!oldMouseList.contains(o)) {
                     o.checkMouseMovement(true, delta);
                 }
@@ -218,7 +218,7 @@ public class GameEngine<G extends Game<G>> {
             oldMouseList.addAll(newList);
 
         } else {
-            for (GameObject o : oldMouseList) {
+            for (GameObject<?> o : oldMouseList) {
                 o.checkMouseMovement(false, delta);
             }
 
@@ -262,7 +262,10 @@ public class GameEngine<G extends Game<G>> {
     }
 
     public SpriteSheet getSpriteSheet(String spriteSrc) {
-        SpriteSheet sheet = spriteSheetsMap.get(game.getMainDirectory() + File.separator + fixPath(spriteSrc));
+        SpriteSheet sheet = spriteSheetsMap.get(
+                game.getMainDirectory() + File.separator +
+                "sprites" + File.separator +
+                fixPath(spriteSrc));
 
         if (sheet == null) {
             System.out.println("No sprite " + spriteSrc);

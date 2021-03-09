@@ -7,7 +7,7 @@ public class LoadGameButton
         extends UITextButton<CrashLandingMainMenuScene> {
 
     public LoadGameButton(CrashLandingMainMenuScene scene) {
-        super(scene, "Continue", "sprites/button.png", "mainbutton");
+        super(scene, "Continue", "button.png", "mainbutton");
         setTextHighlight(new Highlight(0f, 0f, 0f, 1f));
     }
 

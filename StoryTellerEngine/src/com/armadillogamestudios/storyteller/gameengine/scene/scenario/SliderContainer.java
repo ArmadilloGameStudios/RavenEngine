@@ -26,11 +26,11 @@ public class SliderContainer extends UIContainer<ScenarioScene<?>> {
                 scene,
                 116,
                 4,
-                "sprites/selectortop.png");
+                "selectortop.png");
 
         addChild(top);
 
-        UITextInput<ScenarioScene<?>> textInput = new UITextInput<>(scene, "enter your name", "sprites/input.png");
+        UITextInput<ScenarioScene<?>> textInput = new UITextInput<>(scene, "enter your name", "input.png");
         textInput.setTextHighlight(scene.getGame().getTextHighlight());
         addChild(textInput);
 
@@ -40,12 +40,12 @@ public class SliderContainer extends UIContainer<ScenarioScene<?>> {
                 scene,
                 116,
                 29,
-                "sprites/selectorbutton.png");
+                "selectorbutton.png");
 
         addChild(bot);
 
         // btn continue
-        UITextButtonStoryTeller<ScenarioScene<?>> continueBtn = new UITextButtonStoryTeller<ScenarioScene<?>>(scene, "continue", "sprites/button_small.png", "smallbutton") {
+        UITextButtonStoryTeller<ScenarioScene<?>> continueBtn = new UITextButtonStoryTeller<ScenarioScene<?>>(scene, "continue", "button_small.png", "smallbutton") {
             @Override
             public void handleMouseClick() {
                 for (int i = 0; i < selectorCount; i++) {
@@ -83,10 +83,10 @@ public class SliderContainer extends UIContainer<ScenarioScene<?>> {
         UISelector2 red =
                 new UISelector2(
                         getScene(),
-                        "sprites/selector.png",
-                        "sprites/selectormarker.png",
-                        "sprites/selectorleftbutton.png",
-                        "sprites/selectorrightbutton.png");
+                        "selector.png",
+                        "selectormarker.png",
+                        "selectorleftbutton.png",
+                        "selectorrightbutton.png");
 
         red.setTextHighlight(getScene().getGame().getTextHighlight());
 
