@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * Created by cookedbird on 11/15/17.
@@ -93,5 +94,12 @@ public class GameDataList extends ArrayList<GameData> implements GameDatable {
         return this.stream()
                 .filter(map -> map.has(trait) && map.getString(trait).equals(value))
                 .findAny().get();
+    }
+
+    public GameData queryRandom(String trait, String value, Random random) {
+        return new GameDataList(this.stream()
+                .filter(map -> map.has(trait) && map.getString(trait).equals(value))
+                .collect(Collectors.toList()))
+                .getRandom(random);
     }
 }

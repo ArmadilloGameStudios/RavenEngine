@@ -12,7 +12,7 @@ public abstract class CreatePlayerScene<G extends StoryTeller<G>> extends SceneS
     }
 
     @Override
-    public void onInputKey(KeyData i) {
+    public void onKeyPress(KeyData i) {
 
     }
 }

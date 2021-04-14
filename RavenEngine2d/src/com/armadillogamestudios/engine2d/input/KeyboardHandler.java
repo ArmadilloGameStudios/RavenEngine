@@ -1,5 +1,6 @@
 package com.armadillogamestudios.engine2d.input;
 
 public interface KeyboardHandler {
-    void onInputKey(KeyData i);
+    void onKeyPress(KeyData i);
+    void onKeyRelease(KeyData i);
 }

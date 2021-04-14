@@ -14,9 +14,7 @@ public class GameProperties {
     private static final int HEIGHT = 360, WIDTH = 640;
 
     private static float animationSpeed = 1.0f;
-    //private static int scaling = 2;
-//    private static int height = 1080, width = 1920;
-    private static int dheight = 1080, dwidth = 1920;
+    private static float scaling = 4;
     private static String mainDirectory;
     private static List<Vector2i> resolutionList = new ArrayList<>();
     private static int sfx = 100, music = 100;
@@ -27,11 +25,7 @@ public class GameProperties {
     public static final int FULLSCREEN = 0, WINDOWED = 1, WINDOWED_BORDERLESS = 2;
 
     public static int getDisplayWidth() {
-        return dwidth;
-    }
-
-    public static void setDisplayWidth(int width) {
-        GameProperties.dwidth = width;
+        return (int) (WIDTH * scaling);
     }
 
     public static int getWidth() {
@@ -39,15 +33,15 @@ public class GameProperties {
     }
 
     public static int getDisplayHeight() {
-        return dheight;
-    }
-
-    public static void setDisplayHeight(int height) {
-        GameProperties.dheight = height;
+        return (int) (HEIGHT * scaling);
     }
 
     public static int getHeight() {
         return HEIGHT;
+    }
+
+    public static float getScaling() {
+        return scaling;
     }
 
     public static String getMainDirectory() {

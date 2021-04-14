@@ -29,7 +29,7 @@ public abstract class MainMenuScene<G extends TacticsGame<G>> extends TacticsSce
     }
 
     @Override
-    public final void onInputKey(KeyData keyData) {
+    public final void onKeyPress(KeyData keyData) {
         if (keyData.getKey() ==  KeyData.Key.ESCAPE) {
             getGame().exit();
         }

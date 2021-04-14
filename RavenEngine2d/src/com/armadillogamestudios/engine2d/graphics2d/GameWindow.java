@@ -8,6 +8,7 @@ import com.armadillogamestudios.engine2d.graphics2d.shader.Shader;
 import com.armadillogamestudios.engine2d.graphics2d.shader.TextShader;
 import com.armadillogamestudios.engine2d.database.GameData;
 import com.armadillogamestudios.engine2d.util.math.Vector2i;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.opengl.GL;
@@ -81,7 +82,8 @@ public class GameWindow {
         else
             glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
 
-        long monitor = glfwGetMonitors().get(0);
+        PointerBuffer monitors = glfwGetMonitors();
+        long monitor = monitors.get(1);
 
         // Create the window
         if (GameProperties.getWindowMode() == GameProperties.FULLSCREEN)
@@ -137,7 +139,6 @@ public class GameWindow {
         // Enable v-sync?
         glfwSwapInterval(GameProperties.getVSync() ? 1 : 0);
 
-
         // Make the window visible
         glfwShowWindow(window);
 
@@ -149,7 +150,7 @@ public class GameWindow {
         glfwSetCursorPosCallback(window, (window, xpos, ypos) -> engine.inputMouseMove(xpos, ypos));
         glfwSetScrollCallback(window, (window, xoffset, yoffset) -> engine.inputScroll(xoffset, yoffset));
 
-        GLCapabilities cat = GL.createCapabilities();
+        GLCapabilities cat = GL.createCapabilities(true);
 
         layerShader = new LayerShader(engine, this);
         compilationShader = new CompilationShader(engine, this);

@@ -121,8 +121,8 @@ public abstract class Game<G extends Game<G>> {
 
         settings.ifHas("music", s -> GameProperties.setMusicVolume(s.asInteger()));
         settings.ifHas("sfx", s -> GameProperties.setSFXVolume(s.asInteger()));
-        settings.ifHas("width", s -> GameProperties.setDisplayWidth(s.asInteger()));
-        settings.ifHas("height", s -> GameProperties.setDisplayHeight(s.asInteger()));
+        // settings.ifHas("width", s -> GameProperties.setDisplayWidth(s.asInteger()));
+        // settings.ifHas("height", s -> GameProperties.setDisplayHeight(s.asInteger()));
         settings.ifHas("vsync", s -> GameProperties.setVSync(s.asBoolean()));
         settings.ifHas("win_mode", s -> GameProperties.setWindowMode(s.asInteger()));
     }

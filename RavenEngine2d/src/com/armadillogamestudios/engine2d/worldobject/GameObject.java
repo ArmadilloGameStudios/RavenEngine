@@ -12,7 +12,7 @@ import java.util.Optional;
 public abstract class GameObject<C extends GameObject<?>> {
 
     private static int last_id = 0;
-    private static final HashMap<Integer, GameObject<?>> gameObjectIDMap = new HashMap<>();
+    private static final HashMap<Integer, GameObject<?>> gameObjectIDMap = new HashMap<>(10000);
 
     public static void resetObjectIDs() {
         gameObjectIDMap.clear();
@@ -29,7 +29,7 @@ public abstract class GameObject<C extends GameObject<?>> {
     private Highlight highlight;
     private float fade = 1f;
     private boolean mouseHovering = false;
-    private final List<MouseHandler> clickHandlers = new ArrayList<MouseHandler>();
+    private final List<MouseHandler> clickHandlers = new ArrayList<>();
 
     public GameObject() {
         // click id
@@ -46,7 +46,8 @@ public abstract class GameObject<C extends GameObject<?>> {
     }
 
     public final void newID() {
-        id = last_id += 20;
+        id = last_id += 10;
+
         gameObjectIDMap.put(id, this);
     }
 
@@ -70,6 +71,10 @@ public abstract class GameObject<C extends GameObject<?>> {
 
     public void removeMouseHandler(MouseHandler c) {
         this.clickHandlers.remove(c);
+    }
+
+    public void removeAllMouseHandlers() {
+        this.clickHandlers.clear();
     }
 
     public boolean isMouseHovering() {

@@ -1,0 +1,69 @@
+package com.armadillogamestudios.reclaim;
+
+import com.armadillogamestudios.reclaim.data.CosmicExileActiveGameData;
+import com.armadillogamestudios.reclaim.data.Player;
+import com.armadillogamestudios.reclaim.data.World;
+import com.armadillogamestudios.reclaim.scene.mainmenu.CosmicExileMainMenuScene;
+import com.armadillogamestudios.reclaim.scene.world.ReclaimWorldScene;
+import com.armadillogamestudios.tactics.gameengine.game.TacticsGame;
+import com.armadillogamestudios.engine2d.worldobject.Highlight;
+import com.armadillogamestudios.tactics.gameengine.scene.TacticsScene;
+import com.armadillogamestudios.tactics.gameengine.scene.mainmenu.MainMenuScene;
+
+import java.util.Random;
+
+public class CosmicExileGame extends TacticsGame<CosmicExileGame> {
+
+    private static final int seed = new Random().nextInt();
+    public static final Random RANDOM = new Random(seed);
+
+    private static final Highlight TEXT = new Highlight(.4f, .4f, .4f, .6f);
+    private static final String mainDirectory = "CosmicExile";
+    private static final String title = "Cosmic Exile";
+
+    private static CosmicExileActiveGameData activeGameData;
+
+    public static void main(String[] args) {
+        System.out.println("Lunching Cosmic Exile");
+        System.out.println("Seed " + seed);
+        TacticsGame.Launch(new CosmicExileGame());
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public String getMainDirectory() {
+        return mainDirectory;
+    }
+
+    @Override
+    public MainMenuScene<CosmicExileGame> getMainMenuScene() {
+        return new CosmicExileMainMenuScene(this);
+    }
+
+    @Override
+    public Highlight getTextHighlight() {
+        return TEXT;
+    }
+
+    @Override
+    public TacticsScene<CosmicExileGame> getNewGameScene() {
+        activeGameData = new CosmicExileActiveGameData();
+
+        setStartingData();
+
+        return new ReclaimWorldScene(this);
+    }
+
+    private void setStartingData() {
+        activeGameData.addPlayer(new Player());
+        activeGameData.setWorld(new World());
+    }
+
+    public static CosmicExileActiveGameData getActiveGameData() {
+        return activeGameData;
+    }
+}

@@ -182,6 +182,8 @@ public class GameEngine<G extends Game<G>> {
         if (id != 0) {
             hover = GameObject.getGameObjectFromID(id);
         }
+//        System.out.println(id);
+//        System.out.println(hover);
 
         if (hover != null) {
 
@@ -197,6 +199,7 @@ public class GameEngine<G extends Game<G>> {
                 }
 
                 mouse.setLeftButtonClick(false);
+
             }
 
             // hover

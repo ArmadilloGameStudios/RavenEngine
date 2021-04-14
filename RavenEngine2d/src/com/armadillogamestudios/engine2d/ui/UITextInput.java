@@ -84,7 +84,7 @@ public class UITextInput<S extends Scene<?>> extends UIObject<S>
     }
 
     @Override
-    public void onInputKey(KeyData d) {
+    public void onKeyPress(KeyData d) {
         if (unset) {
             displayText = "";
             unset = false;
@@ -106,6 +106,11 @@ public class UITextInput<S extends Scene<?>> extends UIObject<S>
         time = 0f;
 
         this.text.load();
+    }
+
+    @Override
+    public void onKeyRelease(KeyData i) {
+
     }
 
     private float time;

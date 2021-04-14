@@ -13,10 +13,9 @@ public class UIToolTip<S extends Scene<?>> extends UIObject<S> {
     private final Vector2f position = new Vector2f();
 
     private final GameDataTable tips;
-
-    private UIMultipartImage<S> background;
     private final UILabel<S> title;
     private final UILabel<S> text;
+    private UIMultipartImage<S> background;
 
     public UIToolTip(S scene, int width, int height, String backgroundSrc, String animation, GameDataTable tips) {
         super(scene);
@@ -101,7 +100,7 @@ public class UIToolTip<S extends Scene<?>> extends UIObject<S> {
     @Override
     public float getY() {
 
-      float y = GameProperties.getHeight() - height - (float) (getScene().getEngine().getMouse().getY() / ((float) GameProperties.getDisplayHeight () / (float) GameProperties.getHeight()));
+        float y = GameProperties.getHeight() - height - (float) (getScene().getEngine().getMouse().getY() / ((float) GameProperties.getDisplayHeight() / (float) GameProperties.getHeight()));
 
         if (background != null) {
             if (y - background.getHeight() < 0) {
@@ -110,7 +109,6 @@ public class UIToolTip<S extends Scene<?>> extends UIObject<S> {
         }
 
         return y;
-
     }
 
     @Override
@@ -120,11 +118,11 @@ public class UIToolTip<S extends Scene<?>> extends UIObject<S> {
 
     @Override
     public float getX() {
-      float x = (float) (getScene().getEngine().getMouse().getX() / ((float) GameProperties.getDisplayHeight () / (float) GameProperties.getHeight()));
+        float x = (float) (getScene().getEngine().getMouse().getX() / ((float) GameProperties.getDisplayHeight() / (float) GameProperties.getHeight()));
 //        float x = (float) (getScene().getEngine().getMouse().getX() * GameProperties.getDisplayWidth()) / (GameProperties.getDisplayWidth() * GameProperties.getScaling());
 
         if (background != null) {
-            if (background.getWidth() + x > GameProperties.getDisplayWidth() / ((float) GameProperties.getDisplayHeight () / (float) GameProperties.getHeight())) {
+            if (background.getWidth() + x > GameProperties.getDisplayWidth() / ((float) GameProperties.getDisplayHeight() / (float) GameProperties.getHeight())) {
                 x -= background.getWidth();
             }
         }

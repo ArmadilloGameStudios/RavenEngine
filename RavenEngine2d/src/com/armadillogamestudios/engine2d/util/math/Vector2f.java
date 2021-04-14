@@ -40,8 +40,17 @@ public class Vector2f {
         return out;
     }
 
-    public double length() {
-        return Math.sqrt(length2());
+    public Vector2f divide(float scalar, Vector2f out) {
+        return scale(1f / scalar, out);
+    }
+
+    public Vector2f normalize(Vector2f out) {
+        float length = length();
+        return divide(length, out);
+    }
+
+    public float length() {
+        return (float) Math.sqrt(length2());
     }
 
     public float length2() {

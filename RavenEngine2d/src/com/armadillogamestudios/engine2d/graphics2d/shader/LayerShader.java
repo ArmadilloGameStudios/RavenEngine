@@ -64,8 +64,8 @@ public class LayerShader extends Shader {
         super.useProgram();
 
         glViewport(0, 0,
-                GameProperties.getWidth(),
-                GameProperties.getHeight());
+                GameProperties.getDisplayWidth(),
+                GameProperties.getDisplayHeight());
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_GREATER);
@@ -87,8 +87,8 @@ public class LayerShader extends Shader {
         glDrawBuffers(buffers);
 
         glViewport(0, 0,
-                GameProperties.getWidth(),
-                GameProperties.getHeight());
+                GameProperties.getDisplayWidth(),
+                GameProperties.getDisplayHeight());
 
         glClearDepth(0.0);
         glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 0f);
@@ -112,8 +112,8 @@ public class LayerShader extends Shader {
         glBindFramebuffer(GL_FRAMEBUFFER, renderTarget.getFramebufferHandle());
 
         glViewport(0, 0,
-                GameProperties.getWidth(),
-                GameProperties.getHeight());
+                GameProperties.getDisplayWidth(),
+                GameProperties.getDisplayHeight());
 
         glClearDepth(0.0);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -146,6 +146,10 @@ public class LayerShader extends Shader {
                 x = ((position.x * 12f + offset.x));
                 y = ((position.y * 12f + offset.y));
                 break;
+            case STANDARD_1:
+                x = ((position.x + offset.x));
+                y = ((position.y + offset.y));
+                break;
             case ISOMETRIC:
                 x = ((int) (position.y * isoWidth + position.x * isoWidth + offset.x));
                 y = ((int) (position.y * isoHeight - position.x * isoHeight + offset.y));
@@ -166,13 +170,13 @@ public class LayerShader extends Shader {
                 x += spriteAnimation.getXOffset();
                 y += spriteAnimation.getYOffset();
 
-//                x *= GameProperties.getScaling();
-//                y *= GameProperties.getScaling();
+                x *= GameProperties.getScaling();
+                y *= GameProperties.getScaling();
 
                 viewRect[0] = (int) Math.floor(x);
                 viewRect[1] = (int) Math.floor(y);
-                viewRect[2] = spriteAnimation.getWidth(); // * GameProperties.getScaling();
-                viewRect[3] = spriteAnimation.getHeight(); // * GameProperties.getScaling();
+                viewRect[2] = (int) (spriteAnimation.getWidth() * GameProperties.getScaling());
+                viewRect[3] = (int) (spriteAnimation.getHeight() * GameProperties.getScaling());
 
                 spriteRect.x = (float) spriteAnimation.getX() / (float) texture.getWidth();
                 spriteRect.y = (float) spriteAnimation.getY() / (float) texture.getHeight();
@@ -182,13 +186,13 @@ public class LayerShader extends Shader {
                 x -= spriteAnimation.getXOffset();
                 y += spriteAnimation.getYOffset();
 
-//                x *= GameProperties.getScaling();
-//                y *= GameProperties.getScaling();
+                x *= GameProperties.getScaling();
+                y *= GameProperties.getScaling();
 
                 viewRect[0] = (int) Math.floor(x);
                 viewRect[1] = (int) Math.floor(y);
-                viewRect[2] = spriteAnimation.getWidth(); // * GameProperties.getScaling();
-                viewRect[3] = spriteAnimation.getHeight(); // * GameProperties.getScaling();
+                viewRect[2] = (int) (spriteAnimation.getWidth() * GameProperties.getScaling());
+                viewRect[3] = (int) (spriteAnimation.getHeight() * GameProperties.getScaling());
 
                 spriteRect.x = (float) (spriteAnimation.getX() + spriteAnimation.getWidth()) / (float) texture.getWidth();
                 spriteRect.y = (float) spriteAnimation.getY() / (float) texture.getHeight();
@@ -197,13 +201,13 @@ public class LayerShader extends Shader {
             }
         } else {
 
-//            x *= GameProperties.getScaling();
-//            y *= GameProperties.getScaling();
+            x *= GameProperties.getScaling();
+            y *= GameProperties.getScaling();
 
             viewRect[0] = (int) Math.floor(x);
             viewRect[1] = (int) Math.floor(y);
-            viewRect[2] = texture.getWidth(); // * GameProperties.getScaling();
-            viewRect[3] = texture.getHeight(); // * GameProperties.getScaling();
+            viewRect[2] = (int) (texture.getWidth() * GameProperties.getScaling());
+            viewRect[3] = (int) (texture.getHeight() * GameProperties.getScaling());
 
             if (textureOffset != null) {
                 spriteRect.x = textureOffset.x;

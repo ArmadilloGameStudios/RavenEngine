@@ -43,6 +43,7 @@ public class SpriteSheet extends ShaderTexture {
 
     public void load(Scene scene) {
         if (!loaded) {
+
             buffer.flip();
 
             // Set Texture

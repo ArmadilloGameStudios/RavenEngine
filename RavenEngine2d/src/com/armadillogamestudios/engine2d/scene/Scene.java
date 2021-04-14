@@ -14,7 +14,6 @@ import com.armadillogamestudios.engine2d.graphics2d.shader.ShaderTexture;
 import com.armadillogamestudios.engine2d.graphics2d.shader.TextShader;
 import com.armadillogamestudios.engine2d.input.KeyData;
 import com.armadillogamestudios.engine2d.input.KeyboardHandler;
-import com.armadillogamestudios.engine2d.ui.UITextInput;
 import com.armadillogamestudios.engine2d.worldobject.GameObject;
 import com.armadillogamestudios.engine2d.ui.UITextWriter;
 import com.armadillogamestudios.engine2d.ui.UIToolTip;
@@ -258,7 +257,11 @@ public abstract class Scene<G extends Game<G>> {
         if (action == GLFW.GLFW_PRESS) {
             this.key.update(key, mods);
 
-            keyboardHandlers.forEach(keyboardHandler -> keyboardHandler.onInputKey(this.key));
+            keyboardHandlers.forEach(keyboardHandler -> keyboardHandler.onKeyPress(this.key));
+        } else if (action == GLFW.GLFW_RELEASE) {
+            this.key.update(key, mods);
+
+            keyboardHandlers.forEach(keyboardHandler -> keyboardHandler.onKeyRelease(this.key));
         }
     }
 

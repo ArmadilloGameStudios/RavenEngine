@@ -34,7 +34,7 @@ public abstract class MainMenuScene<G extends StoryTeller<G>> extends SceneStory
     }
 
     @Override
-    public final void onInputKey(KeyData keyData) {
+    public final void onKeyPress(KeyData keyData) {
         if (keyData.getKey() ==  KeyData.Key.ESCAPE) {
             getGame().exit();
         }

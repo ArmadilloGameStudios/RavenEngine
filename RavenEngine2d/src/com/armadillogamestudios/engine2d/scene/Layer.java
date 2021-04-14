@@ -22,7 +22,7 @@ public class Layer {
 
     public Layer(Destination destination) {
         this.destination = destination;
-        renderTarget = new RenderTarget(LayerShader.COLOR, LayerShader.ID, LayerShader.DEPTH, false);
+        renderTarget = new RenderTarget(LayerShader.COLOR, LayerShader.ID, LayerShader.DEPTH, true);
     }
 
     public List<GameObject<?>> getChildren() {
