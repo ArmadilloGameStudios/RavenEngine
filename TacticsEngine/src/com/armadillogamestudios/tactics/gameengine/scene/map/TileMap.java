@@ -1,29 +1,32 @@
 package com.armadillogamestudios.tactics.gameengine.scene.map;
 
 import com.armadillogamestudios.engine2d.graphics2d.shader.LayerShader;
+import com.armadillogamestudios.engine2d.input.MouseClickHandler;
 import com.armadillogamestudios.engine2d.input.MouseHandler;
 import com.armadillogamestudios.engine2d.scene.Layer;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
 import com.armadillogamestudios.engine2d.worldobject.GameObject;
 import com.armadillogamestudios.engine2d.worldobject.WorldObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-public class TileMap<S extends MapScene<S, ?, T>, T extends Tile> extends WorldObject<S, WorldObject<S, ?>> {
+public class TileMap<S extends MapScene<S, ?, T, P>, T extends Tile<P>, P extends Pawn> extends WorldObject<S, WorldObject<S, ?>> {
 
-    private final int xSpan = 29, ySpan = 22;
-    private int xOffset;
-    private int yOffset;
+    private final int tileWidth = 24, tileHeight = 20;
+
+    private final int xSpan = 29, ySpan = 30;
     private final float mapMoveSpeed = .1f;
+    private final TileMap<S, T, P>.TileDrawObject[][] tilesDrawObjects = new TileMap.TileDrawObject[xSpan][];
+    private final List<TileMap<S, T, P>.PawnDrawObject> pawnDrawObjects = new ArrayList<>();
     boolean moveRight = false;
     boolean moveLeft = false;
     boolean moveDown = false;
     boolean moveUp = false;
-    private T[][] tiles;
-    private final TileMap<S, T>.TileDrawObject[][] tilesDrawObjects = new TileMap.TileDrawObject[xSpan][];
-    private Vector2f tilePos = new Vector2f();
+    private int xOffset;
+    private int yOffset;
+    private final T[][] tiles;
+    private final Vector2f tilePos = new Vector2f();
+    private int pawnDrawIndex;
 
     public TileMap(S scene, T[][] tiles) {
         super(scene);
@@ -36,6 +39,7 @@ public class TileMap<S extends MapScene<S, ?, T>, T extends Tile> extends WorldO
                 tiles[x][y].load(scene);
             }
         }
+
         for (int x = 0; x < xSpan; x++) {
             tilesDrawObjects[x] = new TileMap.TileDrawObject[ySpan];
 
@@ -49,8 +53,10 @@ public class TileMap<S extends MapScene<S, ?, T>, T extends Tile> extends WorldO
     public void draw(LayerShader shader) {
 
         Vector2f worldPos = getPosition();
-        xOffset = -((int) worldPos.x / 24);
-        yOffset = -((int) worldPos.y / 18);
+        xOffset = -((int) worldPos.x / tileWidth);
+        yOffset = -((int) worldPos.y / (tileHeight - 7));
+
+        pawnDrawIndex = 0;
 
         for (int x = 0; x < xSpan; x++) {
             for (int y = 0; y < ySpan; y++) {
@@ -65,35 +71,53 @@ public class TileMap<S extends MapScene<S, ?, T>, T extends Tile> extends WorldO
 
         if (moveUp) {
             moveY(-mapMoveSpeed * deltaTime);
-
-            int min = getMinY();
-            if (getY() < min) {
-                setY(min);
-            }
         } else if (moveDown) {
             moveY(mapMoveSpeed * deltaTime);
-
-            int max = getMaxY();
-            if (getY() > max) {
-                setY(max);
-            }
         }
 
         if (moveRight) {
             moveX(-mapMoveSpeed * deltaTime);
-
-            int min = getMinX();
-            if (getX() < min) {
-                setX(min);
-            }
         } else if (moveLeft) {
             moveX(mapMoveSpeed * deltaTime);
-
-            int max = getMaxX();
-            if (getX() > max) {
-                setX(max);
-            }
         }
+
+        padPosition();
+    }
+
+    @Override
+    public void setX(float x) {
+        super.setX(x);
+        padPosition();
+    }
+
+    @Override
+    public void setY(float y) {
+        super.setY(y);
+        padPosition();
+    }
+
+    private void padPosition() {
+
+        int max = getMaxX();
+        if (getX() > max) {
+            setX(max);
+        }
+
+        int min = getMinX();
+        if (getX() < min) {
+            setX(min);
+        }
+
+        max = getMaxY();
+        if (getY() > max) {
+            setY(max);
+        }
+
+        min = getMinY();
+        if (getY() < min) {
+            setY(min);
+        }
+
     }
 
     @Override
@@ -103,7 +127,7 @@ public class TileMap<S extends MapScene<S, ?, T>, T extends Tile> extends WorldO
 
     @Override
     public float getZ() {
-        return .1f;
+        return .2f;
     }
 
     public int getMaxY() {
@@ -115,11 +139,11 @@ public class TileMap<S extends MapScene<S, ?, T>, T extends Tile> extends WorldO
     }
 
     public int getMinY() {
-        return (tiles[0].length - ySpan) * -18 - 16;
+        return (tiles[0].length - ySpan) * -(tileHeight - 7) - (tileHeight - 8);
     }
 
     private int getMinX() {
-        return (tiles[0].length - xSpan) * -24 - 22;
+        return (tiles[0].length - xSpan) * -tileWidth - (tileWidth - 2);
     }
 
     class TileDrawObject extends GameObject<GameObject<?>> implements MouseHandler {
@@ -150,27 +174,62 @@ public class TileMap<S extends MapScene<S, ?, T>, T extends Tile> extends WorldO
             TileMap.this.needsRedraw();
         }
 
+
+        private Vector2f unitPosition = new Vector2f();
         @Override
         public void draw(LayerShader shader) {
-            shader.draw(
-                    tiles[x + xOffset][y + yOffset].getSpriteSheet(getScene()),
-                    null,
-                    getTilePosition(x + xOffset, y + yOffset, getPosition()),
-                    getScene().getWorldOffset(), null, getID(),
-                    getWorldZ(),
-                    getFade(), getHighlight(), getScene().getDrawStyle());
+
+            T tile = tiles[x + xOffset][y + yOffset];
+
+            if (!tile.isInCognito()) {
+                shader.draw(
+                        tiles[x + xOffset][y + yOffset].getSpriteSheet(getScene()),
+                        null,
+                        getTilePosition(x + xOffset, y + yOffset, getPosition()),
+                        getScene().getWorldOffset(), null, getID(),
+                        getZ(),
+                        getFade(), getHighlight(), getScene().getDrawStyle());
+
+
+                tiles[x + xOffset][y + yOffset].getPawns().forEach(pawn -> {
+
+                    PawnDrawObject pawnDrawObject;
+
+                    if (pawnDrawObjects.size() == pawnDrawIndex) {
+                        pawnDrawObject = new PawnDrawObject();
+                        pawnDrawObjects.add(pawnDrawObject);
+                    } else {
+                        pawnDrawObject = pawnDrawObjects.get(pawnDrawIndex);
+                    }
+
+                    pawnDrawObject.setPawn(pawn);
+
+                    unitPosition.x = getPosition().x + 5;
+                    unitPosition.y = getPosition().y + 1;
+
+                    shader.draw(
+                            pawn.getSpriteSheet(getScene()),
+                            null,
+                            getTilePosition(x + xOffset, y + yOffset, unitPosition),
+                            getScene().getWorldOffset(), null, pawnDrawObject.getID(),
+                            pawnDrawObject.getZ(),
+                            getFade(), getHighlight(), getScene().getDrawStyle());
+
+                    pawnDrawIndex++;
+                });
+            }
         }
 
         private Vector2f getTilePosition(int x, int y, Vector2f worldPosition) {
             int xOffset = 0;
 
             if (y % 2 == 0) {
-                xOffset = 12 + x * 24;
+                xOffset = tileWidth / 2 + x * tileWidth;
             } else {
-                xOffset = x * 24;
+                xOffset = x * tileWidth;
             }
 
-            int yOffset = y * 18;
+            int yOffset = y * (tileHeight - 7);
 
             tilePos.x = worldPosition.x + xOffset;
             tilePos.y = worldPosition.y + yOffset;
@@ -226,6 +285,76 @@ public class TileMap<S extends MapScene<S, ?, T>, T extends Tile> extends WorldO
         @Override
         public void handleMouseHover(float delta) {
 
+        }
+    }
+
+    class PawnDrawObject extends GameObject<GameObject<?>> implements MouseClickHandler {
+
+        private P pawn;
+
+        public PawnDrawObject() {
+            super();
+
+            this.addMouseHandler(this);
+        }
+
+        public void setPawn(P pawn) {
+            this.pawn = pawn;
+        }
+
+        @Override
+        public void handleMouseClick() {
+            getScene().handlePawnClick(pawn);
+        }
+
+        @Override
+        public Layer.Destination getDestination() {
+            return Layer.Destination.Terrain;
+        }
+
+        @Override
+        public float getZ() {
+            return TileMap.this.getZ() + .01f;
+        }
+
+        @Override
+        public void needsRedraw() {
+
+        }
+
+        @Override
+        public void draw(LayerShader shader) {
+
+        }
+
+        @Override
+        public List<GameObject<?>> getParentGameObjectList() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public GameObject<?> getParent() {
+            return TileMap.this;
+        }
+
+        @Override
+        public void setParent(GameObject<?> parent) {
+
+        }
+
+        @Override
+        public void update(float delta) {
+
+        }
+
+        @Override
+        public void addChild(GameObject<?> obj) {
+
+        }
+
+        @Override
+        public List<GameObject<?>> getChildren() {
+            return Collections.emptyList();
         }
     }
 }

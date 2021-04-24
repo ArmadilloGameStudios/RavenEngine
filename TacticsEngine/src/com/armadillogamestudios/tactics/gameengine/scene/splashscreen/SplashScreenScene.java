@@ -16,7 +16,7 @@ public class SplashScreenScene<G extends TacticsGame<G>> extends TacticsScene<G>
     }
 
     @Override
-    public void updateUI(float deltaTime) {
+    public void onUpdate(float deltaTime) {
         time += deltaTime;
 
         if (time < fadeTime) {

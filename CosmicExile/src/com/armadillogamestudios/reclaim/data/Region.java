@@ -2,28 +2,31 @@ package com.armadillogamestudios.reclaim.data;
 
 import com.armadillogamestudios.engine2d.database.GameData;
 import com.armadillogamestudios.engine2d.database.GameDatable;
-import com.armadillogamestudios.engine2d.util.pathfinding.PathAdjacentNode;
-import com.armadillogamestudios.engine2d.util.pathfinding.PathNode;
 import com.armadillogamestudios.reclaim.scene.world.RegionConnection;
 import com.armadillogamestudios.tactics.gameengine.scene.map.Tile;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
-public class Region extends Tile implements GameDatable, PathNode<Region, Region.PathFlag> {
+public class Region extends Tile<Unit> implements GameDatable {
 
     private final int x, y;
-    private boolean impassable = false;
+    private final World world;
+    private final List<Unit> units = new ArrayList<>();
+    private final Map<Player, Integer> lastVisited = new HashMap<>();
+    private final int biomeValue;
+    private boolean impassable = false, inCognito = true;
     private String name;
-    private int travelDifficulty = 1;
-    private Biome biome = Biome.Planes;
+    private Biome biome;
     private RegionConnection left, right, topLeft, topRight, botLeft, botRight;
-    private Building building;
+    private Settlement settlement;
+    private List<RegionConnection> adjacent;
 
-    public Region(int x, int y) {
+    public Region(World world, int biomeValue, int x, int y) {
         this.x = x;
         this.y = y;
+
+        this.biomeValue = biomeValue;
+        this.world = world;
     }
 
     public void setName(String name) {
@@ -79,11 +82,11 @@ public class Region extends Tile implements GameDatable, PathNode<Region, Region
         return y;
     }
 
-    public int getTravelDifficulty() {
+    public int getBiomeValue() {
         if (impassable)
-            return travelDifficulty + 1000;
+            return biomeValue + 1000;
 
-        return travelDifficulty;
+        return biomeValue;
     }
 
     @Override
@@ -91,45 +94,24 @@ public class Region extends Tile implements GameDatable, PathNode<Region, Region
         return name + " (" + x + "," + y + ")";
     }
 
-    public List<RegionConnection> getAdjacentRegions() {
-        List<RegionConnection> adjacent = new ArrayList<>();
+    public List<RegionConnection> getRegionConnections() {
+        if (adjacent == null) {
+            adjacent = new ArrayList<>();
 
-        addRCIfNotNull(adjacent, left);
-        addRCIfNotNull(adjacent, right);
-        addRCIfNotNull(adjacent, topLeft);
-        addRCIfNotNull(adjacent, topRight);
-        addRCIfNotNull(adjacent, botLeft);
-        addRCIfNotNull(adjacent, botRight);
-
-        return adjacent;
-    }
-
-    @Override
-    public List<PathAdjacentNode<Region>> getAdjacentNodes(EnumSet<PathFlag> flags) {
-        if (flags.contains(PathFlag.Adjacent)) {
-            List<PathAdjacentNode<Region>> adjacent = new ArrayList<>();
-
-            addPANIfNotNull(adjacent, left);
-            addPANIfNotNull(adjacent, right);
-            addPANIfNotNull(adjacent, topLeft);
-            addPANIfNotNull(adjacent, topRight);
-            addPANIfNotNull(adjacent, botLeft);
-            addPANIfNotNull(adjacent, botRight);
-
-            return adjacent;
+            addRCIfNotNull(adjacent, left);
+            addRCIfNotNull(adjacent, right);
+            addRCIfNotNull(adjacent, topLeft);
+            addRCIfNotNull(adjacent, topRight);
+            addRCIfNotNull(adjacent, botLeft);
+            addRCIfNotNull(adjacent, botRight);
         }
 
-        throw new IllegalArgumentException();
+        return adjacent;
     }
 
     private void addRCIfNotNull(List<RegionConnection> adjacent, RegionConnection r) {
         if (r != null)
             adjacent.add(r);
-    }
-
-    private void addPANIfNotNull(List<PathAdjacentNode<Region>> adjacent, RegionConnection r) {
-        if (r != null)
-            adjacent.add(new PathAdjacentNode<>(r.getOther(this), r.getTravelDifficulty(PathFlag.Adjacent)));
     }
 
     public boolean isImpassable() {
@@ -160,62 +142,68 @@ public class Region extends Tile implements GameDatable, PathNode<Region, Region
 
     public String getSprite() {
 
-        if (building != null) {
-            return building.getSprite();
+        if (settlement != null) {
+            return settlement.getSprite();
         }
 
-        switch (biome) {
-            case Planes -> {
-                return "default map tile.png";
-            }
-            case Forrest -> {
-                return "default sand map tile.png";
-            }
-            case Mountains -> {
-                return "default path map tile.png";
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + biome);
-        }
+        return biome.getSprite();
     }
 
-    @Override
-    public void handleMouseClick() {
-
-    }
-
-    @Override
-    public void handleMouseEnter() {
-
-    }
-
-    @Override
-    public void handleMouseLeave() {
-
-    }
-
-    @Override
-    public void handleMouseHover(float delta) {
-
-    }
-
-    @Override
-    public EnumSet<PathFlag> getEmptyNodeEnumSet() {
-        return EnumSet.noneOf(PathFlag.class);
+    public Biome getBiome() {
+        return biome;
     }
 
     public void setBiome(Biome biome) {
         this.biome = biome;
     }
 
-    public void setBuilding(Building building) {
-        this.building = building;
+    public Settlement getSettlement() {
+        return settlement;
     }
 
-    public enum PathFlag {
-        Adjacent
+    public void setSettlement(Settlement settlement) {
+        this.settlement = settlement;
+        settlement.setRegion(this);
     }
 
-    public enum Biome {
-        Planes, Forrest, Mountains
+    public void addUnit(Unit unit) {
+        units.add(unit);
+
+        lastVisited.put(unit.getPLayer(), world.getTime());
+    }
+
+    @Override
+    public List<Unit> getPawns() {
+        return units;
+    }
+
+    public void removeUnit(Unit unit) {
+        units.remove(unit);
+    }
+
+    @Override
+    public boolean isInCognito() {
+        return inCognito;
+    }
+
+    public void setInCognito(boolean inCognito) {
+        this.inCognito = inCognito;
+
+        if (!inCognito)
+            this.getRegionConnections().stream()
+                    .map(regionConnection -> regionConnection.getOther(this))
+                    .forEach(n -> n.inCognito = false);
+    }
+
+    public int getLastTimePlayerVisited(Player player) {
+        return lastVisited.getOrDefault(player, 0);
+    }
+
+    public void triggerLastTimePlayerVisited(Player player) {
+        lastVisited.put(player,  world.getTime());
+    }
+
+    public World getWorld() {
+        return world;
     }
 }

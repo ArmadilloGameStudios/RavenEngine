@@ -4,9 +4,9 @@ import com.armadillogamestudios.engine2d.ui.UITextButton;
 import com.armadillogamestudios.engine2d.worldobject.Highlight;
 
 public class ExitButton
-        extends UITextButton<CosmicExileMainMenuScene> {
+        extends UITextButton<ReclaimMainMenuScene> {
 
-    public ExitButton(CosmicExileMainMenuScene scene) {
+    public ExitButton(ReclaimMainMenuScene scene) {
         super(scene, "exit", "button.png", "mainbutton");
         setTextHighlight(new Highlight(0f, 0f, 0f, 1f));
     }

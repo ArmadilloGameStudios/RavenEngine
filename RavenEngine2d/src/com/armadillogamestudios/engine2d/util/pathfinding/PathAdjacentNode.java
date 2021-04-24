@@ -1,6 +1,6 @@
 package com.armadillogamestudios.engine2d.util.pathfinding;
 
-public class PathAdjacentNode<N extends PathNode> {
+public class PathAdjacentNode<N> {
     private N node;
     private int cost;
 

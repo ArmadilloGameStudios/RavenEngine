@@ -27,16 +27,9 @@ public abstract class TacticsScene<G extends TacticsGame<G>>
     }
 
     @Override
-    public final void onUpdate(float update) {
-        updateUI(update);
-    }
-
-    @Override
     public final DrawStyle getDrawStyle() {
         return DrawStyle.STANDARD_1;
     }
-
-    public abstract void updateUI(float deltaTime);
 
     protected abstract void loadUI();
 }

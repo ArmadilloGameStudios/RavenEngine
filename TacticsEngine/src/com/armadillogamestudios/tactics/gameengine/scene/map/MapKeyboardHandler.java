@@ -5,9 +5,9 @@ import com.armadillogamestudios.engine2d.input.KeyboardHandler;
 
 public class MapKeyboardHandler implements KeyboardHandler {
 
-    private TileMap<?, ?> map;
+    private final TileMap<?, ?, ?> map;
 
-    public MapKeyboardHandler(TileMap<?, ?> map) {
+    public MapKeyboardHandler(TileMap<?, ?, ?> map) {
         this.map = map;
     }
 

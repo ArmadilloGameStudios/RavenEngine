@@ -1,7 +1,7 @@
 package com.armadillogamestudios.reclaim.scene.mainmenu;
 
 import com.armadillogamestudios.engine2d.input.KeyData;
-import com.armadillogamestudios.reclaim.CosmicExileGame;
+import com.armadillogamestudios.reclaim.ReclaimGame;
 import com.armadillogamestudios.engine2d.GameProperties;
 import com.armadillogamestudios.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.armadillogamestudios.engine2d.ui.UIImage;
@@ -10,7 +10,7 @@ import com.armadillogamestudios.tactics.gameengine.scene.mainmenu.MainMenuScene;
 
 import java.util.Random;
 
-public class CosmicExileMainMenuScene extends MainMenuScene<CosmicExileGame> {
+public class ReclaimMainMenuScene extends MainMenuScene<ReclaimGame> {
 
     private final float xOffset = (float) GameProperties.getWidth();
     private final float yOffset = (float) GameProperties.getHeight();
@@ -26,11 +26,11 @@ public class CosmicExileMainMenuScene extends MainMenuScene<CosmicExileGame> {
             "main menu background planet 1.png",
             "main menu background planet 2.png"};
 
-    private UIImage<CosmicExileMainMenuScene>
+    private UIImage<ReclaimMainMenuScene>
             dust1_1, dust1_2, dust2_1, dust2_2, dust3_1, dust3_2,
             planet, ship;
 
-    public CosmicExileMainMenuScene(CosmicExileGame game) {
+    public ReclaimMainMenuScene(ReclaimGame game) {
         super(game);
     }
 
@@ -40,7 +40,7 @@ public class CosmicExileMainMenuScene extends MainMenuScene<CosmicExileGame> {
         // Background
         setBackgroundColor(new Vector3f(0, 0, 0));
 
-        UIImage<MainMenuScene<CosmicExileGame>> background = new UIImage<>(this,
+        UIImage<MainMenuScene<ReclaimGame>> background = new UIImage<>(this,
                 GameProperties.getWidth(), GameProperties.getHeight(),
                 "main menu background.png");
 
@@ -48,7 +48,7 @@ public class CosmicExileMainMenuScene extends MainMenuScene<CosmicExileGame> {
         background.setZ(.1f);
 
         // Window
-        UIImage<CosmicExileMainMenuScene> stars = new UIImage<>(this, winWidth, winHeight,
+        UIImage<ReclaimMainMenuScene> stars = new UIImage<>(this, winWidth, winHeight,
                 "main menu background stars.png");
 
         addChild(stars);
@@ -156,7 +156,7 @@ public class CosmicExileMainMenuScene extends MainMenuScene<CosmicExileGame> {
     }
 
     @Override
-    public void updateUI(float deltaTime) {
+    public void onUpdate(float deltaTime) {
         moveBackground(dust1_1, deltaTime * 0.10752352f);
         moveBackground(dust1_2, deltaTime * 0.10752352f);
         moveBackground(dust2_1, deltaTime * 0.05552352f);

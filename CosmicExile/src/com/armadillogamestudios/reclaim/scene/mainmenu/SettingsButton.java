@@ -4,9 +4,9 @@ import com.armadillogamestudios.engine2d.ui.UITextButton;
 import com.armadillogamestudios.engine2d.worldobject.Highlight;
 
 public class SettingsButton
-        extends UITextButton<CosmicExileMainMenuScene> {
+        extends UITextButton<ReclaimMainMenuScene> {
 
-    public SettingsButton(CosmicExileMainMenuScene scene) {
+    public SettingsButton(ReclaimMainMenuScene scene) {
         super(scene, "settings", "button.png", "mainbutton");
         setTextHighlight(new Highlight(0f, 0f, 0f, 1f));
     }

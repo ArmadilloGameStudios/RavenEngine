@@ -3,11 +3,11 @@ package com.armadillogamestudios.tactics.gameengine.scene.map;
 import com.armadillogamestudios.engine2d.graphics2d.shader.ShaderTexture;
 import com.armadillogamestudios.engine2d.graphics2d.sprite.SpriteSheet;
 import com.armadillogamestudios.engine2d.input.MouseHandler;
+import com.armadillogamestudios.engine2d.scene.Layer;
 import com.armadillogamestudios.engine2d.scene.Scene;
+import com.armadillogamestudios.engine2d.worldobject.WorldObject;
 
-import java.util.List;
-
-public abstract class Tile<U extends Pawn> {
+public abstract class Pawn {
 
     public abstract String getSprite();
 
@@ -20,10 +20,4 @@ public abstract class Tile<U extends Pawn> {
         texture.load(scene);
     }
 
-    public abstract int getX();
-    public abstract int getY();
-
-    public abstract List<U> getPawns();
-
-    public abstract boolean isInCognito();
 }

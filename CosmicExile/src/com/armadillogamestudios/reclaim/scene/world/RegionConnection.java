@@ -2,6 +2,9 @@ package com.armadillogamestudios.reclaim.scene.world;
 
 import com.armadillogamestudios.reclaim.data.Region;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class RegionConnection {
 
     private Region a, b;
@@ -11,12 +14,8 @@ public class RegionConnection {
         this.b = b;
     }
 
-    public int getTravelDifficulty(Region.PathFlag flag) {
-        if (flag == Region.PathFlag.Adjacent) {
-            return a.getTravelDifficulty() + b.getTravelDifficulty();
-        } else {
-            throw new IllegalStateException();
-        }
+    public int getBiomeValue() {
+        return a.getBiomeValue() + b.getBiomeValue() + 1;
     }
 
     public Region getA() {
@@ -33,5 +32,9 @@ public class RegionConnection {
         } else {
             return a;
         }
+    }
+
+    public List<Region> asList() {
+        return Arrays.asList(a, b);
     }
 }

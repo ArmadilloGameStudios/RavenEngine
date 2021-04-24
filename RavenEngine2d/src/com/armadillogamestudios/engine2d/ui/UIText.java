@@ -7,11 +7,14 @@ import com.armadillogamestudios.engine2d.scene.Scene;
 import com.armadillogamestudios.engine2d.worldobject.Highlight;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
 
+import java.util.Objects;
+
 public abstract class UIText<S extends Scene<?>>
         extends UIObject<S> {
 
     private final String backgroundSrc;
     private String text;
+    private boolean needLoad = true;
     private final String currentText;
     private UITexture image;
     private final UITextWriter textWriter;
@@ -39,7 +42,10 @@ public abstract class UIText<S extends Scene<?>>
     }
 
     public void load() {
-        this.load(null);
+        if (needLoad)
+            this.load(null);
+
+        needLoad = false;
     }
 
     public void load(UITextWriterHandler handler) {
@@ -145,7 +151,10 @@ public abstract class UIText<S extends Scene<?>>
     }
 
     public void setText(String text) {
-        this.text = text;
+        if (!Objects.equals(this.text, text)) {
+            this.text = text;
+            needLoad = true;
+        }
     }
 
     public void setColorFeed(UITextColorFeed colorFeed) {

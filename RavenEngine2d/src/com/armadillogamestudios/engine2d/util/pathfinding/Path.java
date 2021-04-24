@@ -2,7 +2,7 @@ package com.armadillogamestudios.engine2d.util.pathfinding;
 
 import java.util.ArrayList;
 
-public class Path<N extends PathNode<N, ? extends Enum>> extends ArrayList<PathAdjacentNode<N>> {
+public class Path<N> extends ArrayList<PathAdjacentNode<N>> {
 
     public int getCost() {
         return stream().mapToInt(PathAdjacentNode::getCost).sum();
@@ -12,9 +12,9 @@ public class Path<N extends PathNode<N, ? extends Enum>> extends ArrayList<PathA
         return get(size() - 1);
     }
 
-    public boolean contains(N o) {
-        return stream().anyMatch(n -> n.getNode() == o);
-    }
+//    public boolean contains(N o) {
+//        return stream().anyMatch(n -> n.getNode() == o);
+//    }
 
     public int getCostTo(N node) {
         int i = 0;

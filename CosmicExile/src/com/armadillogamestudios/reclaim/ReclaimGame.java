@@ -1,9 +1,9 @@
 package com.armadillogamestudios.reclaim;
 
-import com.armadillogamestudios.reclaim.data.CosmicExileActiveGameData;
+import com.armadillogamestudios.reclaim.data.ReclaimActiveGameData;
 import com.armadillogamestudios.reclaim.data.Player;
 import com.armadillogamestudios.reclaim.data.World;
-import com.armadillogamestudios.reclaim.scene.mainmenu.CosmicExileMainMenuScene;
+import com.armadillogamestudios.reclaim.scene.mainmenu.ReclaimMainMenuScene;
 import com.armadillogamestudios.reclaim.scene.world.ReclaimWorldScene;
 import com.armadillogamestudios.tactics.gameengine.game.TacticsGame;
 import com.armadillogamestudios.engine2d.worldobject.Highlight;
@@ -12,21 +12,21 @@ import com.armadillogamestudios.tactics.gameengine.scene.mainmenu.MainMenuScene;
 
 import java.util.Random;
 
-public class CosmicExileGame extends TacticsGame<CosmicExileGame> {
+public class ReclaimGame extends TacticsGame<ReclaimGame> {
 
     private static final int seed = new Random().nextInt();
     public static final Random RANDOM = new Random(seed);
 
     private static final Highlight TEXT = new Highlight(.4f, .4f, .4f, .6f);
     private static final String mainDirectory = "CosmicExile";
-    private static final String title = "Cosmic Exile";
+    private static final String title = "Reclaim";
 
-    private static CosmicExileActiveGameData activeGameData;
+    private static ReclaimActiveGameData activeGameData;
 
     public static void main(String[] args) {
-        System.out.println("Lunching Cosmic Exile");
+        System.out.println("Lunching Reclaim");
         System.out.println("Seed " + seed);
-        TacticsGame.Launch(new CosmicExileGame());
+        TacticsGame.Launch(new ReclaimGame());
     }
 
     @Override
@@ -40,8 +40,8 @@ public class CosmicExileGame extends TacticsGame<CosmicExileGame> {
     }
 
     @Override
-    public MainMenuScene<CosmicExileGame> getMainMenuScene() {
-        return new CosmicExileMainMenuScene(this);
+    public MainMenuScene<ReclaimGame> getMainMenuScene() {
+        return new ReclaimMainMenuScene(this);
     }
 
     @Override
@@ -50,8 +50,8 @@ public class CosmicExileGame extends TacticsGame<CosmicExileGame> {
     }
 
     @Override
-    public TacticsScene<CosmicExileGame> getNewGameScene() {
-        activeGameData = new CosmicExileActiveGameData();
+    public TacticsScene<ReclaimGame> getNewGameScene() {
+        activeGameData = new ReclaimActiveGameData();
 
         setStartingData();
 
@@ -63,7 +63,7 @@ public class CosmicExileGame extends TacticsGame<CosmicExileGame> {
         activeGameData.setWorld(new World());
     }
 
-    public static CosmicExileActiveGameData getActiveGameData() {
+    public static ReclaimActiveGameData getActiveGameData() {
         return activeGameData;
     }
 }

@@ -6,7 +6,7 @@ import com.armadillogamestudios.engine2d.database.GameDatable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CosmicExileActiveGameData implements GameDatable {
+public class ReclaimActiveGameData implements GameDatable {
 
     private final List<Player> players = new ArrayList<>();
     private World world;

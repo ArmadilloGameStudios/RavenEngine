@@ -139,6 +139,7 @@ public class GameWindow {
         // Enable v-sync?
         glfwSwapInterval(GameProperties.getVSync() ? 1 : 0);
 
+
         // Make the window visible
         glfwShowWindow(window);
 
@@ -150,7 +151,7 @@ public class GameWindow {
         glfwSetCursorPosCallback(window, (window, xpos, ypos) -> engine.inputMouseMove(xpos, ypos));
         glfwSetScrollCallback(window, (window, xoffset, yoffset) -> engine.inputScroll(xoffset, yoffset));
 
-        GLCapabilities cat = GL.createCapabilities(true);
+        GLCapabilities cat = GL.createCapabilities();
 
         layerShader = new LayerShader(engine, this);
         compilationShader = new CompilationShader(engine, this);
