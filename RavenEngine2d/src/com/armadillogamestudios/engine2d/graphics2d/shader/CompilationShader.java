@@ -3,6 +3,8 @@ package com.armadillogamestudios.engine2d.graphics2d.shader;
 import com.armadillogamestudios.engine2d.GameEngine;
 import com.armadillogamestudios.engine2d.GameProperties;
 import com.armadillogamestudios.engine2d.graphics2d.GameWindow;
+import com.armadillogamestudios.engine2d.graphics2d.shader.rendertarget.IDMapRenderTarget;
+import com.armadillogamestudios.engine2d.graphics2d.shader.rendertarget.RenderTarget;
 import com.armadillogamestudios.engine2d.input.Mouse;
 import com.armadillogamestudios.engine2d.util.math.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -19,7 +21,7 @@ import static org.lwjgl.opengl.GL30.glClearBufferfv;
 import static org.lwjgl.opengl.GL40.glBlendEquationSeparatei;
 import static org.lwjgl.opengl.GL40.glBlendFuncSeparatei;
 
-public class CompilationShader extends  Shader {
+public class CompilationShader extends Shader {
     public static final int
             COLOR = getNextTextureID("Color"),
             ID = getNextTextureID("ID"),
@@ -28,13 +30,13 @@ public class CompilationShader extends  Shader {
             TEXTURE_ID = Shader.getNextTextureID("Texture"),
             TEXTURE_DEPTH = Shader.getNextTextureID("Texture");
 
-    private int color_location, id_location, depth_location, rect_location;
-    private int[] buffers;
+    private final int color_location, id_location, depth_location, rect_location;
+    private final int[] buffers;
 
-    private RenderTarget compilationTarget;
-    private GameWindow window;
+    private final RenderTarget compilationTarget;
+    private final GameWindow window;
 
-    public CompilationShader(GameEngine engine, GameWindow window) {
+    public CompilationShader(GameEngine<?> engine, GameWindow window) {
         super("vertex.glsl", "compilation.glsl", engine);
 
         glBindAttribLocation(getProgramHandel(), 0, "vertex_pos");
@@ -87,6 +89,8 @@ public class CompilationShader extends  Shader {
     public void clear(Vector3f backgroundColor) {
 
         glBindFramebuffer(GL_FRAMEBUFFER, compilationTarget.getFramebufferHandle());
+
+        glDrawBuffers(buffers);
 
         glViewport(0, 0,
                 GameProperties.getDisplayWidth(),
@@ -165,39 +169,39 @@ public class CompilationShader extends  Shader {
     public void compile(RenderTarget from) {
         glBindFramebuffer(GL_FRAMEBUFFER, compilationTarget.getFramebufferHandle());
 
-//        glActiveTexture(GL_TEXTURE0 + COLOR);
-//        window.printErrors("a");
-//        glBindTexture(GL_TEXTURE_2D, compilationTarget.getColorTexture());
-//        window.printErrors("s");
-//        glActiveTexture(GL_TEXTURE0 + ID);
-//        window.printErrors("d");
-//        glBindTexture(GL_TEXTURE_2D, compilationTarget.getIdTexture());
-//        window.printErrors("f");
-//        glActiveTexture(GL_TEXTURE0 + DEPTH);
-//        window.printErrors("g");
-//        glBindTexture(GL_TEXTURE_2D, compilationTarget.getDepthTexture());
-//        window.printErrors("h");
         glActiveTexture(GL_TEXTURE0 + TEXTURE_COLOR);
-        window.printErrors("j");
         glBindTexture(GL_TEXTURE_2D, from.getColorTexture());
-        window.printErrors("k");
+
         glActiveTexture(GL_TEXTURE0 + TEXTURE_ID);
-        window.printErrors("l");
         glBindTexture(GL_TEXTURE_2D, from.getIdTexture());
-        window.printErrors(";");
+
         glActiveTexture(GL_TEXTURE0 + TEXTURE_DEPTH);
-        window.printErrors("'");
         glBindTexture(GL_TEXTURE_2D, from.getDepthTexture());
-        window.printErrors("q");
+
         glActiveTexture(GL_TEXTURE0);
-        window.printErrors("w");
 
         glUniform1i(color_location, TEXTURE_COLOR);
-        window.printErrors("e");
         glUniform1i(id_location, TEXTURE_ID);
-        window.printErrors("r");
         glUniform1i(depth_location, TEXTURE_DEPTH);
-        window.printErrors("t");
+
+        glUniform4f(rect_location,
+                0,
+                0,
+                1,
+                -1);
+
+        window.drawQuad();
+    }
+
+    public void compileColorOnly(RenderTarget from) {
+        glBindFramebuffer(GL_FRAMEBUFFER, compilationTarget.getFramebufferHandle());
+
+        glActiveTexture(GL_TEXTURE0 + TEXTURE_COLOR);
+        glBindTexture(GL_TEXTURE_2D, from.getColorTexture());
+
+        glActiveTexture(GL_TEXTURE0);
+
+        glUniform1i(color_location, TEXTURE_COLOR);
 
         glUniform4f(rect_location,
                 0,

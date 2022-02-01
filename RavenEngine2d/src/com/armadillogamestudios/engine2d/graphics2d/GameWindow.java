@@ -2,10 +2,7 @@ package com.armadillogamestudios.engine2d.graphics2d;
 
 import com.armadillogamestudios.engine2d.GameEngine;
 import com.armadillogamestudios.engine2d.GameProperties;
-import com.armadillogamestudios.engine2d.graphics2d.shader.CompilationShader;
-import com.armadillogamestudios.engine2d.graphics2d.shader.LayerShader;
-import com.armadillogamestudios.engine2d.graphics2d.shader.Shader;
-import com.armadillogamestudios.engine2d.graphics2d.shader.TextShader;
+import com.armadillogamestudios.engine2d.graphics2d.shader.*;
 import com.armadillogamestudios.engine2d.database.GameData;
 import com.armadillogamestudios.engine2d.util.math.Vector2i;
 import org.lwjgl.PointerBuffer;
@@ -40,6 +37,8 @@ public class GameWindow {
 
     private LayerShader layerShader;
     private CompilationShader compilationShader;
+    private IDMapShader idMapShader;
+    private IDMapCompilationShader idMapCompilationShader;
     private TextShader textShader;
 
     private GameEngine<?> engine;
@@ -83,7 +82,7 @@ public class GameWindow {
             glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
 
         PointerBuffer monitors = glfwGetMonitors();
-        long monitor = monitors.get(1);
+        long monitor = monitors.get(0);
 
         // Create the window
         if (GameProperties.getWindowMode() == GameProperties.FULLSCREEN)
@@ -155,6 +154,8 @@ public class GameWindow {
 
         layerShader = new LayerShader(engine, this);
         compilationShader = new CompilationShader(engine, this);
+        idMapShader = new IDMapShader(engine, this);
+        idMapCompilationShader = new IDMapCompilationShader(engine, this, compilationShader);
         textShader = new TextShader(engine, this);
 
         // Enable depth test
@@ -184,8 +185,6 @@ public class GameWindow {
     }
 
     public LayerShader getLayerShader() {
-//        layerShader.release();
-//        layerShader = new LayerShader(engine, this);
         return layerShader;
     }
 
@@ -197,12 +196,20 @@ public class GameWindow {
         return textShader;
     }
 
+    public IDMapShader getIDMapShader() {
+        return idMapShader;
+    }
+
+    public IDMapCompilationShader getIDMapCompilationShader() {
+        return idMapCompilationShader;
+    }
+
     public void drawQuad() {
         // Draw FBO
 
-        glEnableVertexAttribArray(0);
+        // glEnableVertexAttribArray(0);
         ScreenQuad.getBlankModel().draw(this);
-        glDisableVertexAttribArray(0);
+        // glDisableVertexAttribArray(0);
     }
 
     public void endActiveShader() {

@@ -5,6 +5,7 @@ import com.armadillogamestudios.engine2d.database.GameDataList;
 import com.armadillogamestudios.engine2d.database.GameDataReader;
 import com.armadillogamestudios.engine2d.database.GameDataTable;
 import com.armadillogamestudios.engine2d.graphics2d.GameWindow;
+import com.armadillogamestudios.engine2d.graphics2d.graphicspipeline.GraphicsPipeline;
 import com.armadillogamestudios.engine2d.scene.Scene;
 import com.armadillogamestudios.engine2d.worldobject.GameObject;
 
@@ -50,10 +51,6 @@ public abstract class Game<G extends Game<G>> {
 
     final public Scene getCurrentScene() {
         return currentScene;
-    }
-
-    final public void draw(GameWindow window) {
-        currentScene.draw(window);
     }
 
     final public void update(float deltaTime) {
@@ -227,4 +224,6 @@ public abstract class Game<G extends Game<G>> {
 
         return new GameDataList();
     }
+
+    public abstract GraphicsPipeline createGraphicsPipeline(GameWindow window);
 }

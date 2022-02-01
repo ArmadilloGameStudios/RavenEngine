@@ -13,12 +13,12 @@ import java.util.List;
 public class GameProperties {
     private static final int HEIGHT = 360, WIDTH = 640;
 
-    private static float animationSpeed = 1.0f;
-    private static float scaling = 4;
+    private static final float animationSpeed = 1.0f;
+    private static final float scaling = 4;
     private static String mainDirectory;
-    private static List<Vector2i> resolutionList = new ArrayList<>();
+    private static final List<Vector2i> resolutionList = new ArrayList<>();
     private static int sfx = 100, music = 100;
-    private static boolean vsync = false;
+    private static boolean vsync = true;
     private static int windowMode = 0;
     private static boolean useResolution = true;
 
@@ -100,7 +100,7 @@ public class GameProperties {
     }
 
     public static boolean getVSync() {
-        return vsync;
+        return false;
     }
 
     public static void setWindowMode(int windowMode) {

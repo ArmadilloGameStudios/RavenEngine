@@ -1,5 +1,6 @@
 package com.armadillogamestudios.engine2d;
 
+import com.armadillogamestudios.engine2d.graphics2d.graphicspipeline.GraphicsPipeline;
 import com.codedisaster.steamworks.SteamAPI;
 import com.codedisaster.steamworks.SteamException;
 import com.armadillogamestudios.engine2d.database.GameDataTable;
@@ -25,6 +26,7 @@ public class GameEngine<G extends Game<G>> {
     private GameWindow window;
     private final List<GameObject<?>> oldMouseList = new ArrayList<>();
     private GameDatabase gdb;
+    private GraphicsPipeline pipeline;
     private final Map<String, SpriteSheet> spriteSheetsMap = new HashMap<>();
     private final Map<String, SpriteAnimation> animationMap = new HashMap<>();
     private final Map<String, Clip> audioMap = new HashMap<>();
@@ -36,6 +38,7 @@ public class GameEngine<G extends Game<G>> {
     private final int frame = 0;
     private final float framesdt = 0;
     private final List<GameObject<?>> newList = new ArrayList<>();
+    private int secondID = 0;
 
     private GameEngine(G game) {
         this.game = game;
@@ -105,11 +108,14 @@ public class GameEngine<G extends Game<G>> {
 
         game.setup();
 
+        pipeline = game.createGraphicsPipeline(window);
+
         game.transitionScene(game.loadInitialScene());
 
         // Archaic code, but it should be safe
-        ScreenQuad.loadQuad();
         ScreenQuad.compileBuffer(window);
+
+        // ScreenQuad.bind();
 
         window.printErrors("Compile Buffer Error: ");
 
@@ -170,7 +176,7 @@ public class GameEngine<G extends Game<G>> {
     }
 
     private void draw() {
-        game.draw(window);
+        pipeline.draw();
     }
 
     private void input(float delta) {
@@ -185,6 +191,8 @@ public class GameEngine<G extends Game<G>> {
 //        System.out.println(id);
 //        System.out.println(hover);
 
+        secondID = window.getIDMapShader().getIDMapID();
+
         if (hover != null) {
 
             newList.clear();
@@ -193,6 +201,7 @@ public class GameEngine<G extends Game<G>> {
 
             // clicks - might cause a problem with the order of enter and leave
             if (mouse.isLeftButtonClick()) {
+                System.out.println(id);
                 for (GameObject<?> o : oldMouseList) {
                     if (newList.contains(o))
                         o.onMouseClick();
@@ -379,5 +388,9 @@ public class GameEngine<G extends Game<G>> {
 
     public void inputScroll(double xoffset, double yoffset) {
 
+    }
+
+    public int getSecondID() {
+        return secondID;
     }
 }

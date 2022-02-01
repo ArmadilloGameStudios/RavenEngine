@@ -1,14 +1,15 @@
 package com.armadillogamestudios.reclaim;
 
-import com.armadillogamestudios.reclaim.data.ReclaimActiveGameData;
-import com.armadillogamestudios.reclaim.data.Player;
-import com.armadillogamestudios.reclaim.data.World;
+import com.armadillogamestudios.engine2d.database.GameData;
+import com.armadillogamestudios.reclaim.data.ReclaimGameData;
 import com.armadillogamestudios.reclaim.scene.mainmenu.ReclaimMainMenuScene;
+import com.armadillogamestudios.reclaim.scene.world.ReclaimWorld;
 import com.armadillogamestudios.reclaim.scene.world.ReclaimWorldScene;
 import com.armadillogamestudios.tactics.gameengine.game.TacticsGame;
 import com.armadillogamestudios.engine2d.worldobject.Highlight;
 import com.armadillogamestudios.tactics.gameengine.scene.TacticsScene;
 import com.armadillogamestudios.tactics.gameengine.scene.mainmenu.MainMenuScene;
+import com.armadillogamestudios.tactics.gameengine.scene.splashscreen.SplashScreenScene;
 
 import java.util.Random;
 
@@ -20,8 +21,7 @@ public class ReclaimGame extends TacticsGame<ReclaimGame> {
     private static final Highlight TEXT = new Highlight(.4f, .4f, .4f, .6f);
     private static final String mainDirectory = "CosmicExile";
     private static final String title = "Reclaim";
-
-    private static ReclaimActiveGameData activeGameData;
+    private ReclaimGameData reclaimGameData;
 
     public static void main(String[] args) {
         System.out.println("Lunching Reclaim");
@@ -40,6 +40,11 @@ public class ReclaimGame extends TacticsGame<ReclaimGame> {
     }
 
     @Override
+    public TacticsScene<ReclaimGame> loadInitialScene() {
+        return getNewGameScene();
+    }
+
+    @Override
     public MainMenuScene<ReclaimGame> getMainMenuScene() {
         return new ReclaimMainMenuScene(this);
     }
@@ -51,19 +56,16 @@ public class ReclaimGame extends TacticsGame<ReclaimGame> {
 
     @Override
     public TacticsScene<ReclaimGame> getNewGameScene() {
-        activeGameData = new ReclaimActiveGameData();
-
         setStartingData();
 
         return new ReclaimWorldScene(this);
     }
 
     private void setStartingData() {
-        activeGameData.addPlayer(new Player());
-        activeGameData.setWorld(new World());
+        reclaimGameData = new ReclaimGameData(getEngine().getGameDatabase());
     }
 
-    public static ReclaimActiveGameData getActiveGameData() {
-        return activeGameData;
+    public ReclaimGameData getReclaimGameData() {
+        return reclaimGameData;
     }
 }

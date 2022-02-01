@@ -29,9 +29,9 @@ public abstract class Shader {
 
     int vertex_handel, fragment_handel, program_handel;
 
-    private GameEngine engine;
+    private GameEngine<?> engine;
 
-    public Shader(String vertex_shader, String fragment_shader, GameEngine engine) {
+    public Shader(String vertex_shader, String fragment_shader, GameEngine<?> engine) {
         this.engine = engine;
 
         try {
@@ -117,7 +117,7 @@ public abstract class Shader {
         }
     }
 
-    protected void useProgram() {
+    public void useProgram() {
         if (engine.getWindow().getActiveShader() != this) {
             engine.getWindow().endActiveShader();
             engine.getWindow().setActiveShader(this);
@@ -149,7 +149,7 @@ public abstract class Shader {
         glDeleteShader(vertex_handel);
     }
 
-    private final Map<String, String> getGLSLVariableMap() {
+    private Map<String, String> getGLSLVariableMap() {
         Map<String, String> map = new HashMap<>();
 
 //        map.put("NUM_SAMPLES", Integer.toString(GameProperties.getMultisampleCount()));

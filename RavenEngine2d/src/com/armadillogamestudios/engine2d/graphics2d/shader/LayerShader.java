@@ -2,6 +2,7 @@ package com.armadillogamestudios.engine2d.graphics2d.shader;
 
 import com.armadillogamestudios.engine2d.GameEngine;
 import com.armadillogamestudios.engine2d.GameProperties;
+import com.armadillogamestudios.engine2d.graphics2d.shader.rendertarget.RenderTarget;
 import com.armadillogamestudios.engine2d.graphics2d.sprite.SpriteAnimationState;
 import com.armadillogamestudios.engine2d.worldobject.Highlight;
 import com.armadillogamestudios.engine2d.graphics2d.DrawStyle;
@@ -9,8 +10,6 @@ import com.armadillogamestudios.engine2d.graphics2d.GameWindow;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
 import com.armadillogamestudios.engine2d.util.math.Vector3f;
 import com.armadillogamestudios.engine2d.util.math.Vector4f;
-
-import java.util.Random;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -32,11 +31,11 @@ public class LayerShader extends Shader {
 
     private GameWindow window;
 
-    private int sprite_sheet_location, rect_location, id_location, highlight_location, z_location, fade_location;
+    private final int sprite_sheet_location, rect_location, id_location, highlight_location, z_location, fade_location;
 
     private int[] buffers;
 
-    public LayerShader(GameEngine engine, GameWindow window) {
+    public LayerShader(GameEngine<?> engine, GameWindow window) {
         super("vertex.glsl", "fragment.glsl", engine);
 
         this.window = window;
@@ -87,8 +86,8 @@ public class LayerShader extends Shader {
         glDrawBuffers(buffers);
 
         glViewport(0, 0,
-                GameProperties.getDisplayWidth(),
-                GameProperties.getDisplayHeight());
+                GameProperties.getHeight(),
+                GameProperties.getWidth());
 
         glClearDepth(0.0);
         glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 0f);
@@ -98,13 +97,12 @@ public class LayerShader extends Shader {
         glClearBufferfv(GL_COLOR, 1,
                 new float[]{0f, 0f, 0f, 0f});
 
-
-        glActiveTexture(GL_TEXTURE0 + COLOR);
-        glBindTexture(GL_TEXTURE_2D, renderTarget.getColorTexture());
-        glActiveTexture(GL_TEXTURE0 + ID);
-        glBindTexture(GL_TEXTURE_2D, renderTarget.getIdTexture());
-        glActiveTexture(GL_TEXTURE0 + DEPTH);
-        glBindTexture(GL_TEXTURE_2D, renderTarget.getDepthTexture());
+//        glActiveTexture(GL_TEXTURE0 + COLOR);
+//        glBindTexture(GL_TEXTURE_2D, renderTarget.getColorTexture());
+//        glActiveTexture(GL_TEXTURE0 + ID);
+//        glBindTexture(GL_TEXTURE_2D, renderTarget.getIdTexture());
+//        glActiveTexture(GL_TEXTURE0 + DEPTH);
+//        glBindTexture(GL_TEXTURE_2D, renderTarget.getDepthTexture());
     }
 
     public void clearDepthBuffer(RenderTarget renderTarget) {
@@ -112,8 +110,8 @@ public class LayerShader extends Shader {
         glBindFramebuffer(GL_FRAMEBUFFER, renderTarget.getFramebufferHandle());
 
         glViewport(0, 0,
-                GameProperties.getDisplayWidth(),
-                GameProperties.getDisplayHeight());
+                GameProperties.getWidth(),
+                GameProperties.getHeight());
 
         glClearDepth(0.0);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -170,13 +168,10 @@ public class LayerShader extends Shader {
                 x += spriteAnimation.getXOffset();
                 y += spriteAnimation.getYOffset();
 
-                x *= GameProperties.getScaling();
-                y *= GameProperties.getScaling();
-
                 viewRect[0] = (int) Math.floor(x);
                 viewRect[1] = (int) Math.floor(y);
-                viewRect[2] = (int) (spriteAnimation.getWidth() * GameProperties.getScaling());
-                viewRect[3] = (int) (spriteAnimation.getHeight() * GameProperties.getScaling());
+                viewRect[2] = (int) (spriteAnimation.getWidth());
+                viewRect[3] = (int) (spriteAnimation.getHeight());
 
                 spriteRect.x = (float) spriteAnimation.getX() / (float) texture.getWidth();
                 spriteRect.y = (float) spriteAnimation.getY() / (float) texture.getHeight();
@@ -186,13 +181,13 @@ public class LayerShader extends Shader {
                 x -= spriteAnimation.getXOffset();
                 y += spriteAnimation.getYOffset();
 
-                x *= GameProperties.getScaling();
-                y *= GameProperties.getScaling();
+//                x *= GameProperties.getScaling();
+//                y *= GameProperties.getScaling();
 
                 viewRect[0] = (int) Math.floor(x);
                 viewRect[1] = (int) Math.floor(y);
-                viewRect[2] = (int) (spriteAnimation.getWidth() * GameProperties.getScaling());
-                viewRect[3] = (int) (spriteAnimation.getHeight() * GameProperties.getScaling());
+                viewRect[2] = (int) (spriteAnimation.getWidth());
+                viewRect[3] = (int) (spriteAnimation.getHeight());
 
                 spriteRect.x = (float) (spriteAnimation.getX() + spriteAnimation.getWidth()) / (float) texture.getWidth();
                 spriteRect.y = (float) spriteAnimation.getY() / (float) texture.getHeight();
@@ -201,13 +196,13 @@ public class LayerShader extends Shader {
             }
         } else {
 
-            x *= GameProperties.getScaling();
-            y *= GameProperties.getScaling();
+//            x *= GameProperties.getScaling();
+//            y *= GameProperties.getScaling();
 
             viewRect[0] = (int) Math.floor(x);
             viewRect[1] = (int) Math.floor(y);
-            viewRect[2] = (int) (texture.getWidth() * GameProperties.getScaling());
-            viewRect[3] = (int) (texture.getHeight() * GameProperties.getScaling());
+            viewRect[2] = (int) (texture.getWidth());
+            viewRect[3] = (int) (texture.getHeight());
 
             if (textureOffset != null) {
                 spriteRect.x = textureOffset.x;

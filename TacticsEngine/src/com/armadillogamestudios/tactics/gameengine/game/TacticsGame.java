@@ -3,11 +3,18 @@ package com.armadillogamestudios.tactics.gameengine.game;
 import com.armadillogamestudios.engine2d.Game;
 import com.armadillogamestudios.engine2d.GameEngine;
 import com.armadillogamestudios.engine2d.database.GameData;
+import com.armadillogamestudios.engine2d.graphics2d.GameWindow;
+import com.armadillogamestudios.engine2d.graphics2d.graphicspipeline.GraphicsPipeline;
+import com.armadillogamestudios.engine2d.scene.Layer;
 import com.armadillogamestudios.engine2d.scene.Scene;
 import com.armadillogamestudios.engine2d.worldobject.Highlight;
+import com.armadillogamestudios.tactics.gameengine.game.graphicspipeline.TacticsGraphicsPipeline;
 import com.armadillogamestudios.tactics.gameengine.scene.mainmenu.MainMenuScene;
 import com.armadillogamestudios.tactics.gameengine.scene.TacticsScene;
 import com.armadillogamestudios.tactics.gameengine.scene.splashscreen.SplashScreenScene;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 public abstract class TacticsGame<G extends TacticsGame<G>>
         extends Game<G> {
@@ -27,7 +34,7 @@ public abstract class TacticsGame<G extends TacticsGame<G>>
     }
 
     @Override
-    public final TacticsScene<G> loadInitialScene() {
+    public TacticsScene<G> loadInitialScene() {
         return new SplashScreenScene<>((G) this);
     }
 
@@ -46,4 +53,9 @@ public abstract class TacticsGame<G extends TacticsGame<G>>
     public abstract Highlight getTextHighlight();
 
     public abstract TacticsScene<G> getNewGameScene();
+
+    @Override
+    public GraphicsPipeline createGraphicsPipeline(GameWindow window) {
+        return TacticsGraphicsPipeline.createPipeline(this, window);
+    }
 }

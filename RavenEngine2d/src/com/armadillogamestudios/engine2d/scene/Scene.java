@@ -8,10 +8,9 @@ import com.armadillogamestudios.engine2d.Game;
 import com.armadillogamestudios.engine2d.GameEngine;
 import com.armadillogamestudios.engine2d.graphics2d.DrawStyle;
 import com.armadillogamestudios.engine2d.graphics2d.GameWindow;
-import com.armadillogamestudios.engine2d.graphics2d.shader.CompilationShader;
-import com.armadillogamestudios.engine2d.graphics2d.shader.LayerShader;
-import com.armadillogamestudios.engine2d.graphics2d.shader.ShaderTexture;
-import com.armadillogamestudios.engine2d.graphics2d.shader.TextShader;
+import com.armadillogamestudios.engine2d.graphics2d.shader.*;
+import com.armadillogamestudios.engine2d.graphics2d.shader.rendertarget.IDMapDrawObject;
+import com.armadillogamestudios.engine2d.graphics2d.shader.rendertarget.IDMapRenderTarget;
 import com.armadillogamestudios.engine2d.input.KeyData;
 import com.armadillogamestudios.engine2d.input.KeyboardHandler;
 import com.armadillogamestudios.engine2d.worldobject.GameObject;
@@ -19,6 +18,7 @@ import com.armadillogamestudios.engine2d.ui.UITextWriter;
 import com.armadillogamestudios.engine2d.ui.UIToolTip;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
 import com.armadillogamestudios.engine2d.util.math.Vector3f;
+import com.armadillogamestudios.engine2d.worldobject.Highlight;
 import org.lwjgl.glfw.GLFW;
 
 import javax.sound.sampled.Clip;
@@ -29,6 +29,8 @@ public abstract class Scene<G extends Game<G>> {
     private final Layer layerEffects = new Layer(Layer.Destination.Effects);
     private final Layer layerUI = new Layer(Layer.Destination.UI);
     private final Layer layerToolTip = new Layer(Layer.Destination.ToolTip);
+
+    private IDMapDrawObject idMap;
 
     private final Vector3f backgroundColor = new Vector3f(0,0,0);
     private final Vector2f worldOffset = new Vector2f();
@@ -51,68 +53,6 @@ public abstract class Scene<G extends Game<G>> {
 
     public GameEngine<G> getEngine() {
         return game.getEngine();
-    }
-
-    final public void draw(GameWindow window) {
-
-        // text
-        if (toWrite.size() > 0) {
-            TextShader textShader = window.getTextShader();
-            textShader.useProgram();
-
-            toWrite.forEach(textWriter -> {
-                textWriter.write(textShader);
-                window.printErrors("Draw Text Error: ");
-            });
-
-            toWrite.clear();
-        }
-
-        // shader
-        LayerShader layerShader = window.getLayerShader();
-        layerShader.useProgram();
-
-        // drawImage
-        drawLayer(layerTerrain, layerShader);
-        drawLayer(layerDetails, layerShader);
-        drawLayer(layerEffects, layerShader);
-
-        // ui
-        drawLayer(layerUI, layerShader);
-        drawLayer(layerToolTip, layerShader);
-
-        // compile
-        CompilationShader compilationShader = window.getCompilationShader();
-        compilationShader.useProgram();
-
-        compilationShader.clear(backgroundColor);
-        window.printErrors("Draw Clear Error: ");
-        compilationShader.compile(layerTerrain.getRenderTarget());
-        compilationShader.compile(layerDetails.getRenderTarget());
-        compilationShader.compile(layerEffects.getRenderTarget());
-
-        compilationShader.clearDepthBuffer();
-        compilationShader.compile(layerUI.getRenderTarget());
-        compilationShader.drawColorOnly();
-        compilationShader.compile(layerToolTip.getRenderTarget());
-
-        window.printErrors("Draw Compile Error: ");
-        compilationShader.blitToScreen();
-        window.printErrors("Draw Blit Error: ");
-    }
-
-    private void drawLayer(Layer layer, LayerShader layerShader) {
-        if (layer.isNeedRedraw()) {
-            layerShader.clear(layer.getRenderTarget(), backgroundColor);
-            for (GameObject o : layer.getChildren()) {
-                if (o.isVisible())
-                    o.draw(layerShader);
-
-                getEngine().getWindow().printErrors("Draw " + layer.getDestination() + " Error: ");
-            }
-
-            layer.setNeedRedraw(false);
-        }
     }
 
     final public void update(float deltaTime) {
@@ -141,6 +81,12 @@ public abstract class Scene<G extends Game<G>> {
         }
 
         return null;
+    }
+
+    public void drawIDMap(IDMapShader idMapShader) {
+        if (idMap != null) {
+            idMap.draw(idMapShader);
+        }
     }
 
     public List<GameObject<?>> getChildren() {
@@ -304,4 +250,16 @@ public abstract class Scene<G extends Game<G>> {
     }
 
     public abstract DrawStyle getDrawStyle();
+
+    public List<UITextWriter> getToWrite() {
+        return toWrite;
+    }
+
+    public Vector3f getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void addIDMap(IDMapDrawObject idMap) {
+        this.idMap = idMap;
+    }
 }

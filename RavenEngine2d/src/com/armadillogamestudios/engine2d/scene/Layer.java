@@ -3,8 +3,11 @@ package com.armadillogamestudios.engine2d.scene;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.armadillogamestudios.engine2d.graphics2d.shader.IDMapShader;
 import com.armadillogamestudios.engine2d.graphics2d.shader.LayerShader;
-import com.armadillogamestudios.engine2d.graphics2d.shader.RenderTarget;
+import com.armadillogamestudios.engine2d.graphics2d.shader.rendertarget.IDMapRenderTarget;
+import com.armadillogamestudios.engine2d.graphics2d.shader.rendertarget.RenderTarget;
+import com.armadillogamestudios.engine2d.util.math.Vector3f;
 import com.armadillogamestudios.engine2d.worldobject.GameObject;
 
 public class Layer {
@@ -14,6 +17,7 @@ public class Layer {
     }
 
     private boolean needRedraw = true;
+    private final Vector3f backgroundColor = new Vector3f(0,0,0);
 
     private final Destination destination;
     private final List<GameObject<?>> gameObjectList = new CopyOnWriteArrayList<>();
@@ -22,7 +26,8 @@ public class Layer {
 
     public Layer(Destination destination) {
         this.destination = destination;
-        renderTarget = new RenderTarget(LayerShader.COLOR, LayerShader.ID, LayerShader.DEPTH, true);
+
+        renderTarget = new RenderTarget(LayerShader.COLOR, LayerShader.ID, LayerShader.DEPTH, false);
     }
 
     public List<GameObject<?>> getChildren() {
@@ -36,6 +41,18 @@ public class Layer {
 
     public void setNeedRedraw(boolean needRedraw) {
         this.needRedraw = needRedraw;
+    }
+
+    public void draw(LayerShader layerShader) {
+        if (isNeedRedraw()) {
+            layerShader.clear(renderTarget, backgroundColor);
+            for (GameObject<?> o : getChildren()) {
+                if (o.isVisible())
+                    o.draw(layerShader);
+            }
+
+            setNeedRedraw(false);
+        }
     }
 
     public boolean isNeedRedraw() {

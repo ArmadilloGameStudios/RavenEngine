@@ -1,21 +1,26 @@
 package com.armadillogamestudios.tactics.gameengine.scene.map;
 
+import com.armadillogamestudios.engine2d.database.GameData;
 import com.armadillogamestudios.engine2d.util.math.Vector3f;
 import com.armadillogamestudios.tactics.gameengine.game.TacticsGame;
 import com.armadillogamestudios.tactics.gameengine.scene.TacticsScene;
 
 
-public abstract class MapScene<S extends MapScene<S, G, T, P>, G extends TacticsGame<G>, T extends Tile<P>, P extends Pawn> extends TacticsScene<G> {
+public abstract class MapScene<S extends MapScene<S, G>, G extends TacticsGame<G>> extends TacticsScene<G> {
 
     private Speed speed = Speed.Normal;
     private boolean pausedTick = true;
     private float timeSinceLastTick = 0;
 
+    public boolean moveLeft, moveRight, moveUp, moveDown;
+
+    private World<S, G> world;
+    private final float mapMoveSpeedMultiplier = .1f;
+
     public MapScene(final G game) {
         super(game);
 
-        this.getWorldOffset().x = -16;
-        this.getWorldOffset().y = -12;
+        this.addKeyboardHandler(new MapKeyboardHandler(this));
     }
 
     @Override
@@ -23,12 +28,23 @@ public abstract class MapScene<S extends MapScene<S, G, T, P>, G extends Tactics
         // Background
         setBackgroundColor(new Vector3f(0, 0, 0));
 
-        // Create world objects
-        addChild(getTileMap());
+        this.setWorld(this.loadWorld());
+
+        this.onPostLoad();
+    }
+
+    protected abstract void onPostLoad();
+
+    protected abstract World<S,G> loadWorld();
+
+    private void setWorld(World<S, G> world) {
+        this.world = world;
     }
 
     @Override
     public final void onUpdate(float deltaTime) {
+        moveMap(deltaTime);
+
         if (pausedTick) {
             timeSinceLastTick = 0f;
         } else {
@@ -40,6 +56,24 @@ public abstract class MapScene<S extends MapScene<S, G, T, P>, G extends Tactics
                 tick();
                 timeSinceLastTick = 0f;
             }
+        }
+    }
+
+    private void moveMap(float deltaTime) {
+
+        float speed = deltaTime * mapMoveSpeedMultiplier;
+
+        if (moveUp) {
+            getWorldOffset().y -= speed;
+        }
+        if (moveDown) {
+            getWorldOffset().y += speed;
+        }
+        if (moveRight) {
+            getWorldOffset().x -= speed;
+        }
+        if (moveLeft) {
+            getWorldOffset().x += speed;
         }
     }
 
@@ -64,27 +98,11 @@ public abstract class MapScene<S extends MapScene<S, G, T, P>, G extends Tactics
         updatePlayPause();
     }
 
-    public final void focus(T tile) {
-        if (tile.getY() % 2 == 0) {
-            getTileMap().setX(-24 * tile.getX() + 312);
-        } else {
-            getTileMap().setX(-24 * tile.getX() + 324);
-        }
-
-        getTileMap().setY(-13 * tile.getY() + 180);
-    }
-
     protected abstract void updatePlayPause();
 
     protected abstract void updateUI();
 
     protected abstract void tick();
-
-    protected abstract TileMap<S, T, P> getTileMap();
-
-    public abstract void handleTileClick(T tile);
-
-    public abstract void handlePawnClick(P pawn);
 
     public enum Speed {
         Slow(500f), Normal(250f), Fast(125f), Fastest(0f);

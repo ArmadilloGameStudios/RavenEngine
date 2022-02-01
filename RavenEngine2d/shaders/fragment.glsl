@@ -17,7 +17,7 @@ void main() {
     if (sprite.a <= 0)
         discard;
 
-    gl_FragDepth = z; // TODO get world coords
+    gl_FragDepth = z;
 
     float part = min(1, dot(sprite.xyz, vec3(.6)));
 
