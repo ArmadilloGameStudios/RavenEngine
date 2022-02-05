@@ -1,20 +1,17 @@
-package com.armadillogamestudios.tactics.gameengine.scene.map;
+package com.armadillogamestudios.saga.scene.world;
 
 import com.armadillogamestudios.engine2d.database.GameData;
-import com.armadillogamestudios.engine2d.input.MouseClickHandler;
-import com.armadillogamestudios.engine2d.util.math.Vector2f;
+import com.armadillogamestudios.engine2d.idmap.IDMapChild;
 import com.armadillogamestudios.engine2d.util.math.Vector2i;
-import com.armadillogamestudios.tactics.gameengine.game.gameobject.MapChild;
-import org.lwjgl.system.CallbackI;
 
-public class Region extends MapChild {
+public class Region extends IDMapChild {
 
-    private final World<?, ?> world;
-    private int id;
-    private String name;
-    private Vector2i center = new Vector2i();
+    private final Map world;
+    private final int id;
+    private final String name;
+    private final Vector2i center = new Vector2i();
 
-    public Region(World<?, ?> world, GameData gameData) {
+    public Region(Map world, GameData gameData) {
         this.world = world;
 
         id = gameData.getInteger("id");

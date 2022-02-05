@@ -3,9 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RavenEngine2d/RavenEngine2d.iml" filepath="$PROJECT_DIR$/RavenEngine2d/RavenEngine2d.iml" />
-      <module fileurl="file://$PROJECT_DIR$/CosmicExile/Reclaim.iml" filepath="$PROJECT_DIR$/CosmicExile/Reclaim.iml" />
-      <module fileurl="file://$PROJECT_DIR$/TacticsEngine/TacticsEngine.iml" filepath="$PROJECT_DIR$/TacticsEngine/TacticsEngine.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Totem/Totem.iml" filepath="$PROJECT_DIR$/Totem/Totem.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Saga/Saga.iml" filepath="$PROJECT_DIR$/Saga/Saga.iml" />
     </modules>
   </component>
 </project>
