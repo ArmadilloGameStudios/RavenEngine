@@ -1,4 +1,4 @@
-package com.armadillogamestudios.tactics.gameengine.game.gameobject;
+package com.armadillogamestudios.engine2d.idmap;
 
 import com.armadillogamestudios.engine2d.database.GameData;
 import com.armadillogamestudios.engine2d.graphics2d.DrawStyle;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public abstract class MapGameObject<S extends Scene<?>, C extends MapChild> extends GameObject<GameObject<?>> implements IDMapDrawObject, MouseClickHandler {
+public abstract class IDMapGameObject<S extends Scene<?>, C extends IDMapChild> extends GameObject<GameObject<?>> implements IDMapDrawObject, MouseClickHandler {
 
     private Vector2f worldPosition = new Vector2f();
 
@@ -29,7 +29,7 @@ public abstract class MapGameObject<S extends Scene<?>, C extends MapChild> exte
     private final List<GameObject<?>> children = new CopyOnWriteArrayList<>();
     private final Map<Integer, C> childrenIdMap = new HashMap<>();
 
-    public MapGameObject(S scene, GameData data) {
+    public IDMapGameObject(S scene, GameData data) {
         this.scene = scene;
 
         scene.addGameObject(this);

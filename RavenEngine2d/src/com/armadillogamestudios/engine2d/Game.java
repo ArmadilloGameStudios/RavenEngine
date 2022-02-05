@@ -31,7 +31,7 @@ public abstract class Game<G extends Game<G>> {
 
     private boolean isRunning;
 
-    private ExecutorService threadPool = Executors.newSingleThreadExecutor();
+    private final ExecutorService threadPool = Executors.newSingleThreadExecutor();
 
     public Game() {
         isRunning = true;
@@ -49,7 +49,7 @@ public abstract class Game<G extends Game<G>> {
         this.engine = engine;
     }
 
-    final public Scene getCurrentScene() {
+    final public Scene<G> getCurrentScene() {
         return currentScene;
     }
 
@@ -121,6 +121,7 @@ public abstract class Game<G extends Game<G>> {
         // settings.ifHas("width", s -> GameProperties.setDisplayWidth(s.asInteger()));
         // settings.ifHas("height", s -> GameProperties.setDisplayHeight(s.asInteger()));
         settings.ifHas("vsync", s -> GameProperties.setVSync(s.asBoolean()));
+        settings.ifHas("monitor", s -> GameProperties.setMonitor(s.asInteger()));
         settings.ifHas("win_mode", s -> GameProperties.setWindowMode(s.asInteger()));
     }
 

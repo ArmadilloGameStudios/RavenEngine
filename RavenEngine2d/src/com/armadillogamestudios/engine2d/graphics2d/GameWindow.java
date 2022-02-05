@@ -58,13 +58,11 @@ public class GameWindow {
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
 
-
-        GameData res = engine.getGame().loadGameData("settings.gd").get(0);
-
-
         // Configure GLFW
         glfwDefaultWindowHints();
+
         // this has caused so many problems, including with the steam overlay
+        // FIXME?
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
@@ -82,7 +80,7 @@ public class GameWindow {
             glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
 
         PointerBuffer monitors = glfwGetMonitors();
-        long monitor = monitors.get(0);
+        long monitor = monitors.get(GameProperties.getMonitor());
 
         // Create the window
         if (GameProperties.getWindowMode() == GameProperties.FULLSCREEN)

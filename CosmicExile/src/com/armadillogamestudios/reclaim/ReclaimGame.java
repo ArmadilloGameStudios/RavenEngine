@@ -1,19 +1,21 @@
 package com.armadillogamestudios.reclaim;
 
-import com.armadillogamestudios.engine2d.database.GameData;
-import com.armadillogamestudios.reclaim.data.ReclaimGameData;
-import com.armadillogamestudios.reclaim.scene.mainmenu.ReclaimMainMenuScene;
-import com.armadillogamestudios.reclaim.scene.world.ReclaimWorld;
-import com.armadillogamestudios.reclaim.scene.world.ReclaimWorldScene;
-import com.armadillogamestudios.tactics.gameengine.game.TacticsGame;
+import com.armadillogamestudios.engine2d.Game;
+import com.armadillogamestudios.engine2d.GameEngine;
+import com.armadillogamestudios.engine2d.graphics2d.GameWindow;
+import com.armadillogamestudios.engine2d.graphics2d.graphicspipeline.GraphicsPipeline;
+import com.armadillogamestudios.engine2d.scene.Scene;
 import com.armadillogamestudios.engine2d.worldobject.Highlight;
-import com.armadillogamestudios.tactics.gameengine.scene.TacticsScene;
-import com.armadillogamestudios.tactics.gameengine.scene.mainmenu.MainMenuScene;
-import com.armadillogamestudios.tactics.gameengine.scene.splashscreen.SplashScreenScene;
+import com.armadillogamestudios.reclaim.data.ReclaimGameData;
+import com.armadillogamestudios.reclaim.graphicspipeline.SagaGraphicsPipeline;
+import com.armadillogamestudios.reclaim.scene.SagaScene;
+import com.armadillogamestudios.reclaim.scene.mainmenu.ReclaimMainMenuScene;
+import com.armadillogamestudios.reclaim.scene.splashscreen.SplashScreenScene;
+import com.armadillogamestudios.reclaim.scene.world.ReclaimWorldScene;
 
 import java.util.Random;
 
-public class ReclaimGame extends TacticsGame<ReclaimGame> {
+public class ReclaimGame extends Game<ReclaimGame> {
 
     private static final int seed = new Random().nextInt();
     public static final Random RANDOM = new Random(seed);
@@ -24,9 +26,31 @@ public class ReclaimGame extends TacticsGame<ReclaimGame> {
     private ReclaimGameData reclaimGameData;
 
     public static void main(String[] args) {
+
         System.out.println("Lunching Reclaim");
         System.out.println("Seed " + seed);
-        TacticsGame.Launch(new ReclaimGame());
+
+        GameEngine.Launch(new ReclaimGame());
+    }
+
+    @Override
+    public final void setup() {
+
+    }
+
+    @Override
+    public final void breakdown() {
+
+    }
+
+    @Override
+    public boolean saveGame() {
+        return false;
+    }
+
+    @Override
+    public boolean loadGame() {
+        return false;
     }
 
     @Override
@@ -40,22 +64,24 @@ public class ReclaimGame extends TacticsGame<ReclaimGame> {
     }
 
     @Override
-    public TacticsScene<ReclaimGame> loadInitialScene() {
-        return getNewGameScene();
+    public SagaScene loadInitialScene() {
+        return new SplashScreenScene(this);
     }
 
     @Override
-    public MainMenuScene<ReclaimGame> getMainMenuScene() {
+    public GraphicsPipeline createGraphicsPipeline(GameWindow window) {
+        return SagaGraphicsPipeline.createPipeline(this, window);
+    }
+
+    public final ReclaimMainMenuScene getMainMenuScene() {
         return new ReclaimMainMenuScene(this);
     }
 
-    @Override
-    public Highlight getTextHighlight() {
+    public final Highlight getTextHighlight() {
         return TEXT;
     }
 
-    @Override
-    public TacticsScene<ReclaimGame> getNewGameScene() {
+    public final SagaScene getNewGameScene() {
         setStartingData();
 
         return new ReclaimWorldScene(this);

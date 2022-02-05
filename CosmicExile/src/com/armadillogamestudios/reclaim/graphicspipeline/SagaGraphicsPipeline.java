@@ -1,13 +1,13 @@
-package com.armadillogamestudios.tactics.gameengine.game.graphicspipeline;
+package com.armadillogamestudios.reclaim.graphicspipeline;
 
 import com.armadillogamestudios.engine2d.graphics2d.GameWindow;
 import com.armadillogamestudios.engine2d.graphics2d.graphicspipeline.GraphicsPipeline;
 import com.armadillogamestudios.engine2d.scene.Layer;
-import com.armadillogamestudios.tactics.gameengine.game.TacticsGame;
+import com.armadillogamestudios.reclaim.ReclaimGame;
 
-public class TacticsGraphicsPipeline {
+public class SagaGraphicsPipeline {
 
-    public static GraphicsPipeline createPipeline(TacticsGame<?> game, GameWindow window) {
+    public static GraphicsPipeline createPipeline(ReclaimGame game, GameWindow window) {
         GraphicsPipeline pipeline = new GraphicsPipeline(game, window);
 
         pipeline.drawIDMap();

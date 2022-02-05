@@ -2,6 +2,7 @@ package com.armadillogamestudios.engine2d;
 
 import com.armadillogamestudios.engine2d.util.math.Vector2i;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class GameProperties {
     private static final List<Vector2i> resolutionList = new ArrayList<>();
     private static int sfx = 100, music = 100;
     private static boolean vsync = true;
+    private static int monitor = 0;
     private static int windowMode = 0;
     private static boolean useResolution = true;
 
@@ -45,7 +47,7 @@ public class GameProperties {
     }
 
     public static String getMainDirectory() {
-        return mainDirectory;
+        return mainDirectory + File.separator + "res";
     }
 
     public static void setMainDirectory(String dir) {
@@ -100,7 +102,15 @@ public class GameProperties {
     }
 
     public static boolean getVSync() {
-        return false;
+        return GameProperties.vsync;
+    }
+
+    public static void setMonitor(int monitor) {
+        GameProperties.monitor = monitor;
+    }
+
+    public static int getMonitor() {
+        return GameProperties.monitor;
     }
 
     public static void setWindowMode(int windowMode) {

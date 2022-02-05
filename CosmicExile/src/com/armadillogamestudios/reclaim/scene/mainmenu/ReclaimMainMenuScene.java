@@ -1,21 +1,27 @@
 package com.armadillogamestudios.reclaim.scene.mainmenu;
 
-import com.armadillogamestudios.engine2d.input.KeyData;
-import com.armadillogamestudios.reclaim.ReclaimGame;
 import com.armadillogamestudios.engine2d.GameProperties;
 import com.armadillogamestudios.engine2d.graphics2d.sprite.SpriteAnimationState;
+import com.armadillogamestudios.engine2d.input.KeyData;
+import com.armadillogamestudios.engine2d.input.KeyboardHandler;
 import com.armadillogamestudios.engine2d.ui.UIImage;
 import com.armadillogamestudios.engine2d.util.math.Vector3f;
-import com.armadillogamestudios.tactics.gameengine.scene.mainmenu.MainMenuScene;
+import com.armadillogamestudios.reclaim.ReclaimGame;
+import com.armadillogamestudios.reclaim.scene.SagaScene;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Random;
 
-public class ReclaimMainMenuScene extends MainMenuScene<ReclaimGame> {
+public class ReclaimMainMenuScene extends SagaScene implements KeyboardHandler {
 
     private final float xOffset = (float) GameProperties.getWidth();
     private final float yOffset = (float) GameProperties.getHeight();
 
     private final int buttonHeight = 31;
+
+    private final String[] savedGames;
 
     private final Random random = new Random();
 
@@ -32,6 +38,28 @@ public class ReclaimMainMenuScene extends MainMenuScene<ReclaimGame> {
 
     public ReclaimMainMenuScene(ReclaimGame game) {
         super(game);
+
+        Path charPath = Paths.get(getGame().getMainDirectory(), "save");
+
+        File sFile = charPath.toFile();
+        if (sFile.list() == null) {
+            sFile.mkdir();
+        }
+
+        savedGames = sFile.list();
+
+        addKeyboardHandler(this);
+    }
+
+    public final boolean isLoadGame() {
+        return savedGames != null && savedGames.length > 0;
+    }
+
+    @Override
+    public final void onKeyPress(KeyData keyData) {
+        if (keyData.getKey() == KeyData.Key.ESCAPE) {
+            getGame().exit();
+        }
     }
 
     @Override
@@ -40,7 +68,7 @@ public class ReclaimMainMenuScene extends MainMenuScene<ReclaimGame> {
         // Background
         setBackgroundColor(new Vector3f(0, 0, 0));
 
-        UIImage<MainMenuScene<ReclaimGame>> background = new UIImage<>(this,
+        UIImage<ReclaimMainMenuScene> background = new UIImage<>(this,
                 GameProperties.getWidth(), GameProperties.getHeight(),
                 "main menu background.png");
 
@@ -188,5 +216,23 @@ public class ReclaimMainMenuScene extends MainMenuScene<ReclaimGame> {
     @Override
     public void onKeyRelease(KeyData i) {
 
+    }
+
+    public final void onLoadGameClick() {
+
+    }
+
+    public final void onNewGameClick() {
+        getGame().prepTransitionScene(getGame().getNewGameScene());
+    }
+
+    public final void onSettingsClick() {
+    }
+
+    public final void onCreditsClick() {
+    }
+
+    public void onExitClick() {
+        getGame().exit();
     }
 }

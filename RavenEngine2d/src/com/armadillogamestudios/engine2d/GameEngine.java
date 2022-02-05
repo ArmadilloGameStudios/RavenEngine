@@ -241,10 +241,14 @@ public class GameEngine<G extends Game<G>> {
     private void loadDatabase() {
         // load models
 
-        File modelDirectory = new File(game.getMainDirectory() + File.separator + "sprites");
+        File modelDirectory = new File(game.getMainDirectory() + File.separator +
+                "res" + File.separator +
+                "sprites");
         loadSprites(modelDirectory);
 
-        File animationDir = new File(game.getMainDirectory() + File.separator + "animations");
+        File animationDir = new File(game.getMainDirectory() + File.separator +
+                "res" + File.separator +
+                "animations");
         loadAnimations(animationDir);
 
         // load database
@@ -276,8 +280,9 @@ public class GameEngine<G extends Game<G>> {
     public SpriteSheet getSpriteSheet(String spriteSrc) {
         SpriteSheet sheet = spriteSheetsMap.get(
                 game.getMainDirectory() + File.separator +
-                "sprites" + File.separator +
-                fixPath(spriteSrc));
+                        "res" + File.separator +
+                        "sprites" + File.separator +
+                        fixPath(spriteSrc));
 
         if (sheet == null) {
             System.out.println("No sprite " + spriteSrc);

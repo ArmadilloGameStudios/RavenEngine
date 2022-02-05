@@ -1,17 +1,17 @@
-package com.armadillogamestudios.tactics.gameengine.scene.splashscreen;
+package com.armadillogamestudios.reclaim.scene.splashscreen;
 
 import com.armadillogamestudios.engine2d.ui.UIImage;
 import com.armadillogamestudios.engine2d.ui.container.UIContainer;
-import com.armadillogamestudios.tactics.gameengine.game.TacticsGame;
-import com.armadillogamestudios.tactics.gameengine.scene.TacticsScene;
+import com.armadillogamestudios.reclaim.ReclaimGame;
+import com.armadillogamestudios.reclaim.scene.SagaScene;
 
-public class SplashScreenScene<G extends TacticsGame<G>> extends TacticsScene<G> {
+public class SplashScreenScene extends SagaScene {
 
     private final float fadeTime = 350f;
     private final float totalTime = 2500f;
-    private UIImage<SplashScreenScene<?>> splash;
+    private UIImage<SplashScreenScene> splash;
     private float time = 0f;
-    public SplashScreenScene(G game) {
+    public SplashScreenScene(ReclaimGame game) {
         super(game);
     }
 
@@ -35,7 +35,7 @@ public class SplashScreenScene<G extends TacticsGame<G>> extends TacticsScene<G>
     @Override
     protected void loadUI() {
 
-        UIContainer<SplashScreenScene<?>> container = new UIContainer<>(this, UIContainer.Location.CENTER, UIContainer.Layout.VERTICAL);
+        UIContainer<SplashScreenScene> container = new UIContainer<>(this, UIContainer.Location.CENTER, UIContainer.Layout.VERTICAL);
         addChild(container);
 
         splash = new UIImage<>(this, 314, 64, "armadillo.png");
