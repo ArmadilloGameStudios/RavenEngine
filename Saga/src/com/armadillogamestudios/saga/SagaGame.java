@@ -10,7 +10,7 @@ import com.armadillogamestudios.saga.graphicspipeline.SagaGraphicsPipeline;
 import com.armadillogamestudios.saga.scene.SagaScene;
 import com.armadillogamestudios.saga.scene.mainmenu.MainMenuScene;
 import com.armadillogamestudios.saga.scene.splashscreen.SplashScreenScene;
-import com.armadillogamestudios.saga.scene.world.MapScene;
+import com.armadillogamestudios.saga.scene.map.WorldScene;
 
 import java.util.Random;
 
@@ -83,14 +83,10 @@ public class SagaGame extends Game<SagaGame> {
     public final SagaScene getNewGameScene() {
         setStartingData();
 
-        return new MapScene(this);
+        return new WorldScene(this);
     }
 
     private void setStartingData() {
-        sagaGameData = new SagaGameData(getEngine().getGameDatabase());
-    }
-
-    public SagaGameData getSagaGameData() {
-        return sagaGameData;
+        SagaGameData.init(getEngine().getGameDatabase());
     }
 }

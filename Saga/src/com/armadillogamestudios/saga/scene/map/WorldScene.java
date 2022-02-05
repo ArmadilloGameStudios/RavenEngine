@@ -1,12 +1,13 @@
-package com.armadillogamestudios.saga.scene.world;
+package com.armadillogamestudios.saga.scene.map;
 
 import com.armadillogamestudios.engine2d.util.math.Vector3f;
 import com.armadillogamestudios.saga.SagaGame;
+import com.armadillogamestudios.saga.data.SagaGameData;
 import com.armadillogamestudios.saga.scene.SagaScene;
 
-public class MapScene extends SagaScene {
+public class WorldScene extends SagaScene {
 
-    private Map world;
+    private World world;
 
     private Speed speed = Speed.Normal;
     private boolean pausedTick = true;
@@ -16,7 +17,7 @@ public class MapScene extends SagaScene {
 
     private final float mapMoveSpeedMultiplier = .1f;
 
-    public MapScene(SagaGame game) {
+    public WorldScene(SagaGame game) {
         super(game);
 
         this.addKeyboardHandler(new MapKeyboardHandler(this));
@@ -37,7 +38,7 @@ public class MapScene extends SagaScene {
     }
 
     protected void loadWorld() {
-        world = new Map(this, getGame().getSagaGameData().getSagaWorldData());
+        world = new World(this, SagaGameData.getSagaWorldData());
     }
 
     @Override

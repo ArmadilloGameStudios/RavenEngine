@@ -42,7 +42,7 @@ public abstract class IDMapGameObject<S extends Scene<?>, C extends IDMapChild> 
         mapSpriteSheet = scene.getEngine().getSpriteSheet(mapSpriteName);
         mapSpriteSheet.load(scene);
 
-        String regionSpriteName = mapData.getString("regionsprite");
+        String regionSpriteName = mapData.getString("map_sprite");
         idSpriteSheet = scene.getEngine().getSpriteSheet(regionSpriteName);
         idSpriteSheet.load(scene);
 
@@ -50,7 +50,7 @@ public abstract class IDMapGameObject<S extends Scene<?>, C extends IDMapChild> 
     }
 
     private void createChildren(GameData data) {
-        String childName = data.getString("childrenname");
+        String childName = data.getString("children_name");
 
         data.getList(childName).forEach(d -> {
             C child = this.constructChild(d);

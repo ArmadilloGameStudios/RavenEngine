@@ -1,4 +1,4 @@
-package com.armadillogamestudios.saga.scene.world;
+package com.armadillogamestudios.saga.scene.map;
 
 import com.armadillogamestudios.engine2d.GameProperties;
 import com.armadillogamestudios.engine2d.database.GameData;
@@ -6,9 +6,9 @@ import com.armadillogamestudios.engine2d.idmap.IDMapGameObject;
 import com.armadillogamestudios.engine2d.util.math.Vector2f;
 import com.armadillogamestudios.engine2d.util.math.Vector2i;
 
-public class Map extends IDMapGameObject<MapScene, Region> {
+public class World extends IDMapGameObject<WorldScene, Region> {
 
-    public Map(MapScene scene, GameData data) {
+    public World(WorldScene scene, GameData data) {
         super(scene, data);
     }
 

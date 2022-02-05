@@ -1,13 +1,13 @@
-package com.armadillogamestudios.saga.scene.world;
+package com.armadillogamestudios.saga.scene.map;
 
 import com.armadillogamestudios.engine2d.input.KeyData;
 import com.armadillogamestudios.engine2d.input.KeyboardHandler;
 
 public class MapKeyboardHandler implements KeyboardHandler {
 
-    private final MapScene map;
+    private final WorldScene map;
 
-    public MapKeyboardHandler(MapScene map) {
+    public MapKeyboardHandler(WorldScene map) {
         this.map = map;
     }
 
