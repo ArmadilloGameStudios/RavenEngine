@@ -42,4 +42,8 @@ public class RegionData implements GameDatable {
     public String getName() {
         return name;
     }
+
+    public TerrainData getTerrain() {
+        return terrain;
+    }
 }

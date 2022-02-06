@@ -25,8 +25,8 @@
         "name": "name",
         "terrain": "plains",
         "center":{
-          "x": 2064,
-          "y": 1021
+          "x": 2067,
+          "y": 1016
         }
       },
       {
@@ -34,8 +34,8 @@
         "name": "name2",
         "terrain": "mountains",
         "center":{
-          "x": 2090,
-          "y": 1030
+          "x": 2087,
+          "y": 1026
         }
       },
       {
@@ -43,7 +43,7 @@
         "name": "name3",
         "terrain": "forests",
         "center":{
-          "x": 2090,
+          "x": 2058,
           "y": 1030
         }
       },
@@ -52,8 +52,8 @@
         "name": "name4",
         "terrain": "plains",
         "center":{
-          "x": 2090,
-          "y": 1030
+          "x": 2071,
+          "y": 1034
         }
       }
     ]

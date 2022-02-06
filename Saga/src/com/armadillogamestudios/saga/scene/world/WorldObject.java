@@ -27,8 +27,11 @@ public class WorldObject extends IDMapGameObject<WorldScene, RegionObject> {
     }
 
     public void focus(Vector2i center) {
-        Vector2f offset = this.getScene().getWorldOffset();
+        Vector2f wo = getScene().getWorldOffset();
+        System.out.println(-wo.x + getScene().getEngine().getMouse().getX() / 4);
+        System.out.println(-wo.y - getScene().getEngine().getMouse().getY() / 4 + GameProperties.getHeight());
 
+        Vector2f offset = getScene().getWorldOffset();
         offset.x = -center.x + (GameProperties.getWidth() / 2);
         offset.y = -center.y + (GameProperties.getHeight() / 2);
     }
