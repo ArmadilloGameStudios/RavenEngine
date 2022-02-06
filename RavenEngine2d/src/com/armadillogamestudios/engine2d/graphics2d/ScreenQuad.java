@@ -17,19 +17,17 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
-import static org.lwjgl.opengl.GL32.GL_LINES_ADJACENCY;
-import static org.lwjgl.opengl.GL32.GL_LINE_STRIP_ADJACENCY;
 
 public class ScreenQuad {
     private final static int vertex_size = 3, texture_size = 2;
     private static ScreenQuad blank;
-    private static List<Float> vertex_list = new ArrayList<>();
-    private static List<Float> texture_list = new ArrayList<>();
+    private static final List<Float> vertex_list = new ArrayList<>();
+    private static final List<Float> texture_list = new ArrayList<>();
     private static FloatBuffer vertex_list_buffer;
 
     private static int vbo_vertex_handle, vbo_texture_handle, vao_handle;
     private int vertex_start;
-    private int draw_mode = GL_TRIANGLES;
+    private final int draw_mode = GL_TRIANGLES;
     private int vertices;
     private int vbo_index_handle;
 
@@ -43,7 +41,6 @@ public class ScreenQuad {
         vertex_list_buffer =
                 BufferUtils.createFloatBuffer(vertex_list.size());
         vertex_list.forEach(vertex_list_buffer::put);
-        System.out.println(vertex_list.toString());
         vertex_list_buffer.flip();
 
         FloatBuffer texture_list_buffer =

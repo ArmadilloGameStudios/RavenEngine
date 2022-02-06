@@ -1,21 +1,20 @@
-package com.armadillogamestudios.saga.data;
+package com.armadillogamestudios.saga.data.world;
 
 import com.armadillogamestudios.engine2d.database.GameDatabase;
-import com.armadillogamestudios.saga.scene.map.Terrain;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class TerrainManager {
 
-    private final Map<String, Terrain> terrainMap = new HashMap<>();
+    private final Map<String, TerrainData> terrainMap = new HashMap<>();
 
-    public Terrain get(GameDatabase gameDatabase, String name) {
+    public TerrainData get(GameDatabase gameDatabase, String name) {
 
         if (terrainMap.containsKey(name)) {
             return terrainMap.get(name);
         } else {
-            Terrain terrain =  new Terrain(gameDatabase.getTable("terrain").query("name", name));
+            TerrainData terrain =  new TerrainData(gameDatabase.getTable("terrain").query("name", name));
 
             terrainMap.put(name, terrain);
 

@@ -10,7 +10,7 @@ import com.armadillogamestudios.saga.graphicspipeline.SagaGraphicsPipeline;
 import com.armadillogamestudios.saga.scene.SagaScene;
 import com.armadillogamestudios.saga.scene.mainmenu.MainMenuScene;
 import com.armadillogamestudios.saga.scene.splashscreen.SplashScreenScene;
-import com.armadillogamestudios.saga.scene.map.WorldScene;
+import com.armadillogamestudios.saga.scene.world.WorldScene;
 
 import java.util.Random;
 

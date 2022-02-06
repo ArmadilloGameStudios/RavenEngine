@@ -1,4 +1,4 @@
-package com.armadillogamestudios.saga.scene.map;
+package com.armadillogamestudios.saga.scene.world;
 
 import com.armadillogamestudios.engine2d.util.math.Vector3f;
 import com.armadillogamestudios.saga.SagaGame;
@@ -7,7 +7,7 @@ import com.armadillogamestudios.saga.scene.SagaScene;
 
 public class WorldScene extends SagaScene {
 
-    private World world;
+    private WorldObject worldObject;
 
     private Speed speed = Speed.Normal;
     private boolean pausedTick = true;
@@ -34,11 +34,11 @@ public class WorldScene extends SagaScene {
     }
 
     protected void onPostLoad() {
-        world.focus(10442563);
+        worldObject.focus(10442563);
     }
 
     protected void loadWorld() {
-        world = new World(this, SagaGameData.getSagaWorldData());
+        worldObject = new WorldObject(this, SagaGameData.getSagaWorldData());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.armadillogamestudios.saga.scene.map;
+package com.armadillogamestudios.saga.scene.world;
 
 import com.armadillogamestudios.engine2d.input.KeyData;
 import com.armadillogamestudios.engine2d.input.KeyboardHandler;

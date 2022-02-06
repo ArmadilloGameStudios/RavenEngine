@@ -1,22 +1,19 @@
-package com.armadillogamestudios.saga.scene.map;
+package com.armadillogamestudios.saga.data.world;
 
 import com.armadillogamestudios.engine2d.database.GameData;
-import com.armadillogamestudios.engine2d.idmap.IDMapChild;
+import com.armadillogamestudios.engine2d.database.GameDatable;
 import com.armadillogamestudios.engine2d.util.math.Vector2i;
 import com.armadillogamestudios.saga.data.SagaGameData;
 
-import java.util.HashMap;
+public class RegionData implements GameDatable {
 
-public class Region extends IDMapChild {
-
-    private final World world;
+    private final GameData gameData;
+    private final Vector2i center = new Vector2i();
     private final int id;
     private final String name;
-    private final Terrain terrain;
-    private final Vector2i center = new Vector2i();
+    private final TerrainData terrain;
 
-    public Region(World world, GameData gameData) {
-        this.world = world;
+    public RegionData(GameData gameData) {
 
         id = gameData.getInteger("id");
         name = gameData.getString("name");
@@ -25,17 +22,17 @@ public class Region extends IDMapChild {
 
         center.x = gameData.getData("center").getInteger("x");
         center.y = gameData.getData("center").getInteger("y");
+
+        this.gameData = gameData;
     }
 
     @Override
+    public GameData toGameData() {
+        return gameData;
+    }
+
     public int getID() {
         return id;
-    }
-
-    @Override
-    public void handleMouseClick() {
-        System.out.println(name);
-        world.focus(center);
     }
 
     public Vector2i getCenter() {
