@@ -23,7 +23,6 @@ public class WorldData implements GameDatable {
         regions.forEach(gd -> {
             regionDataIDMap.put(gd.getInteger("id"), new RegionData(gd));
         });
-
     }
 
     @Override

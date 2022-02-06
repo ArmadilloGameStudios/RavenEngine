@@ -121,7 +121,6 @@ public abstract class IDMapGameObject<S extends Scene<?>, C extends IDMapChild> 
     @Override
     public final void handleMouseClick() {
         if (scene.getEngine().getSecondID() != 0) {
-            System.out.println(scene.getEngine().getSecondID());
             C child = getChildByID(scene.getEngine().getSecondID());
 
             if (child != null) {

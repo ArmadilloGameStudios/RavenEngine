@@ -34,6 +34,7 @@ public class WorldObject extends IDMapGameObject<WorldScene, RegionObject> {
     }
 
     public void focus(int id) {
-        focus(getChildByID(id).getCenter());
+        RegionObject regionObject = getChildByID(id);
+        regionObject.handleMouseClick();
     }
 }

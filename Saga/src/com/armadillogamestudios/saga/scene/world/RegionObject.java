@@ -1,13 +1,10 @@
 package com.armadillogamestudios.saga.scene.world;
 
-import com.armadillogamestudios.engine2d.database.GameData;
 import com.armadillogamestudios.engine2d.idmap.IDMapChild;
 import com.armadillogamestudios.engine2d.util.math.Vector2i;
-import com.armadillogamestudios.saga.data.SagaGameData;
 import com.armadillogamestudios.saga.data.world.RegionData;
-import com.armadillogamestudios.saga.data.world.TerrainData;
 
-public class RegionObject extends IDMapChild {
+public class RegionObject extends IDMapChild<WorldScene> {
 
     private final WorldObject worldObject;
     private final RegionData regionData;
@@ -26,12 +23,14 @@ public class RegionObject extends IDMapChild {
 
     @Override
     public void handleMouseClick() {
-        this.getMapGameObject().getScene();
-
-        worldObject.focus(regionData.getCenter());
+        getMapGameObject().getScene().setRegion(this);
     }
 
     public Vector2i getCenter() {
         return regionData.getCenter();
+    }
+
+    public RegionData getData() {
+        return regionData;
     }
 }

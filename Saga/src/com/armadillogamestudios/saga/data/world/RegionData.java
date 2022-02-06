@@ -38,4 +38,8 @@ public class RegionData implements GameDatable {
     public Vector2i getCenter() {
         return center;
     }
+
+    public String getName() {
+        return name;
+    }
 }

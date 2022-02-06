@@ -7,15 +7,13 @@ import com.armadillogamestudios.saga.scene.SagaScene;
 
 public class WorldScene extends SagaScene {
 
+    private final float mapMoveSpeedMultiplier = .1f;
+    public boolean moveLeft, moveRight, moveUp, moveDown;
     private WorldObject worldObject;
-
+    private RegionDisplay regionDisplay;
     private Speed speed = Speed.Normal;
     private boolean pausedTick = true;
     private float timeSinceLastTick = 0;
-
-    public boolean moveLeft, moveRight, moveUp, moveDown;
-
-    private final float mapMoveSpeedMultiplier = .1f;
 
     public WorldScene(SagaGame game) {
         super(game);
@@ -27,6 +25,9 @@ public class WorldScene extends SagaScene {
     protected void loadUI() {
         // Background
         setBackgroundColor(new Vector3f(0, 0, 0));
+
+        regionDisplay = new RegionDisplay(this);
+        this.addChild(regionDisplay);
 
         this.loadWorld();
 
@@ -51,7 +52,7 @@ public class WorldScene extends SagaScene {
             timeSinceLastTick += deltaTime;
 
             if (timeSinceLastTick >= speed.getValue()) {
-                // TODO multithread tick
+                // TODO multi-thread tick
                 // TODO tick beforehand but don't apply until tick
                 tick();
                 timeSinceLastTick = 0f;
@@ -108,6 +109,11 @@ public class WorldScene extends SagaScene {
 
     protected void tick() {
 
+    }
+
+    public void setRegion(RegionObject regionObject) {
+        worldObject.focus(regionObject.getCenter());
+        regionDisplay.setInfo(regionObject.getData());
     }
 
     public enum Speed {
